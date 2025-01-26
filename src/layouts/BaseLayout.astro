@@ -1,0 +1,22 @@
+---
+import "~styles/global.css";
+---
+
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Astoir's Universe</title>
+  </head>
+  <body class="bg-stars">
+    <header class="container py-4">
+      <h1 class="text-4xl font-serif text-secondary">Astoir's Universe</h1>
+    </header>
+    <main class="container">
+      <slot /> <!-- 페이지별 콘텐츠 렌더링 -->
+    </main>
+    <footer class="container py-4 text-muted text-center">
+      <p>© 2025 Astoir. All rights reserved.</p>
+    </footer>
+  </body>
+</html>
