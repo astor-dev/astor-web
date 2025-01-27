@@ -1,23 +1,106 @@
 ---
-// src/pages/index.astro
-import React from "react";
-import BlogPreview from "~components/Blogpreview";
-import Hero from "~components/Hero";
-import Portfolio from "~components/Portfolio";
-// Astro 컴포넌트에서 React 컴포넌트를 사용할 땐 <Hero /> 같이 태그 형태로 바로 쓸 수 있음.
+import Layout from "~layouts/BaseLayout.astro";
+import Hero from "~components/Hero/Hero";
+import Card from "~components/Card/Card";
+import ProjectCard from "~components/Card/ProjectCard";
+
+// 가짜 데이터 예시
+const recentProjects = [
+  {
+    id: 1,
+    imageUrl: "https://picsum.photos/200/300",
+    projectType: "Brand Website dev.",
+    roles: ["Frontend", "UI/UX", "Animation"],
+    companyName: "Samsung Electronics",
+    projectName: "Samsung Display Solution",
+    projectSlug: "samsung-display",
+  },
+  {
+    id: 2,
+    imageUrl: "https://picsum.photos/200/300",
+    projectType: "Brand Website dev.",
+    roles: ["Frontend", "UI/UX", "Animation"],
+    companyName: "Samsung Electronics",
+    projectName: "Samsung Display Solution",
+    projectSlug: "samsung-display",
+  },
+  {
+    id: 3,
+    imageUrl: "https://picsum.photos/200/300",
+    projectType: "Brand Website dev.",
+    roles: ["Frontend", "UI/UX", "Animation"],
+    companyName: "Samsung Electronics",
+    projectName: "Samsung Display Solution",
+    projectSlug: "samsung-display",
+  },
+  {
+    id: 4,
+    imageUrl: "https://picsum.photos/200/300",
+    projectType: "Brand Website dev.",
+    roles: ["Frontend", "UI/UX", "Animation"],
+    companyName: "Samsung Electronics",
+    projectName: "Samsung Display Solution",
+    projectSlug: "samsung-display",
+  },
+];
+
+const recentPosts = [
+  {
+    title: "Tailwind CSS 활용 꿀팁",
+    subtitle: "브랜드 컬러를 변수로 쓰기",
+    content: "공통색을 @layer base에 등록하면 ...",
+  },
+  {
+    title: "Astro + React로 블로그 만들기",
+    subtitle: "SSG & SPA 혼합 접근",
+    content:
+      "Astro는 정적 사이트를 만들어주면서도, React 컴포넌트를 쓸 수 있어요. ...",
+  },
+];
 ---
 
-<!doctype html>
-<html lang="ko">
-  <head>
-    <meta charset="UTF-8" />
-    <title>astoir의 포트폴리오 & 블로그</title>
-    <!-- global.css를 불러오기 위해 다음과 같이 설정 (설정에 따라 다를 수 있음) -->
-    <link rel="stylesheet" href="/src/styles/global.css" />
-  </head>
-  <body>
-    <Hero />
-    <Portfolio />
-    <BlogPreview />
-  </body>
-</html>
+<Layout title="홈">
+  <section class="mb-16">
+    <Hero client:load />
+  </section>
+  <div class="mx-auto w-full px-4">
+    <!-- Hero 섹션 -->
+
+    <!-- 최근 프로젝트 섹션 -->
+    <section class="mb-16">
+      <h2 class="mb-8 text-2xl font-bold text-skin-base">최근 프로젝트</h2>
+      <!-- 
+        grid-cols-1: 기본 1열
+        sm:grid-cols-2: 작은 화면(sm 이상)에서는 2열
+        lg:grid-cols-3: 큰 화면(lg 이상)에서는 3열
+      -->
+      <div
+        class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 lg:gap-6"
+      >
+        {
+          recentProjects.map(project => (
+            <ProjectCard {...project} client:load />
+          ))
+        }
+      </div>
+    </section>
+
+    <!-- 최근 블로그 글 섹션 -->
+    <section class="mb-16">
+      <h2 class="mb-8 text-2xl font-bold text-skin-base">최근 블로그 글</h2>
+      <!-- 
+        grid-cols-1: 기본 1열
+        sm:grid-cols-2: 작은 화면부터는 2열
+      -->
+      <div class="grid grid-cols-1 gap-6 sm:grid-cols-2">
+        {
+          recentPosts.map(post => (
+            <Card title={post.title} subtitle={post.subtitle}>
+              <p>{post.content}</p>
+            </Card>
+          ))
+        }
+      </div>
+    </section>
+  </div>
+</Layout>

@@ -3,28 +3,37 @@
 @tailwind utilities;
 
 @layer base {
+  /* ===== Color Theme (CSS Variables) ===== */
   :root,
-  html[data-theme="light"] {
-    /* Light Theme Colors (Brand Style) */
-    --color-fill: 248, 249, 253; /* 전체 배경: 밝고 차분한 느낌(F8F9FD) */
-    --color-text-base: 33, 37, 41; /* 텍스트: 살짝 부드러운 블랙(212529) */
-    --color-accent: 99, 102, 241; /* 포인트 컬러(보랏빛 블루) => #6366F1 */
-    --color-card: 255, 255, 255; /* 카드 배경(화이트) */
-    --color-card-muted: 224, 226, 250; /* 카드 내부 강조 or 서브 배경(#E0E2FA) */
-    --color-border: 203, 210, 247; /* 카드/요소 테두리(#CBD2F7) */
+/* Light Theme */
+html[data-theme="light"] {
+    --color-fill: 244, 244, 246; /* #F4F4F6: 아주 연한 회색/백색 */
+    --color-text-base: 45, 45, 45; /* #2D2D2D: 짙은 회색 */
+    --color-text-accent: 29, 29, 31; /* #1D1D1F: 애플스타일 검정색 */
+    --color-text-white: 242, 242, 245; /* #F2F2F5: 밝은 회색, 흰색에 가까움 */
+    --color-text-white-accent: 245, 245, 247; /* #F5F5F7: 애플스타일 밝은 회색 */
+    --color-accent: 91, 95, 176; /* #5B5FB0: 은은한 퍼플블루 */
+    --color-background: 255, 255, 255; /* #FFFFFF */
+    --color-card: 255, 255, 255; /* #FFFFFF */
+    --color-card-muted: 230, 232, 242; /* #E6E8F2: 보랏빛 감도는 옅은 회색 */
+    --color-border: 204, 206, 218; /* #CCCEDA: 카드/요소 테두리 */
   }
 
+  /* Dark Theme */
   html[data-theme="dark"] {
-    /* Dark Theme Colors (Brand Style) */
-    --color-fill: 33, 38, 57; /* 전체 배경: 어두운 블루톤(#212639) */
-    --color-text-base: 234, 237, 239; /* 텍스트: 밝은 톤(#EAEDF9 정도) */
-    --color-accent: 158, 160, 255; /* 포인트 컬러 (약간 더 라이트한 #9EA0FF) */
-    --color-card: 52, 63, 96; /* 카드 배경(#343F60) */
-    --color-card-muted: 75, 86, 124; /* 카드 내부 강조 or 서브 배경(#4B567C) */
-    --color-border: 91, 94, 126; /* 테두리(#5B5E7E) */
+    --color-fill: 21, 21, 33; /* #151521: 어두운 남보라톤 밤하늘 느낌 */
+    --color-text-base: 242, 242, 245; /* #F2F2F5: 밝은 회색, 흰색에 가까움 */
+    --color-text-accent: 245, 245, 247; /* #F5F5F7: 애플스타일 밝은 회색 */
+    --color-text-white: 242, 242, 245; /* #F2F2F5: 밝은 회색, 흰색에 가까움 */
+    --color-text-white-accent: 245, 245, 247; /* #F5F5F7: 애플스타일 밝은 회색 */
+    --color-accent: 124, 124, 191; /* #7C7CBF: 다크 모드에서 조금 더 라이트한 퍼플블루 */
+    --color-background: 21, 21, 33; /* #151521: 어두운 남보라톤 밤하늘 느낌 */
+    --color-card: 34, 34, 48; /* #222230 */
+    --color-card-muted: 46, 46, 68; /* #2E2E44: 살짝 더 옅은 농도 */
+    --color-border: 90, 90, 112; /* #5A5A70 */
   }
 
-  /* 다크/라이트 토글 시 아이콘 전환 */
+  /* ===== 다크/라이트 토글 시 아이콘 전환 ===== */
   #sun-svg,
   html[data-theme="dark"] #moon-svg {
     display: none;
@@ -34,58 +43,24 @@
     display: block;
   }
 
+  /* ===== Global Base 스타일 ===== */
   body {
-    @apply bg-skin-fill text-skin-base selection:bg-skin-accent/70 selection:text-skin-inverted flex min-h-[100svh] flex-col font-sans;
-  }
-
-  section,
-  footer {
-    @apply mx-auto max-w-3xl px-4;
+    @apply min-h-screen bg-skin-background font-sans text-skin-base antialiased;
+    /* 반응형은 Tailwind의 유틸 클래스로 충분히 대응 가능 */
   }
 
   a {
-    @apply outline-skin-fill outline-2 outline-offset-1 focus-visible:no-underline focus-visible:outline-dashed;
+    /* 포커스 스타일, 기본적으로 Tailwind 유틸로 처리 가능하나 예시로 작성 */
+    @apply text-skin-accent underline outline-0 hover:text-skin-accent/80;
   }
 
-  svg {
-    @apply fill-skin-base group-hover:fill-skin-accent inline-block h-6 w-6;
-  }
-  svg.icon-tabler {
-    @apply inline-block h-6 w-6 scale-125 fill-transparent stroke-current stroke-2 opacity-90 group-hover:fill-transparent sm:scale-110;
-  }
-
-  /* prose (tailwind typography) 관련 스타일 */
-  .prose {
-    @apply prose-headings:!mb-3 prose-headings:!text-skin-base prose-h3:italic prose-p:!text-skin-base prose-a:!text-skin-base prose-a:!decoration-dashed prose-a:underline-offset-8 hover:prose-a:text-skin-accent prose-blockquote:!border-l-skin-accent/50 prose-blockquote:opacity-80 prose-figcaption:!text-skin-base prose-figcaption:opacity-70 prose-strong:!text-skin-base prose-code:rounded prose-code:bg-skin-card/75 prose-code:p-1 prose-code:before:!content-none prose-code:after:!content-none prose-ol:!text-skin-base prose-ul:overflow-x-clip prose-ul:!text-skin-base prose-li:marker:!text-skin-accent prose-table:text-skin-base prose-th:border prose-th:border-skin-line prose-td:border prose-td:border-skin-line prose-img:!my-2 prose-img:mx-auto prose-img:border-2 prose-img:border-skin-line prose-hr:!border-skin-line;
-  }
-  .prose a {
-    @apply hover:!text-skin-accent break-words;
-  }
-  .prose code {
-    @apply font-mono;
-  }
-  .prose thead th:first-child,
-  tbody td:first-child,
-  tfoot td:first-child {
-    padding-left: 0.5714286em;
-  }
-  .prose h2#table-of-contents {
-    @apply mb-2;
-  }
-  .prose details {
-    @apply text-skin-base inline-block cursor-pointer select-none;
-  }
-  .prose summary {
-    @apply focus-outline;
-  }
-  .prose h2#table-of-contents + p {
-    @apply hidden;
+  /* ===== 선택 영역 (selection) 커스터마이징 예시 ===== */
+  ::selection {
+    @apply bg-skin-accent text-skin-inverted;
+    /* text-skin-inverted은 필요하다면 변수로 정의, 혹은 간단히 #fff 등으로 지정 가능 */
   }
 
-  /* ===== scrollbar ===== */
-  html {
-    overflow-y: scroll;
-  }
+  /* ===== 기본 스크롤바 ===== */
   ::-webkit-scrollbar {
     @apply w-3;
   }
@@ -99,34 +74,47 @@
     @apply bg-skin-card-muted;
   }
 
-  /* ===== Code Blocks & Syntax Highlighting ===== */
-  pre:has(code) {
-    @apply border-skin-line border;
-  }
+  /* ===== 코드 블럭 & Syntax Highlight ===== */
   code,
   blockquote {
-    word-wrap: break-word;
+    @apply break-words;
   }
   pre > code {
-    white-space: pre;
+    @apply whitespace-pre;
+  }
+  pre:has(code) {
+    @apply rounded-md border border-skin-line p-4;
   }
 
-  /* Dark Theme의 코드 블록 처리 */
+  /* 다크 테마에서 *별도*로 색을 주고 싶을 때(하이라이팅 라이브러리 있으면 거기에 맞춰 보완 가능) */
   html[data-theme="dark"] pre:has(code),
   html[data-theme="dark"] pre:has(code) span {
-    color: var(--shiki-dark) !important;
-    background-color: var(--shiki-dark-bg) !important;
-    font-style: var(--shiki-dark-font-style) !important;
-    font-weight: var(--shiki-dark-font-weight) !important;
-    text-decoration: var(--shiki-dark-text-decoration) !important;
+    /* shiki 등 특정 라이브러리 색상 변수 사용 시 */
+    color: var(--shiki-dark, #ffffff) !important;
+    background-color: var(--shiki-dark-bg, #1e1e2f) !important;
+  }
+
+  html {
+    @apply bg-skin-background; /* 최하위 기본 배경색 */
   }
 }
 
 @layer components {
+  /* ===== 공통 컴포넌트/헬퍼 클래스 ===== */
+  .focus-outline {
+    @apply outline-2 outline-offset-2 outline-skin-fill focus-visible:outline-dashed;
+  }
   .display-none {
     @apply hidden;
   }
-  .focus-outline {
-    @apply outline-skin-fill outline-2 outline-offset-1 focus-visible:no-underline focus-visible:outline-dashed;
+
+  /* 필요 시 카드나 섹션 등에 사용할 간단한 헬퍼 */
+  .card {
+    @apply border-skin-border rounded-lg border bg-skin-card p-4;
+  }
+
+  /* 예시: 섹션 제목 스타일(반응형은 유틸 클래스로 커버 가능) */
+  .section-title {
+    @apply mb-4 text-2xl font-bold;
   }
 }
