@@ -107,14 +107,4 @@ html[data-theme="light"] {
   .display-none {
     @apply hidden;
   }
-
-  /* 필요 시 카드나 섹션 등에 사용할 간단한 헬퍼 */
-  .card {
-    @apply border-skin-border rounded-lg border bg-skin-card p-4;
-  }
-
-  /* 예시: 섹션 제목 스타일(반응형은 유틸 클래스로 커버 가능) */
-  .section-title {
-    @apply mb-4 text-2xl font-bold;
-  }
 }

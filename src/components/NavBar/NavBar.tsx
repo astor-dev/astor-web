@@ -1,11 +1,12 @@
+// components/NavBar.jsx
+import { MoonIcon, SunIcon } from "@heroicons/react/24/solid";
 import React, { useState, useEffect, useRef } from "react";
+import throttle from "lodash/throttle";
 
-export default function NavBar() {
+export default function NavBar({ initialShowNav = false }) {
   const [isOpen, setIsOpen] = useState(false);
   const [isDark, setIsDark] = useState(false);
-
-  // NavBar 보여줄지 말지 결정하는 상태
-  const [showNav, setShowNav] = useState(true);
+  const [showNav, setShowNav] = useState(initialShowNav);
   const lastScrollY = useRef(0);
 
   useEffect(() => {
@@ -14,9 +15,8 @@ export default function NavBar() {
     setIsDark(currentTheme === "dark");
   }, []);
 
-  // 스크롤 이벤트로 NavBar 숨김/보임 제어
   useEffect(() => {
-    const handleScroll = () => {
+    const handleScroll = throttle(() => {
       const currentScrollY = window.scrollY;
       if (currentScrollY > lastScrollY.current) {
         // 스크롤 ‘내려가는’ 중이면 NavBar 숨김
@@ -26,13 +26,12 @@ export default function NavBar() {
         setShowNav(true);
       }
       lastScrollY.current = currentScrollY;
-    };
+    }, 200); // 200ms 간격으로 throttle
 
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  // 테마 토글
   const handleThemeToggle = () => {
     const currentTheme = document.documentElement.getAttribute("data-theme");
     if (currentTheme === "dark") {
@@ -45,12 +44,10 @@ export default function NavBar() {
   };
 
   return (
-    // showNav 상태에 따라 transform이 달라지도록
-    // position을 fixed로 해서 스크롤 이동시에도 항상 상단에 위치
     <header
-      className={`fixed left-0 top-0 z-50 w-full transform transition-transform duration-300 ${
+      className={`fixed left-0 top-0 z-50 w-full transform transition-transform duration-300 ease-in-out will-change-transform ${
         showNav ? "translate-y-0" : "-translate-y-full"
-      } bg-skin-fill`}
+      } bg-skin-fill shadow-md`}
     >
       <nav className="mx-auto flex max-w-3xl items-center justify-between px-4 py-4">
         <a href="/" className="text-xl font-bold text-skin-accent">
@@ -60,19 +57,19 @@ export default function NavBar() {
         {/* 데스크톱용 메뉴 */}
         <div className="hidden space-x-6 sm:flex">
           <a
-            href="#"
+            href="#about"
             className="text-skin-base transition hover:text-skin-accent"
           >
             About
           </a>
           <a
-            href="#"
+            href="#blog"
             className="text-skin-base transition hover:text-skin-accent"
           >
             Blog
           </a>
           <a
-            href="#"
+            href="#contact"
             className="text-skin-base transition hover:text-skin-accent"
           >
             Contact
@@ -87,34 +84,9 @@ export default function NavBar() {
             className="rounded p-2 text-skin-base transition hover:bg-skin-card-muted hover:text-skin-accent focus:outline-none"
           >
             {isDark ? (
-              // Light 모드로 전환 아이콘 (Sun)
-              <svg
-                className="h-6 w-6 stroke-current"
-                fill="none"
-                strokeWidth="2"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  d="M12 2v2m0 16v2m10-10h-2M4 12H2m15.364-6.364l-1.414 1.414M6.05 17.95l-1.414 1.414m12.728 0l1.414-1.414M6.05 6.05l1.414 1.414"
-                />
-                <circle cx="12" cy="12" r="3" />
-              </svg>
+              <SunIcon className="h-6 w-6 stroke-current" />
             ) : (
-              // Dark 모드로 전환 아이콘 (Moon)
-              <svg
-                className="h-6 w-6 stroke-current"
-                fill="none"
-                strokeWidth="2"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  d="M20.354 15.354A9 9 0 018.646 3.646 9 9 0 1019.06 16.94c.456-.188.892-.414 1.294-.686z"
-                />
-              </svg>
+              <MoonIcon className="h-6 w-6 stroke-current" />
             )}
           </button>
 
@@ -145,19 +117,19 @@ export default function NavBar() {
         <div className="border-t border-skin-line sm:hidden">
           <div className="flex flex-col space-y-2 px-4 py-3">
             <a
-              href="#"
+              href="#about"
               className="text-skin-base transition hover:text-skin-accent"
             >
               About
             </a>
             <a
-              href="#"
+              href="#blog"
               className="text-skin-base transition hover:text-skin-accent"
             >
               Blog
             </a>
             <a
-              href="#"
+              href="#contact"
               className="text-skin-base transition hover:text-skin-accent"
             >
               Contact
