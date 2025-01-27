@@ -94,16 +94,18 @@ export default function Hero() {
       {/* 메인 콘텐츠 (텍스트 + CTA 버튼) */}
       <div className="relative z-10 mx-auto flex max-w-4xl flex-col items-center px-4 text-center">
         <h1
-          className={`mb-6 text-5xl font-extrabold tracking-widest text-skin-white-accent sm:text-6xl md:text-7xl ${
+          className={`mb-6 text-5xl font-extrabold tracking-widest sm:text-6xl md:text-7xl ${
             isMounted ? "animate-fadeInDown-1s" : ""
           }`}
+          style={{ color: "#F5F5F7" }}
         >
           Implode()
         </h1>
         <p
-          className={`mb-12 max-w-2xl text-lg font-light text-skin-white sm:text-xl md:text-2xl ${
+          className={`text-white-base mb-12 max-w-2xl text-lg font-light text-white sm:text-xl md:text-2xl ${
             isMounted ? "animate-fadeInUp-1.2s" : ""
           }`}
+          style={{ color: "#F2F2F5" }}
         >
           안녕하세요!{" "}
           <span className="font-semibold">백엔드 개발자 Astoir, 김도훈</span>
@@ -119,7 +121,8 @@ export default function Hero() {
         <div className={`${isMounted ? "animate-fadeInUp-1.4s" : ""}`}>
           <a
             href="/projects"
-            className="rounded-full bg-skin-accent px-10 py-4 text-sm font-semibold text-skin-white shadow-lg transition hover:bg-skin-accent/90 active:scale-95"
+            className="text-white-base rounded-full bg-skin-accent px-10 py-4 text-sm font-semibold shadow-lg transition hover:bg-skin-accent/90 active:scale-95"
+            style={{ color: "#F5F5F7" }}
           >
             프로젝트 보러가기
           </a>

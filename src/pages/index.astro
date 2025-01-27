@@ -1,6 +1,5 @@
 ---
 import Layout from "~layouts/BaseLayout.astro";
-import Hero from "~components/Hero/Hero";
 import Card from "~components/Card/Card";
 import ProjectCard from "~components/Card/ProjectCard";
 
@@ -9,7 +8,7 @@ const recentProjects = [
   {
     id: 1,
     imageUrl: "https://picsum.photos/200/300",
-    projectType: "Brand Website dev.",
+    projectAbstract: "Brand Website dev.",
     roles: ["Frontend", "UI/UX", "Animation"],
     companyName: "Samsung Electronics",
     projectName: "Samsung Display Solution",
@@ -18,7 +17,7 @@ const recentProjects = [
   {
     id: 2,
     imageUrl: "https://picsum.photos/200/300",
-    projectType: "Brand Website dev.",
+    projectAbstract: "Brand Website dev.",
     roles: ["Frontend", "UI/UX", "Animation"],
     companyName: "Samsung Electronics",
     projectName: "Samsung Display Solution",
@@ -27,7 +26,7 @@ const recentProjects = [
   {
     id: 3,
     imageUrl: "https://picsum.photos/200/300",
-    projectType: "Brand Website dev.",
+    projectAbstract: "Brand Website dev.",
     roles: ["Frontend", "UI/UX", "Animation"],
     companyName: "Samsung Electronics",
     projectName: "Samsung Display Solution",
@@ -36,7 +35,7 @@ const recentProjects = [
   {
     id: 4,
     imageUrl: "https://picsum.photos/200/300",
-    projectType: "Brand Website dev.",
+    projectAbstract: "Brand Website dev.",
     roles: ["Frontend", "UI/UX", "Animation"],
     companyName: "Samsung Electronics",
     projectName: "Samsung Display Solution",
@@ -60,15 +59,12 @@ const recentPosts = [
 ---
 
 <Layout title="홈">
-  <section class="mb-16">
-    <Hero client:load />
-  </section>
-  <div class="mx-auto w-full px-4">
+  <div class="mx-auto w-full">
     <!-- Hero 섹션 -->
 
     <!-- 최근 프로젝트 섹션 -->
-    <section class="mb-16">
-      <h2 class="mb-8 text-2xl font-bold text-skin-base">최근 프로젝트</h2>
+    <section class="mb-16 mt-16">
+      <h2 class="text-black-base mb-8 text-2xl font-bold">최근 프로젝트</h2>
       <!-- 
         grid-cols-1: 기본 1열
         sm:grid-cols-2: 작은 화면(sm 이상)에서는 2열
@@ -86,8 +82,8 @@ const recentPosts = [
     </section>
 
     <!-- 최근 블로그 글 섹션 -->
-    <section class="mb-16">
-      <h2 class="mb-8 text-2xl font-bold text-skin-base">최근 블로그 글</h2>
+    <section class="mb-16 mt-16">
+      <h2 class="text-black-base mb-8 text-2xl font-bold">최근 블로그 글</h2>
       <!-- 
         grid-cols-1: 기본 1열
         sm:grid-cols-2: 작은 화면부터는 2열

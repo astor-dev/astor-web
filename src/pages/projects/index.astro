@@ -1,6 +1,5 @@
 ---
 import Layout from "~layouts/BaseLayout.astro";
-import Card from "~components/Card/Card";
 import ProjectCard from "~components/Card/ProjectCard";
 
 // 가짜 데이터 예시
@@ -8,7 +7,7 @@ const recentProjects = [
   {
     id: 1,
     imageUrl: "https://picsum.photos/200/300",
-    projectType: "Brand Website dev.",
+    projectAbstract: "Brand Website dev.",
     roles: ["Frontend", "UI/UX", "Animation"],
     companyName: "Samsung Electronics",
     projectName: "Samsung Display Solution",
@@ -17,7 +16,7 @@ const recentProjects = [
   {
     id: 2,
     imageUrl: "https://picsum.photos/200/300",
-    projectType: "Brand Website dev.",
+    projectAbstract: "Brand Website dev.",
     roles: ["Frontend", "UI/UX", "Animation"],
     companyName: "Samsung Electronics",
     projectName: "Samsung Display Solution",
@@ -26,7 +25,7 @@ const recentProjects = [
   {
     id: 3,
     imageUrl: "https://picsum.photos/200/300",
-    projectType: "Brand Website dev.",
+    projectAbstract: "Brand Website dev.",
     roles: ["Frontend", "UI/UX", "Animation"],
     companyName: "Samsung Electronics",
     projectName: "Samsung Display Solution",
@@ -35,36 +34,31 @@ const recentProjects = [
   {
     id: 4,
     imageUrl: "https://picsum.photos/200/300",
-    projectType: "Brand Website dev.",
+    projectAbstract: "Brand Website dev.",
     roles: ["Frontend", "UI/UX", "Animation"],
     companyName: "Samsung Electronics",
     projectName: "Samsung Display Solution",
     projectSlug: "samsung-display",
   },
 ];
-
-const recentPosts = [
-  {
-    title: "Tailwind CSS 활용 꿀팁",
-    subtitle: "브랜드 컬러를 변수로 쓰기",
-    content: "공통색을 @layer base에 등록하면 ...",
-  },
-  {
-    title: "Astro + React로 블로그 만들기",
-    subtitle: "SSG & SPA 혼합 접근",
-    content:
-      "Astro는 정적 사이트를 만들어주면서도, React 컴포넌트를 쓸 수 있어요. ...",
-  },
-];
 ---
 
 <Layout title="홈">
-  <div class="mx-auto w-full px-4">
-    <!-- Hero 섹션 -->
+  <div class="mx-auto w-full">
+    <!-- 설명 -->
+    <section class="mb-16 mt-16 px-8">
+      <p
+        class="mb-4 text-3xl font-semibold leading-snug tracking-tight text-black-accent"
+      >
+        여태까지 만든 프로젝트를 소개합니다.
+      </p>
+      <p class="text-lg leading-relaxed text-black-base/80">
+        하나하나 정성을 담아 만든 프로젝트들이에요. 예쁘게 봐주세요 :)
+      </p>
+    </section>
 
     <!-- 최근 프로젝트 섹션 -->
     <section class="mb-16">
-      <h2 class="mb-8 text-2xl font-bold text-skin-base">최근 프로젝트</h2>
       <!-- 
         grid-cols-1: 기본 1열
         sm:grid-cols-2: 작은 화면(sm 이상)에서는 2열
@@ -76,24 +70,6 @@ const recentPosts = [
         {
           recentProjects.map(project => (
             <ProjectCard {...project} client:load />
-          ))
-        }
-      </div>
-    </section>
-
-    <!-- 최근 블로그 글 섹션 -->
-    <section class="mb-16">
-      <h2 class="mb-8 text-2xl font-bold text-skin-base">최근 블로그 글</h2>
-      <!-- 
-        grid-cols-1: 기본 1열
-        sm:grid-cols-2: 작은 화면부터는 2열
-      -->
-      <div class="grid grid-cols-1 gap-6 sm:grid-cols-2">
-        {
-          recentPosts.map(post => (
-            <Card title={post.title} subtitle={post.subtitle}>
-              <p>{post.content}</p>
-            </Card>
           ))
         }
       </div>

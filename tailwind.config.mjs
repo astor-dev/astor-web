@@ -28,12 +28,21 @@ export default {
       /* text color */
       textColor: {
         skin: {
-          base: withOpacity("--color-text-base"),
-          "color-accent": withOpacity("--color-accent"),
-          accent: withOpacity("--color-text-accent"),
-          white: withOpacity("--color-text-white"),
-          "white-accent": withOpacity("--color-text-white-accent"),
+          base: withOpacity("--color-base"),
+          accent: withOpacity("--color-accent"),
+          secondary: withOpacity("--color-secondary"),
           inverted: withOpacity("--color-fill"),
+          danger: withOpacity("--color-danger"),
+          success: withOpacity("--color-success"),
+          warning: withOpacity("--color-warning"),
+        },
+        black: {
+          base: withOpacity("--color-black-base"),
+          accent: withOpacity("--color-black-accent"),
+        },
+        white: {
+          base: withOpacity("--color-white-base"),
+          accent: withOpacity("--color-white-accent"),
         },
       },
       /* background color */
@@ -41,10 +50,12 @@ export default {
         skin: {
           fill: withOpacity("--color-fill"),
           accent: withOpacity("--color-accent"),
+          secondary: withOpacity("--color-secondary"),
           inverted: withOpacity("--color-text-base"),
-          card: withOpacity("--color-card"),
-          "card-muted": withOpacity("--color-card-muted"),
           background: withOpacity("--color-background"),
+          danger: withOpacity("--color-danger"),
+          success: withOpacity("--color-success"),
+          warning: withOpacity("--color-warning"),
         },
       },
       keyframes: {

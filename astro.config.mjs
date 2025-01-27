@@ -9,11 +9,15 @@ import viteImagemin from "@vheemstra/vite-plugin-imagemin";
 import imageminMozjpeg from "imagemin-mozjpeg";
 import imageminWebp from "imagemin-webp";
 import imageminPngquant from "imagemin-pngquant";
-// const env = loadEnv("", process.cwd(), "STORYBLOK");
+import node from "@astrojs/node";
 
 // https://astro.build/config
 export default defineConfig({
-  site: "https://example.com",
+  output: "server",
+  adapter: node({
+    mode: "standalone",
+  }),
+
   devToolbar: {
     enabled: true,
   },

@@ -13,6 +13,7 @@
   "rootDir": "src",
   "dependencies": {
     "@astrojs/mdx": "^4.0.7",
+    "@astrojs/node": "^9.0.2",
     "@astrojs/react": "^4.1.6",
     "@astrojs/rss": "^4.0.11",
     "@astrojs/sitemap": "^3.2.1",

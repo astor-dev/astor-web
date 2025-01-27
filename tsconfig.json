@@ -8,14 +8,14 @@
     "jsxImportSource": "react",
     "baseUrl": "./",
     "paths": {
-      "~components/*": ["./src/components/*"],
-      "~content/*": ["./src/content/*"],
-      "~layouts/*": ["./src/layouts/*"],
-      "~pages/*": ["./src/pages/*"],
-      "~styles/*": ["./src/styles/*"],
-      "~assets/*": ["./src/assets/*"],
-      "~hooks/*": ["./src/hooks/*"],
-      "~/*": ["./*"]
+      "~components/*": ["src/components/*"],
+      "~content/*": ["src/content/*"],
+      "~layouts/*": ["src/layouts/*"],
+      "~pages/*": ["src/pages/*"],
+      "~styles/*": ["src/styles/*"],
+      "~assets/*": ["src/assets/*"],
+      "~hooks/*": ["src/hooks/*"],
+      "~/*": ["src/*"]
     }
   }
 }

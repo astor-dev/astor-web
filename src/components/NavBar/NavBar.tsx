@@ -3,7 +3,15 @@ import { MoonIcon, SunIcon } from "@heroicons/react/24/solid";
 import React, { useState, useEffect, useRef } from "react";
 import throttle from "lodash/throttle";
 
-export default function NavBar({ initialShowNav = false }) {
+interface NavBarProps {
+  pathname: string; // 현재 경로를 전달받음
+  initialShowNav?: boolean; // 초기 표시 여부를 전달받음 (optional)
+}
+
+export default function NavBar({
+  initialShowNav = false,
+  pathname,
+}: NavBarProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [isDark, setIsDark] = useState(false);
   const [showNav, setShowNav] = useState(initialShowNav);
@@ -43,37 +51,52 @@ export default function NavBar({ initialShowNav = false }) {
     }
   };
 
+  // 메뉴 항목 배열
+  const menuItems = [
+    { name: "About", href: "/about" },
+    { name: "Projects", href: "/projects" },
+    { name: "Blog", href: "/blog" },
+    { name: "Contact", href: "/contact" }, // 모바일 메뉴에만 추가된 Contact
+  ];
+
+  // 활성화된 메뉴 확인 함수
+  const isActive = (href: string) => {
+    const lowerCasePathname = pathname.toLowerCase();
+    const lowerCaseHref = href.toLowerCase();
+    if (lowerCaseHref === "/") {
+      return lowerCasePathname === "/";
+    }
+    const match = lowerCasePathname.startsWith(lowerCaseHref);
+    return match;
+  };
+
   return (
     <header
       className={`fixed left-0 top-0 z-50 w-full transform transition-transform duration-300 ease-in-out will-change-transform ${
         showNav ? "translate-y-0" : "-translate-y-full"
       } bg-skin-fill shadow-md`}
     >
-      <nav className="mx-auto flex max-w-3xl items-center justify-between px-4 py-4">
-        <a href="/" className="text-xl font-bold text-skin-accent">
-          Astoir
-        </a>
+      <nav className="mx-auto flex max-w-5xl items-center justify-between px-6 py-5">
+        {/* 로고 섹션 */}
+        <div className="flex items-center space-x-12">
+          <a href="/" className={`text-black-accent text-2xl font-extrabold`}>
+            Astoir
+          </a>
 
-        {/* 데스크톱용 메뉴 */}
-        <div className="hidden space-x-6 sm:flex">
-          <a
-            href="#about"
-            className="text-skin-base transition hover:text-skin-accent"
-          >
-            About
-          </a>
-          <a
-            href="#blog"
-            className="text-skin-base transition hover:text-skin-accent"
-          >
-            Blog
-          </a>
-          <a
-            href="#contact"
-            className="text-skin-base transition hover:text-skin-accent"
-          >
-            Contact
-          </a>
+          {/* PC용 메뉴 */}
+          <div className="hidden space-x-6 sm:flex">
+            {menuItems.slice(0, 3).map(item => (
+              <a
+                key={item.name}
+                href={item.href}
+                className={`hover:text-skin-secondary text-lg font-medium transition ${
+                  isActive(item.href) ? "text-skin-accent" : "text-black-base"
+                }`}
+              >
+                {item.name}
+              </a>
+            ))}
+          </div>
         </div>
 
         {/* 오른쪽 아이콘들 */}
@@ -116,24 +139,17 @@ export default function NavBar({ initialShowNav = false }) {
       {isOpen && (
         <div className="border-t border-skin-line sm:hidden">
           <div className="flex flex-col space-y-2 px-4 py-3">
-            <a
-              href="#about"
-              className="text-skin-base transition hover:text-skin-accent"
-            >
-              About
-            </a>
-            <a
-              href="#blog"
-              className="text-skin-base transition hover:text-skin-accent"
-            >
-              Blog
-            </a>
-            <a
-              href="#contact"
-              className="text-skin-base transition hover:text-skin-accent"
-            >
-              Contact
-            </a>
+            {menuItems.map(item => (
+              <a
+                key={item.name}
+                href={item.href}
+                className={`hover:text-skin-secondary text-lg font-medium transition ${
+                  isActive(item.href) ? "text-skin-accent" : "text-black-base"
+                }`}
+              >
+                {item.name}
+              </a>
+            ))}
           </div>
         </div>
       )}

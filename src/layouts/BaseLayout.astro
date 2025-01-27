@@ -1,11 +1,14 @@
 ---
 import Footer from "~components/Footer/Footer";
 import NavBar from "~components/NavBar/NavBar";
+import BreadcrumbNavigator from "~components/Breadcrumb/BreadcrumbNavigator";
 import "~styles/global.css";
+import Hero from "~components/Hero/Hero";
 // src/layouts/BaseLayout.astro
-
-const { title = "astoir의 개발 블로그" } = Astro.props;
 const currentPath = Astro.url.pathname;
+const { title = "astoir의 개발 블로그" } = Astro.props;
+const shouldRenderHero = currentPath === "/";
+const shouldShowBreadcrumb = currentPath !== "/" && currentPath !== "/about"; // 루트 및 특정 경로 제외
 ---
 
 <!doctype html>
@@ -22,9 +25,17 @@ const currentPath = Astro.url.pathname;
   </head>
   <body class="flex w-full flex-col text-skin-base">
     <!-- 헤더 (NavBar) - 내부에서 Tailwind 반응형 유틸을 사용하여 메뉴 등을 숨기거나 보이도록 처리 가능 -->
-    <NavBar client:load initialShowNav={currentPath !== "/"} />
+    <NavBar
+      client:load
+      initialShowNav={!shouldRenderHero}
+      pathname={currentPath}
+    />
+    {shouldRenderHero && <Hero client:load />}
     <!-- 메인 콘텐츠 영역: 반응형 컨테이너 적용 예시 -->
-    <main class="relative w-full flex-1">
+    <main class="relative w-full flex-1 bg-skin-background px-12">
+      <!-- Navbar를 보여주는 경우 Navbar+12px 띄워줌 -->
+      {!shouldRenderHero && <div class="h-[84px] w-full" />}
+      {shouldShowBreadcrumb && <BreadcrumbNavigator pathname={currentPath} />}
       <!-- 페이지별 콘텐츠는 slot을 통해 들어옴 -->
       <slot />
     </main>

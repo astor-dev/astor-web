@@ -1,0 +1,74 @@
+---
+import Layout from "~layouts/BaseLayout.astro";
+
+interface Project {
+  id: string;
+  imageUrl: string;
+  projectAbstract: string;
+  roles: string[];
+  companyName: string;
+  projectName: string;
+  description: string;
+  projectSlug: string;
+}
+
+// Astro의 파라미터에서 projectName 가져오기
+const { projectName } = Astro.params;
+
+const mockedProject = {
+  id: "1",
+  imageUrl: "https://picsum.photos/200/300",
+  projectAbstract: "프로젝트 개요",
+  roles: ["프론트엔드", "백엔드"],
+  companyName: "회사명",
+  projectName: "프로젝트명",
+  description: "프로젝트 설명",
+  projectSlug: "프로젝트슬러그",
+};
+// 서버에서 데이터를 가져오기
+async function fetchProjectBySlug(slug: string): Promise<Project | null> {
+  const response = await fetch(`https://your-api.com/api/projects/${slug}`);
+  if (!response.ok) {
+    return mockedProject;
+  }
+  return await response.json();
+}
+
+if (!projectName) {
+  return Astro.redirect("/404");
+}
+
+const project = await fetchProjectBySlug(projectName);
+
+if (!project) {
+  return Astro.redirect("/404");
+}
+---
+
+<Layout title={project.projectName}>
+  <div class="mx-auto max-w-4xl px-8 py-16">
+    <div class="mb-8">
+      <img
+        src={project.imageUrl}
+        alt={project.projectName}
+        class="w-full rounded-lg shadow-lg"
+      />
+    </div>
+    <h1 class="mb-4 text-4xl font-bold text-black-accent">
+      {project.projectName}
+    </h1>
+    <p class="mb-4 text-xl text-black-base/80">
+      <strong>{project.companyName}</strong> |{" "}
+      {project.roles.join(", ")}
+    </p>
+    <p class="mb-8 text-lg leading-relaxed text-black-base/80">
+      {project.description}
+    </p>
+    <div class="rounded-lg border border-skin-line bg-skin-fill p-6">
+      <h2 class="mb-4 text-2xl font-semibold text-black-accent">
+        프로젝트 개요
+      </h2>
+      <p class="text-lg text-black-base/80">{project.projectAbstract}</p>
+    </div>
+  </div>
+</Layout>

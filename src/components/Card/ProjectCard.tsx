@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 
 interface ProjectCardProps {
   imageUrl: string;
-  projectType: string;
+  projectAbstract: string;
   roles: string[];
   companyName: string;
   projectName: string;
@@ -12,7 +12,7 @@ interface ProjectCardProps {
 
 const ProjectCard: React.FC<ProjectCardProps> = ({
   imageUrl,
-  projectType,
+  projectAbstract,
   roles,
   companyName,
   projectName,
@@ -37,7 +37,7 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
     >
       <article className="relative h-full overflow-hidden rounded-2xl bg-skin-card shadow-lg">
         {loading ? (
-          <div className="md:h-[300px] lg:h-[220px] h-[250px] animate-pulse bg-gray-200" />
+          <div className="h-[250px] animate-pulse bg-gray-200 md:h-[300px] lg:h-[220px]" />
         ) : (
           <>
             <div className="aspect-[4/3] w-full overflow-hidden">
@@ -47,9 +47,9 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
                 className="h-full w-full object-cover transition-transform duration-500 hover:scale-105"
               />
             </div>
-            <div className="lg:p-5 p-4">
-              <p className="mb-3 text-sm font-medium uppercase tracking-wider text-skin-accent">
-                {projectType}
+            <div className="p-4 lg:p-5">
+              <p className="text-black-base mb-3 text-sm font-medium uppercase tracking-wider">
+                {projectAbstract}
               </p>
               <div className="flex flex-wrap gap-2">
                 {roles.map((role, idx) => (
@@ -64,10 +64,16 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
             </div>
             <div className="absolute inset-0 flex items-center justify-center bg-gradient-to-t from-black/80 via-black/60 to-black/40 opacity-0 transition-opacity duration-300 hover:opacity-100">
               <div className="p-4 text-center">
-                <p className="lg:text-lg mb-2 text-base font-medium text-white/80">
+                <p
+                  className="text-white-base mb-2 text-base font-medium lg:text-lg"
+                  style={{ color: "#F2F2F5" }}
+                >
                   {companyName}
                 </p>
-                <h3 className="lg:text-2xl text-xl font-bold text-white">
+                <h3
+                  className="text-white-base text-xl font-bold lg:text-2xl"
+                  style={{ color: "#F5F5F7" }}
+                >
                   {projectName}
                 </h3>
               </div>
