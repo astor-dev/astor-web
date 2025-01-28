@@ -109,3 +109,9 @@ html[data-theme="light"] {
     @apply hidden;
   }
 }
+
+@layer utilities {
+  .particles-js-canvas-el {
+    @apply pointer-events-none absolute inset-0;
+  }
+}

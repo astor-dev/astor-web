@@ -12,6 +12,7 @@
       "~content/*": ["src/content/*"],
       "~layouts/*": ["src/layouts/*"],
       "~pages/*": ["src/pages/*"],
+      "~types/*": ["src/types/*"],
       "~styles/*": ["src/styles/*"],
       "~assets/*": ["src/assets/*"],
       "~hooks/*": ["src/hooks/*"],

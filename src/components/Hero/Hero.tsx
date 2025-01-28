@@ -1,20 +1,22 @@
 // components/Hero.jsx
 import React, { useEffect, useState } from "react";
-import {
-  CloudIcon,
-  CodeBracketIcon,
-  ServerIcon,
-  StarIcon,
-  CommandLineIcon,
-  CpuChipIcon,
-  CubeIcon,
-  GlobeAltIcon,
-  RocketLaunchIcon,
-  WrenchScrewdriverIcon,
-  WifiIcon,
-} from "@heroicons/react/24/solid";
 import FloatingIcons from "~components/Icon/FloatingIcons";
 import heroMilkyway from "~assets/images/hero-milkyway.jpg";
+import {
+  SiDocker,
+  SiGit,
+  SiGithub,
+  SiJavascript,
+  SiKubernetes,
+  SiNestjs,
+  SiNginx,
+  SiPagespeedinsights,
+  SiPython,
+  SiReact,
+  SiTailwindcss,
+  SiTypescript,
+} from "react-icons/si";
+import { HiStar } from "react-icons/hi";
 
 export default function Hero() {
   const [isMounted, setIsMounted] = useState(false);
@@ -26,17 +28,19 @@ export default function Hero() {
 
   // 아이콘 타입 배열
   const iconTypes = [
-    StarIcon,
-    ServerIcon,
-    CloudIcon,
-    CodeBracketIcon,
-    CommandLineIcon,
-    CpuChipIcon,
-    CubeIcon,
-    GlobeAltIcon,
-    RocketLaunchIcon,
-    WrenchScrewdriverIcon,
-    WifiIcon,
+    SiNestjs,
+    SiJavascript,
+    SiTypescript,
+    SiPython,
+    SiReact,
+    SiTailwindcss,
+    SiDocker,
+    SiKubernetes,
+    SiGit,
+    SiGithub,
+    SiNginx,
+    SiPagespeedinsights,
+    HiStar,
   ];
 
   // 색상 배열
@@ -83,7 +87,7 @@ export default function Hero() {
       <div className="absolute inset-0 z-10 bg-black opacity-50"></div>
       {/* 배경 레이어 (아이콘 + 펄스 그라디언트) */}
       <div className="pointer-events-none absolute inset-0 z-0 overflow-hidden opacity-30">
-        <div className="via-skin-accent/20 absolute inset-0 z-0 animate-pulseCustom bg-gradient-to-r from-transparent to-transparent" />
+        <div className="via-skin-accent/20 animate-pulseCustom absolute inset-0 z-0 bg-gradient-to-r from-transparent to-transparent" />
         <FloatingIcons
           iconTypes={iconTypes}
           iconColors={iconColors}
@@ -102,7 +106,7 @@ export default function Hero() {
           Implode()
         </h1>
         <p
-          className={`text-white-base mb-12 max-w-2xl text-lg font-light text-white sm:text-xl md:text-2xl ${
+          className={`text-white mb-12 max-w-2xl text-lg font-light text-white-base sm:text-xl md:text-2xl ${
             isMounted ? "animate-fadeInUp-1.2s" : ""
           }`}
           style={{ color: "#F2F2F5" }}
@@ -121,7 +125,7 @@ export default function Hero() {
         <div className={`${isMounted ? "animate-fadeInUp-1.4s" : ""}`}>
           <a
             href="/projects"
-            className="text-white-base rounded-full bg-skin-accent px-10 py-4 text-sm font-semibold shadow-lg transition hover:bg-skin-accent/90 active:scale-95"
+            className="rounded-full bg-skin-accent px-10 py-4 text-sm font-semibold text-white-base shadow-lg transition hover:bg-skin-accent/90 active:scale-95"
             style={{ color: "#F5F5F7" }}
           >
             프로젝트 보러가기

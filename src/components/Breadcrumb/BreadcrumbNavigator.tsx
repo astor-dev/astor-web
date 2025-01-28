@@ -1,5 +1,5 @@
 import React from "react";
-import { ChevronRightIcon } from "@heroicons/react/24/solid";
+import { CgChevronRight } from "react-icons/cg";
 import { getBreadcrumbPaths } from "~components/Breadcrumb/utils";
 
 interface BreadcrumbProps {
@@ -10,7 +10,7 @@ const BreadcrumbNavigator: React.FC<BreadcrumbProps> = ({ pathname }) => {
   const breadcrumbPaths = getBreadcrumbPaths(pathname); // Breadcrumb 경로 생성
 
   return (
-    <div className="flex items-center space-x-2 rounded-lg bg-skin-card p-4">
+    <div className="bg-skin-card flex items-center space-x-2 rounded-lg p-4">
       {breadcrumbPaths.map((path, index) => (
         <React.Fragment key={index}>
           <a
@@ -18,13 +18,13 @@ const BreadcrumbNavigator: React.FC<BreadcrumbProps> = ({ pathname }) => {
             className={
               index === breadcrumbPaths.length - 1
                 ? "font-semibold text-skin-accent"
-                : "hover:text-skin-secondary text-skin-base"
+                : "text-skin-base hover:text-skin-secondary"
             }
           >
             {path.name}
           </a>
           {index < breadcrumbPaths.length - 1 && (
-            <ChevronRightIcon className="text-skin-muted h-5 w-5" />
+            <CgChevronRight className="text-skin-muted h-5 w-5" />
           )}
         </React.Fragment>
       ))}

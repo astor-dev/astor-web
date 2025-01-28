@@ -59,6 +59,11 @@ export default {
         },
       },
       keyframes: {
+        loading: {
+          "0%": { transform: "translateX(-100%)" },
+          "50%": { transform: "translateX(100%)" },
+          "100%": { transform: "translateX(100%)" },
+        },
         floating0: {
           "0%, 100%": { transform: "translateY(0px)" },
           "50%": { transform: "translateY(-10px)" },
@@ -88,8 +93,7 @@ export default {
         "floating-0": "floating0 5s ease-in-out infinite",
         "floating-1": "floating1 5s ease-in-out infinite",
         "floating-2": "floating2 5s ease-in-out infinite",
-        // 유사하게 0/1/2 번 돌려가며 쓸 수 있음
-        pulseCustom: "pulseCustom 8s ease-in-out infinite",
+        loading: "loading 1.5s infinite",
         "fadeInDown-1s": "fadeInDown 1s ease forwards",
         "fadeInUp-1s": "fadeInUp 1s ease forwards",
         "fadeInUp-1.2s": "fadeInUp 1.2s ease forwards",

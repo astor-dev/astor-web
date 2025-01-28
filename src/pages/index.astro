@@ -2,45 +2,12 @@
 import Layout from "~layouts/BaseLayout.astro";
 import Card from "~components/Card/Card";
 import ProjectCard from "~components/Card/ProjectCard";
+import { createMockedProject } from "~types/project.type";
+import { PiShootingStarFill } from "react-icons/pi";
 
 // 가짜 데이터 예시
 const recentProjects = [
-  {
-    id: 1,
-    imageUrl: "https://picsum.photos/200/300",
-    projectAbstract: "Brand Website dev.",
-    roles: ["Frontend", "UI/UX", "Animation"],
-    companyName: "Samsung Electronics",
-    projectName: "Samsung Display Solution",
-    projectSlug: "samsung-display",
-  },
-  {
-    id: 2,
-    imageUrl: "https://picsum.photos/200/300",
-    projectAbstract: "Brand Website dev.",
-    roles: ["Frontend", "UI/UX", "Animation"],
-    companyName: "Samsung Electronics",
-    projectName: "Samsung Display Solution",
-    projectSlug: "samsung-display",
-  },
-  {
-    id: 3,
-    imageUrl: "https://picsum.photos/200/300",
-    projectAbstract: "Brand Website dev.",
-    roles: ["Frontend", "UI/UX", "Animation"],
-    companyName: "Samsung Electronics",
-    projectName: "Samsung Display Solution",
-    projectSlug: "samsung-display",
-  },
-  {
-    id: 4,
-    imageUrl: "https://picsum.photos/200/300",
-    projectAbstract: "Brand Website dev.",
-    roles: ["Frontend", "UI/UX", "Animation"],
-    companyName: "Samsung Electronics",
-    projectName: "Samsung Display Solution",
-    projectSlug: "samsung-display",
-  },
+  ...Array.from({ length: 6 }, () => createMockedProject()),
 ];
 
 const recentPosts = [
@@ -61,10 +28,19 @@ const recentPosts = [
 <Layout title="홈">
   <div class="mx-auto w-full">
     <!-- Hero 섹션 -->
-
     <!-- 최근 프로젝트 섹션 -->
     <section class="mb-16 mt-16">
-      <h2 class="text-black-base mb-8 text-2xl font-bold">최근 프로젝트</h2>
+      <div class="mb-8 flex items-center justify-between">
+        <h2 class="font-sans text-2xl font-bold text-black-base">
+          <span class="text-skin-accent">✦</span> 프로젝트 모음
+        </h2>
+        <a
+          href="/projects"
+          class="inline-flex items-center gap-1 font-sans text-sm text-skin-accent hover:text-skin-accent/80"
+        >
+          More <PiShootingStarFill />
+        </a>
+      </div>
       <!-- 
         grid-cols-1: 기본 1열
         sm:grid-cols-2: 작은 화면(sm 이상)에서는 2열
@@ -83,7 +59,7 @@ const recentPosts = [
 
     <!-- 최근 블로그 글 섹션 -->
     <section class="mb-16 mt-16">
-      <h2 class="text-black-base mb-8 text-2xl font-bold">최근 블로그 글</h2>
+      <h2 class="mb-8 text-2xl font-bold text-black-base">최근 블로그 글</h2>
       <!-- 
         grid-cols-1: 기본 1열
         sm:grid-cols-2: 작은 화면부터는 2열

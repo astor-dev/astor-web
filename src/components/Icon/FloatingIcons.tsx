@@ -21,6 +21,16 @@ const generateRandomPosition = (
   };
 };
 
+// 배열을 균등하게 분배하는 함수
+const distributeEvenly = <T,>(array: T[], count: number): T[] => {
+  const result: T[] = [];
+  for (let i = 0; i < count; i++) {
+    const index = Math.floor((i * array.length) / count);
+    result.push(array[index]);
+  }
+  return result;
+};
+
 export default function FloatingIcons({
   iconTypes,
   iconColors,
@@ -41,18 +51,34 @@ export default function FloatingIcons({
 
   const counter = getCounter();
 
-  // useMemo를 사용하여 랜덤 아이콘 데이터 생성 (컴포넌트가 리렌더링될 때마다 새로운 아이콘 데이터 생성)
   const iconsData = useMemo(() => {
+    // 아이콘 타입을 균등하게 분배
+    const distributedIcons = distributeEvenly(iconTypes, counter);
+
+    // 색상과 크기도 균등하게 분배
+    const distributedColors = distributeEvenly(iconColors, counter);
+    const distributedSizes = distributeEvenly(iconSizes, counter);
+
+    // 분배된 값들을 섞어서 약간의 랜덤성 추가
+    const shuffleArray = <T,>(array: T[]): T[] => {
+      const shuffled = [...array];
+      for (let i = shuffled.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+      }
+      return shuffled;
+    };
+
+    const shuffledColors = shuffleArray(distributedColors);
+    const shuffledSizes = shuffleArray(distributedSizes);
+
     const data = [];
     for (let i = 0; i < counter; i++) {
-      const Icon = iconTypes[Math.floor(Math.random() * iconTypes.length)];
-      const color = iconColors[Math.floor(Math.random() * iconColors.length)];
-      const size = iconSizes[Math.floor(Math.random() * iconSizes.length)];
       const position = generateRandomPosition(i, counter);
       data.push({
-        Icon,
-        color,
-        size,
+        Icon: distributedIcons[i],
+        color: shuffledColors[i],
+        size: shuffledSizes[i],
         top: position.top,
         left: position.left,
       });
@@ -72,8 +98,8 @@ export default function FloatingIcons({
           left={it.left}
           // floating 애니메이션 중 하나를 랜덤하게 할당
           animation={`animate-floating-${index % 3}`}
-          // 애니메이션 지연 시간 설정 (100ms 간격)
-          delay={index * 100}
+          // 애니메이션 지연 시간 설정 (40ms 간격)
+          delay={index * 40}
         />
       ))}
     </>

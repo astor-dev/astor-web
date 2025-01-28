@@ -1,7 +1,7 @@
 // components/NavBar.jsx
-import { MoonIcon, SunIcon } from "@heroicons/react/24/solid";
 import React, { useState, useEffect, useRef } from "react";
 import throttle from "lodash/throttle";
+import { RiMoonClearFill, RiSunFill } from "react-icons/ri";
 
 interface NavBarProps {
   pathname: string; // 현재 경로를 전달받음
@@ -79,7 +79,7 @@ export default function NavBar({
       <nav className="mx-auto flex max-w-5xl items-center justify-between px-6 py-5">
         {/* 로고 섹션 */}
         <div className="flex items-center space-x-12">
-          <a href="/" className={`text-black-accent text-2xl font-extrabold`}>
+          <a href="/" className={`text-2xl font-extrabold text-black-accent`}>
             Astoir
           </a>
 
@@ -89,7 +89,7 @@ export default function NavBar({
               <a
                 key={item.name}
                 href={item.href}
-                className={`hover:text-skin-secondary text-lg font-medium transition ${
+                className={`text-lg font-medium transition hover:text-skin-secondary ${
                   isActive(item.href) ? "text-skin-accent" : "text-black-base"
                 }`}
               >
@@ -104,12 +104,12 @@ export default function NavBar({
           {/* 테마 토글 버튼 */}
           <button
             onClick={handleThemeToggle}
-            className="rounded p-2 text-skin-base transition hover:bg-skin-card-muted hover:text-skin-accent focus:outline-none"
+            className="hover:bg-skin-card-muted rounded p-2 text-skin-base transition hover:text-skin-accent focus:outline-none"
           >
             {isDark ? (
-              <SunIcon className="h-6 w-6 stroke-current" />
+              <RiSunFill className="h-6 w-6 stroke-current" />
             ) : (
-              <MoonIcon className="h-6 w-6 stroke-current" />
+              <RiMoonClearFill className="h-6 w-6 stroke-current" />
             )}
           </button>
 
@@ -143,7 +143,7 @@ export default function NavBar({
               <a
                 key={item.name}
                 href={item.href}
-                className={`hover:text-skin-secondary text-lg font-medium transition ${
+                className={`text-lg font-medium transition hover:text-skin-secondary ${
                   isActive(item.href) ? "text-skin-accent" : "text-black-base"
                 }`}
               >
