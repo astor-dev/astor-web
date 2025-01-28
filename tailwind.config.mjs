@@ -76,42 +76,77 @@ export default {
           "0%": { transform: "translateY(20px)", opacity: 0 },
           "100%": { transform: "translateY(0)", opacity: 1 },
         },
-        float: {
+        "float-0": {
           "0%": {
-            transform: "translate(0, 0) rotate(0deg)",
-            opacity: "0",
-          },
-          "10%": {
-            opacity: "0.5",
+            opacity: 1,
           },
           "25%": {
-            transform: "translate(15px, -15px) rotate(90deg)",
+            opacity: 0.5,
           },
           "50%": {
-            transform: "translate(-5px, 20px) rotate(180deg)",
+            opacity: 0,
           },
           "75%": {
-            transform: "translate(-20px, -15px) rotate(270deg)",
-          },
-          "90%": {
-            opacity: "0.5",
+            opacity: 0.5,
           },
           "100%": {
-            transform: "translate(0, 0) rotate(360deg)",
-            opacity: "0",
+            opacity: 1,
+          },
+        },
+        "float-1": {
+          "0%": {
+            transform: "rotate(0deg) translate(-50%, -50%) ",
+            opacity: "1",
+          },
+          "25%": {
+            transform: "rotate(-90deg) translate(-75%, -75%) ",
+            opacity: "1",
+          },
+          "50%": {
+            transform: "rotate(-180deg) translate(-100%, -100%) ",
+            opacity: "1",
+          },
+          "75%": {
+            transform: "rotate(-270deg) translate(-75%, -75%) ",
+            opacity: "1",
+          },
+          "100%": {
+            transform: "rotate(-360deg) translate(-50%, -50%) ",
+            opacity: "1",
+          },
+        },
+        "float-2": {
+          "0%": {
+            transform: "rotate(0deg) translate(-50%, -50%) ",
+            opacity: "1",
+          },
+          "25%": {
+            transform: "rotate(90deg) translate(-25%, -25%) ",
+            opacity: "1",
+          },
+          "50%": {
+            transform: "rotate(180deg) translate(0%, 0%) ",
+            opacity: "1",
+          },
+          "75%": {
+            transform: "rotate(270deg) translate(-25%, -25%) ",
+            opacity: "1",
+          },
+          "100%": {
+            transform: "rotate(360deg) translate(-50%, -50%) ",
+            opacity: "1",
           },
         },
       },
       animation: {
-        "floating-0": "floating0 5s ease-in-out infinite",
-        "floating-1": "floating1 5s ease-in-out infinite",
-        "floating-2": "floating2 5s ease-in-out infinite",
         loading: "loading 1.5s infinite",
         "fadeInDown-1s": "fadeInDown 1s ease forwards",
         "fadeInUp-1s": "fadeInUp 1s ease forwards",
         "fadeInUp-1.2s": "fadeInUp 1.2s ease forwards",
         "fadeInUp-1.4s": "fadeInUp 1.4s ease forwards",
-        float: "float 10s ease-in-out infinite",
+        "float-0": "float-0 6s linear infinite",
+        "float-1": "float-1 12s linear infinite",
+        "float-2": "float-2 12s linear infinite",
       },
       /* outline color */
       outlineColor: {
@@ -162,4 +197,5 @@ export default {
     },
   },
   plugins: [typography],
+  safelist: ["animate-float-0", "animate-float-1", "animate-float-2"],
 };
