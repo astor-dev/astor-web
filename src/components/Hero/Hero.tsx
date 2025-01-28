@@ -1,6 +1,5 @@
 // components/Hero.jsx
 import React, { useEffect, useState } from "react";
-import FloatingIcons from "~components/Icon/FloatingIcons";
 import heroMilkyway from "~assets/images/hero-milkyway.jpg";
 import {
   SiDocker,
@@ -22,48 +21,54 @@ export default function Hero() {
   const [isMounted, setIsMounted] = useState(false);
 
   useEffect(() => {
-    // 컴포넌트가 클라이언트에서 마운트된 후에 상태를 업데이트
     setIsMounted(true);
   }, []);
 
-  // 아이콘 타입 배열
-  const iconTypes = [
-    SiNestjs,
-    SiJavascript,
-    SiTypescript,
-    SiPython,
-    SiReact,
-    SiTailwindcss,
-    SiDocker,
-    SiKubernetes,
-    SiGit,
-    SiGithub,
-    SiNginx,
-    SiPagespeedinsights,
-    HiStar,
-  ];
-
-  // 색상 배열
-  const iconColors = [
-    "text-yellow-400/100",
-    "text-blue-500/100",
-    "text-purple-400/100",
-    "text-green-400/100",
-    "text-pink-400/100",
-    "text-indigo-400/100",
-    "text-cyan-400/100",
-    "text-teal-400/100",
-    "text-orange-400/100",
-  ];
-
-  // 크기 배열
-  const iconSizes = [
-    "h-5 w-5",
-    "h-6 w-6",
-    "h-7 w-7",
-    "h-8 w-8",
-    "h-9 w-9",
-    "h-10 w-10",
+  // 아이콘 설정 배열
+  const floatingIcons = [
+    { Icon: SiNestjs, color: "text-red-500", size: "w-8 h-8", delay: "0s" },
+    {
+      Icon: SiJavascript,
+      color: "text-yellow-400",
+      size: "w-10 h-10",
+      delay: "0.2s",
+    },
+    {
+      Icon: SiTypescript,
+      color: "text-blue-500",
+      size: "w-6 h-6",
+      delay: "0.4s",
+    },
+    {
+      Icon: SiPython,
+      color: "text-yellow-500",
+      size: "w-12 h-12",
+      delay: "0.6s",
+    },
+    { Icon: SiReact, color: "text-cyan-400", size: "w-9 h-9", delay: "0.8s" },
+    {
+      Icon: SiTailwindcss,
+      color: "text-teal-400",
+      size: "w-7 h-7",
+      delay: "1s",
+    },
+    { Icon: SiDocker, color: "text-blue-400", size: "w-8 h-8", delay: "1.2s" },
+    {
+      Icon: SiKubernetes,
+      color: "text-blue-500",
+      size: "w-10 h-10",
+      delay: "1.4s",
+    },
+    { Icon: SiGit, color: "text-orange-500", size: "w-6 h-6", delay: "1.6s" },
+    { Icon: SiGithub, color: "text-gray-200", size: "w-8 h-8", delay: "1.8s" },
+    { Icon: SiNginx, color: "text-green-400", size: "w-7 h-7", delay: "2s" },
+    {
+      Icon: SiPagespeedinsights,
+      color: "text-blue-300",
+      size: "w-9 h-9",
+      delay: "2.2s",
+    },
+    { Icon: HiStar, color: "text-yellow-300", size: "w-5 h-5", delay: "2.4s" },
   ];
 
   return (
@@ -83,23 +88,33 @@ export default function Hero() {
           decoding="async"
         />
       </picture>
+
       {/* 어두운 오버레이 레이어 */}
       <div className="absolute inset-0 z-10 bg-black opacity-50"></div>
-      {/* 배경 레이어 (아이콘 + 펄스 그라디언트) */}
-      <div className="pointer-events-none absolute inset-0 z-0 overflow-hidden opacity-30">
-        <div className="via-skin-accent/20 animate-pulseCustom absolute inset-0 z-0 bg-gradient-to-r from-transparent to-transparent" />
-        <FloatingIcons
-          iconTypes={iconTypes}
-          iconColors={iconColors}
-          iconSizes={iconSizes}
-        />
+
+      {/* 떠다니는 아이콘들 */}
+      <div className="pointer-events-none absolute inset-0 z-20 overflow-hidden">
+        {floatingIcons.map(({ Icon, color, size, delay }, index) => (
+          <div
+            key={index}
+            className={`animate-float absolute opacity-0 ${color} ${size}`}
+            style={{
+              left: `${Math.random() * 100}%`,
+              top: `${Math.random() * 100}%`,
+              animationDelay: delay,
+              animationDuration: `${5 + Math.random() * 5}s`,
+            }}
+          >
+            <Icon className="transition-transform hover:scale-110" />
+          </div>
+        ))}
       </div>
 
       {/* 메인 콘텐츠 (텍스트 + CTA 버튼) */}
-      <div className="relative z-10 mx-auto flex max-w-4xl flex-col items-center px-4 text-center">
+      <div className="relative z-30 mx-auto flex max-w-4xl flex-col items-center px-4 text-center">
         <h1
           className={`mb-6 text-5xl font-extrabold tracking-widest sm:text-6xl md:text-7xl ${
-            isMounted ? "animate-fadeInDown-1s" : ""
+            isMounted ? "animate-fadeInDown-1s" : "opacity-0"
           }`}
           style={{ color: "#F5F5F7" }}
         >
@@ -107,7 +122,7 @@ export default function Hero() {
         </h1>
         <p
           className={`text-white mb-12 max-w-2xl text-lg font-light text-white-base sm:text-xl md:text-2xl ${
-            isMounted ? "animate-fadeInUp-1.2s" : ""
+            isMounted ? "animate-fadeInUp-1.2s" : "opacity-0"
           }`}
           style={{ color: "#F2F2F5" }}
         >
@@ -122,7 +137,7 @@ export default function Hero() {
         </p>
 
         {/* CTA 버튼 (하나만 남김) */}
-        <div className={`${isMounted ? "animate-fadeInUp-1.4s" : ""}`}>
+        <div className={isMounted ? "animate-fadeInUp-1.4s" : "opacity-0"}>
           <a
             href="/projects"
             className="rounded-full bg-skin-accent px-10 py-4 text-sm font-semibold text-white-base shadow-lg transition hover:bg-skin-accent/90 active:scale-95"

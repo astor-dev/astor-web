@@ -88,6 +88,31 @@ export default {
           "0%": { transform: "translateY(20px)", opacity: 0 },
           "100%": { transform: "translateY(0)", opacity: 1 },
         },
+        float: {
+          "0%": {
+            transform: "translate(0, 0) rotate(0deg)",
+            opacity: "0",
+          },
+          "10%": {
+            opacity: "0.5",
+          },
+          "25%": {
+            transform: "translate(15px, -15px) rotate(90deg)",
+          },
+          "50%": {
+            transform: "translate(-5px, 20px) rotate(180deg)",
+          },
+          "75%": {
+            transform: "translate(-20px, -15px) rotate(270deg)",
+          },
+          "90%": {
+            opacity: "0.5",
+          },
+          "100%": {
+            transform: "translate(0, 0) rotate(360deg)",
+            opacity: "0",
+          },
+        },
       },
       animation: {
         "floating-0": "floating0 5s ease-in-out infinite",
@@ -98,6 +123,7 @@ export default {
         "fadeInUp-1s": "fadeInUp 1s ease forwards",
         "fadeInUp-1.2s": "fadeInUp 1.2s ease forwards",
         "fadeInUp-1.4s": "fadeInUp 1.4s ease forwards",
+        float: "float 10s ease-in-out infinite",
       },
       /* outline color */
       outlineColor: {
