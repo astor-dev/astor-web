@@ -94,20 +94,37 @@ export default function Hero() {
 
       {/* 떠다니는 아이콘들 */}
       <div className="pointer-events-none absolute inset-0 z-20 overflow-hidden">
-        {floatingIcons.map(({ Icon, color, size, delay }, index) => (
-          <div
-            key={index}
-            className={`animate-float absolute opacity-0 ${color} ${size}`}
-            style={{
-              left: `${Math.random() * 100}%`,
-              top: `${Math.random() * 100}%`,
-              animationDelay: delay,
-              animationDuration: `${5 + Math.random() * 5}s`,
-            }}
-          >
-            <Icon className="transition-transform hover:scale-110" />
-          </div>
-        ))}
+        {floatingIcons.map(({ Icon, color, size, delay }, index) => {
+          // 각 아이콘의 기본 각도를 균등하게 분배
+          const baseAngle = (index / floatingIcons.length) * 2 * Math.PI;
+          // 기본 각도에 약간의 랜덤성 추가 (-15도 ~ +15도)
+          const randomAngleOffset = ((Math.random() - 0.5) * Math.PI) / 6;
+          const angle = baseAngle + randomAngleOffset;
+
+          // 반지름 범위 설정 (20% ~ 45% of viewport)
+          const minRadius = 20;
+          const maxRadius = 45;
+          const radius =
+            minRadius + Math.pow(Math.random(), 0.8) * (maxRadius - minRadius);
+
+          const top = 50 + radius * Math.sin(angle);
+          const left = 50 + radius * Math.cos(angle);
+
+          return (
+            <div
+              key={index}
+              className={`animate-float absolute opacity-0 ${color} ${size}`}
+              style={{
+                left: `${Math.min(Math.max(left, 10), 90)}%`,
+                top: `${Math.min(Math.max(top, 10), 90)}%`,
+                animationDelay: delay,
+                animationDuration: `${5 + Math.random() * 5}s`,
+              }}
+            >
+              <Icon className="transition-transform hover:scale-110" />
+            </div>
+          );
+        })}
       </div>
 
       {/* 메인 콘텐츠 (텍스트 + CTA 버튼) */}

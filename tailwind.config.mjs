@@ -64,18 +64,6 @@ export default {
           "50%": { transform: "translateX(100%)" },
           "100%": { transform: "translateX(100%)" },
         },
-        floating0: {
-          "0%, 100%": { transform: "translateY(0px)" },
-          "50%": { transform: "translateY(-10px)" },
-        },
-        floating1: {
-          "0%, 100%": { transform: "translateY(0px)" },
-          "50%": { transform: "translateY(-14px)" },
-        },
-        floating2: {
-          "0%, 100%": { transform: "translateY(0px)" },
-          "50%": { transform: "translateY(-8px)" },
-        },
         pulseCustom: {
           "0%, 100%": { opacity: "0.6" },
           "50%": { opacity: "1" },
