@@ -18,8 +18,10 @@ html[data-theme="light"] {
     --color-warning: 234, 179, 8; /* #EAB308: 옐로우 */
     --color-black-base: 45, 45, 45; /* #2D2D2D: 짙은 회색 */
     --color-black-accent: 29, 29, 31; /* #1D1D1F: 애플스타일 검정색 */
+    --color-black-muted: 156, 163, 175; /* #9CA3AF: 라이트 그레이 */
     --color-white-base: 242, 242, 245; /* #F2F2F5: 밝은 회색, 흰색에 가까움 */
     --color-white-accent: 245, 245, 247; /* #F5F5F7: 애플스타일 밝은 회색 */
+    --color-white-muted: 229, 231, 235; /* #E5E7EB: 부드러운 회백색 */
   }
 
   /* Dark Theme */
@@ -35,8 +37,10 @@ html[data-theme="light"] {
     --color-warning: 217, 119, 6; /* #D97706: 다크 모드 옐로우 */
     --color-white-base: 45, 45, 45; /* #2D2D2D: 짙은 회색 */
     --color-white-accent: 29, 29, 31; /* #1D1D1F: 애플스타일 검정색 */
+    --color-white-muted: 156, 163, 175; /* #9CA3AF: 라이트 그레이 */
     --color-black-base: 242, 242, 245; /* #F2F2F5: 밝은 회색, 흰색에 가까움 */
     --color-black-accent: 245, 245, 247; /* #F5F5F7: 애플스타일 밝은 회색 */
+    --color-black-muted: 229, 231, 235; /* #E5E7EB: 부드러운 회백색 */
   }
 
   /* ===== 다크/라이트 토글 시 아이콘 전환 ===== */

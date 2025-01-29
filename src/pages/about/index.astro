@@ -1,85 +1,68 @@
 ---
 import Layout from "~layouts/BaseLayout.astro";
-import ImageWithSkeleton from "~components/Skeleton/ImageWithSkeleton";
+import StackGrid from "~components/Stack/StackGrid";
+import SectionWithHeader from "~components/Section/SectionWithHeader";
+import { FEATURED_STACK_IDS, EXPERIENCES } from "~constants/about";
+import ExperienceItem from "~components/Experience/ExperienceItem";
+import ProfileHeader from "~components/Profile/ProfileHeader";
+import profileImage from "~assets/images/image.png";
 ---
 
 <Layout title="About Me">
   <article class="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8">
     <div class="py-8 sm:py-12 lg:py-16">
-      <header class="mb-6 sm:mb-8 lg:mb-12">
-        <div class="flex flex-col items-center text-center">
-          <ImageWithSkeleton
-            src="/assets/profile.jpg"
-            alt="Astoir"
-            className="h-32 w-32 rounded-full shadow-md sm:h-40 sm:w-40 lg:h-48 lg:w-48"
-            client:load
-          />
-          <h1
-            class="mt-6 text-3xl font-bold text-black-accent sm:text-4xl lg:text-5xl"
-          >
-            Astoir
-          </h1>
-          <p class="mt-4 text-lg text-black-base/80 sm:text-xl lg:text-2xl">
-            Backend Developer | Creator | Space Enthusiast
-          </p>
-        </div>
-      </header>
+      <ProfileHeader
+        name="Astoir"
+        realName="김도훈"
+        role="Backend Developer"
+        imageSrc={profileImage.src}
+        info={{
+          birth: "2001",
+          education: {
+            school: "고려대학교 서울캠퍼스",
+            majors: ["영어영문", "소프트웨어기술벤처"],
+            year: "2020-재학중",
+          },
+          location: "Seoul, Korea",
+        }}
+        client:load
+      />
 
-      <section class="space-y-8">
-        <div class="prose prose-lg max-w-none prose-headings:text-black-accent">
-          <h2>About Me</h2>
-          <p>
-            안녕하세요! 저는 백엔드 개발자 <strong>Astoir</strong>입니다. 우주와
-            별을 사랑하며, 창의적인 프로젝트를 통해 세상을 더 나은 곳으로
-            만들고자 합니다.
-          </p>
-          <p>
-            백엔드 아키텍처 설계부터 데이터베이스 관리까지, 다양한 기술 스택을
-            활용해 고성능의 시스템을 구축하는 데 열정을 가지고 있습니다.
-          </p>
-        </div>
+      <SectionWithHeader
+        title="About Me"
+        description="안녕하세요! 저는 백엔드 개발자 Astoir입니다. "
+        client:load
+      />
 
-        <div class="prose prose-lg max-w-none prose-headings:text-black-accent">
-          <h2>Skills & Tech Stack</h2>
-          <ul class="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
-            <li>FastAPI</li>
-            <li>Node.js (NestJS)</li>
-            <li>PostgreSQL</li>
-            <li>Kafka</li>
-            <li>Docker & Kubernetes</li>
-            <li>GCP & AWS</li>
-            <li>Tailwind CSS</li>
-            <li>React & Astro</li>
-          </ul>
-        </div>
+      <SectionWithHeader
+        title="Tech Stack"
+        description="제가 사용하는 기술 스택들입니다. 각 도구의 특성을 이해하고 최적의 솔루션을 제공하기 위해 노력합니다."
+        className="from-white-base to-skin-card/20 relative bg-gradient-to-b"
+        client:load
+      >
+        <StackGrid client:load stackIds={FEATURED_STACK_IDS} />
+      </SectionWithHeader>
 
-        <div class="prose prose-lg max-w-none prose-headings:text-black-accent">
-          <h2>Experience</h2>
-          <ul class="space-y-4">
-            <li>
-              <strong>Backend Developer - [Company Name]</strong>
-              <br />
-              <span class="text-sm text-black-base/60">2023 - Present</span>
-              <p>
-                • 주요 프로젝트 아키텍처 설계 및 배포 <br />
-                • Kafka 기반의 이벤트 스트리밍 플랫폼 구현
-              </p>
-            </li>
-            <li>
-              <strong>Software Engineer - [Previous Company]</strong>
-              <br />
-              <span class="text-sm text-black-base/60">2020 - 2023</span>
-              <p>
-                • 대규모 데이터 처리 시스템 최적화 <br />
-                • API Gateway 설계 및 보안 강화
-              </p>
-            </li>
-          </ul>
+      <SectionWithHeader
+        title="Experience"
+        description="지금까지의 경험과 성장 과정을 소개합니다."
+        client:load
+      >
+        <div class="not-prose space-y-6">
+          {
+            EXPERIENCES.reverse().map(exp => (
+              <ExperienceItem experience={exp} client:load />
+            ))
+          }
         </div>
+      </SectionWithHeader>
 
+      <SectionWithHeader
+        title="Contact"
+        description="아래 링크를 통해 저와 소통하거나 제 작업을 확인해보세요."
+        client:load
+      >
         <div class="prose prose-lg max-w-none prose-headings:text-black-accent">
-          <h2>Contact</h2>
-          <p>아래 링크를 통해 저와 소통하거나 제 작업을 확인해보세요.</p>
           <ul>
             <li>
               Email: <a href="mailto:astoir@example.com">astoir@example.com</a>
@@ -100,7 +83,7 @@ import ImageWithSkeleton from "~components/Skeleton/ImageWithSkeleton";
             </li>
           </ul>
         </div>
-      </section>
+      </SectionWithHeader>
     </div>
   </article>
 </Layout>

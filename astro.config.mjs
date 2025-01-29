@@ -9,15 +9,9 @@ import viteImagemin from "@vheemstra/vite-plugin-imagemin";
 import imageminMozjpeg from "imagemin-mozjpeg";
 import imageminWebp from "imagemin-webp";
 import imageminPngquant from "imagemin-pngquant";
-import node from "@astrojs/node";
 
-// https://astro.build/config
 export default defineConfig({
-  output: "server",
-  adapter: node({
-    mode: "standalone",
-  }),
-
+  output: "static",
   devToolbar: {
     enabled: true,
   },

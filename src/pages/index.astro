@@ -2,13 +2,14 @@
 import Layout from "~layouts/BaseLayout.astro";
 import Card from "~components/Card/Card";
 import ProjectCard from "~components/Card/ProjectCard";
-import { createMockedProject } from "~types/project.type";
-import { PiShootingStarFill } from "react-icons/pi";
 
-// 가짜 데이터 예시
-const recentProjects = [
-  ...Array.from({ length: 6 }, () => createMockedProject()),
-];
+import { PiShootingStarFill } from "react-icons/pi";
+import { getProjects } from "~/utils/getProjects";
+
+// 프로젝트 데이터 가져오기
+const allProjects = await getProjects();
+// 최신 6개 프로젝트만 선택
+const recentProjects = allProjects.slice(0, 6);
 
 const recentPosts = [
   {
@@ -29,7 +30,6 @@ const recentPosts = [
   <div class="mx-auto w-full">
     <!-- Hero 섹션 -->
     <!-- 최근 프로젝트 섹션 -->
-
     <section class="mb-16 mt-16">
       <div class="mb-8 flex items-center justify-between">
         <h2 class="font-sans text-2xl font-bold text-black-base">
@@ -42,11 +42,6 @@ const recentPosts = [
           More <PiShootingStarFill />
         </a>
       </div>
-      <!-- 
-        grid-cols-1: 기본 1열
-        sm:grid-cols-2: 작은 화면(sm 이상)에서는 2열
-        lg:grid-cols-3: 큰 화면(lg 이상)에서는 3열
-      -->
       <div
         class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 lg:gap-6"
       >
@@ -61,10 +56,6 @@ const recentPosts = [
     <!-- 최근 블로그 글 섹션 -->
     <section class="mb-16 mt-16">
       <h2 class="mb-8 text-2xl font-bold text-black-base">최근 블로그 글</h2>
-      <!-- 
-        grid-cols-1: 기본 1열
-        sm:grid-cols-2: 작은 화면부터는 2열
-      -->
       <div class="grid grid-cols-1 gap-6 sm:grid-cols-2">
         {
           recentPosts.map(post => (

@@ -39,10 +39,12 @@ export default {
         black: {
           base: withOpacity("--color-black-base"),
           accent: withOpacity("--color-black-accent"),
+          muted: withOpacity("--color-black-muted"),
         },
         white: {
           base: withOpacity("--color-white-base"),
           accent: withOpacity("--color-white-accent"),
+          muted: withOpacity("--color-white-muted"),
         },
       },
       /* background color */
@@ -56,6 +58,16 @@ export default {
           danger: withOpacity("--color-danger"),
           success: withOpacity("--color-success"),
           warning: withOpacity("--color-warning"),
+        },
+      },
+      /* gradient color stops */
+      gradientColorStops: {
+        skin: {
+          fill: withOpacity("--color-fill"),
+          accent: withOpacity("--color-accent"),
+          secondary: withOpacity("--color-secondary"),
+          inverted: withOpacity("--color-text-base"),
+          background: withOpacity("--color-background"),
         },
       },
       keyframes: {

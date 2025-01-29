@@ -1,45 +1,18 @@
 // ProjectCard.tsx
-import React, { useState, useCallback, useRef, useEffect } from "react";
+import React, { useState, useCallback, useRef } from "react";
 import Skeleton from "react-loading-skeleton";
 import ImageWithSkeleton from "~components/Skeleton/ImageWithSkeleton";
-import type { Project } from "~types/project.type";
+
 import { loadSlim } from "tsparticles-slim";
 import { Particles as ReactParticles } from "react-tsparticles";
 import type { Engine } from "tsparticles-engine";
+import { useIntersectionObserver } from "~hooks/UseIntersectionObserver/UseIntersectionObserver";
+import type { CollectionEntry } from "astro:content";
 
-const ProjectCard: React.FC<Project> = props => {
+const ProjectCard: React.FC<CollectionEntry<"projects">> = props => {
   const [isLoading, setIsLoading] = useState(true);
-  const [isVisible, setIsVisible] = useState(false);
   const cardRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    const observer = new IntersectionObserver(
-      entries => {
-        entries.forEach(entry => {
-          if (entry.isIntersecting) {
-            requestAnimationFrame(() => {
-              setIsVisible(true);
-            });
-            observer.unobserve(entry.target);
-          }
-        });
-      },
-      {
-        threshold: 0.1, // 10%만 보여도 애니메이션 시작
-        rootMargin: "50px", // 뷰포트 경계 50px 전에 감지 시작
-      },
-    );
-
-    if (cardRef.current) {
-      observer.observe(cardRef.current);
-    }
-
-    return () => {
-      if (cardRef.current) {
-        observer.unobserve(cardRef.current);
-      }
-    };
-  }, []);
+  const isVisible = useIntersectionObserver(cardRef);
 
   const handleImageLoad = () => {
     setIsLoading(false);
@@ -50,7 +23,7 @@ const ProjectCard: React.FC<Project> = props => {
   }, []);
 
   return (
-    <a href={`/projects/${props.projectName}`} className="group block">
+    <a href={`/projects/${props.data.projectName}`} className="group block">
       <article
         ref={cardRef}
         className={`bg-skin-card relative h-full overflow-hidden rounded-2xl shadow-lg transition-all duration-700 ease-out ${
@@ -71,50 +44,75 @@ const ProjectCard: React.FC<Project> = props => {
             fpsLimit: 120,
             particles: {
               color: {
-                value: "#ffffff",
+                value: ["#ffffff", "#E3E6EC", "#f8f8ff"],
               },
               links: {
-                color: "#ffffff",
+                color: {
+                  value: "rgba(255, 255, 255, 0.35)",
+                },
                 distance: 150,
                 enable: true,
-                opacity: 0.3,
-                width: 1,
+                opacity: 0.35,
+                width: 0.8,
+                triangles: {
+                  enable: true,
+                  opacity: 0.05,
+                  frequency: 0.01,
+                },
               },
               move: {
                 direction: "none",
                 enable: true,
                 outModes: {
-                  default: "bounce",
+                  default: "out",
                 },
                 random: true,
-                speed: 1,
+                speed: 0.4,
                 straight: false,
               },
               number: {
                 density: {
                   enable: true,
-                  area: 800,
+                  area: 900,
                 },
-                value: 80,
+                value: 45,
               },
               opacity: {
-                value: 0.5,
+                value: 1,
+                random: true,
                 animation: {
                   enable: true,
-                  speed: 1,
-                  minimumValue: 0.1,
+                  speed: 0.8,
+                  minimumValue: 0.3,
+                  sync: false,
                 },
               },
               shape: {
-                type: "circle",
+                type: ["circle", "star"],
               },
               size: {
                 value: { min: 1, max: 3 },
+                random: true,
                 animation: {
                   enable: true,
-                  speed: 2,
-                  minimumValue: 0.1,
+                  speed: 0.8,
+                  minimumValue: 0.5,
+                  sync: false,
                 },
+              },
+              twinkle: {
+                particles: {
+                  enable: true,
+                  frequency: 0.04,
+                  opacity: 1,
+                  color: {
+                    value: "#ffffff",
+                  },
+                },
+              },
+              blur: {
+                enable: true,
+                strength: 2,
               },
             },
             detectRetina: true,
@@ -122,18 +120,18 @@ const ProjectCard: React.FC<Project> = props => {
         />
         <div className="aspect-[4/3] w-full overflow-hidden">
           <ImageWithSkeleton
-            src={props.imageUrl}
-            alt={props.projectName}
+            src={props.data.imageUrl}
+            alt={props.data.projectName}
             className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
             onLoadComplete={handleImageLoad}
           />
         </div>
         <div className="p-4 lg:p-5">
           <p className="mb-3 text-sm font-medium uppercase tracking-wider text-black-base">
-            {isLoading ? <Skeleton /> : props.shortDescription}
+            {isLoading ? <Skeleton /> : props.data.shortDescription}
           </p>
           <div className="flex flex-wrap gap-2">
-            {props.roles.map((role, idx) => (
+            {props.data.roles.map((role, idx) => (
               <span
                 key={idx}
                 className="inline-flex items-center rounded-full bg-skin-accent/10 px-2.5 py-0.5 text-xs font-medium text-skin-accent"
@@ -146,10 +144,10 @@ const ProjectCard: React.FC<Project> = props => {
         <div className="absolute inset-0 flex items-center justify-center bg-gradient-to-t from-black/80 via-black/60 to-black/40 opacity-0 transition-opacity duration-300 group-hover:opacity-100">
           <div className="p-4 text-center">
             <p className="mb-2 text-base font-medium text-white-base lg:text-lg">
-              {isLoading ? <Skeleton /> : props.companyName}
+              {isLoading ? <Skeleton /> : props.data.companyName}
             </p>
             <h3 className="text-xl font-bold text-white-base lg:text-2xl">
-              {isLoading ? <Skeleton /> : props.projectName}
+              {isLoading ? <Skeleton /> : props.data.projectName}
             </h3>
           </div>
         </div>

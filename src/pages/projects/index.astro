@@ -1,12 +1,9 @@
 ---
 import Layout from "~layouts/BaseLayout.astro";
 import ProjectCard from "~components/Card/ProjectCard";
-import { createMockedProject } from "~types/project.type";
+import { getProjects } from "~utils/getProjects";
 
-// 가짜 데이터 예시
-const recentProjects = [
-  ...Array.from({ length: 6 }, () => createMockedProject()),
-];
+const projects = await getProjects();
 ---
 
 <Layout title="홈">
@@ -33,11 +30,7 @@ const recentProjects = [
       <div
         class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 lg:gap-6"
       >
-        {
-          recentProjects.map(project => (
-            <ProjectCard {...project} client:load />
-          ))
-        }
+        {projects.map(project => <ProjectCard {...project} client:load />)}
       </div>
     </section>
   </div>

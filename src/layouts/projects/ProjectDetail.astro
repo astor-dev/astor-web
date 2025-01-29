@@ -1,0 +1,98 @@
+---
+import ImageWithSkeleton from "~components/Skeleton/ImageWithSkeleton";
+import Layout from "~layouts/BaseLayout.astro";
+import dayjs from "dayjs";
+import type { CollectionEntry } from "astro:content";
+
+interface Props {
+  project: CollectionEntry<"projects">;
+}
+
+const { project } = Astro.props;
+
+if (!project) {
+  return Astro.redirect("/404");
+}
+
+// 날짜 포맷팅
+const period = `${dayjs(project.data.startedAt).format("YYYY.MM")} - ${dayjs(project.data.endedAt).format("YYYY.MM")}`;
+---
+
+<Layout title={project.data.projectName}>
+  <article class="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8">
+    <div class="py-8 sm:py-12 lg:py-16">
+      <header class="mb-6 sm:mb-8 lg:mb-12">
+        <ImageWithSkeleton
+          src={project.data.imageUrl}
+          alt={project.data.projectName}
+          className="h-[30vh] w-full rounded-lg shadow-md sm:h-[35vh] lg:h-[70vh]"
+          client:load
+        />
+
+        <div class="mt-6 sm:mt-8">
+          <div class="flex flex-wrap items-center justify-between gap-4">
+            <h1
+              class="text-2xl font-bold text-black-accent sm:text-3xl lg:text-4xl"
+            >
+              {project.data.projectName}
+            </h1>
+            <a
+              href={project.data.siteUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              class="bg-primary text-white hover:bg-primary/90 focus:ring-primary/50 inline-flex items-center rounded-md px-4 py-2 text-sm font-medium focus:outline-none focus:ring-2"
+            >
+              사이트 방문
+              <svg class="ml-2 h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
+                <path
+                  d="M11 3a1 1 0 100 2h2.586l-6.293 6.293a1 1 0 101.414 1.414L15 6.414V9a1 1 0 102 0V4a1 1 0 00-1-1h-5z"
+                ></path>
+                <path
+                  d="M5 5a2 2 0 00-2 2v8a2 2 0 002 2h8a2 2 0 002-2v-3a1 1 0 10-2 0v3H5V7h3a1 1 0 000-2H5z"
+                ></path>
+              </svg>
+            </a>
+          </div>
+
+          <div class="mt-4 flex flex-wrap gap-4 text-lg text-black-base/80">
+            <p><strong>{project.data.companyName}</strong></p>
+            <p>{period}</p>
+          </div>
+
+          <div class="mt-3 flex flex-wrap gap-2">
+            {
+              project.data.roles.map((role: string) => (
+                <span class="rounded-full bg-gray-100 px-3 py-1 text-sm font-medium text-gray-800">
+                  {role}
+                </span>
+              ))
+            }
+          </div>
+        </div>
+      </header>
+
+      <div class="space-y-8">
+        <section
+          class="prose-a:text-primary prose prose-lg max-w-none prose-headings:text-black-accent"
+          set:html={project.rendered?.html}
+        />
+      </div>
+    </div>
+  </article>
+</Layout>
+
+<style>
+  /* 뷰포트 높이가 매우 작을 때 이미지 높이 조정 */
+  @media (max-height: 600px) {
+    :global(.h-\[30vh\]) {
+      height: 200px;
+    }
+  }
+
+  /* 뷰포트 높이가 매우 클 때 이미지 최대 높이 제한 */
+  @media (min-height: 1200px) {
+    :global(.h-\[70vh\]) {
+      max-height: 700px;
+    }
+  }
+</style>
