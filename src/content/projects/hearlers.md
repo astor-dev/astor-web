@@ -1,19 +1,17 @@
 ---
 projectType: "Side-project"
-imageUrl: "/assets/projects/example.png"
-siteUrl: "https://example.com"
+imageUrl: "https://github.com/user-attachments/assets/e3fc4d90-30b3-4f2e-9271-a326c3c11104"
+siteUrl: "https://blccu.com"
 roles: ["Backend", "Infra"]
-companyName: "Personal"
-projectName: "Example Project"
-shortDescription: "This is an example project"
-startedAt: "2024-01-01"
-endedAt: "2024-03-01"
+companyName: "테일러즈"
+projectName: "히얼러스"
+shortDescription: "위로"
+startedAt: "2024-03"
+endedAt: "2024-08"
 stackIds: [1, 2, 3]
 ---
 
-# Example Project
-
-프로젝트에 대한 상세한 설명이 여기에 들어갑니다.
+#
 
 ## 주요 기능
 
