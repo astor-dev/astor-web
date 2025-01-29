@@ -1,5 +1,4 @@
-// src/components/ImageWithSkeleton.tsx
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
 
@@ -9,32 +8,48 @@ interface ImageWithSkeletonProps
   alt: string;
   className?: string;
   style?: React.CSSProperties;
-  onLoadComplete?: () => void; // 새로운 콜백 prop 추가
+  onLoadComplete?: () => void;
 }
 
-const ImageWithSkeleton: React.FC<ImageWithSkeletonProps> = ({
+export default function ImageWithSkeleton({
   src,
   alt,
   className,
   style,
   onLoadComplete,
   ...props
-}) => {
+}: ImageWithSkeletonProps) {
   const [isLoading, setIsLoading] = useState(true);
 
-  const handleLoad = () => {
-    setIsLoading(false);
-    if (onLoadComplete) {
-      onLoadComplete();
-    }
-  };
+  useEffect(() => {
+    const img = new Image();
+    img.src = src;
 
-  const handleError = () => {
-    setIsLoading(false);
-    if (onLoadComplete) {
-      onLoadComplete();
+    // 캐시에 존재할 경우 바로 처리
+    if (img.complete) {
+      setIsLoading(false);
+      if (onLoadComplete) {
+        console.log("onLoadComplete (이미 캐시된 이미지)");
+        onLoadComplete();
+      }
+    } else {
+      // 이미지 로드 이벤트 등록
+      img.onload = () => {
+        setIsLoading(false);
+        if (onLoadComplete) {
+          console.log("onLoadComplete");
+          onLoadComplete();
+        }
+      };
+      img.onerror = () => {
+        setIsLoading(false);
+        if (onLoadComplete) {
+          console.log("onLoadComplete (로드 실패)");
+          onLoadComplete();
+        }
+      };
     }
-  };
+  }, [src, onLoadComplete]);
 
   return (
     <div className={`relative ${className}`} style={style}>
@@ -50,12 +65,22 @@ const ImageWithSkeleton: React.FC<ImageWithSkeletonProps> = ({
         className={`h-full w-full object-cover transition-opacity duration-500 ${
           isLoading ? "opacity-0" : "opacity-100"
         }`}
-        onLoad={handleLoad}
-        onError={handleError}
+        onLoad={() => {
+          setIsLoading(false);
+          if (onLoadComplete) {
+            console.log("onLoadComplete (onLoad 트리거)");
+            onLoadComplete();
+          }
+        }}
+        onError={() => {
+          setIsLoading(false);
+          if (onLoadComplete) {
+            console.log("onLoadComplete (onError 트리거)");
+            onLoadComplete();
+          }
+        }}
         {...props}
       />
     </div>
   );
-};
-
-export default ImageWithSkeleton;
+}

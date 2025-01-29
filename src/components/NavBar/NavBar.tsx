@@ -1,4 +1,3 @@
-// components/NavBar.jsx
 import React, { useState, useEffect, useRef } from "react";
 import throttle from "lodash/throttle";
 import { RiMoonClearFill, RiSunFill } from "react-icons/ri";
@@ -13,25 +12,39 @@ export default function NavBar({
   pathname,
 }: NavBarProps) {
   const [isOpen, setIsOpen] = useState(false);
-  const [isDark, setIsDark] = useState(false);
+  const [isDark, setIsDark] = useState(false); // 다크모드 상태
   const [showNav, setShowNav] = useState(initialShowNav);
   const lastScrollY = useRef(0);
 
   useEffect(() => {
-    // 현재 테마 확인
-    const currentTheme = document.documentElement.getAttribute("data-theme");
-    setIsDark(currentTheme === "dark");
+    // 로컬 스토리지에서 다크모드 설정 불러오기
+    const savedTheme = localStorage.getItem("theme");
+    if (savedTheme === "dark") {
+      document.documentElement.setAttribute("data-theme", "dark");
+      setIsDark(true);
+    } else if (savedTheme === "light") {
+      document.documentElement.setAttribute("data-theme", "light");
+      setIsDark(false);
+    } else {
+      // 브라우저 기본 다크모드 설정 확인
+      const prefersDark = window.matchMedia(
+        "(prefers-color-scheme: dark)",
+      ).matches;
+      document.documentElement.setAttribute(
+        "data-theme",
+        prefersDark ? "dark" : "light",
+      );
+      setIsDark(prefersDark);
+    }
   }, []);
 
   useEffect(() => {
     const handleScroll = throttle(() => {
       const currentScrollY = window.scrollY;
       if (currentScrollY > lastScrollY.current) {
-        // 스크롤 ‘내려가는’ 중이면 NavBar 숨김
-        setShowNav(false);
+        setShowNav(false); // 스크롤 내리면 NavBar 숨김
       } else {
-        // 스크롤 ‘올라가는’ 중이면 NavBar 보임
-        setShowNav(true);
+        setShowNav(true); // 스크롤 올리면 NavBar 보임
       }
       lastScrollY.current = currentScrollY;
     }, 200); // 200ms 간격으로 throttle
@@ -41,33 +54,25 @@ export default function NavBar({
   }, []);
 
   const handleThemeToggle = () => {
-    const currentTheme = document.documentElement.getAttribute("data-theme");
-    if (currentTheme === "dark") {
-      document.documentElement.setAttribute("data-theme", "light");
-      setIsDark(false);
-    } else {
-      document.documentElement.setAttribute("data-theme", "dark");
-      setIsDark(true);
-    }
+    const currentTheme = isDark ? "light" : "dark";
+    document.documentElement.setAttribute("data-theme", currentTheme);
+    localStorage.setItem("theme", currentTheme); // 로컬 스토리지에 테마 저장
+    setIsDark(!isDark);
   };
 
-  // 메뉴 항목 배열
   const menuItems = [
     { name: "About", href: "/about" },
     { name: "Projects", href: "/projects" },
     { name: "Blog", href: "/blog" },
-    { name: "Contact", href: "/contact" }, // 모바일 메뉴에만 추가된 Contact
   ];
 
-  // 활성화된 메뉴 확인 함수
   const isActive = (href: string) => {
     const lowerCasePathname = pathname.toLowerCase();
     const lowerCaseHref = href.toLowerCase();
     if (lowerCaseHref === "/") {
       return lowerCasePathname === "/";
     }
-    const match = lowerCasePathname.startsWith(lowerCaseHref);
-    return match;
+    return lowerCasePathname.startsWith(lowerCaseHref);
   };
 
   return (

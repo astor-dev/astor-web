@@ -34,9 +34,9 @@ export default function FloatingIcons({
 
   // 브레이크포인트에 따른 아이콘 개수 설정
   const getCounter = () => {
-    if (width < 640) return 8; // 모바일
-    if (width < 1024) return 12; // 태블릿
-    return 16; // 데스크탑 이상
+    if (width < 640) return 12; // 모바일
+    if (width < 1024) return 16; // 태블릿
+    return 20; // 데스크탑 이상
   };
 
   const counter = getCounter();
@@ -52,7 +52,6 @@ export default function FloatingIcons({
       const floatingAnimation = `animate-float-${Math.floor(
         Math.random() * 3,
       )}`;
-      console.log(floatingAnimation);
       data.push({
         Icon,
         color,
@@ -78,7 +77,9 @@ export default function FloatingIcons({
           left={it.left}
           floatingAnimation={it.floatingAnimation}
           // 애니메이션 지연 시간 설정 (100ms 간격)
-          delay={index * 40}
+          delay={
+            width < 640 ? index * 80 : width < 1024 ? index * 60 : index * 40
+          }
         />
       ))}
     </>

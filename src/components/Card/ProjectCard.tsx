@@ -8,7 +8,7 @@ import { Particles as ReactParticles } from "react-tsparticles";
 import type { Engine } from "tsparticles-engine";
 
 const ProjectCard: React.FC<Project> = props => {
-  const [loading, setLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(true);
   const [isVisible, setIsVisible] = useState(false);
   const cardRef = useRef<HTMLDivElement>(null);
 
@@ -42,7 +42,7 @@ const ProjectCard: React.FC<Project> = props => {
   }, []);
 
   const handleImageLoad = () => {
-    setLoading(false);
+    setIsLoading(false);
   };
 
   const particlesInit = useCallback(async (engine: Engine) => {
@@ -130,7 +130,7 @@ const ProjectCard: React.FC<Project> = props => {
         </div>
         <div className="p-4 lg:p-5">
           <p className="mb-3 text-sm font-medium uppercase tracking-wider text-black-base">
-            {loading ? <Skeleton /> : props.shortDescription}
+            {isLoading ? <Skeleton /> : props.shortDescription}
           </p>
           <div className="flex flex-wrap gap-2">
             {props.roles.map((role, idx) => (
@@ -138,7 +138,7 @@ const ProjectCard: React.FC<Project> = props => {
                 key={idx}
                 className="inline-flex items-center rounded-full bg-skin-accent/10 px-2.5 py-0.5 text-xs font-medium text-skin-accent"
               >
-                {loading ? <Skeleton width={40} height={16} /> : role}
+                {isLoading ? <Skeleton width={40} height={16} /> : role}
               </span>
             ))}
           </div>
@@ -146,10 +146,10 @@ const ProjectCard: React.FC<Project> = props => {
         <div className="absolute inset-0 flex items-center justify-center bg-gradient-to-t from-black/80 via-black/60 to-black/40 opacity-0 transition-opacity duration-300 group-hover:opacity-100">
           <div className="p-4 text-center">
             <p className="mb-2 text-base font-medium text-white-base lg:text-lg">
-              {loading ? <Skeleton /> : props.companyName}
+              {isLoading ? <Skeleton /> : props.companyName}
             </p>
             <h3 className="text-xl font-bold text-white-base lg:text-2xl">
-              {loading ? <Skeleton /> : props.projectName}
+              {isLoading ? <Skeleton /> : props.projectName}
             </h3>
           </div>
         </div>

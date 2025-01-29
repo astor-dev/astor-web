@@ -51,7 +51,7 @@ html[data-theme="light"] {
 
   /* ===== Global Base 스타일 ===== */
   body {
-    @apply min-h-screen bg-skin-background font-sans text-skin-base antialiased;
+    @apply min-h-screen bg-skin-background font-sans text-black-base antialiased;
     /* 반응형은 Tailwind의 유틸 클래스로 충분히 대응 가능 */
   }
 
@@ -63,7 +63,7 @@ html[data-theme="light"] {
 
   /* ===== 선택 영역 (selection) 커스터마이징 예시 ===== */
   ::selection {
-    @apply bg-skin-accent text-skin-inverted;
+    @apply bg-skin-accent text-black-base;
     /* text-skin-inverted은 필요하다면 변수로 정의, 혹은 간단히 #fff 등으로 지정 가능 */
   }
 

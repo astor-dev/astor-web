@@ -1,0 +1,106 @@
+---
+import Layout from "~layouts/BaseLayout.astro";
+import ImageWithSkeleton from "~components/Skeleton/ImageWithSkeleton";
+---
+
+<Layout title="About Me">
+  <article class="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8">
+    <div class="py-8 sm:py-12 lg:py-16">
+      <header class="mb-6 sm:mb-8 lg:mb-12">
+        <div class="flex flex-col items-center text-center">
+          <ImageWithSkeleton
+            src="/assets/profile.jpg"
+            alt="Astoir"
+            className="h-32 w-32 rounded-full shadow-md sm:h-40 sm:w-40 lg:h-48 lg:w-48"
+            client:load
+          />
+          <h1
+            class="mt-6 text-3xl font-bold text-black-accent sm:text-4xl lg:text-5xl"
+          >
+            Astoir
+          </h1>
+          <p class="mt-4 text-lg text-black-base/80 sm:text-xl lg:text-2xl">
+            Backend Developer | Creator | Space Enthusiast
+          </p>
+        </div>
+      </header>
+
+      <section class="space-y-8">
+        <div class="prose prose-lg max-w-none prose-headings:text-black-accent">
+          <h2>About Me</h2>
+          <p>
+            안녕하세요! 저는 백엔드 개발자 <strong>Astoir</strong>입니다. 우주와
+            별을 사랑하며, 창의적인 프로젝트를 통해 세상을 더 나은 곳으로
+            만들고자 합니다.
+          </p>
+          <p>
+            백엔드 아키텍처 설계부터 데이터베이스 관리까지, 다양한 기술 스택을
+            활용해 고성능의 시스템을 구축하는 데 열정을 가지고 있습니다.
+          </p>
+        </div>
+
+        <div class="prose prose-lg max-w-none prose-headings:text-black-accent">
+          <h2>Skills & Tech Stack</h2>
+          <ul class="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
+            <li>FastAPI</li>
+            <li>Node.js (NestJS)</li>
+            <li>PostgreSQL</li>
+            <li>Kafka</li>
+            <li>Docker & Kubernetes</li>
+            <li>GCP & AWS</li>
+            <li>Tailwind CSS</li>
+            <li>React & Astro</li>
+          </ul>
+        </div>
+
+        <div class="prose prose-lg max-w-none prose-headings:text-black-accent">
+          <h2>Experience</h2>
+          <ul class="space-y-4">
+            <li>
+              <strong>Backend Developer - [Company Name]</strong>
+              <br />
+              <span class="text-sm text-black-base/60">2023 - Present</span>
+              <p>
+                • 주요 프로젝트 아키텍처 설계 및 배포 <br />
+                • Kafka 기반의 이벤트 스트리밍 플랫폼 구현
+              </p>
+            </li>
+            <li>
+              <strong>Software Engineer - [Previous Company]</strong>
+              <br />
+              <span class="text-sm text-black-base/60">2020 - 2023</span>
+              <p>
+                • 대규모 데이터 처리 시스템 최적화 <br />
+                • API Gateway 설계 및 보안 강화
+              </p>
+            </li>
+          </ul>
+        </div>
+
+        <div class="prose prose-lg max-w-none prose-headings:text-black-accent">
+          <h2>Contact</h2>
+          <p>아래 링크를 통해 저와 소통하거나 제 작업을 확인해보세요.</p>
+          <ul>
+            <li>
+              Email: <a href="mailto:astoir@example.com">astoir@example.com</a>
+            </li>
+            <li>
+              GitHub: <a
+                href="https://github.com/astoir"
+                target="_blank"
+                rel="noopener noreferrer">github.com/astoir</a
+              >
+            </li>
+            <li>
+              LinkedIn: <a
+                href="https://linkedin.com/in/astoir"
+                target="_blank"
+                rel="noopener noreferrer">linkedin.com/in/astoir</a
+              >
+            </li>
+          </ul>
+        </div>
+      </section>
+    </div>
+  </article>
+</Layout>
