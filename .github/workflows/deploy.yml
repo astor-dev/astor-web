@@ -24,7 +24,9 @@ jobs:
       - name: Install, build, and upload your site
         uses: withastro/action@v3
         with:
-          path: . # 저장소 내 Astro 프로젝트의 루트 위치입니다. (선택 사항)
+          path: .
+          node-version: 22.9.0
+          package-manager: pnpm@latest
 
   deploy:
     needs: build
