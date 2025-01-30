@@ -62,7 +62,6 @@ html[data-theme="light"] {
   a {
     /* 포커스 스타일, 기본적으로 Tailwind 유틸로 처리 가능하나 예시로 작성 */
     @apply no-underline; /* Tailwind 유틸로 밑줄 제거 */
-    @apply text-skin-accent outline-0 hover:text-skin-accent/80;
   }
 
   /* ===== 선택 영역 (selection) 커스터마이징 예시 ===== */

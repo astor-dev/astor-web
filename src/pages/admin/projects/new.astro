@@ -2,20 +2,13 @@
 import Layout from "~layouts/BaseLayout.astro";
 import ProjectForm from "~components/Form/ProjectForm";
 import MDXEditor from "~components/Editor/MDXEditor";
-import { IoArrowBack } from "react-icons/io5";
+import IconButton from "~components/Button/IconButton";
 ---
 
 <Layout title="새 프로젝트">
   <div class="mx-auto w-full max-w-5xl px-4 py-8 sm:px-6 lg:px-8">
     <!-- 헤더 -->
     <div class="mb-8">
-      <a
-        href="/admin/projects"
-        class="mb-4 inline-flex items-center gap-1 text-sm text-black-muted hover:text-skin-accent"
-      >
-        <IoArrowBack />
-        <span>프로젝트 목록으로</span>
-      </a>
       <h1 class="text-3xl font-bold text-black-accent">새 프로젝트</h1>
       <p class="mt-2 text-black-muted">새로운 프로젝트를 등록합니다</p>
     </div>
@@ -36,18 +29,18 @@ import { IoArrowBack } from "react-icons/io5";
 
       <!-- 제출 버튼 -->
       <div class="flex justify-end gap-3">
-        <a
+        <IconButton
+          client:load
+          text="취소"
           href="/admin/projects"
-          class="rounded-lg border border-skin-line px-4 py-2 text-sm font-medium text-black-base hover:bg-skin-fill"
-        >
-          취소
-        </a>
-        <button
-          type="submit"
-          class="text-white rounded-lg bg-skin-accent px-4 py-2 text-sm font-medium hover:bg-skin-accent/90"
-        >
-          저장하기
-        </button>
+          variant="secondary"
+        />
+        <IconButton
+          client:load
+          text="저장하기"
+          variant="primary"
+          onClick={() => {}}
+        />
       </div>
     </div>
   </div>

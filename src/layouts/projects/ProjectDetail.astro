@@ -3,12 +3,14 @@ import ImageWithSkeleton from "~components/Skeleton/ImageWithSkeleton";
 import Layout from "~layouts/BaseLayout.astro";
 import dayjs from "dayjs";
 import type { CollectionEntry } from "astro:content";
+import IconButton from "~components/Button/IconButton";
 
 interface Props {
   project: CollectionEntry<"projects">;
+  isAdmin: boolean;
 }
 
-const { project } = Astro.props;
+const { project, isAdmin } = Astro.props;
 
 if (!project) {
   return Astro.redirect("/404");
@@ -19,7 +21,30 @@ const period = `${dayjs(project.data.startedAt).format("YYYY.MM")} - ${dayjs(pro
 ---
 
 <Layout title={project.data.projectName}>
-  <article class="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8">
+  <div class="mx-auto max-w-4xl px-4 py-8 sm:px-6 lg:px-8">
+    <!-- 헤더 섹션 -->
+    <div class="mb-8 flex items-center justify-between">
+      <div>
+        <h1 class="text-3xl font-bold text-black-accent">
+          {project.data.projectName}
+        </h1>
+        <p class="mt-2 text-black-muted">{project.data.companyName}</p>
+      </div>
+      {
+        isAdmin ? (
+          <IconButton
+            client:load
+            icon="FaPen"
+            text="프로젝트 수정"
+            href={`/admin/projects/${project.id}/edit`}
+          />
+        ) : (
+          <></>
+        )
+      }
+    </div>
+
+    <!-- 나머지 프로젝트 상세 내용 -->
     <div class="py-8 sm:py-12 lg:py-16">
       <header class="mb-6 sm:mb-8 lg:mb-12">
         <ImageWithSkeleton
@@ -78,7 +103,7 @@ const period = `${dayjs(project.data.startedAt).format("YYYY.MM")} - ${dayjs(pro
         />
       </div>
     </div>
-  </article>
+  </div>
 </Layout>
 
 <style>

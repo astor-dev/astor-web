@@ -16,6 +16,9 @@ export default defineConfig({
   devToolbar: {
     enabled: true,
   },
+  build: {
+    assets: "assets",
+  },
   integrations: [mdx(), sitemap(), react(), tailwind()],
   vite: {
     server: {

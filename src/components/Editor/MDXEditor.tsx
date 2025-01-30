@@ -18,6 +18,7 @@ import {
   tablePlugin,
   InsertTable,
 } from "@mdxeditor/editor";
+import "~styles/editor.css";
 
 interface EditorProps {
   markdown: string;

@@ -7,6 +7,10 @@ interface ProjectTableProps {
 }
 
 const ProjectTable: React.FC<ProjectTableProps> = ({ projects }) => {
+  const handleRowClick = (projectId: string) => {
+    window.location.href = `./projects/${projectId}`;
+  };
+
   return (
     <div className="overflow-hidden rounded-lg border border-skin-line bg-white shadow-sm">
       <div className="overflow-x-auto">
@@ -35,7 +39,11 @@ const ProjectTable: React.FC<ProjectTableProps> = ({ projects }) => {
           </thead>
           <tbody className="divide-y divide-skin-line">
             {projects.map(project => (
-              <tr key={project.id} className="hover:bg-skin-fill/50">
+              <tr
+                key={project.id}
+                onClick={() => handleRowClick(project.id)}
+                className="cursor-pointer hover:bg-skin-fill/50"
+              >
                 <td className="whitespace-nowrap px-6 py-4">
                   <div className="flex items-center gap-2">
                     <span className="font-medium text-black-accent">
@@ -47,6 +55,7 @@ const ProjectTable: React.FC<ProjectTableProps> = ({ projects }) => {
                         target="_blank"
                         rel="noopener noreferrer"
                         className="text-skin-accent hover:text-skin-accent/80"
+                        onClick={e => e.stopPropagation()}
                       >
                         <FaExternalLinkAlt className="text-sm" />
                       </a>
@@ -80,12 +89,17 @@ const ProjectTable: React.FC<ProjectTableProps> = ({ projects }) => {
                       href={`/admin/projects/${project.id}/edit`}
                       className="inline-flex items-center rounded p-1 text-black-muted hover:text-skin-accent"
                       title="수정"
+                      onClick={e => e.stopPropagation()}
                     >
                       <FaPen className="text-sm" />
                     </a>
                     <button
                       className="hover:text-danger inline-flex items-center rounded p-1 text-black-muted"
                       title="삭제"
+                      onClick={e => {
+                        e.stopPropagation();
+                        // 삭제 로직
+                      }}
                     >
                       <FaTrash className="text-sm" />
                     </button>

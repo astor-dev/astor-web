@@ -1,8 +1,8 @@
 ---
 import Layout from "~layouts/BaseLayout.astro";
 import ProjectTable from "~components/Table/ProjectTable";
-import { FaPlus } from "react-icons/fa";
 import { getProjects } from "~utils/getProjects";
+import IconButton from "~components/Button/IconButton";
 
 const projects = await getProjects();
 ---
@@ -17,13 +17,13 @@ const projects = await getProjects();
           프로젝트를 추가, 수정, 삭제할 수 있습니다
         </p>
       </div>
-      <a
+      <IconButton
+        client:load
+        icon="FaPlus"
+        text="새 프로젝트"
         href="/admin/projects/new"
-        class="inline-flex items-center gap-2 rounded-lg bg-skin-accent px-4 py-2 text-sm font-medium text-white-base transition-colors hover:bg-skin-accent/90 hover:text-white-accent"
-      >
-        <FaPlus />
-        새 프로젝트
-      </a>
+        variant="primary"
+      />
     </div>
 
     <ProjectTable projects={projects} client:load />
