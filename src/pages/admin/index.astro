@@ -1,0 +1,91 @@
+---
+import Layout from "~layouts/BaseLayout.astro";
+import ActionCard, { type ActionCardProps } from "~components/Card/ActionCard";
+import StatCard, { type StatCardProps } from "~components/Card/StatCard";
+import ActivityItem, {
+  type ActivityItemProps,
+} from "~components/Item/ActivityItem";
+
+const QUICK_ACTIONS: ActionCardProps[] = [
+  {
+    href: "/admin/projects",
+    icon: "FaCode",
+    title: "프로젝트 관리",
+    description: "프로젝트를 관리합니다",
+  },
+  {
+    href: "/admin/posts/new",
+    icon: "FaPen",
+    title: "새 글 작성",
+    description: "새로운 블로그 글을 작성합니다",
+  },
+];
+
+const STATS: StatCardProps[] = [
+  { label: "총 프로젝트", value: 12 },
+  { label: "총 게시글", value: 24 },
+  { label: "이번 달 조회수", value: 1234 },
+  { label: "총 방문자", value: 5678 },
+];
+
+const ACTIVITIES: ActivityItemProps[] = [
+  {
+    title: "새 프로젝트 등록",
+    description: "포트폴리오 웹사이트 v2",
+    timestamp: "2시간 전",
+  },
+  {
+    title: "새 글 작성",
+    description: "Next.js 13 업데이트 소식",
+    timestamp: "어제",
+  },
+  {
+    title: "프로젝트 수정",
+    description: "블로그 프로젝트",
+    timestamp: "3일 전",
+  },
+];
+---
+
+<Layout title="관리자 대시보드">
+  <div class="mx-auto w-full max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
+    <!-- 헤더 -->
+    <div class="mb-8">
+      <h1 class="text-3xl font-bold text-black-accent">관리자 대시보드</h1>
+      <p class="mt-2 text-black-muted">
+        프로젝트와 블로그 글을 관리할 수 있습니다
+      </p>
+    </div>
+
+    <!-- 빠른 작성 버튼 -->
+    <div class="mb-12 grid grid-cols-1 gap-4 sm:grid-cols-2">
+      {QUICK_ACTIONS.map(action => <ActionCard {...action} client:load />)}
+    </div>
+
+    <!-- 통계 카드 -->
+    <div class="mb-8">
+      <h2 class="mb-4 text-xl font-semibold text-black-accent">통계</h2>
+      <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        {STATS.map(stat => <StatCard {...stat} client:load />)}
+      </div>
+    </div>
+
+    <!-- 최근 활동 -->
+    <div>
+      <h2 class="mb-4 text-xl font-semibold text-black-accent">최근 활동</h2>
+      <div class="rounded-lg bg-white p-6 shadow-sm">
+        <div class="space-y-4">
+          {
+            ACTIVITIES.map((activity, index) => (
+              <ActivityItem
+                {...activity}
+                isLast={index === ACTIVITIES.length - 1}
+                client:load
+              />
+            ))
+          }
+        </div>
+      </div>
+    </div>
+  </div>
+</Layout>

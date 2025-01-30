@@ -1,0 +1,57 @@
+---
+import Layout from "~layouts/BaseLayout.astro";
+import { FaLock } from "react-icons/fa";
+import kakaoLogo from "~/assets/svgs/KakaoTalk_logo.svg";
+---
+
+<Layout title="로그인">
+  <div
+    class="mx-auto flex min-h-[60vh] w-full max-w-md flex-col items-center justify-center px-4"
+  >
+    <!-- 로그인 카드 -->
+    <div class="w-full rounded-lg bg-white p-8 shadow-lg">
+      <!-- 헤더 -->
+      <div class="mb-8 text-center">
+        <div class="mb-2 flex justify-center">
+          <span
+            class="inline-flex h-12 w-12 items-center justify-center rounded-full bg-skin-accent/10"
+          >
+            <FaLock className="text-xl text-skin-accent" />
+          </span>
+        </div>
+        <h1 class="text-2xl font-bold text-black-accent">관리자 로그인</h1>
+        <p class="mt-2 text-sm text-black-muted">
+          계속하려면 허용된 관리자 계정으로 로그인이 필요합니다
+        </p>
+      </div>
+
+      <!-- 카카오 로그인 버튼 -->
+      <a
+        href="/api/auth/kakao"
+        class="flex w-full items-center justify-center gap-2 rounded-md bg-[#FEE500] px-4 py-3 text-center font-medium text-[#191919] transition-colors hover:bg-[#FEE500]/90"
+      >
+        <img
+          src={kakaoLogo.src}
+          width={32}
+          height={32}
+          alt="카카오 로그인 버튼"
+        />
+        카카오 계정으로 로그인
+      </a>
+
+      <!-- 추가 정보 -->
+      <div class="mt-6 text-center text-xs text-black-muted">
+        <p class="mb-2">
+          허용된 계정이 아닌 경우 카카오 로그인을 완료하여도<br />
+          <span class="text-skin-accent hover:underline"
+            >어드민에 접속할 수 없습니다.</span
+          >
+        </p>
+        <p>
+          카카오 관련 개인정보를 제공하지 않으려면<br />
+          로그인을 시도하지 마세요.
+        </p>
+      </div>
+    </div>
+  </div>
+</Layout>

@@ -23,7 +23,7 @@ const ProjectCard: React.FC<CollectionEntry<"projects">> = props => {
   }, []);
 
   return (
-    <a href={`/projects/${props.data.projectName}`} className="group block">
+    <a href={`/projects/${props.id}`} className="group block">
       <article
         ref={cardRef}
         className={`bg-skin-card relative h-full overflow-hidden rounded-2xl shadow-lg transition-all duration-700 ease-out ${

@@ -1,24 +1,15 @@
 import { defineCollection, z } from "astro:content";
 import { glob } from "astro/loaders";
+import { ProjectRoleEnum, ProjectTypeEnum } from "~types/project.type";
 
 // 프로젝트 컬렉션 스키마 정의
 const projects = defineCollection({
   loader: glob({ base: "./src/content/projects", pattern: "**/*.{md,mdx}" }),
   schema: z.object({
-    projectType: z.enum(["Toy-project", "Side-project", "Company-project"]),
+    projectType: ProjectTypeEnum,
     imageUrl: z.string(),
     siteUrl: z.string().url(),
-    roles: z.array(
-      z.enum([
-        "Frontend",
-        "Backend",
-        "Infra",
-        "UI/UX",
-        "Design",
-        "Plan",
-        "Etc",
-      ]),
-    ),
+    roles: z.array(ProjectRoleEnum),
     companyName: z.string(),
     projectName: z.string(),
     shortDescription: z.string(),
