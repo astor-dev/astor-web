@@ -16,12 +16,23 @@ jobs:
     steps:
       - name: Checkout your repository using git
         uses: actions/checkout@v4
-      - name: Install, build, and upload your site
-        uses: withastro/action@v3
+
+      - name: Install Node.js
+        uses: actions/setup-node@v4
         with:
-          path: . # 저장소 내 Astro 프로젝트의 루트 위치입니다. (선택 사항)
-          node-version: 22.9.0 # 사이트를 빌드하는 데 사용해야 하는 특정 버전의 Node입니다. 기본값은 20입니다. (선택 사항)
-          package-manager: yarn # 종속성을 설치하고 사이트를 빌드하는 데 사용해야 하는 노드 패키지 관리자입니다. lockfile을 기반으로 자동으로 감지됩니다. (선택 사항)
+          node-version: 22.9.0
+          cache: "yarn"
+
+      - name: Install dependencies
+        run: yarn install --frozen-lockfile
+
+      - name: Build site
+        run: yarn build
+
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v2
+        with:
+          path: dist # Astro의 빌드된 파일이 위치한 폴더
 
   deploy:
     needs: build
