@@ -89,8 +89,8 @@ export default function NavBar({
             href="/"
             className="flex items-center text-2xl font-extrabold text-black-accent"
           >
-            <img src={logo.src} alt="astoir" className="mr-2 h-8 w-8" />
-            <span>Astoir</span>
+            {/* <img src={logo.src} alt="astor" className="mr-2 h-8 w-8" /> */}
+            <span>Astor</span>
           </a>
 
           {/* PC용 메뉴 */}
