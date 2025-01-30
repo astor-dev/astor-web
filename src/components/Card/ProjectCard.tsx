@@ -7,9 +7,9 @@ import { loadSlim } from "tsparticles-slim";
 import { Particles as ReactParticles } from "react-tsparticles";
 import type { Engine } from "tsparticles-engine";
 import { useIntersectionObserver } from "~hooks/UseIntersectionObserver/UseIntersectionObserver";
-import type { CollectionEntry } from "astro:content";
+import type { ProjectEntry } from "~/types/project.type";
 
-const ProjectCard: React.FC<CollectionEntry<"projects">> = props => {
+const ProjectCard: React.FC<ProjectEntry> = props => {
   const [isLoading, setIsLoading] = useState(true);
   const cardRef = useRef<HTMLDivElement>(null);
   const isVisible = useIntersectionObserver(cardRef);

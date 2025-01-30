@@ -1,0 +1,130 @@
+---
+import type { PostEntry } from "~types/post.type";
+import Layout from "~layouts/BaseLayout.astro";
+import { FaClock, FaHashtag, FaUser } from "react-icons/fa";
+import IconButton from "~components/Button/IconButton";
+
+interface Props {
+  post: PostEntry;
+  isAdmin: boolean;
+}
+
+const {
+  post,
+  // isAdmin
+} = Astro.props;
+
+if (!post) {
+  return Astro.redirect("/404");
+}
+
+const formattedDate = new Date(post.data.createdAt).toLocaleDateString(
+  "ko-KR",
+  {
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+  },
+);
+---
+
+<Layout title={post.data.title}>
+  <article class="relative mx-auto max-w-4xl px-4 py-8 sm:px-6 lg:px-8">
+    {/* 배경 효과 */}
+    <div class="pointer-events-none absolute inset-0 -z-10">
+      <div
+        class="absolute inset-0 bg-gradient-to-b from-skin-fill via-transparent to-transparent opacity-80"
+      >
+      </div>
+      <div class="absolute left-0 top-0 h-[70vh] w-full">
+        <div
+          class="absolute inset-0 bg-gradient-to-br from-skin-accent/5 via-transparent to-transparent"
+        >
+        </div>
+      </div>
+    </div>
+
+    {/* 헤더 섹션 */}
+    <header class="mb-16 text-center">
+      {/* 태그 */}
+      <div class="mb-6 flex flex-wrap justify-center gap-2">
+        {
+          post.data.tags.map(tag => (
+            <span class="inline-flex items-center gap-1.5 rounded-full bg-gradient-to-r from-skin-accent/10 to-skin-accent/5 px-3 py-1 text-sm font-medium text-skin-accent">
+              <FaHashtag className="h-3 w-3 opacity-70" />
+              {tag}
+            </span>
+          ))
+        }
+      </div>
+
+      {/* 제목 */}
+      <h1
+        class="from-black-accent mb-6 bg-gradient-to-r to-skin-accent bg-clip-text text-4xl font-bold text-black-accent sm:text-5xl"
+      >
+        {post.data.title}
+      </h1>
+
+      {/* 메타 정보 */}
+      <div
+        class="flex items-center justify-center gap-4 text-sm text-black-muted"
+      >
+        <div class="flex items-center gap-1.5">
+          <FaUser className="h-4 w-4" />
+          <span>{post.data.author}</span>
+        </div>
+        <div class="flex items-center gap-1.5">
+          <FaClock className="h-4 w-4" />
+          <time datetime={post.data.createdAt}>{formattedDate}</time>
+        </div>
+      </div>
+    </header>
+
+    {/* 본문 */}
+    <div class="prose prose-lg mx-auto max-w-none">
+      {/* 시리즈 정보 */}
+      {
+        post.data.series && (
+          <div class="not-prose mb-12 rounded-lg bg-gradient-to-br from-skin-accent/10 via-skin-accent/5 to-transparent p-6">
+            <h2 class="mb-2 text-lg font-semibold text-skin-accent">
+              {post.data.series} 시리즈
+            </h2>
+            <p class="text-black-base/80">{post.data.description}</p>
+          </div>
+        )
+      }
+
+      {/* 마크다운 콘텐츠 */}
+      <div
+        class="prose-headings:text-black-accent prose-a:text-skin-accent prose-blockquote:border-skin-accent prose-blockquote:bg-skin-fill/50 prose-blockquote:text-black-base/80 prose-strong:text-black-accent prose-code:text-skin-accent"
+      >
+        <Fragment set:html={post.rendered?.html} />
+      </div>
+    </div>
+
+    {/* 하단 공유 버튼 */}
+    <div class="mt-16 flex justify-center gap-4">
+      <IconButton icon="FaShare" text="공유하기" />
+    </div>
+  </article>
+</Layout>
+
+<style>
+  /* 스크롤바 커스텀 */
+  ::-webkit-scrollbar {
+    width: 8px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: rgb(var(--color-accent) / 0.3);
+    border-radius: 4px;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background: rgb(var(--color-accent) / 0.5);
+  }
+</style>

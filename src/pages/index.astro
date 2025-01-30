@@ -1,34 +1,21 @@
 ---
 import Layout from "~layouts/BaseLayout.astro";
-import Card from "~components/Card/Card";
 import ProjectCard from "~components/Card/ProjectCard";
-
+import BlogPostCard from "~components/Card/BlogPostCard";
 import { PiShootingStarFill } from "react-icons/pi";
 import { getProjects } from "~/utils/getProjects";
+import { getPosts } from "~utils/getPosts";
 
 // 프로젝트 데이터 가져오기
 const allProjects = await getProjects();
-// 최신 6개 프로젝트만 선택
 const recentProjects = allProjects.slice(0, 6);
 
-const recentPosts = [
-  {
-    title: "Tailwind CSS 활용 꿀팁",
-    subtitle: "브랜드 컬러를 변수로 쓰기",
-    content: "공통색을 @layer base에 등록하면 ...",
-  },
-  {
-    title: "Astro + React로 블로그 만들기",
-    subtitle: "SSG & SPA 혼합 접근",
-    content:
-      "Astro는 정적 사이트를 만들어주면서도, React 컴포넌트를 쓸 수 있어요. ...",
-  },
-];
+// 블로그 데이터 가져오기
+const pinnedPosts = await getPosts({ filter: { pinned: true } });
 ---
 
 <Layout title="홈">
   <div class="mx-auto w-full">
-    <!-- Hero 섹션 -->
     <!-- 최근 프로젝트 섹션 -->
     <section class="mb-16 mt-16">
       <div class="mb-8 flex items-center justify-between">
@@ -55,15 +42,19 @@ const recentPosts = [
 
     <!-- 최근 블로그 글 섹션 -->
     <section class="mb-16 mt-16">
-      <h2 class="mb-8 text-2xl font-bold text-black-base">최근 블로그 글</h2>
-      <div class="grid grid-cols-1 gap-6 sm:grid-cols-2">
-        {
-          recentPosts.map(post => (
-            <Card title={post.title} subtitle={post.subtitle}>
-              <p>{post.content}</p>
-            </Card>
-          ))
-        }
+      <div class="mb-8 flex items-center justify-between">
+        <h2 class="font-sans text-2xl font-bold text-black-base">
+          <span class="text-skin-accent">✦</span> 주목할만한 글
+        </h2>
+        <a
+          href="/blog"
+          class="inline-flex items-center gap-1 font-sans text-sm text-skin-accent hover:text-skin-accent/80"
+        >
+          More <PiShootingStarFill />
+        </a>
+      </div>
+      <div class="grid grid-cols-1 gap-6 md:grid-cols-2">
+        {pinnedPosts.map(post => <BlogPostCard {...post} client:load />)}
       </div>
     </section>
   </div>

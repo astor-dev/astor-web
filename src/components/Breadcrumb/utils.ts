@@ -8,6 +8,7 @@ export const breadcrumbNameMap: Record<string, string> = {
   contact: "연락처",
   edit: "수정",
   new: "작성",
+  blog: "블로그",
 };
 
 // 경로 변환 함수

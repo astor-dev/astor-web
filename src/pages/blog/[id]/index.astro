@@ -1,0 +1,16 @@
+---
+import PostDetail from "~layouts/blog/PostDetail.astro";
+import { getPosts } from "~utils/getPosts";
+
+export async function getStaticPaths() {
+  const posts = await getPosts();
+  return posts.map(post => ({
+    params: { id: post.id },
+    props: { post },
+  }));
+}
+
+const { post } = Astro.props;
+---
+
+<PostDetail post={post} isAdmin={false} />

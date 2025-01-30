@@ -1,10 +1,11 @@
 import React from "react";
-import { FaCode, FaPen, FaPlus } from "react-icons/fa";
+import { FaCode, FaPen, FaPlus, FaShare } from "react-icons/fa";
 
 const IconRecord: Record<string, React.ElementType> = {
   FaCode: FaCode,
   FaPen: FaPen,
   FaPlus: FaPlus,
+  FaShare: FaShare,
 };
 
 interface IconButtonProps {
