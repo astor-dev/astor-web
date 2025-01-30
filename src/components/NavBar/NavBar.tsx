@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import throttle from "lodash/throttle";
 import { RiMoonClearFill, RiSunFill } from "react-icons/ri";
+import logo from "~assets/svgs/logo.svg";
 
 interface NavBarProps {
   pathname: string; // 현재 경로를 전달받음
@@ -84,8 +85,12 @@ export default function NavBar({
       <nav className="mx-auto flex max-w-5xl items-center justify-between px-6 py-5">
         {/* 로고 섹션 */}
         <div className="flex items-center space-x-12">
-          <a href="/" className={`text-2xl font-extrabold text-black-accent`}>
-            Astoir
+          <a
+            href="/"
+            className="flex items-center text-2xl font-extrabold text-black-accent"
+          >
+            <img src={logo.src} alt="astoir" className="mr-2 h-8 w-8" />
+            <span>Astoir</span>
           </a>
 
           {/* PC용 메뉴 */}

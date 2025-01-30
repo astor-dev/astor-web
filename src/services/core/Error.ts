@@ -1,4 +1,4 @@
-export class AstoirError extends Error {
+export class AstorError extends Error {
   constructor(
     public statusCode: number,
     message: string,

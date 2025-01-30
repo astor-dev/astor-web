@@ -11,7 +11,7 @@ import imageminWebp from "imagemin-webp";
 import imageminPngquant from "imagemin-pngquant";
 
 export default defineConfig({
-  site: "https://astoir.github.io",
+  site: "https://astorverse.github.io",
   output: "static",
   devToolbar: {
     enabled: true,

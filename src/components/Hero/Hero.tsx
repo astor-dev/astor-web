@@ -107,7 +107,7 @@ export default function Hero() {
             >
               안녕하세요!{" "}
               <span className="font-semibold">
-                백엔드 개발자 Astoir, 김도훈{" "}
+                백엔드 개발자 Astor, 김도훈{" "}
               </span>
               입니다.
               <br />

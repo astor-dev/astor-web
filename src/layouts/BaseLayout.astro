@@ -5,22 +5,16 @@ import BreadcrumbNavigator from "~components/Breadcrumb/BreadcrumbNavigator";
 import "~styles/global.css";
 import Hero from "~components/Hero/Hero";
 import { SkeletonProvider } from "~components/Skeleton/SkeletonProvider";
+import Seo from "~components/Seo/Seo.astro";
 // src/layouts/BaseLayout.astro
 const currentPath = Astro.url.pathname;
-const { title = "astoir의 개발 블로그" } = Astro.props;
 const shouldRenderHero = currentPath === "/";
 const shouldShowBreadcrumb = currentPath !== "/" && currentPath !== "/about"; // 루트 및 특정 경로 제외
 ---
 
 <!doctype html>
 <html lang="ko" data-theme="light" class="w-full">
-  <head>
-    <meta charset="utf-8" />
-    <title>{title}</title>
-
-    <!-- 반응형을 위해 꼭 필요한 meta 태그 -->
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  </head>
+  <Seo />
   <body class="flex w-full flex-col text-skin-base">
     <!-- 헤더 (NavBar) - 내부에서 Tailwind 반응형 유틸을 사용하여 메뉴 등을 숨기거나 보이도록 처리 가능 -->
     <SkeletonProvider>

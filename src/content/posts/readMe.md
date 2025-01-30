@@ -1,5 +1,5 @@
 ---
-author: "Astoir"
+author: "Astor"
 createdAt: "2024-03-15"
 updatedAt: "2024-03-15"
 title: "블로그 시작하기"
@@ -12,7 +12,7 @@ description: "Astro와 React를 사용하여 개인 블로그를 만들게 된 �
 
 # 블로그를 시작하며
 
-안녕하세요! 백엔드 개발자 Astoir입니다.
+안녕하세요! 백엔드 개발자 Astor입니다.
 오랫동안 미루어왔던 개인 블로그를 드디어 시작하게 되었습니다.
 
 ## 기술 스택 선택

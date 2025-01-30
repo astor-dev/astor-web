@@ -1,9 +1,9 @@
 export const SITE = {
-  website: "https://astoir.github.io", // replace this with your deployed domain
+  website: "https://astorverse.github.io", // replace this with your deployed domain
   author: "Astoir",
-  profile: "https://github.com/astoir",
-  desc: "Astoir의 개인 블로그입니다. 백엔드 개발에 관한 글을 주로 다룹니다.",
-  title: "Astoir",
+  profile: "https://github.com/astorverse",
+  desc: "Astor의 개인 블로그입니다. 백엔드 개발에 관한 글을 주로 다룹니다.",
+  title: "Astor",
   ogImage: "astropaper-og.jpg",
   lightAndDarkMode: true,
   postPerIndex: 4,

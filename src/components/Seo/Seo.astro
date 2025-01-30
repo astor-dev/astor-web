@@ -1,0 +1,41 @@
+---
+import logo from "~assets/svgs/logo.svg";
+const {
+  title = "Astor",
+  description = "Astor의 개발 및 기술 관련 블로그입니다.",
+  url = "https://astorverse.github.io",
+  favicon = logo.src,
+  keywords = "Astro, 블로그, 개발, 웹",
+  type = "website",
+} = Astro.props;
+---
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <title>{title}</title>
+  <meta name="description" content={description} />
+  <meta name="keywords" content={keywords} />
+  <link rel="canonical" href={url} />
+
+  <!-- Favicon -->
+  <link rel="icon" type="image/svg+xml" href={favicon} />
+  <link rel="apple-touch-icon" href={favicon} />
+
+  <!-- Open Graph (Facebook, LinkedIn) -->
+  <meta property="og:type" content={type} />
+  <meta property="og:url" content={url} />
+  <meta property="og:title" content={title} />
+  <meta property="og:description" content={description} />
+  <meta property="og:image" content={favicon} />
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content={title} />
+  <meta name="twitter:description" content={description} />
+  <meta name="twitter:image" content={favicon} />
+
+  <!-- 추가적인 SEO 설정 -->
+  <meta name="robots" content="index, follow" />
+</head>

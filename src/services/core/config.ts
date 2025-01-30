@@ -5,11 +5,11 @@ import { z } from "zod";
 import { getAccessToken, logout } from "~services/core/auth";
 import type { AstroGlobal } from "astro";
 import { silentParse } from "~services/core/parser";
-import { AstoirError } from "~services/core/Error";
+import { AstorError } from "~services/core/Error";
 
 type HttpMethod = "GET" | "POST" | "PUT" | "PATCH" | "DELETE";
 
-export const BASE_URL = process.env.ASTOIR_API_URL;
+export const BASE_URL = process.env.ASTOR_API_URL;
 
 const emptyShape = {};
 type EmptyShape = typeof emptyShape;
@@ -55,7 +55,7 @@ class Instance {
     // response가 없는 경우
     if (res.statusText === "No Content") {
       if (res.status >= 400) {
-        throw new AstoirError(res.status, "No Content");
+        throw new AstorError(res.status, "No Content");
       }
       return silentParse(
         schema,
@@ -69,7 +69,7 @@ class Instance {
     // response가 있는 경우
     const data = await res.json();
     if (!data.ok) {
-      throw new AstoirError(
+      throw new AstorError(
         data.statusCode,
         data.error?.message || "알 수 없는 오류",
       );
@@ -139,7 +139,7 @@ class AuthInstance {
     try {
       return await instance.fetchWithConfig<T>(url, method, body, authOptions);
     } catch (e) {
-      const error = e as AstoirError;
+      const error = e as AstorError;
       const isServer = typeof window === "undefined";
       if (error.statusCode === 401 && !isServer) {
         console.error("로그인 시간 만료: ", error.message);
