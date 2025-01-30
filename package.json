@@ -85,6 +85,6 @@
     "^~hooks/(.*)$": "<rootDir>/../src/hooks/$1",
     "^~constants/(.*)$": "<rootDir>/../src/constants/$1",
     "^~utils/(.*)$": "<rootDir>/../src/utils/$1",
-    "^~/(.*)$": "<rootDir>/../$1"
+    "^~/(.*)$": "<rootDir>/../src/$1"
   }
 }

@@ -9,10 +9,9 @@ import viteImagemin from "@vheemstra/vite-plugin-imagemin";
 import imageminMozjpeg from "imagemin-mozjpeg";
 import imageminWebp from "imagemin-webp";
 import imageminPngquant from "imagemin-pngquant";
-import { SITE } from "~/consts";
 
 export default defineConfig({
-  site: SITE.website,
+  site: "https://astoir.github.io",
   output: "static",
   devToolbar: {
     enabled: true,
