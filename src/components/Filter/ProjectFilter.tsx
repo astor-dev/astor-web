@@ -1,7 +1,7 @@
 "use client";
 
 import React, { type Dispatch, type SetStateAction } from "react";
-import { projectTypeEnum } from "~types/project.type";
+import { ProjectTypeEnum } from "~types/project.type";
 
 interface ProjectFilterProps {
   selectedType: string | undefined;
@@ -10,9 +10,9 @@ interface ProjectFilterProps {
 
 const filterOptions = [
   { value: "all", label: "전체" },
-  { value: projectTypeEnum.Enum["Company-project"], label: "회사 프로젝트" },
-  { value: projectTypeEnum.Enum["Side-project"], label: "사이드 프로젝트" },
-  { value: projectTypeEnum.Enum["Toy-project"], label: "토이 프로젝트" },
+  { value: ProjectTypeEnum.Enum["Company-project"], label: "회사 프로젝트" },
+  { value: ProjectTypeEnum.Enum["Side-project"], label: "사이드 프로젝트" },
+  { value: ProjectTypeEnum.Enum["Toy-project"], label: "토이 프로젝트" },
 ];
 
 export default function ProjectFilter({
