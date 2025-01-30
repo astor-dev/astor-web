@@ -71,12 +71,19 @@ html[data-theme="light"] {
     /* text-skin-inverted은 필요하다면 변수로 정의, 혹은 간단히 #fff 등으로 지정 가능 */
   }
 
-  /* ===== 기본 스크롤바 ===== */
+  /* ===== 기본 스크롤바 숨기기 ===== */
   ::-webkit-scrollbar {
-    @apply w-3;
+    display: none;
   }
-  ::-webkit-scrollbar-track {
-    @apply bg-skin-fill;
+
+  /* Firefox 스크롤바 숨기기 */
+  * {
+    scrollbar-width: none;
+  }
+
+  /* IE and Edge 스크롤바 숨기기 */
+  * {
+    -ms-overflow-style: none;
   }
 
   /* ===== 코드 블럭 & Syntax Highlight ===== */

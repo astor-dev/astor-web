@@ -21,19 +21,19 @@ const SectionWithHeader: React.FC<SectionWithHeaderProps> = ({
   return (
     <section
       ref={sectionRef}
-      className={`relative space-y-12 py-16 transition-all duration-700 ${className} ${
+      className={`relative w-full transform-gpu space-y-12 py-16 transition-all duration-700 ${className} ${
         isVisible ? "translate-y-0 opacity-100" : "translate-y-20 opacity-0"
       }`}
     >
       {/* 헤더 영역 */}
-      <div className="relative">
+      <div className="relative w-full overflow-x-hidden">
         {/* 작은 악센트 라인 */}
         <div className="mb-6">
           <div className="h-0.5 w-12 bg-skin-accent" />
         </div>
 
         {/* 제목과 설명 */}
-        <div className="relative max-w-3xl">
+        <div className="relative w-full">
           <h2 className="mb-6 text-4xl font-bold tracking-tight text-black-accent sm:text-5xl">
             {title}
           </h2>
@@ -41,18 +41,11 @@ const SectionWithHeader: React.FC<SectionWithHeaderProps> = ({
             {description}
           </p>
         </div>
-
-        {/* 배경 장식 요소 */}
-        <div className="from-skin-accent/5 pointer-events-none absolute -right-64 top-0 -z-10 h-[200px] w-[500px] rotate-12 bg-gradient-to-r to-transparent blur-3xl" />
       </div>
 
       {/* 컨텐츠 영역 */}
       {children && (
-        <div className="relative">
-          {children}
-          {/* 배경 장식 요소 */}
-          <div className="from-skin-accent/5 pointer-events-none absolute -left-64 bottom-0 -z-10 h-[200px] w-[500px] -rotate-12 bg-gradient-to-l to-transparent blur-3xl" />
-        </div>
+        <div className="relative w-full overflow-x-hidden">{children}</div>
       )}
     </section>
   );
