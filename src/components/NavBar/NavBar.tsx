@@ -1,8 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import throttle from "lodash/throttle";
 import { RiMoonClearFill, RiSunFill } from "react-icons/ri";
-import logo from "~assets/svgs/logo.svg";
-
+// import logo from "~assets/svgs/logo.svg";
 interface NavBarProps {
   pathname: string; // 현재 경로를 전달받음
   initialShowNav?: boolean; // 초기 표시 여부를 전달받음 (optional)

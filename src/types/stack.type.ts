@@ -10,6 +10,9 @@ export const stackSchema = z.object({
   name: z.string(),
   icon: z.custom<IconType>(() => true),
   description: z.string(),
+  color: z.string(),
+  featured: z.boolean(),
+  superFeatured: z.boolean().optional(),
 });
 export type Stack = z.infer<typeof stackSchema>;
 

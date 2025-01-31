@@ -15,7 +15,7 @@ const BlogPostCard: React.FC<PostEntry> = props => {
         className="group relative block overflow-hidden rounded-2xl bg-gradient-to-br from-white via-white to-skin-fill/5 p-1"
       >
         {/* 배경 그라데이션 효과 */}
-        <div className="absolute inset-0 bg-gradient-to-r from-skin-accent/5 via-transparent to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
+        <div className="absolute inset-0 bg-gradient-to-r from-skin-accent/5 via-transparent to-skin-accent/10 opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
 
         {/* 카드 내용 */}
         <article className="relative rounded-xl bg-white p-6">
@@ -24,7 +24,7 @@ const BlogPostCard: React.FC<PostEntry> = props => {
             {props?.data?.tags.map((tag, index) => (
               <span
                 key={index}
-                className="inline-flex items-center gap-1.5 rounded-full bg-gradient-to-r from-skin-accent/10 to-skin-accent/5 px-3 py-1 text-xs font-medium text-skin-accent transition-colors group-hover:from-skin-accent/20 group-hover:to-skin-accent/10"
+                className="inline-flex items-center gap-1.5 rounded-full bg-gradient-to-r from-skin-accent/10 to-skin-accent/5 px-3 py-1 text-xs font-medium text-skin-accent transition-colors"
               >
                 <FaHashtag className="h-2.5 w-2.5 opacity-70" />
                 {tag}
@@ -34,7 +34,7 @@ const BlogPostCard: React.FC<PostEntry> = props => {
 
           {/* 제목과 부제목 */}
           <div className="mb-4">
-            <h3 className="text-xl font-bold text-black-accent transition-colors group-hover:text-skin-accent">
+            <h3 className="text-xl font-bold text-black-accent transition-colors">
               {props?.data?.title}
             </h3>
             <p className="mt-2 text-sm text-black-muted">

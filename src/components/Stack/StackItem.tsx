@@ -32,15 +32,27 @@ const StackItem: React.FC<StackItemProps> = ({ stack }) => {
     >
       {/* 아이콘 */}
       <div className="text-xl text-skin-accent">
-        <stack.icon className="transition-transform duration-300 md:group-hover:scale-110" />
+        <stack.icon
+          className={`transition-transform duration-300 md:group-hover:scale-110`}
+          style={{ color: stack.color }}
+        />
       </div>
 
       {/* 스택 정보 */}
       <div className="min-w-0 flex-1">
         <h3 className="truncate text-sm font-medium text-black-accent">
           {stack.name}
+          {stack.featured && (
+            <span
+              className={`ml-1 inline-block ${
+                stack.superFeatured ? "text-skin-accent" : "text-yellow-500"
+              }`}
+            >
+              ★
+            </span>
+          )}
         </h3>
-        <p className="text-black-muted truncate text-xs">{stack.description}</p>
+        <p className="truncate text-xs text-black-muted">{stack.description}</p>
       </div>
 
       {/* 툴팁 (데스크톱) */}

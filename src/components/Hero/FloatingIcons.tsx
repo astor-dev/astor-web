@@ -22,12 +22,10 @@ const generateRandomPosition = (
 };
 
 export default function FloatingIcons({
-  iconTypes,
-  iconColors,
+  icons,
   iconSizes,
 }: {
-  iconTypes: React.ElementType[];
-  iconColors: string[];
+  icons: { icon: React.ElementType; color: string }[];
   iconSizes: string[];
 }) {
   const { width } = useViewport();
@@ -42,11 +40,17 @@ export default function FloatingIcons({
   const counter = getCounter();
 
   // useMemo를 사용하여 랜덤 아이콘 데이터 생성 (컴포넌트가 리렌더링될 때마다 새로운 아이콘 데이터 생성)
+  const usedIcons = new Set();
   const iconsData = useMemo(() => {
     const data = [];
     for (let i = 0; i < counter; i++) {
-      const Icon = iconTypes[Math.floor(Math.random() * iconTypes.length)];
-      const color = iconColors[Math.floor(Math.random() * iconColors.length)];
+      let randomIndex;
+      do {
+        randomIndex = Math.floor(Math.random() * icons.length);
+      } while (usedIcons.has(randomIndex));
+      usedIcons.add(randomIndex);
+      const Icon = icons[randomIndex].icon;
+      const color = icons[randomIndex].color;
       const size = iconSizes[Math.floor(Math.random() * iconSizes.length)];
       const position = generateRandomPosition(i, counter);
       const floatingAnimation = `animate-float-${Math.floor(
@@ -63,7 +67,7 @@ export default function FloatingIcons({
       });
     }
     return data;
-  }, [iconTypes, iconColors, iconSizes, counter]);
+  }, [icons, iconSizes, counter]);
 
   return (
     <>

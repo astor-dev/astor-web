@@ -1,21 +1,9 @@
 import React, { useEffect, useState } from "react";
 import FloatingIcons from "~components/Hero/FloatingIcons";
 import heroMilkyway from "~assets/images/hero-milkyway.jpg";
-import {
-  SiDocker,
-  SiGit,
-  SiGithub,
-  SiJavascript,
-  SiKubernetes,
-  SiNestjs,
-  SiNginx,
-  SiPagespeedinsights,
-  SiPython,
-  SiReact,
-  SiTailwindcss,
-  SiTypescript,
-} from "react-icons/si";
 import LoadingSpinner from "~components/LoadingSpinner/LoadingSpinner";
+import { stacks } from "~constants/stacks";
+import type { IconType } from "react-icons";
 
 export default function Hero() {
   const [isLoading, setIsLoading] = useState(true);
@@ -28,32 +16,10 @@ export default function Hero() {
     };
   }, []);
 
-  const iconTypes = [
-    SiDocker,
-    SiGit,
-    SiGithub,
-    SiJavascript,
-    SiKubernetes,
-    SiNestjs,
-    SiNginx,
-    SiPagespeedinsights,
-    SiPython,
-    SiReact,
-    SiTailwindcss,
-    SiTypescript,
-  ];
-
-  const iconColors = [
-    "text-yellow-400/100",
-    "text-blue-500/100",
-    "text-purple-400/100",
-    "text-green-400/100",
-    "text-pink-400/100",
-    "text-indigo-400/100",
-    "text-cyan-400/100",
-    "text-teal-400/100",
-    "text-orange-400/100",
-  ];
+  const icons: { icon: IconType; color: string }[] = stacks.map(stack => ({
+    icon: stack.icon,
+    color: stack.color,
+  }));
 
   const iconSizes = [
     "h-5 w-5",
@@ -86,11 +52,7 @@ export default function Hero() {
 
           {/* 플로팅 아이콘 */}
           <div className="pointer-events-none absolute inset-0 z-0 overflow-hidden opacity-80">
-            <FloatingIcons
-              iconTypes={iconTypes}
-              iconColors={iconColors}
-              iconSizes={iconSizes}
-            />
+            <FloatingIcons icons={icons} iconSizes={iconSizes} />
           </div>
 
           {/* 메인 콘텐츠 */}

@@ -27,15 +27,19 @@ const StackGrid: React.FC<StackGridProps> = ({ stackIds }) => {
   const availableStacks = stacks
     .filter(stack => (stackIds ? stackIds.includes(stack.id) : true))
     .sort((a, b) => {
-      // 먼저 stackType으로 정렬 (정의된 순서대로)
+      if (a.superFeatured !== b.superFeatured) {
+        return b.superFeatured ? 1 : -1;
+      }
+      if (a.featured !== b.featured) {
+        return b.featured ? 1 : -1;
+      }
       if (a.stackType !== b.stackType) {
         return (
           (stackTypeOrder[a.stackType] ?? Infinity) -
           (stackTypeOrder[b.stackType] ?? Infinity)
         );
       }
-      // stackType이 같으면 id로 정렬
-      return a.id - b.id;
+      return a.name.localeCompare(b.name);
     });
 
   // 사용 가능한 스택 타입도 정의된 순서대로 정렬
@@ -96,7 +100,7 @@ const StackGrid: React.FC<StackGridProps> = ({ stackIds }) => {
                 </div>
               ))
             ) : (
-              <p className="text-black-muted text-center text-sm">
+              <p className="text-center text-sm text-black-muted">
                 해당하는 스택이 없습니다.
               </p>
             )}

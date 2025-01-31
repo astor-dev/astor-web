@@ -58,7 +58,10 @@ export default function FloatingObject({
       }`}
       style={isSpread ? finalStyle : initialStyle}
     >
-      <div className={`${size} ${color} transition-opacity duration-300`}>
+      <div
+        className={`${size} transition-opacity duration-300`}
+        style={{ color }}
+      >
         {icon}
       </div>
     </div>
