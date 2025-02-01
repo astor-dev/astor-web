@@ -27,7 +27,7 @@ import kakaoLogo from "~/assets/svgs/KakaoTalk_logo.svg";
 
       <!-- 카카오 로그인 버튼 -->
       <a
-        href="/api/auth/kakao"
+        href={`${import.meta.env.PUBLIC_BASE_URL}/auth/login/kakao`}
         class="flex w-full items-center justify-center gap-2 rounded-md bg-[#FEE500] px-4 py-3 text-center font-medium text-[#191919] transition-colors hover:bg-[#FEE500]/90"
       >
         <img

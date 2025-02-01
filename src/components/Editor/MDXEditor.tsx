@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useCallback } from "react";
 import {
   MDXEditor,
   headingsPlugin,
@@ -27,10 +27,21 @@ interface EditorProps {
 }
 
 const Editor: React.FC<EditorProps> = ({ markdown, onChange, placeholder }) => {
+  const handleChange = useCallback(
+    (content: string) => {
+      onChange(content);
+
+      window.dispatchEvent(
+        new CustomEvent("mdx-editor-update", { detail: content }),
+      );
+    },
+    [onChange],
+  );
+
   return (
     <MDXEditor
       markdown={markdown}
-      onChange={onChange}
+      onChange={handleChange}
       placeholder={placeholder}
       contentEditableClassName="prose max-w-none min-h-[500px] p-4"
       plugins={[

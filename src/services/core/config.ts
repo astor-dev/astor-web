@@ -9,7 +9,7 @@ import { AstorError } from "~services/core/Error";
 
 type HttpMethod = "GET" | "POST" | "PUT" | "PATCH" | "DELETE";
 
-export const BASE_URL = process.env.ASTOR_API_URL;
+export const BASE_URL = import.meta.env.PUBLIC_BASE_URL;
 
 const emptyShape = {};
 type EmptyShape = typeof emptyShape;
@@ -42,6 +42,7 @@ class Instance {
     const config: RequestInit = {
       method,
       cache: "no-store",
+      credentials: "include",
       ...pure,
       headers: {
         "Content-Type": "application/json",
@@ -50,6 +51,7 @@ class Instance {
       ...(body && { body: JSON.stringify(body, replacer) }),
     };
 
+    console.log("BASE_URL", this.baseUrl);
     const res = await fetch(new URL(url, this.baseUrl).toString(), config);
 
     // response가 없는 경우
@@ -118,95 +120,3 @@ class Instance {
 }
 
 export const instance = new Instance();
-
-class AuthInstance {
-  async authFetchWithConfig<T extends z.ZodRawShape = EmptyShape>(
-    Astro: AstroGlobal,
-    url: string,
-    method: HttpMethod,
-    body?: unknown,
-    options: RequestInit = {},
-  ) {
-    const accessToken = getAccessToken(Astro);
-    const authOptions: RequestInitWithSchema<T> = {
-      ...options,
-      headers: {
-        Authorization: `Bearer ${accessToken}`,
-        ...options.headers,
-      },
-    };
-
-    try {
-      return await instance.fetchWithConfig<T>(url, method, body, authOptions);
-    } catch (e) {
-      const error = e as AstorError;
-      const isServer = typeof window === "undefined";
-      if (error.statusCode === 401 && !isServer) {
-        console.error("로그인 시간 만료: ", error.message);
-        logout(Astro);
-      }
-      throw error;
-    }
-  }
-
-  async get<T extends z.ZodRawShape = EmptyShape>(
-    Astro: AstroGlobal,
-    url: string,
-    options?: RequestInitWithSchema<T>,
-  ) {
-    return this.authFetchWithConfig<T>(Astro, url, "GET", undefined, options);
-  }
-  async delete<T extends z.ZodRawShape = EmptyShape>(
-    Astro: AstroGlobal,
-    url: string,
-    body?: any,
-    options?: RequestInitWithSchema<T>,
-  ) {
-    return this.authFetchWithConfig<T>(Astro, url, "DELETE", body, options);
-  }
-
-  async post<T extends z.ZodRawShape = EmptyShape>(
-    Astro: AstroGlobal,
-    url: string,
-    body: any,
-    options?: RequestInitWithSchema<T>,
-  ) {
-    return this.authFetchWithConfig<T>(Astro, url, "POST", body, options);
-  }
-  async put<T extends z.ZodRawShape = EmptyShape>(
-    Astro: AstroGlobal,
-    url: string,
-    body: any,
-    options?: RequestInitWithSchema<T>,
-  ) {
-    return this.authFetchWithConfig<T>(Astro, url, "PUT", body, options);
-  }
-
-  async patch<T extends z.ZodRawShape = EmptyShape>(
-    Astro: AstroGlobal,
-    url: string,
-    body: any,
-    options?: RequestInitWithSchema<T>,
-  ) {
-    return this.authFetchWithConfig<T>(Astro, url, "PATCH", body, options);
-  }
-}
-
-export const authInstance = new AuthInstance();
-
-// ----- utility for shape option -----
-
-type PaginatedResponse<Shape extends z.ZodRawShape> = Shape & {
-  totalCount: z.ZodNumber;
-  nextPage: z.ZodNullable<z.ZodString>;
-};
-
-// limit이 없을 경우 전체 데이터 조회
-export const withPagination = <Shape extends z.ZodRawShape>(
-  shape: Shape,
-): PaginatedResponse<Shape> =>
-  ({
-    ...shape,
-    totalCount: z.number(),
-    nextPage: z.string().nullable(),
-  }) satisfies PaginatedResponse<Shape>;

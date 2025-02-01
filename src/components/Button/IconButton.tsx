@@ -12,6 +12,7 @@ interface IconButtonProps {
   icon?: keyof typeof IconRecord;
   text: string;
   href?: string;
+  type?: "button" | "submit" | "reset";
   onClick?: () => void;
   variant?: "primary" | "secondary" | "danger";
   size?: "sm" | "md" | "lg";
@@ -21,6 +22,7 @@ const IconButton: React.FC<IconButtonProps> = ({
   icon,
   text,
   href,
+  type = "button",
   onClick,
   variant = "primary",
   size = "md",
@@ -52,6 +54,15 @@ const IconButton: React.FC<IconButtonProps> = ({
     </>
   );
 
+  const handleClick = (e: React.MouseEvent) => {
+    if (type !== "submit") {
+      e.preventDefault();
+    }
+    if (onClick) {
+      onClick();
+    }
+  };
+
   if (href) {
     return (
       <a href={href} className={buttonClasses}>
@@ -61,7 +72,7 @@ const IconButton: React.FC<IconButtonProps> = ({
   }
 
   return (
-    <button onClick={onClick} className={buttonClasses}>
+    <button type={type} onClick={handleClick} className={buttonClasses}>
       <ButtonContent />
     </button>
   );

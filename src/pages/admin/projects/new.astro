@@ -1,8 +1,7 @@
 ---
+// src/pages/new-project.astro
 import Layout from "~layouts/BaseLayout.astro";
 import ProjectForm from "~components/Form/ProjectForm";
-import MDXEditor from "~components/Editor/MDXEditor";
-import IconButton from "~components/Button/IconButton";
 ---
 
 <Layout title="새 프로젝트">
@@ -12,36 +11,6 @@ import IconButton from "~components/Button/IconButton";
       <h1 class="text-3xl font-bold text-black-accent">새 프로젝트</h1>
       <p class="mt-2 text-black-muted">새로운 프로젝트를 등록합니다</p>
     </div>
-
-    <div class="space-y-8">
-      <ProjectForm client:load />
-
-      <!-- 상세 설명 -->
-      <div class="rounded-lg border border-skin-line bg-white p-6">
-        <h2 class="mb-6 text-xl font-semibold text-black-accent">상세 설명</h2>
-        <MDXEditor
-          client:load
-          markdown=""
-          onChange={value => console.log(value)}
-          placeholder="프로젝트에 대해 자세히 설명해주세요..."
-        />
-      </div>
-
-      <!-- 제출 버튼 -->
-      <div class="flex justify-end gap-3">
-        <IconButton
-          client:load
-          text="취소"
-          href="/admin/projects"
-          variant="secondary"
-        />
-        <IconButton
-          client:load
-          text="저장하기"
-          variant="primary"
-          onClick={() => {}}
-        />
-      </div>
-    </div>
+    <ProjectForm client:only="react" />
   </div>
 </Layout>

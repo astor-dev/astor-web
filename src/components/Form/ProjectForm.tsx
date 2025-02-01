@@ -1,197 +1,195 @@
-import React from "react";
+import React, { useState, useCallback } from "react";
 import {
   ProjectRoleEnum,
   ProjectTypeEnum,
   type ProjectEntry,
+  type ProjectRole,
+  type ProjectType,
 } from "~types/project.type";
+import { ProjectsService } from "~services/projects.service";
+import MDXEditor from "~components/Editor/MDXEditor";
+import IconButton from "~components/Button/IconButton";
+import FormInput from "./FormInput";
+import FormSelect from "./FormSelect";
+import FormCheckboxGroup from "./FormCheckboxGroup";
+import FormTextarea from "./FormTextarea";
+import type { AstroGlobal } from "astro";
 
 interface ProjectFormProps {
   initialData?: Partial<ProjectEntry>;
-  onSubmit?: (data: FormData) => void;
 }
 
 const PROJECT_TYPES = ProjectTypeEnum.options;
 const ROLES = ProjectRoleEnum.options;
 
-const ProjectForm: React.FC<ProjectFormProps> = ({ initialData, onSubmit }) => {
+const ProjectForm: React.FC<ProjectFormProps> = ({ initialData }) => {
+  // 폼 필드 변경 시 즉시 반영되는 "기본 정보"
+  const [formData, setFormData] = useState<ProjectEntry["data"]>(() => ({
+    projectName: initialData?.data?.projectName ?? "",
+    projectType: initialData?.data?.projectType ?? ProjectTypeEnum.options[0],
+    imageUrl: initialData?.data?.imageUrl ?? "",
+    siteUrl: initialData?.data?.siteUrl ?? "",
+    companyName: initialData?.data?.companyName ?? "",
+    startedAt: initialData?.data?.startedAt ?? "",
+    endedAt: initialData?.data?.endedAt ?? "",
+    roles: initialData?.data?.roles ?? [],
+    shortDescription: initialData?.data?.shortDescription ?? "",
+    stackIds: [],
+  }));
+
+  // 마크다운 에디터에서 입력한 텍스트
+  const [markdownContent, setMarkdownContent] = useState<string>("");
+
+  // 폼 내용 변경 시마다 호출
+  const handleFormChange = useCallback(
+    (e: React.FormEvent<HTMLFormElement>) => {
+      const form = e.currentTarget;
+      const fd = new FormData(form);
+
+      const updatedData: ProjectEntry["data"] = {
+        projectName: fd.get("projectName") as string,
+        projectType: fd.get("projectType") as ProjectType,
+        imageUrl: fd.get("imageUrl") as string,
+        siteUrl: fd.get("siteUrl") as string,
+        companyName: fd.get("companyName") as string,
+        startedAt: fd.get("startedAt") as string,
+        endedAt: fd.get("endedAt") as string,
+        roles: fd.getAll("roles") as ProjectRole[],
+        shortDescription: fd.get("shortDescription") as string,
+        stackIds: [],
+      };
+
+      setFormData(updatedData);
+    },
+    [],
+  );
+
+  // 폼 제출 처리
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    console.log("폼 제출 처리");
+    try {
+      const projectData = {
+        frontmatter: formData,
+        body: markdownContent,
+      };
+
+      console.log("프로젝트 최종 데이터:", projectData);
+
+      const response = await ProjectsService.createProject(projectData);
+      console.log("프로젝트 생성 성공:", response);
+
+      window.location.href = "/admin/projects";
+    } catch (error) {
+      console.error("프로젝트 생성 실패:", error);
+    }
+  };
+
   return (
     <form
       className="space-y-8"
-      onSubmit={e => {
-        e.preventDefault();
-        if (onSubmit) {
-          const formData = new FormData(e.currentTarget);
-          onSubmit(formData);
-        }
-      }}
+      onChange={handleFormChange}
+      onSubmit={handleSubmit}
     >
       <div className="rounded-lg border border-skin-line bg-white p-6">
         <h2 className="mb-6 text-xl font-semibold text-black-accent">
           기본 정보
         </h2>
         <div className="grid gap-6 lg:grid-cols-2">
-          <div>
-            <label
-              htmlFor="projectName"
-              className="mb-2 block text-sm font-medium text-black-accent"
-            >
-              프로젝트명 <span className="text-danger">*</span>
-            </label>
-            <input
-              type="text"
-              id="projectName"
-              name="projectName"
-              required
-              defaultValue={initialData?.data?.projectName}
-              className="focus:ring-skin-accent w-full rounded-lg border border-skin-line px-4 py-2 focus:border-skin-accent focus:outline-none focus:ring-1"
-            />
-          </div>
+          <FormInput
+            id="projectName"
+            name="projectName"
+            label="프로젝트명"
+            required
+            defaultValue={formData.projectName}
+          />
 
-          <div>
-            <label
-              htmlFor="projectType"
-              className="mb-2 block text-sm font-medium text-black-accent"
-            >
-              프로젝트 유형 <span className="text-danger">*</span>
-            </label>
-            <select
-              id="projectType"
-              name="projectType"
-              required
-              defaultValue={initialData?.data?.projectType}
-              className="focus:ring-skin-accent w-full rounded-lg border border-skin-line px-4 py-2 focus:border-skin-accent focus:outline-none focus:ring-1"
-            >
-              <option value="">선택해주세요</option>
-              {PROJECT_TYPES.map(type => (
-                <option key={type} value={type}>
-                  {type}
-                </option>
-              ))}
-            </select>
-          </div>
+          <FormSelect
+            id="projectType"
+            name="projectType"
+            label="프로젝트 유형"
+            options={PROJECT_TYPES}
+            required
+            defaultValue={formData.projectType}
+          />
 
-          <div>
-            <label
-              htmlFor="imageUrl"
-              className="mb-2 block text-sm font-medium text-black-accent"
-            >
-              이미지 URL <span className="text-danger">*</span>
-            </label>
-            <input
-              type="text"
-              id="imageUrl"
-              name="imageUrl"
-              required
-              defaultValue={initialData?.data?.imageUrl}
-              className="focus:ring-skin-accent w-full rounded-lg border border-skin-line px-4 py-2 focus:border-skin-accent focus:outline-none focus:ring-1"
-            />
-          </div>
+          <FormInput
+            id="imageUrl"
+            name="imageUrl"
+            label="이미지 URL"
+            required
+            defaultValue={formData.imageUrl}
+          />
 
-          <div>
-            <label
-              htmlFor="siteUrl"
-              className="mb-2 block text-sm font-medium text-black-accent"
-            >
-              사이트 URL <span className="text-danger">*</span>
-            </label>
-            <input
-              type="url"
-              id="siteUrl"
-              name="siteUrl"
-              required
-              defaultValue={initialData?.data?.siteUrl}
-              className="focus:ring-skin-accent w-full rounded-lg border border-skin-line px-4 py-2 focus:border-skin-accent focus:outline-none focus:ring-1"
-            />
-          </div>
+          <FormInput
+            id="siteUrl"
+            name="siteUrl"
+            label="사이트 URL"
+            type="url"
+            required
+            defaultValue={formData.siteUrl}
+          />
 
-          <div>
-            <label
-              htmlFor="companyName"
-              className="mb-2 block text-sm font-medium text-black-accent"
-            >
-              회사명 <span className="text-danger">*</span>
-            </label>
-            <input
-              type="text"
-              id="companyName"
-              name="companyName"
-              required
-              defaultValue={initialData?.data?.companyName}
-              className="focus:ring-skin-accent w-full rounded-lg border border-skin-line px-4 py-2 focus:border-skin-accent focus:outline-none focus:ring-1"
-            />
-          </div>
+          <FormInput
+            id="companyName"
+            name="companyName"
+            label="회사명"
+            required
+            defaultValue={formData.companyName}
+          />
 
-          <div>
-            <label
-              htmlFor="startedAt"
-              className="mb-2 block text-sm font-medium text-black-accent"
-            >
-              시작일 <span className="text-danger">*</span>
-            </label>
-            <input
-              type="date"
-              id="startedAt"
-              name="startedAt"
-              required
-              defaultValue={initialData?.data?.startedAt}
-              className="focus:ring-skin-accent w-full rounded-lg border border-skin-line px-4 py-2 focus:border-skin-accent focus:outline-none focus:ring-1"
-            />
-          </div>
+          <FormInput
+            id="startedAt"
+            name="startedAt"
+            label="시작일"
+            type="date"
+            required
+            defaultValue={formData.startedAt}
+          />
 
-          <div>
-            <label
-              htmlFor="endedAt"
-              className="mb-2 block text-sm font-medium text-black-accent"
-            >
-              종료일 <span className="text-danger">*</span>
-            </label>
-            <input
-              type="date"
-              id="endedAt"
-              name="endedAt"
-              required
-              defaultValue={initialData?.data?.endedAt}
-              className="focus:ring-skin-accent w-full rounded-lg border border-skin-line px-4 py-2 focus:border-skin-accent focus:outline-none focus:ring-1"
-            />
-          </div>
+          <FormInput
+            id="endedAt"
+            name="endedAt"
+            label="종료일"
+            type="date"
+            required
+            defaultValue={formData.endedAt}
+          />
 
-          <div className="lg:col-span-2">
-            <label className="mb-2 block text-sm font-medium text-black-accent">
-              역할 <span className="text-danger">*</span>
-            </label>
-            <div className="flex flex-wrap gap-3">
-              {ROLES.map(role => (
-                <label key={role} className="flex items-center gap-2">
-                  <input
-                    type="checkbox"
-                    name="roles"
-                    value={role}
-                    defaultChecked={initialData?.data?.roles?.includes(role)}
-                    className="focus:ring-skin-accent rounded border-skin-line text-skin-accent"
-                  />
-                  <span className="text-sm text-black-base">{role}</span>
-                </label>
-              ))}
-            </div>
-          </div>
+          <FormCheckboxGroup
+            name="roles"
+            label="역할"
+            options={ROLES}
+            required
+            defaultValues={formData.roles}
+          />
 
-          <div className="lg:col-span-2">
-            <label
-              htmlFor="shortDescription"
-              className="mb-2 block text-sm font-medium text-black-accent"
-            >
-              간단 설명 <span className="text-danger">*</span>
-            </label>
-            <textarea
-              id="shortDescription"
-              name="shortDescription"
-              required
-              defaultValue={initialData?.data?.shortDescription}
-              rows={3}
-              className="focus:ring-skin-accent w-full rounded-lg border border-skin-line px-4 py-2 focus:border-skin-accent focus:outline-none focus:ring-1"
-            />
-          </div>
+          <FormTextarea
+            id="shortDescription"
+            name="shortDescription"
+            label="간단 설명"
+            required
+            defaultValue={formData.shortDescription}
+          />
         </div>
+      </div>
+
+      {/* 상세 설명(마크다운) 입력 영역 */}
+      <div className="rounded-lg border border-skin-line bg-white p-6">
+        <h2 className="mb-6 text-xl font-semibold text-black-accent">
+          상세 설명
+        </h2>
+        <MDXEditor
+          markdown={markdownContent}
+          onChange={setMarkdownContent}
+          placeholder="프로젝트에 대해 자세히 설명해주세요..."
+        />
+      </div>
+
+      {/* 폼 제출/취소 버튼 영역 */}
+      <div className="flex justify-end gap-3">
+        <IconButton text="취소" href="/admin/projects" variant="secondary" />
+        <IconButton text="저장하기" variant="primary" type="submit" />
       </div>
     </form>
   );
