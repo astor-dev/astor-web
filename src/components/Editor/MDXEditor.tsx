@@ -30,10 +30,6 @@ const Editor: React.FC<EditorProps> = ({ markdown, onChange, placeholder }) => {
   const handleChange = useCallback(
     (content: string) => {
       onChange(content);
-
-      window.dispatchEvent(
-        new CustomEvent("mdx-editor-update", { detail: content }),
-      );
     },
     [onChange],
   );
