@@ -2,89 +2,82 @@ import React, { useState, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { type Stack } from "~types/stack.type";
 import { useIntersectionObserver } from "~hooks/UseIntersectionObserver/UseIntersectionObserver";
+import type { ProjectEntry } from "~types/project.type";
+import RelatedProjects from "~components/Modal/RelatedProjects";
+import { FiInfo, FiExternalLink } from "react-icons/fi";
 
 interface StackItemProps {
   stack: Stack;
+  showFeatured?: boolean;
+  relatedProjects: ProjectEntry[];
 }
 
-const StackItem: React.FC<StackItemProps> = ({ stack }) => {
-  const [isOpen, setIsOpen] = useState(false);
+const StackItem: React.FC<StackItemProps> = ({
+  stack,
+  showFeatured = false,
+  relatedProjects = [],
+}) => {
+  const [showRelated, setShowRelated] = useState(false);
   const itemRef = useRef<HTMLDivElement>(null);
   const isVisible = useIntersectionObserver(itemRef);
 
-  const toggleOpen = () => {
-    setIsOpen(!isOpen);
-  };
-
   return (
-    <motion.div
-      ref={itemRef}
-      layout
-      initial={{ opacity: 0, y: 20 }}
-      animate={{
-        opacity: isVisible ? 1 : 0,
-        y: isVisible ? 0 : 20,
-      }}
-      exit={{ opacity: 0, y: -20 }}
-      transition={{ duration: 0.4, delay: 0.1 }}
-      onClick={toggleOpen}
-      className="active:bg-skin-card/70 md:hover:bg-skin-card/50 group relative flex cursor-pointer items-center gap-3 rounded-lg px-3 py-2.5 transition-all duration-300"
-    >
-      {/* 아이콘 */}
-      <div className="text-xl text-skin-accent">
-        <stack.icon
-          className={`transition-transform duration-300 md:group-hover:scale-110`}
-          style={{ color: stack.color }}
-        />
-      </div>
-
-      {/* 스택 정보 */}
-      <div className="min-w-0 flex-1">
-        <h3 className="truncate text-sm font-medium text-black-accent">
-          {stack.name}
-          {stack.featured && (
-            <span
-              className={`ml-1 inline-block ${
-                stack.superFeatured ? "text-skin-accent" : "text-yellow-500"
-              }`}
-            >
-              ★
-            </span>
-          )}
-        </h3>
-        <p className="truncate text-xs text-black-muted">{stack.description}</p>
-      </div>
-
-      {/* 툴팁 (데스크톱) */}
-      <div className="pointer-events-none invisible absolute left-1/2 top-[calc(100%+4px)] z-50 w-max -translate-x-1/2 rounded-lg bg-gray-900/90 p-2.5 text-xs opacity-0 shadow-lg transition-all duration-200 md:group-hover:visible md:group-hover:opacity-100">
-        <div className="max-w-[200px]">
-          <p className="text-white font-medium">{stack.name}</p>
-          <p className="mt-1 text-gray-200">{stack.description}</p>
+    <>
+      <motion.div
+        ref={itemRef}
+        layout="position"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: isVisible ? 1 : 0 }}
+        exit={{ opacity: 0 }}
+        transition={{
+          opacity: { duration: 0.2 },
+          layout: { duration: 0.2 },
+        }}
+        onClick={() => setShowRelated(true)}
+        className="group relative flex cursor-pointer items-center gap-3 rounded-lg bg-white/50 px-3 py-2.5 transition-colors hover:bg-white/80"
+      >
+        <div className="text-xl text-skin-accent">
+          <stack.icon
+            className="transition-transform ease-out group-hover:scale-105"
+            style={{ color: stack.color }}
+          />
         </div>
-      </div>
 
-      {/* 모바일 상세 정보 */}
+        <div className="min-w-0 flex-1">
+          <h3 className="truncate text-sm font-medium text-black-accent">
+            {stack.name}
+            {showFeatured && stack.featured && (
+              <span
+                className={`ml-1 inline-block opacity-75 ${stack.superFeatured ? "text-skin-accent" : "text-yellow-500"}`}
+              >
+                ★
+              </span>
+            )}
+          </h3>
+          <p className="truncate text-xs text-black-muted">
+            {stack.description}
+          </p>
+        </div>
+
+        {/* 데스크톱 툴팁 */}
+        <div className="pointer-events-none invisible absolute left-1/2 top-full z-50 mt-2 w-max -translate-x-1/2 rounded-lg bg-black/80 p-3 text-xs opacity-0 shadow-lg backdrop-blur-sm transition-all duration-200 md:group-hover:visible md:group-hover:opacity-100">
+          <div className="max-w-[200px]">
+            <p className="text-white font-medium">{stack.name}</p>
+            <p className="mt-1 text-gray-200/90">{stack.description}</p>
+          </div>
+        </div>
+      </motion.div>
+
       <AnimatePresence>
-        {isOpen && (
-          <motion.div
-            initial={{ height: 0, opacity: 0 }}
-            animate={{ height: "auto", opacity: 1 }}
-            exit={{ height: 0, opacity: 0 }}
-            transition={{ duration: 0.2 }}
-            className="absolute left-0 right-0 top-full z-50 mt-1 overflow-hidden rounded-lg bg-gray-900/90 shadow-lg md:hidden"
-          >
-            <div className="p-3">
-              <p className="text-sm font-medium text-white-accent">
-                {stack.name}
-              </p>
-              <p className="mt-2 text-xs leading-relaxed text-gray-200">
-                {stack.description}
-              </p>
-            </div>
-          </motion.div>
+        {showRelated && (
+          <RelatedProjects
+            stack={stack}
+            projects={relatedProjects}
+            onClose={() => setShowRelated(false)}
+          />
         )}
       </AnimatePresence>
-    </motion.div>
+    </>
   );
 };
 

@@ -4,7 +4,10 @@ import Layout from "~layouts/BaseLayout.astro";
 import dayjs from "dayjs";
 import type { CollectionEntry } from "astro:content";
 import IconButton from "~components/Button/IconButton";
-import {  render } from 'astro:content';
+import { render } from 'astro:content';
+import StackGrid from "~components/Stack/StackGrid";
+import { getProjects } from "~utils/getProjects";
+import type { ProjectEntry } from "~types/project.type";
 
 interface Props {
   project: CollectionEntry<"projects">;
@@ -21,6 +24,21 @@ const {Content} = await render(project);
 
 // 날짜 포맷팅
 const period = `${dayjs(project.data.startedAt).format("YYYY.MM")} - ${project.data.endedAt ? dayjs(project.data.endedAt).format("YYYY.MM") : "진행중"}`;
+
+// 각 스택별 관련 프로젝트 가져오기
+const relatedProjects: Record<number, ProjectEntry[]> = {};
+for (const stackId of project.data.stackIds) {
+  const projects = await getProjects({
+    filter: {
+      stackIds: [stackId],
+    },
+    sort: {
+      field: "startedAt",
+      order: "desc",
+    },
+  });
+  relatedProjects[stackId] = projects;
+}
 ---
 
 <Layout title={project.data.projectName}>
@@ -100,12 +118,20 @@ const period = `${dayjs(project.data.startedAt).format("YYYY.MM")} - ${project.d
       </header>
 
       <div class="space-y-8">
-        <!-- <section
-          class="prose-a:text-primary prose prose-lg max-w-none prose-headings:text-black-accent"
-          set:html={content}
-        /> -->
-        <Content/>
+        <!-- 기술 스택 섹션 -->
+        <section>
+          <h2 class="mb-6 text-2xl font-bold text-black-accent">사용 기술</h2>
+          <StackGrid
+            client:load
+            stackIds={project.data.stackIds}
+            relatedProjects={relatedProjects}
+          />
+        </section>
 
+        <!-- 프로젝트 설명 -->
+        <section>
+          <Content/>
+        </section>
       </div>
     </div>
   </div>

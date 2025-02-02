@@ -64,18 +64,31 @@ export async function getProjects(
     const sort = options.sort;
     projects = projects.sort((a, b) => {
       if (sort.field === "endedAt") {
-        // endedAt이 ""인 경우 제일 앞으로 정렬
+        // endedAt이 ""인 경우 내림차순 기준 제일 앞으로 정렬
         if (sort.order === "asc") {
-          if (a.data.endedAt === "") return -1;
-          if (b.data.endedAt === "") return 1;
-        } else {
           if (a.data.endedAt === "") return 1;
           if (b.data.endedAt === "") return -1;
+        } else {
+          if (a.data.endedAt === "") return -1;
+          if (b.data.endedAt === "") return 1;
         }
       }
-      return sort.order === "asc"
-        ? String(a.data[sort.field]).localeCompare(String(b.data[sort.field]))
-        : String(b.data[sort.field]).localeCompare(String(a.data[sort.field]));
+
+      // 값이 같을 경우 projectName으로 가나다순 정렬
+      const compareResult =
+        sort.order === "asc"
+          ? String(a.data[sort.field]).localeCompare(String(b.data[sort.field]))
+          : String(b.data[sort.field]).localeCompare(
+              String(a.data[sort.field]),
+            );
+
+      if (compareResult === 0) {
+        return String(a.data.projectName).localeCompare(
+          String(b.data.projectName),
+        );
+      }
+
+      return compareResult;
     });
   }
 

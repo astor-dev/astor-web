@@ -4,9 +4,14 @@ import { stacks } from "~constants/stacks";
 import { stackTypeEnum, type StackType } from "~types/stack.type";
 import StackItem from "./StackItem";
 import { useIntersectionObserver } from "~hooks/UseIntersectionObserver/UseIntersectionObserver";
+import type { ProjectEntry } from "~types/project.type";
+import { FiChevronDown, FiChevronUp } from "react-icons/fi";
 
 interface StackGridProps {
   stackIds?: number[];
+  defaultType?: StackType | "all";
+  enableFeatured?: boolean;
+  relatedProjects?: Record<number, ProjectEntry[]>;
 }
 
 // 스택 타입 순서 정의
@@ -16,22 +21,28 @@ const stackTypeOrder: Record<StackType, number> = {
   [stackTypeEnum.Enum.DevOps]: 3,
 };
 
-const StackGrid: React.FC<StackGridProps> = ({ stackIds }) => {
-  const [selectedType, setSelectedType] = useState<StackType | "all">("all");
+const StackGrid: React.FC<StackGridProps> = ({
+  stackIds,
+  defaultType = "all",
+  enableFeatured = false,
+  relatedProjects = {},
+}) => {
+  const [selectedType, setSelectedType] = useState<StackType | "all">(
+    defaultType,
+  );
   const gridRef = useRef<HTMLDivElement>(null);
-  const isVisible = useIntersectionObserver(gridRef, {
-    threshold: 0.1,
-    rootMargin: "100px",
-  });
+  const isVisible = useIntersectionObserver(gridRef);
 
   const availableStacks = stacks
     .filter(stack => (stackIds ? stackIds.includes(stack.id) : true))
     .sort((a, b) => {
-      if (a.superFeatured !== b.superFeatured) {
-        return b.superFeatured ? 1 : -1;
-      }
-      if (a.featured !== b.featured) {
-        return b.featured ? 1 : -1;
+      if (enableFeatured) {
+        if (a.superFeatured !== b.superFeatured) {
+          return b.superFeatured ? 1 : -1;
+        }
+        if (a.featured !== b.featured) {
+          return b.featured ? 1 : -1;
+        }
       }
       if (a.stackType !== b.stackType) {
         return (
@@ -55,18 +66,18 @@ const StackGrid: React.FC<StackGridProps> = ({ stackIds }) => {
     selectedType === "all" ? true : stack.stackType === selectedType,
   );
 
-  // 상태 변경 시 로그 출력
   useEffect(() => {
-    console.log("Selected Type changed:", selectedType);
-    console.log("Filtered Stacks:", filteredStacks);
-  }, [selectedType, filteredStacks]);
+    if (selectedType !== defaultType) {
+      setSelectedType(defaultType);
+    }
+  }, [defaultType]);
 
   return (
-    <div className="w-full px-4">
+    <div className="relative w-full px-4">
       {/* 필터 버튼 */}
       <div
         ref={gridRef}
-        className={`mb-6 flex flex-wrap justify-center gap-2 transition-all duration-300 ${
+        className={`relative mb-6 flex max-h-[120px] flex-wrap justify-center gap-2 overflow-y-auto px-1 py-2 transition-all duration-300 ${
           isVisible ? "translate-y-0 opacity-100" : "translate-y-10 opacity-0"
         }`}
       >
@@ -74,10 +85,7 @@ const StackGrid: React.FC<StackGridProps> = ({ stackIds }) => {
           <button
             type="button"
             key={type}
-            onClick={() => {
-              console.log("Clicked Type:", type);
-              setSelectedType(type);
-            }}
+            onClick={() => setSelectedType(type)}
             className={`z-10 rounded-full px-3 py-1.5 text-xs font-medium transition-all duration-300 ${
               selectedType === type
                 ? "bg-skin-accent text-white-base shadow-md"
@@ -90,14 +98,17 @@ const StackGrid: React.FC<StackGridProps> = ({ stackIds }) => {
       </div>
 
       {/* 스택 그리드 */}
-      <div className="relative overflow-visible">
-        <div className="grid grid-cols-2 gap-4 overflow-visible sm:grid-cols-3 md:grid-cols-4">
-          <AnimatePresence mode="popLayout">
+      <div className="relative">
+        <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4">
+          <AnimatePresence mode="sync">
             {filteredStacks.length > 0 ? (
               filteredStacks.map(stack => (
-                <div className="overflow-visible" key={stack.id}>
-                  <StackItem stack={stack} />
-                </div>
+                <StackItem
+                  key={stack.id}
+                  stack={stack}
+                  showFeatured={enableFeatured}
+                  relatedProjects={relatedProjects[stack.id] || []}
+                />
               ))
             ) : (
               <p className="text-center text-sm text-black-muted">

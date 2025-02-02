@@ -6,6 +6,23 @@ import ExperienceItem from "~components/Experience/ExperienceItem";
 import profileImage from "~assets/images/image.png";
 import ProfileHeader from "~components/Header/ProfileHeader";
 import SectionWithHeader from "~components/Section/SectionWithHeader";
+import type { ProjectEntry } from "~types/project.type";
+import { getProjects } from "~utils/getProjects";
+
+// 각 스택별 관련 프로젝트 가져오기
+const relatedProjects: Record<number, ProjectEntry[]> = {};
+for (const stackId of FEATURED_STACK_IDS) {
+  const projects = await getProjects({
+    filter: {
+      stackIds: [stackId],
+    },
+    sort: {
+      field: "startedAt",
+      order: "desc",
+    },
+  });
+  relatedProjects[stackId] = projects;
+}
 ---
 
 <Layout title="About Me">
@@ -41,7 +58,12 @@ import SectionWithHeader from "~components/Section/SectionWithHeader";
         className="from-white-base to-skin-card/20 relative bg-gradient-to-b"
         client:load
       >
-        <StackGrid client:load stackIds={FEATURED_STACK_IDS} />
+        <StackGrid
+          client:load
+          stackIds={FEATURED_STACK_IDS}
+          enableFeatured={true}
+          relatedProjects={relatedProjects}
+        />
       </SectionWithHeader>
 
       <SectionWithHeader
