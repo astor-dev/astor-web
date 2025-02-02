@@ -34,37 +34,31 @@ const StackItem: React.FC<StackItemProps> = ({
           layout: { duration: 0.2 },
         }}
         onClick={() => setShowRelated(true)}
-        className="group relative flex cursor-pointer items-center gap-3 rounded-lg bg-white/50 px-3 py-2.5 transition-colors hover:bg-white/80"
+        className="group relative flex cursor-pointer items-center gap-3 rounded-lg bg-white/50 px-3 py-2.5 shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:bg-white/80 hover:shadow-md active:translate-y-0 active:bg-white/70 active:shadow"
       >
         <div className="text-xl text-skin-accent">
           <stack.icon
-            className="transition-transform ease-out group-hover:scale-105"
+            className="transition-transform duration-200 ease-out group-hover:scale-110 group-active:scale-95"
             style={{ color: stack.color }}
           />
         </div>
 
         <div className="min-w-0 flex-1">
-          <h3 className="truncate text-sm font-medium text-black-accent">
+          <h3 className="truncate text-sm font-medium text-black-accent group-hover:text-skin-accent group-active:text-skin-accent/90">
             {stack.name}
             {showFeatured && stack.featured && (
               <span
-                className={`ml-1 inline-block opacity-75 ${stack.superFeatured ? "text-skin-accent" : "text-yellow-500"}`}
+                className={`ml-1 inline-block opacity-75 ${
+                  stack.superFeatured ? "text-skin-accent" : "text-yellow-500"
+                }`}
               >
                 ★
               </span>
             )}
           </h3>
-          <p className="truncate text-xs text-black-muted">
+          <p className="truncate text-xs text-black-muted group-hover:text-black-base/80">
             {stack.description}
           </p>
-        </div>
-
-        {/* 데스크톱 툴팁 */}
-        <div className="pointer-events-none invisible absolute left-1/2 top-full z-50 mt-2 w-max -translate-x-1/2 rounded-lg bg-black/80 p-3 text-xs opacity-0 shadow-lg backdrop-blur-sm transition-all duration-200 md:group-hover:visible md:group-hover:opacity-100">
-          <div className="max-w-[200px]">
-            <p className="text-white font-medium">{stack.name}</p>
-            <p className="mt-1 text-gray-200/90">{stack.description}</p>
-          </div>
         </div>
       </motion.div>
 
