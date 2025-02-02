@@ -43,7 +43,7 @@ interface CreateProjectRequest {
 export class ProjectsService {
   // 프로젝트 생성
   static async createProject(project: CreateProjectRequest) {
-    return await instance.post("/projects", project, {
+    return await instance.put("/projects", project, {
       shape: ProjectCreateSchema,
     });
   }

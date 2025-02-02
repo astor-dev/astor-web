@@ -17,7 +17,6 @@ permissions:
 
 jobs:
   build:
-    env:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout your repository using git

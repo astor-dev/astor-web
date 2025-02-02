@@ -30,7 +30,7 @@ const FormSelect: React.FC<FormSelectProps> = ({
         name={name}
         required={required}
         defaultValue={defaultValue}
-        className="focus:ring-skin-accent w-full rounded-lg border border-skin-line px-4 py-2 focus:border-skin-accent focus:outline-none focus:ring-1"
+        className="focus:ring-skin-accent w-full rounded-lg border border-skin-line px-4 py-2 text-black-base focus:border-skin-accent focus:outline-none focus:ring-1"
       >
         <option value="">선택해주세요</option>
         {options.map(option => (

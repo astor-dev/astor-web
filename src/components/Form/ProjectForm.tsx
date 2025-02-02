@@ -14,6 +14,7 @@ import FormSelect from "./FormSelect";
 import FormCheckboxGroup from "./FormCheckboxGroup";
 import FormTextarea from "./FormTextarea";
 import type { AstroGlobal } from "astro";
+import { stacks } from "~constants/stacks";
 
 interface ProjectFormProps {
   initialData?: Partial<ProjectEntry>;
@@ -34,7 +35,7 @@ const ProjectForm: React.FC<ProjectFormProps> = ({ initialData }) => {
     endedAt: initialData?.data?.endedAt ?? "",
     roles: initialData?.data?.roles ?? [],
     shortDescription: initialData?.data?.shortDescription ?? "",
-    stackIds: [],
+    stackIds: initialData?.data?.stackIds ?? [],
   }));
 
   // 마크다운 에디터에서 입력한 텍스트
@@ -56,7 +57,7 @@ const ProjectForm: React.FC<ProjectFormProps> = ({ initialData }) => {
         endedAt: fd.get("endedAt") as string,
         roles: fd.getAll("roles") as ProjectRole[],
         shortDescription: fd.get("shortDescription") as string,
-        stackIds: [],
+        stackIds: fd.getAll("stackIds").map(id => Number(id)),
       };
 
       setFormData(updatedData);
@@ -96,12 +97,22 @@ const ProjectForm: React.FC<ProjectFormProps> = ({ initialData }) => {
           기본 정보
         </h2>
         <div className="grid gap-6 lg:grid-cols-2">
+          <div className="lg:col-span-2">
+            <FormInput
+              id="projectName"
+              name="projectName"
+              label="프로젝트명"
+              required
+              defaultValue={formData.projectName}
+            />
+          </div>
+
           <FormInput
-            id="projectName"
-            name="projectName"
-            label="프로젝트명"
+            id="companyName"
+            name="companyName"
+            label="회사명"
             required
-            defaultValue={formData.projectName}
+            defaultValue={formData.companyName}
           />
 
           <FormSelect
@@ -131,14 +142,6 @@ const ProjectForm: React.FC<ProjectFormProps> = ({ initialData }) => {
           />
 
           <FormInput
-            id="companyName"
-            name="companyName"
-            label="회사명"
-            required
-            defaultValue={formData.companyName}
-          />
-
-          <FormInput
             id="startedAt"
             name="startedAt"
             label="시작일"
@@ -155,14 +158,18 @@ const ProjectForm: React.FC<ProjectFormProps> = ({ initialData }) => {
             required
             defaultValue={formData.endedAt}
           />
-
-          <FormCheckboxGroup
-            name="roles"
-            label="역할"
-            options={ROLES}
-            required
-            defaultValues={formData.roles}
-          />
+          <div className="lg:col-span-2">
+            <FormCheckboxGroup
+              name="roles"
+              label="역할"
+              options={ROLES.map(role => ({
+                value: role,
+                label: role,
+              }))}
+              required
+              defaultValues={formData.roles}
+            />
+          </div>
 
           <FormTextarea
             id="shortDescription"
@@ -171,6 +178,29 @@ const ProjectForm: React.FC<ProjectFormProps> = ({ initialData }) => {
             required
             defaultValue={formData.shortDescription}
           />
+
+          <div className="lg:col-span-2">
+            <FormCheckboxGroup
+              name="stackIds"
+              label="사용 기술"
+              options={stacks
+                .sort((a, b) => a.name.localeCompare(b.name))
+                .map(stack => ({
+                  value: stack.id.toString(),
+                  label: stack.name,
+                  icon: {
+                    Icon: stack.icon,
+                    color: stack.color,
+                  },
+                  // description: stack.description,
+                  category: stack.stackType,
+                }))}
+              required
+              defaultValues={formData.stackIds.map(id => id.toString())}
+              enableSearch={true}
+              itemsPerPage={9}
+            />
+          </div>
         </div>
       </div>
 

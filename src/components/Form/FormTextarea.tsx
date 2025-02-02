@@ -34,7 +34,7 @@ const FormTextarea: React.FC<FormTextareaProps> = ({
         defaultValue={defaultValue}
         rows={rows}
         placeholder={placeholder}
-        className="focus:ring-skin-accent w-full rounded-lg border border-skin-line px-4 py-2 focus:border-skin-accent focus:outline-none focus:ring-1"
+        className="focus:ring-skin-accent w-full rounded-lg border border-skin-line px-4 py-2 text-black-base focus:border-skin-accent focus:outline-none focus:ring-1"
       />
     </div>
   );
