@@ -26,36 +26,6 @@ const { project } = Astro.props;
       <h1 class="text-3xl font-bold text-black-accent">프로젝트 수정</h1>
       <p class="mt-2 text-black-muted">프로젝트 정보를 수정합니다</p>
     </div>
-
-    <div class="space-y-8">
-      <ProjectForm client:load initialData={project} />
-
-      <!-- 상세 설명 -->
-      <div class="rounded-lg border border-skin-line bg-white p-6">
-        <h2 class="mb-6 text-xl font-semibold text-black-accent">상세 설명</h2>
-        <MDXEditor
-          client:load
-          markdown={project.body as string}
-          onChange={value => console.log(value)}
-          placeholder="프로젝트에 대해 자세히 설명해주세요..."
-        />
-      </div>
-
-      <!-- 제출 버튼 -->
-      <div class="flex justify-end gap-3">
-        <IconButton
-          client:load
-          text="취소"
-          href="/admin/projects"
-          variant="secondary"
-        />
-        <IconButton
-          client:load
-          text="저장하기"
-          variant="primary"
-          onClick={() => {}}
-        />
-      </div>
-    </div>
+    <ProjectForm client:load initialData={project} />
   </div>
 </Layout>

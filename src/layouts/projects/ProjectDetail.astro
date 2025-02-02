@@ -36,7 +36,7 @@ const period = `${dayjs(project.data.startedAt).format("YYYY.MM")} - ${dayjs(pro
             client:load
             icon="FaPen"
             text="프로젝트 수정"
-            href={`/admin/projects/${project.id}/edit`}
+            href={`/admin/projects/detail/${project.id}/edit`}
           />
         ) : (
           <></>

@@ -8,7 +8,7 @@ interface ProjectTableProps {
 
 const ProjectTable: React.FC<ProjectTableProps> = ({ projects }) => {
   const handleRowClick = (projectId: string) => {
-    window.location.href = `/admin/projects/${projectId}`;
+    window.location.href = `/admin/projects/detail/${projectId}`;
   };
 
   return (
@@ -86,7 +86,7 @@ const ProjectTable: React.FC<ProjectTableProps> = ({ projects }) => {
                 <td className="whitespace-nowrap px-6 py-4 text-right">
                   <div className="flex items-center justify-end gap-2">
                     <a
-                      href={`/admin/projects/${project.id}/edit`}
+                      href={`/admin/projects/detail/${project.id}/edit`}
                       className="inline-flex items-center rounded p-1 text-black-muted hover:text-skin-accent"
                       title="수정"
                       onClick={e => e.stopPropagation()}

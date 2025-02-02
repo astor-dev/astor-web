@@ -147,7 +147,9 @@ const ProjectForm: React.FC<ProjectFormProps> = ({ initialData }) => {
             label="시작일"
             type="date"
             required
-            defaultValue={formData.startedAt}
+            defaultValue={
+              new Date(formData.startedAt).toISOString().split("T")[0]
+            }
           />
 
           <FormInput
@@ -156,7 +158,9 @@ const ProjectForm: React.FC<ProjectFormProps> = ({ initialData }) => {
             label="종료일"
             type="date"
             required
-            defaultValue={formData.endedAt}
+            defaultValue={
+              new Date(formData.endedAt).toISOString().split("T")[0]
+            }
           />
           <div className="lg:col-span-2">
             <FormCheckboxGroup
