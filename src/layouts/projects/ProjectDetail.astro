@@ -8,7 +8,7 @@ import { render } from "astro:content";
 import StackGrid from "~components/Stack/StackGrid";
 import { getProjects } from "~utils/getProjects";
 import type { ProjectEntry } from "~types/project.type";
-import ProjectDetailContent from "./ProjectDetailContent";
+import ProjectDetailContent from "~components/Project/ProjectDetailContent";
 
 interface Props {
   project: CollectionEntry<"projects">;
