@@ -20,6 +20,12 @@ const ProjectCard: React.FC<ProjectEntry> = props => {
   };
 
   const handleClick = (e: React.MouseEvent) => {
+    // 태그 영역 클릭 시 이벤트 중단
+    if ((e.target as HTMLElement).closest(".tags-scroll")) {
+      e.preventDefault();
+      return;
+    }
+
     // 데스크톱에서는 바로 이동
     if (window.matchMedia("(min-width: 768px)").matches) {
       return;
@@ -152,15 +158,17 @@ const ProjectCard: React.FC<ProjectEntry> = props => {
           <p className="line-clamp-2 text-sm font-medium uppercase tracking-wider text-black-base">
             {isLoading ? <Skeleton count={2} /> : props.data.shortDescription}
           </p>
-          <div className="flex flex-wrap gap-2">
-            {props.data.roles.map((role, idx) => (
-              <span
-                key={idx}
-                className="inline-flex items-center rounded-full bg-skin-accent/10 px-2.5 py-0.5 text-xs font-medium text-skin-accent"
-              >
-                {isLoading ? <Skeleton width={40} height={16} /> : role}
-              </span>
-            ))}
+          <div className="tags-scroll relative -mx-4 px-4 lg:-mx-5 lg:px-5">
+            <div className="hide-scrollbar flex overflow-x-scroll">
+              {props.data.roles.map((role, idx) => (
+                <span
+                  key={idx}
+                  className="mr-2 inline-flex shrink-0 items-center whitespace-nowrap rounded-full bg-skin-accent/10 px-2.5 py-0.5 text-xs font-medium text-skin-accent last:mr-0"
+                >
+                  {isLoading ? <Skeleton width={40} height={16} /> : role}
+                </span>
+              ))}
+            </div>
           </div>
         </div>
         <div
