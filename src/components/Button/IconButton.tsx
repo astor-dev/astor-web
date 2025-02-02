@@ -16,10 +16,11 @@ interface IconButtonProps {
   href?: string;
   type?: "button" | "submit" | "reset";
   onClick?: () => void;
-  variant?: "primary" | "secondary" | "danger";
+  variant?: "primary" | "secondary" | "danger" | "muted";
   size?: "sm" | "md" | "lg";
   target?: string;
   rel?: string;
+  disabled?: boolean;
 }
 
 const IconButton: React.FC<IconButtonProps> = ({
@@ -32,6 +33,7 @@ const IconButton: React.FC<IconButtonProps> = ({
   size = "md",
   target,
   rel,
+  disabled,
 }) => {
   const Icon = icon ? IconRecord[icon] : null;
   const baseStyles =
@@ -43,6 +45,7 @@ const IconButton: React.FC<IconButtonProps> = ({
       "bg-skin-fill text-black-base hover:text-black-base hover:bg-skin-fill/90",
     danger:
       "bg-danger text-white-base hover:text-white-base hover:bg-danger/90",
+    muted: "bg-skin-fill text-black-muted ",
   };
 
   const sizeStyles = {
@@ -78,7 +81,12 @@ const IconButton: React.FC<IconButtonProps> = ({
   }
 
   return (
-    <button type={type} onClick={handleClick} className={buttonClasses}>
+    <button
+      type={type}
+      onClick={handleClick}
+      className={buttonClasses}
+      disabled={disabled}
+    >
       <ButtonContent />
     </button>
   );

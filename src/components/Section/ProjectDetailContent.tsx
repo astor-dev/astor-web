@@ -118,13 +118,17 @@ const ProjectDetailContent: React.FC<ProjectDetailContentProps> = ({
               <p className="text-lg leading-relaxed text-black-base">
                 {project.data.shortDescription}
               </p>
-              <IconButton
-                icon="FiExternalLink"
-                text="사이트 방문"
-                href={project.data.siteUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-              />
+              <div className="flex shrink-0 flex-col items-end gap-3">
+                <IconButton
+                  icon="FiExternalLink"
+                  text="사이트 방문"
+                  href={project.data.siteUrl}
+                  target="_blank"
+                  variant={project.data.siteUrl ? "primary" : "muted"}
+                  disabled={!project.data.siteUrl}
+                  rel="noopener noreferrer"
+                />
+              </div>
             </div>
           </div>
         </header>

@@ -1,12 +1,5 @@
-"use client";
-
-import React, { type Dispatch, type SetStateAction } from "react";
+import { useState, useEffect } from "react";
 import { ProjectTypeEnum } from "~types/project.type";
-
-interface ProjectFilterProps {
-  selectedType: string | undefined;
-  setSelectedType: Dispatch<SetStateAction<string | undefined>>;
-}
 
 const filterOptions = [
   { value: "all", label: "전체" },
@@ -15,18 +8,24 @@ const filterOptions = [
   { value: ProjectTypeEnum.Enum["Toy-project"], label: "토이 프로젝트" },
 ];
 
-export default function ProjectFilter({
-  selectedType,
-  setSelectedType,
-}: ProjectFilterProps) {
-  const [isOpen, setIsOpen] = React.useState(false);
+export default function ProjectFilter() {
+  const [isOpen, setIsOpen] = useState(false);
+  const [selectedType, setSelectedType] = useState<string>("all");
+
+  // 필터 변경 시 이벤트 발생
+  useEffect(() => {
+    const event = new CustomEvent("projectFilterChange", {
+      detail: selectedType,
+    });
+    document.dispatchEvent(event);
+  }, [selectedType]);
 
   return (
     <div className="relative">
       <button
         onClick={() => setIsOpen(!isOpen)}
         className={`group flex w-fit items-center gap-2 rounded-lg p-4 transition-all hover:bg-skin-fill/5 active:scale-90 ${
-          selectedType === undefined ? "" : "text-skin-accent"
+          selectedType === "all" ? "" : "text-skin-accent"
         }`}
       >
         <svg
@@ -73,11 +72,10 @@ export default function ProjectFilter({
           {filterOptions.map(option => (
             <button
               key={option.value}
-              onClick={() =>
-                setSelectedType(curr =>
-                  curr === option.value ? undefined : option.value,
-                )
-              }
+              onClick={() => {
+                setSelectedType(option.value);
+                setIsOpen(false);
+              }}
               className={`hover:text-white rounded-full border border-skin-line px-6 py-2 text-sm transition-colors hover:bg-skin-accent ${
                 selectedType === option.value ? "text-white bg-skin-accent" : ""
               }`}
@@ -89,10 +87,4 @@ export default function ProjectFilter({
       )}
     </div>
   );
-}
-export function useProjectTypeFilter() {
-  const [selectedType, setSelectedType] = React.useState<string | undefined>(
-    "all",
-  );
-  return { selectedType, setSelectedType };
 }

@@ -17,6 +17,5 @@ export const ProjectRoleEnum = z.enum([
   "UI/UX",
   "Design",
   "Plan",
-  "Etc",
 ]);
 export type ProjectRole = z.infer<typeof ProjectRoleEnum>;

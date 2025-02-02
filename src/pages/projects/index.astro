@@ -2,36 +2,105 @@
 import Layout from "~layouts/BaseLayout.astro";
 import ProjectCard from "~components/Card/ProjectCard";
 import { getProjects } from "~utils/getProjects";
+import { ProjectTypeEnum } from "~types/project.type";
 
 const projects = await getProjects();
+
+// 프로젝트 타입별로 분류
+const companyProjects = projects.filter(
+  p => p.data.projectType === "Company-project",
+);
+const sideProjects = projects.filter(
+  p => p.data.projectType === "Side-project",
+);
+const toyProjects = projects.filter(p => p.data.projectType === "Toy-project");
 ---
 
-<Layout title="홈">
+<Layout title="프로젝트">
   <div class="mx-auto w-full">
-    <!-- 설명 -->
-    <section class="mb-16 mt-16 px-8">
-      <p
-        class="mb-4 text-3xl font-semibold leading-snug tracking-tight text-black-accent"
-      >
-        여태까지 만든 프로젝트를 소개합니다.
-      </p>
-      <p class="text-lg leading-relaxed text-black-base/80">
-        하나하나 정성을 담아 만든 프로젝트들이에요. 예쁘게 봐주세요 :)
-      </p>
-    </section>
-
-    <!-- 최근 프로젝트 섹션 -->
-    <section class="mb-16">
-      <!-- 
-        grid-cols-1: 기본 1열
-        sm:grid-cols-2: 작은 화면(sm 이상)에서는 2열
-        lg:grid-cols-3: 큰 화면(lg 이상)에서는 3열
-      -->
+    <!-- 헤더 섹션 -->
+    <section class="relative mb-24 mt-16 overflow-hidden px-8">
+      <div class="relative z-10">
+        <h1 class="mb-6 text-4xl font-bold text-black-accent sm:text-5xl">
+          프로젝트 갤러리
+        </h1>
+        <p class="max-w-2xl text-lg leading-relaxed text-black-base/80">
+          하나하나 정성을 담아 만든 프로젝트들이에요. 예쁘게 봐주세요 :)
+        </p>
+      </div>
       <div
-        class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 lg:gap-6"
+        class="pointer-events-none absolute -right-40 top-0 h-[300px] w-[600px] rotate-12 bg-gradient-to-br from-skin-accent/5 via-skin-accent/10 to-transparent opacity-50 blur-3xl"
       >
-        {projects.map(project => <ProjectCard {...project} client:load />)}
       </div>
     </section>
+
+    <!-- 회사 프로젝트 섹션 -->
+    {
+      companyProjects.length > 0 && (
+        <section class="mb-24 px-8">
+          <div class="mb-12">
+            <h2 class="mb-4 text-3xl font-bold text-black-accent">
+              회사 프로젝트
+            </h2>
+            <p class="text-lg text-black-base/80">
+              실무에서 진행한 프로젝트들입니다.
+            </p>
+          </div>
+          <div class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+            {companyProjects.map(project => (
+              <ProjectCard {...project} client:load />
+            ))}
+          </div>
+        </section>
+      )
+    }
+
+    <!-- 사이드 프로젝트 섹션 -->
+    {
+      sideProjects.length > 0 && (
+        <section class="mb-24 bg-gradient-to-b from-skin-fill/50 to-transparent px-8 py-24">
+          <div class="mb-12">
+            <h2 class="mb-4 text-3xl font-bold text-black-accent">
+              사이드 프로젝트
+            </h2>
+            <p class="text-lg text-black-base/80">
+              개인적으로 진행한 프로젝트들입니다.
+            </p>
+          </div>
+          <div class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+            {sideProjects.map(project => (
+              <ProjectCard {...project} client:load />
+            ))}
+          </div>
+        </section>
+      )
+    }
+
+    <!-- 토이 프로젝트 섹션 -->
+    {
+      toyProjects.length > 0 && (
+        <section class="mb-24 px-8">
+          <div class="mb-12">
+            <h2 class="mb-4 text-3xl font-bold text-black-accent">
+              토이 프로젝트
+            </h2>
+            <p class="text-lg text-black-base/80">
+              학습과 실험을 위한 작은 프로젝트들입니다.
+            </p>
+          </div>
+          <div class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+            {toyProjects.map(project => (
+              <ProjectCard {...project} client:load />
+            ))}
+          </div>
+        </section>
+      )
+    }
   </div>
 </Layout>
+
+<style>
+  section {
+    scroll-margin-top: 2rem;
+  }
+</style>
