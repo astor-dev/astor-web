@@ -3,29 +3,32 @@ import Layout from "~layouts/BaseLayout.astro";
 import ProjectTable from "~components/Table/ProjectTable";
 import { getProjects } from "~utils/getProjects";
 import IconButton from "~components/Button/IconButton";
+import AdminOnly from "~components/Auth/AdminOnly";
 
 const projects = await getProjects();
 ---
 
 <Layout title="프로젝트 관리">
-  <div class="mx-auto w-full max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
-    <!-- 헤더 -->
-    <div class="mb-8 flex items-center justify-between">
-      <div>
-        <h1 class="text-3xl font-bold text-black-accent">프로젝트 관리</h1>
-        <p class="mt-2 text-black-muted">
-          프로젝트를 추가, 수정, 삭제할 수 있습니다
-        </p>
+  <AdminOnly client:load>
+    <div class="mx-auto w-full max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
+      <!-- 헤더 -->
+      <div class="mb-8 flex items-center justify-between">
+        <div>
+          <h1 class="text-3xl font-bold text-black-accent">프로젝트 관리</h1>
+          <p class="mt-2 text-black-muted">
+            프로젝트를 추가, 수정, 삭제할 수 있습니다
+          </p>
+        </div>
+        <IconButton
+          client:load
+          icon="FaPlus"
+          text="새 프로젝트"
+          href="/admin/projects/new"
+          variant="primary"
+        />
       </div>
-      <IconButton
-        client:load
-        icon="FaPlus"
-        text="새 프로젝트"
-        href="/admin/projects/new"
-        variant="primary"
-      />
-    </div>
 
-    <ProjectTable projects={projects} client:load />
-  </div>
+      <ProjectTable projects={projects} client:load />
+    </div>
+  </AdminOnly>
 </Layout>

@@ -5,6 +5,7 @@ import StatCard, { type StatCardProps } from "~components/Card/StatCard";
 import ActivityItem, {
   type ActivityItemProps,
 } from "~components/Item/ActivityItem";
+import AdminOnly from "~components/Auth/AdminOnly";
 
 const QUICK_ACTIONS: ActionCardProps[] = [
   {
@@ -48,44 +49,46 @@ const ACTIVITIES: ActivityItemProps[] = [
 ---
 
 <Layout title="관리자 대시보드">
-  <div class="mx-auto w-full max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
-    <!-- 헤더 -->
-    <div class="mb-8">
-      <h1 class="text-3xl font-bold text-black-accent">관리자 대시보드</h1>
-      <p class="mt-2 text-black-muted">
-        프로젝트와 블로그 글을 관리할 수 있습니다
-      </p>
-    </div>
-
-    <!-- 빠른 작성 버튼 -->
-    <div class="mb-12 grid grid-cols-1 gap-4 sm:grid-cols-2">
-      {QUICK_ACTIONS.map(action => <ActionCard {...action} client:load />)}
-    </div>
-
-    <!-- 통계 카드 -->
-    <div class="mb-8">
-      <h2 class="mb-4 text-xl font-semibold text-black-accent">통계</h2>
-      <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        {STATS.map(stat => <StatCard {...stat} client:load />)}
+  <AdminOnly client:load>
+    <div class="mx-auto w-full max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
+      <!-- 헤더 -->
+      <div class="mb-8">
+        <h1 class="text-3xl font-bold text-black-accent">관리자 대시보드</h1>
+        <p class="mt-2 text-black-muted">
+          프로젝트와 블로그 글을 관리할 수 있습니다
+        </p>
       </div>
-    </div>
 
-    <!-- 최근 활동 -->
-    <div>
-      <h2 class="mb-4 text-xl font-semibold text-black-accent">최근 활동</h2>
-      <div class="rounded-lg bg-white p-6 shadow-sm">
-        <div class="space-y-4">
-          {
-            ACTIVITIES.map((activity, index) => (
-              <ActivityItem
-                {...activity}
-                isLast={index === ACTIVITIES.length - 1}
-                client:load
-              />
-            ))
-          }
+      <!-- 빠른 작성 버튼 -->
+      <div class="mb-12 grid grid-cols-1 gap-4 sm:grid-cols-2">
+        {QUICK_ACTIONS.map(action => <ActionCard {...action} client:load />)}
+      </div>
+
+      <!-- 통계 카드 -->
+      <div class="mb-8">
+        <h2 class="mb-4 text-xl font-semibold text-black-accent">통계</h2>
+        <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          {STATS.map(stat => <StatCard {...stat} client:load />)}
+        </div>
+      </div>
+
+      <!-- 최근 활동 -->
+      <div>
+        <h2 class="mb-4 text-xl font-semibold text-black-accent">최근 활동</h2>
+        <div class="rounded-lg bg-white p-6 shadow-sm">
+          <div class="space-y-4">
+            {
+              ACTIVITIES.map((activity, index) => (
+                <ActivityItem
+                  {...activity}
+                  isLast={index === ACTIVITIES.length - 1}
+                  client:load
+                />
+              ))
+            }
+          </div>
         </div>
       </div>
     </div>
-  </div>
+  </AdminOnly>
 </Layout>
