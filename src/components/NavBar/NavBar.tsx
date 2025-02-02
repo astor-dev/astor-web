@@ -18,7 +18,8 @@ export default function NavBar({
 
   useEffect(() => {
     // TODO: 서버에서 관리자 여부 확인
-    setIsAdmin(true);
+    const isLoggedIn = document.cookie.includes("isLoggedIn");
+    setIsAdmin(isLoggedIn);
   }, []);
 
   useEffect(() => {
