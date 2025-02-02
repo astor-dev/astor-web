@@ -31,15 +31,17 @@ const ProjectForm: React.FC<ProjectFormProps> = ({ initialData }) => {
     imageUrl: initialData?.data?.imageUrl ?? "",
     siteUrl: initialData?.data?.siteUrl ?? "",
     companyName: initialData?.data?.companyName ?? "",
-    startedAt: initialData?.data?.startedAt ?? "",
-    endedAt: initialData?.data?.endedAt ?? "",
+    startedAt: initialData?.data?.startedAt ?? new Date().toISOString(),
+    endedAt: initialData?.data?.endedAt ?? new Date().toISOString(),
     roles: initialData?.data?.roles ?? [],
     shortDescription: initialData?.data?.shortDescription ?? "",
     stackIds: initialData?.data?.stackIds ?? [],
   }));
 
   // 마크다운 에디터에서 입력한 텍스트
-  const [markdownContent, setMarkdownContent] = useState<string>("");
+  const [markdownContent, setMarkdownContent] = useState<string>(
+    initialData?.body ?? "",
+  );
 
   // 폼 내용 변경 시마다 호출
   const handleFormChange = useCallback(
