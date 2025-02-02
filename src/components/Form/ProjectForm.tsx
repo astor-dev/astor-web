@@ -88,7 +88,7 @@ const ProjectForm: React.FC<ProjectFormProps> = ({ initialData }) => {
         projectName: fd.get("projectName") as string,
         projectType: fd.get("projectType") as ProjectType,
         imageUrl: formData.imageUrl,
-        siteUrl: fd.get("siteUrl") as string,
+        siteUrl: (fd.get("siteUrl") as string) || "",
         companyName: fd.get("companyName") as string,
         startedAt: fd.get("startedAt") as string,
         endedAt: fd.get("endedAt") as string,
@@ -105,12 +105,8 @@ const ProjectForm: React.FC<ProjectFormProps> = ({ initialData }) => {
   // 스택 ID 변경 핸들러
   const handleStackIdsChange = useCallback(
     (values: string[]) => {
-      console.log("스택 변경 전:", formData.stackIds);
-      console.log("스택 변경될 값:", values);
-
       setFormData(prev => {
         const newStackIds = values.map(id => Number(id));
-        console.log("스택 변경 후:", newStackIds);
         return {
           ...prev,
           stackIds: newStackIds,
@@ -124,8 +120,16 @@ const ProjectForm: React.FC<ProjectFormProps> = ({ initialData }) => {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     try {
+      // URL이 비어있을 경우 빈 문자열로 설정
+      const submissionData = {
+        ...formData,
+        siteUrl: formData.siteUrl || "",
+        endedAt: formData.endedAt || "",
+        stackIds: formData.stackIds || [],
+      };
+
       const projectData = {
-        frontmatter: formData,
+        frontmatter: submissionData,
         body: markdownContent,
       };
 
@@ -223,9 +227,14 @@ const ProjectForm: React.FC<ProjectFormProps> = ({ initialData }) => {
               name="siteUrl"
               label="사이트 URL"
               type="url"
-              required
+              required={false}
               defaultValue={formData.siteUrl}
+              pattern="^$|https?:\/\/.+"
+              title="URL을 입력하거나 비워두세요"
             />
+            <p className="mt-2 text-sm text-skin-accent">
+              사이트가 없는 경우 비워두세요.
+            </p>
           </div>
 
           <Input

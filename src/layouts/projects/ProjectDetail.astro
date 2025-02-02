@@ -4,10 +4,11 @@ import Layout from "~layouts/BaseLayout.astro";
 import dayjs from "dayjs";
 import type { CollectionEntry } from "astro:content";
 import IconButton from "~components/Button/IconButton";
-import { render } from 'astro:content';
+import { render } from "astro:content";
 import StackGrid from "~components/Stack/StackGrid";
 import { getProjects } from "~utils/getProjects";
 import type { ProjectEntry } from "~types/project.type";
+import ProjectDetailContent from "./ProjectDetailContent";
 
 interface Props {
   project: CollectionEntry<"projects">;
@@ -20,7 +21,7 @@ if (!project) {
   return Astro.redirect("/404");
 }
 
-const {Content} = await render(project);
+const { Content } = await render(project);
 
 // 날짜 포맷팅
 const period = `${dayjs(project.data.startedAt).format("YYYY.MM")} - ${project.data.endedAt ? dayjs(project.data.endedAt).format("YYYY.MM") : "진행중"}`;
@@ -42,99 +43,15 @@ for (const stackId of project.data.stackIds) {
 ---
 
 <Layout title={project.data.projectName}>
-  <div class="mx-auto max-w-4xl px-4 py-8 sm:px-6 lg:px-8">
-    <!-- 헤더 섹션 -->
-    <div class="mb-8 flex items-center justify-between">
-      <div>
-        <h1 class="text-3xl font-bold text-black-accent">
-          {project.data.projectName}
-        </h1>
-        <p class="mt-2 text-black-muted">{project.data.companyName}</p>
-      </div>
-      {
-        isAdmin ? (
-          <IconButton
-            client:load
-            icon="FaPen"
-            text="프로젝트 수정"
-            href={`/admin/projects/detail/${project.id}/edit`}
-          />
-        ) : (
-          <></>
-        )
-      }
-    </div>
-
-    <!-- 나머지 프로젝트 상세 내용 -->
-    <div class="py-8 sm:py-12 lg:py-16">
-      <header class="mb-6 sm:mb-8 lg:mb-12">
-        <ImageWithSkeleton
-          src={project.data.imageUrl}
-          alt={project.data.projectName}
-          className="aspect-4/3 w-full rounded-lg object-cover shadow-md"
-          client:load
-        />
-
-        <div class="mt-6 sm:mt-8">
-          <div class="flex flex-wrap items-center justify-between gap-4">
-            <h1
-              class="text-2xl font-bold text-black-accent sm:text-3xl lg:text-4xl"
-            >
-              {project.data.projectName}
-            </h1>
-            <a
-              href={project.data.siteUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              class="bg-primary text-white hover:bg-primary/90 focus:ring-primary/50 inline-flex items-center rounded-md px-4 py-2 text-sm font-medium focus:outline-none focus:ring-2"
-            >
-              사이트 방문
-              <svg class="ml-2 h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
-                <path
-                  d="M11 3a1 1 0 100 2h2.586l-6.293 6.293a1 1 0 101.414 1.414L15 6.414V9a1 1 0 102 0V4a1 1 0 00-1-1h-5z"
-                ></path>
-                <path
-                  d="M5 5a2 2 0 00-2 2v8a2 2 0 002 2h8a2 2 0 002-2v-3a1 1 0 10-2 0v3H5V7h3a1 1 0 000-2H5z"
-                ></path>
-              </svg>
-            </a>
-          </div>
-
-          <div class="mt-4 flex flex-wrap gap-4 text-lg text-black-base/80">
-            <p><strong>{project.data.companyName}</strong></p>
-            <p>{period}</p>
-          </div>
-
-          <div class="mt-3 flex flex-wrap gap-2">
-            {
-              project.data.roles.map((role: string) => (
-                <span class="rounded-full bg-gray-100 px-3 py-1 text-sm font-medium text-gray-800">
-                  {role}
-                </span>
-              ))
-            }
-          </div>
-        </div>
-      </header>
-
-      <div class="space-y-8">
-        <!-- 기술 스택 섹션 -->
-        <section>
-          <h2 class="mb-6 text-2xl font-bold text-black-accent">사용 기술</h2>
-          <StackGrid
-            client:load
-            stackIds={project.data.stackIds}
-            relatedProjects={relatedProjects}
-          />
-        </section>
-
-        <!-- 프로젝트 설명 -->
-        <section>
-          <Content/>
-        </section>
-      </div>
-    </div>
-  </div>
+  <ProjectDetailContent
+    client:load
+    project={project}
+    isAdmin={isAdmin}
+    period={period}
+    relatedProjects={relatedProjects}
+  >
+    <Content />
+  </ProjectDetailContent>
 </Layout>
 
 <style>

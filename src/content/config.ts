@@ -8,7 +8,7 @@ const projects = defineCollection({
   schema: z.object({
     projectType: ProjectTypeEnum,
     imageUrl: z.string(),
-    siteUrl: z.string().url(),
+    siteUrl: z.string().url().or(z.literal("")),
     roles: z.array(ProjectRoleEnum),
     companyName: z.string(),
     projectName: z.string(),

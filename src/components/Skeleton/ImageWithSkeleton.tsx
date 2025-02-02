@@ -29,7 +29,6 @@ export default function ImageWithSkeleton({
     if (img.complete) {
       setIsLoading(false);
       if (onLoadComplete) {
-        console.log("onLoadComplete (이미 캐시된 이미지)");
         onLoadComplete();
       }
     } else {
@@ -37,7 +36,6 @@ export default function ImageWithSkeleton({
       img.onload = () => {
         setIsLoading(false);
         if (onLoadComplete) {
-          console.log("onLoadComplete");
           onLoadComplete();
         }
       };

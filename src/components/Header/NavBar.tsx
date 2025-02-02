@@ -136,19 +136,6 @@ export default function NavBar({
                 {item.name}
               </a>
             ))}
-            {/* 모바일에서 Admin 메뉴 추가 */}
-            {isAdmin && (
-              <a
-                href="/admin"
-                className={`text-lg font-medium transition hover:text-skin-secondary ${
-                  pathname.startsWith("/admin")
-                    ? "text-skin-accent"
-                    : "text-black-base"
-                }`}
-              >
-                관리자
-              </a>
-            )}
           </div>
         </div>
       )}

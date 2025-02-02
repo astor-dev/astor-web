@@ -31,6 +31,7 @@ import {
   SiGoogle,
   SiFastapi,
   SiSpring,
+  SiFirebase,
 } from "react-icons/si";
 import { stackTypeEnum, type Stack } from "~types/stack.type";
 
@@ -325,6 +326,16 @@ export const stacks: Stack[] = [
     icon: SiSpring,
     description: "자바 기반의 프레임워크로 안정적인 애플리케이션 개발",
     color: "#6DB33D",
+    featured: false,
+  },
+  {
+    id: 33,
+    stackType: stackTypeEnum.Enum.Backend,
+    name: "Firebase",
+    icon: SiFirebase,
+    description:
+      "실시간 데이터베이스와 클라우드 서비스로 빠른 애플리케이션 개발",
+    color: "#FFCA28",
     featured: false,
   },
 ];

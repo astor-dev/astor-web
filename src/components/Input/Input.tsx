@@ -12,6 +12,8 @@ interface InputProps {
   max?: string;
   onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
   disabled?: boolean;
+  pattern?: string;
+  title?: string;
 }
 
 const Input: React.FC<InputProps> = ({
@@ -26,6 +28,8 @@ const Input: React.FC<InputProps> = ({
   max,
   onChange,
   disabled,
+  pattern,
+  title,
 }) => {
   return (
     <div>
@@ -46,6 +50,8 @@ const Input: React.FC<InputProps> = ({
         max={max}
         onChange={onChange}
         disabled={disabled}
+        pattern={pattern}
+        title={title}
         className={`focus:ring-skin-accent disabled:all-unset w-full rounded-lg border border-skin-line px-4 py-2 text-black-base focus:border-skin-accent focus:outline-none focus:ring-1 disabled:w-full disabled:rounded-lg disabled:border disabled:border-skin-line disabled:bg-skin-fill disabled:px-4 disabled:py-2 disabled:opacity-60 ${
           disabled ? "cursor-not-allowed" : ""
         }`}

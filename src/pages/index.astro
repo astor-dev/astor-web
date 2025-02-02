@@ -39,8 +39,10 @@ const pinnedPosts = await getPosts({ filter: { pinned: true } });
         class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 lg:gap-6"
       >
         {
-          recentProjects.map(project => (
-            <ProjectCard {...project} client:load />
+          recentProjects.map((project, index) => (
+            <div class={`${index >= 3 ? "hidden md:block" : ""}`}>
+              <ProjectCard {...project} client:load />
+            </div>
           ))
         }
       </div>

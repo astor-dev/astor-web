@@ -1,11 +1,13 @@
 import React from "react";
 import { FaCode, FaPen, FaPlus, FaShare } from "react-icons/fa";
+import { FiExternalLink } from "react-icons/fi";
 
 const IconRecord: Record<string, React.ElementType> = {
   FaCode: FaCode,
   FaPen: FaPen,
   FaPlus: FaPlus,
   FaShare: FaShare,
+  FiExternalLink: FiExternalLink,
 };
 
 interface IconButtonProps {
@@ -16,6 +18,8 @@ interface IconButtonProps {
   onClick?: () => void;
   variant?: "primary" | "secondary" | "danger";
   size?: "sm" | "md" | "lg";
+  target?: string;
+  rel?: string;
 }
 
 const IconButton: React.FC<IconButtonProps> = ({
@@ -26,6 +30,8 @@ const IconButton: React.FC<IconButtonProps> = ({
   onClick,
   variant = "primary",
   size = "md",
+  target,
+  rel,
 }) => {
   const Icon = icon ? IconRecord[icon] : null;
   const baseStyles =
@@ -65,7 +71,7 @@ const IconButton: React.FC<IconButtonProps> = ({
 
   if (href) {
     return (
-      <a href={href} className={buttonClasses}>
+      <a href={href} className={buttonClasses} target={target} rel={rel}>
         <ButtonContent />
       </a>
     );

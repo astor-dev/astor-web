@@ -11,6 +11,7 @@ import type { ProjectEntry } from "~/types/project.type";
 
 const ProjectCard: React.FC<ProjectEntry> = props => {
   const [isLoading, setIsLoading] = useState(true);
+  const [isTouched, setIsTouched] = useState(false);
   const cardRef = useRef<HTMLDivElement>(null);
   const isVisible = useIntersectionObserver(cardRef);
 
@@ -18,12 +19,31 @@ const ProjectCard: React.FC<ProjectEntry> = props => {
     setIsLoading(false);
   };
 
+  const handleClick = (e: React.MouseEvent) => {
+    // 데스크톱에서는 바로 이동
+    if (window.matchMedia("(min-width: 768px)").matches) {
+      return;
+    }
+
+    // 모바일에서 첫 터치시에는 이벤트 중단
+    if (!isTouched) {
+      e.preventDefault();
+      setIsTouched(true);
+      // 3초 후 터치 상태 초기화
+      setTimeout(() => setIsTouched(false), 3000);
+    }
+  };
+
   const particlesInit = useCallback(async (engine: Engine) => {
     await loadSlim(engine);
   }, []);
 
   return (
-    <a href={`/projects/${props.id}`} className="group block">
+    <a
+      href={`/projects/${props.id}`}
+      className="group block"
+      onClick={handleClick}
+    >
       <article
         ref={cardRef}
         className={`bg-skin-card relative h-full overflow-hidden rounded-2xl shadow-lg transition-all duration-700 ease-out ${
@@ -32,7 +52,9 @@ const ProjectCard: React.FC<ProjectEntry> = props => {
       >
         <ReactParticles
           id={`particles-${props.id}`}
-          className="absolute inset-0 z-10 opacity-0 transition-opacity duration-300 group-hover:opacity-100"
+          className={`absolute inset-0 z-10 opacity-0 transition-opacity duration-300 md:group-hover:opacity-100 ${
+            isTouched ? "opacity-100" : ""
+          }`}
           init={particlesInit}
           options={{
             fullScreen: { enable: false },
@@ -126,9 +148,9 @@ const ProjectCard: React.FC<ProjectEntry> = props => {
             onLoadComplete={handleImageLoad}
           />
         </div>
-        <div className="p-4 lg:p-5">
-          <p className="mb-3 text-sm font-medium uppercase tracking-wider text-black-base">
-            {isLoading ? <Skeleton /> : props.data.shortDescription}
+        <div className="flex h-[6.5rem] flex-col justify-between p-4 lg:p-5">
+          <p className="line-clamp-2 text-sm font-medium uppercase tracking-wider text-black-base">
+            {isLoading ? <Skeleton count={2} /> : props.data.shortDescription}
           </p>
           <div className="flex flex-wrap gap-2">
             {props.data.roles.map((role, idx) => (
@@ -141,14 +163,23 @@ const ProjectCard: React.FC<ProjectEntry> = props => {
             ))}
           </div>
         </div>
-        <div className="absolute inset-0 flex items-center justify-center bg-gradient-to-t from-black/80 via-black/60 to-black/40 opacity-0 transition-opacity duration-300 group-hover:opacity-100">
-          <div className="p-4 text-center">
+        <div
+          className={`absolute inset-0 flex items-center justify-center bg-gradient-to-t from-black/80 via-black/60 to-black/40 opacity-0 transition-all duration-300 md:group-hover:opacity-100 ${
+            isTouched ? "opacity-100" : ""
+          }`}
+        >
+          <div
+            className={`p-4 text-center transition-opacity duration-300 ${isTouched ? "opacity-100" : "opacity-0 md:opacity-100"}`}
+          >
             <p className="mb-2 text-base font-medium text-white-base lg:text-lg">
               {isLoading ? <Skeleton /> : props.data.companyName}
             </p>
             <h3 className="text-xl font-bold text-white-base lg:text-2xl">
               {isLoading ? <Skeleton /> : props.data.projectName}
             </h3>
+            <p className="mt-2 text-sm text-white-base/80">
+              {isTouched ? "탭하여 자세히 보기" : ""}
+            </p>
           </div>
         </div>
       </article>
