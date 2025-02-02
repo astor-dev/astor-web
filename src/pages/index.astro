@@ -5,10 +5,16 @@ import BlogPostCard from "~components/Card/BlogPostCard";
 import { PiShootingStarFill } from "react-icons/pi";
 import { getProjects } from "~/utils/getProjects";
 import { getPosts } from "~utils/getPosts";
+import { ProjectTypeEnum } from "~types/project.type";
 
 // 프로젝트 데이터 가져오기
-const allProjects = await getProjects();
-const recentProjects = allProjects.slice(0, 6);
+const recentProjects = await getProjects({
+  paging: { page: 0, limit: 6 },
+  sort: { field: "endedAt", order: "desc" },
+  filter: {
+    projectTypes: ["Company-project", "Side-project"],
+  },
+});
 
 // 블로그 데이터 가져오기
 const pinnedPosts = await getPosts({ filter: { pinned: true } });

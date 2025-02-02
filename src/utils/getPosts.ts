@@ -7,7 +7,7 @@ export interface GetPostsOptions {
     page: number;
     limit: number;
   };
-  filter: {
+  filter?: {
     tag?: string[];
     pinned?: boolean;
   };

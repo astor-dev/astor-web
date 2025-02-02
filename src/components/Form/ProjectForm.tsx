@@ -69,11 +69,13 @@ const ProjectForm: React.FC<ProjectFormProps> = ({ initialData }) => {
   // 폼 내용 변경 시마다 호출
   const handleFormChange = useCallback(
     (e: React.FormEvent<HTMLFormElement>) => {
+      const target = e.target as HTMLElement;
+
       // 이미지 입력, 무기한 체크박스, 스택 체크박스의 경우 건너뛰기
       if (
-        (e.target as HTMLElement).id === "imageUrl" ||
-        (e.target as HTMLElement).id === "infiniteEndDate" ||
-        (e.target as HTMLElement).id === "stackIds" // 스택 체크박스 제외
+        target.id === "imageUrl" ||
+        target.id === "infiniteEndDate" ||
+        target.closest("#stackIds") // 스택 체크박스 영역 전체를 제외
       ) {
         return;
       }
@@ -89,10 +91,10 @@ const ProjectForm: React.FC<ProjectFormProps> = ({ initialData }) => {
         siteUrl: fd.get("siteUrl") as string,
         companyName: fd.get("companyName") as string,
         startedAt: fd.get("startedAt") as string,
-        endedAt: formData.endedAt,
+        endedAt: fd.get("endedAt") as string,
         roles: fd.getAll("roles") as ProjectRole[],
         shortDescription: fd.get("shortDescription") as string,
-        stackIds: formData.stackIds, // 스택은 별도 핸들러로 관리
+        stackIds: formData.stackIds,
       };
 
       setFormData(updatedData);
@@ -101,19 +103,22 @@ const ProjectForm: React.FC<ProjectFormProps> = ({ initialData }) => {
   );
 
   // 스택 ID 변경 핸들러
-  const handleStackIdsChange = useCallback((values: string[]) => {
-    const newStackIds = values.map(id => Number(id));
+  const handleStackIdsChange = useCallback(
+    (values: string[]) => {
+      console.log("스택 변경 전:", formData.stackIds);
+      console.log("스택 변경될 값:", values);
 
-    // 직접 setFormData 호출
-    setFormData(prev => {
-      const updated = {
-        ...prev,
-        stackIds: newStackIds,
-      };
-      console.log("업데이트된 formData:", updated);
-      return updated;
-    });
-  }, []); // formData 의존성 제거
+      setFormData(prev => {
+        const newStackIds = values.map(id => Number(id));
+        console.log("스택 변경 후:", newStackIds);
+        return {
+          ...prev,
+          stackIds: newStackIds,
+        };
+      });
+    },
+    [formData],
+  ); // formData를 의존성 배열에 추가
 
   // 폼 제출 처리
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
