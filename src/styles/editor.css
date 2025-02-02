@@ -15,3 +15,23 @@
   min-height: 500px;
   padding: 1rem;
 }
+
+.mdxeditor-image-upload-dialog {
+  border-radius: 0.5rem;
+  padding: 1.5rem;
+  box-shadow:
+    0 10px 15px -3px rgb(0 0 0 / 0.1),
+    0 4px 6px -4px rgb(0 0 0 / 0.1);
+}
+
+.mdxeditor-image-upload-dialog-drop-zone {
+  border-radius: 0.5rem;
+  border: 2px dashed #e5e7eb;
+  padding: 2rem;
+  text-align: center;
+  transition: border-color 0.2s;
+}
+
+.mdxeditor-image-upload-dialog-drop-zone:hover {
+  border-color: var(--color-primary);
+}

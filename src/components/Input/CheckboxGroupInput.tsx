@@ -13,7 +13,7 @@ interface CheckboxOption {
   category?: string;
 }
 
-interface FormCheckboxGroupProps {
+interface CheckboxGroupInputProps {
   name: string;
   label: string;
   options: CheckboxOption[];
@@ -21,9 +21,10 @@ interface FormCheckboxGroupProps {
   defaultValues?: string[];
   enableSearch?: boolean;
   itemsPerPage?: number;
+  onChange?: (values: string[]) => void;
 }
 
-const FormCheckboxGroup: React.FC<FormCheckboxGroupProps> = ({
+const CheckboxGroupInput: React.FC<CheckboxGroupInputProps> = ({
   name,
   label,
   options,
@@ -31,7 +32,9 @@ const FormCheckboxGroup: React.FC<FormCheckboxGroupProps> = ({
   defaultValues = [],
   enableSearch = false,
   itemsPerPage = 9,
+  onChange,
 }) => {
+  const [selectedValues, setSelectedValues] = useState<string[]>(defaultValues);
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedCategory, setSelectedCategory] = useState<string>("전체");
   const [currentPage, setCurrentPage] = useState(1);
@@ -41,6 +44,17 @@ const FormCheckboxGroup: React.FC<FormCheckboxGroupProps> = ({
   const categories = hasCategories
     ? ["전체", ...new Set(options.map(opt => opt.category || "기타"))]
     : [];
+
+  // 체크박스 변경 핸들러
+  const handleCheckboxChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { value, checked } = e.target;
+    const newValues = checked
+      ? [...selectedValues, value]
+      : selectedValues.filter(v => v !== value);
+
+    setSelectedValues(newValues);
+    onChange?.(newValues);
+  };
 
   // 검색어와 카테고리로 필터링된 옵션들
   const filteredOptions = options.filter(option => {
@@ -124,7 +138,8 @@ const FormCheckboxGroup: React.FC<FormCheckboxGroupProps> = ({
               type="checkbox"
               name={name}
               value={option.value}
-              defaultChecked={defaultValues.includes(option.value)}
+              checked={selectedValues.includes(option.value)}
+              onChange={handleCheckboxChange}
               className="focus:ring-skin-accent mt-1 rounded border-skin-line text-skin-accent"
             />
             <div className="flex-1">
@@ -178,4 +193,4 @@ const FormCheckboxGroup: React.FC<FormCheckboxGroupProps> = ({
   );
 };
 
-export default FormCheckboxGroup;
+export default CheckboxGroupInput;

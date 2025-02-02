@@ -2,7 +2,7 @@
 import AdminOnly from "~components/Auth/AdminOnly";
 import ProjectDetail from "~layouts/projects/ProjectDetail.astro";
 import { getProjects } from "~utils/getProjects";
-
+import Layout from "~layouts/BaseLayout.astro";
 export async function getStaticPaths() {
   const projects = await getProjects();
 
@@ -17,6 +17,8 @@ export async function getStaticPaths() {
 const { project } = Astro.props;
 ---
 
-<AdminOnly client:load>
-  <ProjectDetail project={project} isAdmin={true} />
-</AdminOnly>
+<Layout title="프로젝트 상세">
+  <AdminOnly client:load>
+    <ProjectDetail project={project} isAdmin={true} />
+  </AdminOnly>
+</Layout>

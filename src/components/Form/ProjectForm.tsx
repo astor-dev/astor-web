@@ -9,12 +9,13 @@ import {
 import { ProjectsService } from "~services/projects.service";
 import MDXEditor from "~components/Editor/MDXEditor";
 import IconButton from "~components/Button/IconButton";
-import FormInput from "./FormInput";
-import FormSelect from "./FormSelect";
-import FormCheckboxGroup from "./FormCheckboxGroup";
-import FormTextarea from "./FormTextarea";
-import type { AstroGlobal } from "astro";
 import { stacks } from "~constants/stacks";
+import Input from "~components/Input/Input";
+import SelectInput from "~components/Input/SelectInput";
+import TextareaInput from "~components/Input/TextareaInput";
+import CheckboxGroupInput from "~components/Input/CheckboxGroupInput";
+import ImageFileInput from "~components/Input/ImageFileInput";
+import dayjs from "dayjs";
 
 interface ProjectFormProps {
   initialData?: Partial<ProjectEntry>;
@@ -24,19 +25,41 @@ const PROJECT_TYPES = ProjectTypeEnum.options;
 const ROLES = ProjectRoleEnum.options;
 
 const ProjectForm: React.FC<ProjectFormProps> = ({ initialData }) => {
+  // 날짜를 YYYY-MM 형식으로 안전하게 변환하는 헬퍼 함수
+  const formatDateToYearMonth = (dateString: string) => {
+    if (!dateString) return "";
+
+    try {
+      const date = dayjs(dateString);
+      return date.isValid()
+        ? date.format("YYYY-MM")
+        : dayjs().format("YYYY-MM");
+    } catch {
+      return dayjs().format("YYYY-MM");
+    }
+  };
+
+  // 초기 상태 설정을 위한 함수
+  const getInitialDate = () => {
+    return dayjs().startOf("month").hour(12).format("YYYY-MM");
+  };
+
   // 폼 필드 변경 시 즉시 반영되는 "기본 정보"
-  const [formData, setFormData] = useState<ProjectEntry["data"]>(() => ({
-    projectName: initialData?.data?.projectName ?? "",
-    projectType: initialData?.data?.projectType ?? ProjectTypeEnum.options[0],
-    imageUrl: initialData?.data?.imageUrl ?? "",
-    siteUrl: initialData?.data?.siteUrl ?? "",
-    companyName: initialData?.data?.companyName ?? "",
-    startedAt: initialData?.data?.startedAt ?? new Date().toISOString(),
-    endedAt: initialData?.data?.endedAt ?? new Date().toISOString(),
-    roles: initialData?.data?.roles ?? [],
-    shortDescription: initialData?.data?.shortDescription ?? "",
-    stackIds: initialData?.data?.stackIds ?? [],
-  }));
+  const [formData, setFormData] = useState<ProjectEntry["data"]>(() => {
+    const initialDate = getInitialDate();
+    return {
+      projectName: initialData?.data?.projectName ?? "",
+      projectType: initialData?.data?.projectType ?? ProjectTypeEnum.options[0],
+      imageUrl: initialData?.data?.imageUrl ?? "",
+      siteUrl: initialData?.data?.siteUrl ?? "",
+      companyName: initialData?.data?.companyName ?? "",
+      startedAt: initialData?.data?.startedAt ?? initialDate,
+      endedAt: initialData?.data?.endedAt ?? initialDate,
+      roles: initialData?.data?.roles ?? [],
+      shortDescription: initialData?.data?.shortDescription ?? "",
+      stackIds: initialData?.data?.stackIds ?? [],
+    };
+  });
 
   // 마크다운 에디터에서 입력한 텍스트
   const [markdownContent, setMarkdownContent] = useState<string>(
@@ -46,17 +69,26 @@ const ProjectForm: React.FC<ProjectFormProps> = ({ initialData }) => {
   // 폼 내용 변경 시마다 호출
   const handleFormChange = useCallback(
     (e: React.FormEvent<HTMLFormElement>) => {
+      // 이미지 입력과 무기한 체크박스의 경우 건너뛰기
+      if (
+        (e.target as HTMLElement).id === "imageUrl" ||
+        (e.target as HTMLElement).id === "infiniteEndDate"
+      ) {
+        return;
+      }
+
       const form = e.currentTarget;
       const fd = new FormData(form);
 
       const updatedData: ProjectEntry["data"] = {
+        ...formData,
         projectName: fd.get("projectName") as string,
         projectType: fd.get("projectType") as ProjectType,
-        imageUrl: fd.get("imageUrl") as string,
+        imageUrl: formData.imageUrl,
         siteUrl: fd.get("siteUrl") as string,
         companyName: fd.get("companyName") as string,
         startedAt: fd.get("startedAt") as string,
-        endedAt: fd.get("endedAt") as string,
+        endedAt: formData.endedAt, // 종료일은 별도 핸들러로 처리
         roles: fd.getAll("roles") as ProjectRole[],
         shortDescription: fd.get("shortDescription") as string,
         stackIds: fd.getAll("stackIds").map(id => Number(id)),
@@ -64,8 +96,16 @@ const ProjectForm: React.FC<ProjectFormProps> = ({ initialData }) => {
 
       setFormData(updatedData);
     },
-    [],
+    [formData],
   );
+
+  // 스택 ID 변경 핸들러
+  const handleStackIdsChange = (values: string[]) => {
+    setFormData(prev => ({
+      ...prev,
+      stackIds: values.map(id => Number(id)),
+    }));
+  };
 
   // 폼 제출 처리
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -88,6 +128,31 @@ const ProjectForm: React.FC<ProjectFormProps> = ({ initialData }) => {
     }
   };
 
+  // 월 선택 시 날짜를 해당 월의 첫날로 설정하는 핸들러
+  const handleMonthChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    try {
+      const date = dayjs(value + "-01")
+        .hour(12)
+        .format("YYYY-MM");
+
+      setFormData(prev => ({
+        ...prev,
+        [name]: date,
+      }));
+    } catch (error) {
+      console.error("날짜 변환 오류:", error);
+    }
+  };
+
+  // 종료일 무기한 설정 핸들러
+  const handleEndDateInfinite = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setFormData(prev => ({
+      ...prev,
+      endedAt: e.target.checked ? "" : dayjs().hour(12).format("YYYY-MM"),
+    }));
+  };
+
   return (
     <form
       className="space-y-8"
@@ -100,7 +165,7 @@ const ProjectForm: React.FC<ProjectFormProps> = ({ initialData }) => {
         </h2>
         <div className="grid gap-6 lg:grid-cols-2">
           <div className="lg:col-span-2">
-            <FormInput
+            <Input
               id="projectName"
               name="projectName"
               label="프로젝트명"
@@ -109,7 +174,7 @@ const ProjectForm: React.FC<ProjectFormProps> = ({ initialData }) => {
             />
           </div>
 
-          <FormInput
+          <Input
             id="companyName"
             name="companyName"
             label="회사명"
@@ -117,7 +182,7 @@ const ProjectForm: React.FC<ProjectFormProps> = ({ initialData }) => {
             defaultValue={formData.companyName}
           />
 
-          <FormSelect
+          <SelectInput
             id="projectType"
             name="projectType"
             label="프로젝트 유형"
@@ -126,46 +191,79 @@ const ProjectForm: React.FC<ProjectFormProps> = ({ initialData }) => {
             defaultValue={formData.projectType}
           />
 
-          <FormInput
-            id="imageUrl"
-            name="imageUrl"
-            label="이미지 URL"
-            required
-            defaultValue={formData.imageUrl}
-          />
+          <div className="lg:col-span-2">
+            <ImageFileInput
+              id="imageUrl"
+              name="imageUrl"
+              label="이미지"
+              type="projects"
+              required
+              value={formData.imageUrl}
+              setValue={url => {
+                setFormData(prev => ({
+                  ...prev,
+                  imageUrl: url || "",
+                }));
+              }}
+            />
+            <p className="mt-2 text-sm text-skin-accent">
+              이미지는 4:3 비율을 권장드립니다.
+            </p>
+          </div>
 
-          <FormInput
-            id="siteUrl"
-            name="siteUrl"
-            label="사이트 URL"
-            type="url"
-            required
-            defaultValue={formData.siteUrl}
-          />
+          <div className="lg:col-span-2">
+            <Input
+              id="siteUrl"
+              name="siteUrl"
+              label="사이트 URL"
+              type="url"
+              required
+              defaultValue={formData.siteUrl}
+            />
+          </div>
 
-          <FormInput
+          <Input
             id="startedAt"
             name="startedAt"
             label="시작일"
-            type="date"
+            type="month"
             required
-            defaultValue={
-              new Date(formData.startedAt).toISOString().split("T")[0]
-            }
+            defaultValue={formatDateToYearMonth(formData.startedAt)}
+            onChange={handleMonthChange}
+            max={dayjs().format("YYYY-MM")}
           />
 
-          <FormInput
-            id="endedAt"
-            name="endedAt"
-            label="종료일"
-            type="date"
-            required
-            defaultValue={
-              new Date(formData.endedAt).toISOString().split("T")[0]
-            }
-          />
+          <div className="space-y-2">
+            <Input
+              id="endedAt"
+              name="endedAt"
+              label="종료일"
+              type="month"
+              required={!formData.endedAt === false}
+              defaultValue={formatDateToYearMonth(formData.endedAt)}
+              onChange={handleMonthChange}
+              min={formatDateToYearMonth(formData.startedAt)}
+              max={dayjs().format("YYYY-MM")}
+              disabled={!formData.endedAt}
+            />
+            <div className="flex items-center gap-2">
+              <input
+                type="checkbox"
+                id="infiniteEndDate"
+                checked={!formData.endedAt}
+                onChange={handleEndDateInfinite}
+                className="focus:ring-skin-accent h-4 w-4 rounded border-skin-line text-skin-accent"
+              />
+              <label
+                htmlFor="infiniteEndDate"
+                className="text-sm text-black-base"
+              >
+                진행 중 (종료일 미정)
+              </label>
+            </div>
+          </div>
           <div className="lg:col-span-2">
-            <FormCheckboxGroup
+            <CheckboxGroupInput
               name="roles"
               label="역할"
               options={ROLES.map(role => ({
@@ -177,7 +275,7 @@ const ProjectForm: React.FC<ProjectFormProps> = ({ initialData }) => {
             />
           </div>
 
-          <FormTextarea
+          <TextareaInput
             id="shortDescription"
             name="shortDescription"
             label="간단 설명"
@@ -186,7 +284,7 @@ const ProjectForm: React.FC<ProjectFormProps> = ({ initialData }) => {
           />
 
           <div className="lg:col-span-2">
-            <FormCheckboxGroup
+            <CheckboxGroupInput
               name="stackIds"
               label="사용 기술"
               options={stacks
@@ -198,13 +296,13 @@ const ProjectForm: React.FC<ProjectFormProps> = ({ initialData }) => {
                     Icon: stack.icon,
                     color: stack.color,
                   },
-                  // description: stack.description,
                   category: stack.stackType,
                 }))}
               required
               defaultValues={formData.stackIds.map(id => id.toString())}
               enableSearch={true}
               itemsPerPage={9}
+              onChange={handleStackIdsChange}
             />
           </div>
         </div>
@@ -212,9 +310,6 @@ const ProjectForm: React.FC<ProjectFormProps> = ({ initialData }) => {
 
       {/* 상세 설명(마크다운) 입력 영역 */}
       <div className="rounded-lg border border-skin-line bg-white p-6">
-        <h2 className="mb-6 text-xl font-semibold text-black-accent">
-          상세 설명
-        </h2>
         <MDXEditor
           markdown={markdownContent}
           onChange={setMarkdownContent}

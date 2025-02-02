@@ -28,7 +28,7 @@ const { project } = Astro.props;
         <h1 class="text-3xl font-bold text-black-accent">프로젝트 수정</h1>
         <p class="mt-2 text-black-muted">프로젝트 정보를 수정합니다</p>
       </div>
-      <ProjectForm client:load initialData={project} />
+      <ProjectForm client:only="react" initialData={project} />
     </div>
   </AdminOnly>
 </Layout>

@@ -19,7 +19,15 @@ export default defineConfig({
   build: {
     assets: "assets",
   },
-  integrations: [mdx(), sitemap(), react(), tailwind()],
+  integrations: [
+    mdx({
+      remarkPlugins: [],
+      gfm: true,
+    }),
+    sitemap(),
+    react(),
+    tailwind(),
+  ],
   vite: {
     server: {
       allowedHosts: ["localhost", ".ngrok-free.app"],

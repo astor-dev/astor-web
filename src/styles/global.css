@@ -108,6 +108,45 @@ html[data-theme="light"] {
   html {
     @apply bg-skin-background; /* 최하위 기본 배경색 */
   }
+
+  p {
+    @apply text-black-base;
+  }
+  /* MDX Table Styling */
+  table {
+    @apply my-6 w-full border-collapse text-left;
+  }
+
+  table thead {
+    @apply border-b border-skin-line bg-skin-fill;
+  }
+
+  table th {
+    @apply p-3 text-sm font-semibold text-black-accent dark:text-black-base;
+  }
+
+  table tbody tr {
+    @apply border-b border-skin-line transition-colors hover:bg-skin-fill;
+  }
+
+  table td {
+    @apply p-3 text-sm text-black-base dark:text-black-muted;
+  }
+
+  /* 테이블 반응형 스크롤을 위한 wrapper */
+  div:has(> table) {
+    @apply w-full overflow-x-auto;
+  }
+
+  /* 짝수/홀수 행 구분 */
+  table tbody tr:nth-child(even) {
+    @apply bg-skin-fill/50;
+  }
+
+  /* 테두리 둥글게 */
+  table {
+    @apply overflow-hidden rounded-lg;
+  }
 }
 
 @layer components {

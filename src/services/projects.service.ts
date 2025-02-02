@@ -33,7 +33,7 @@ interface CreateProjectRequest {
     projectName: string;
     shortDescription: string;
     startedAt: string;
-    endedAt: string;
+    endedAt?: string;
     stackIds: number[];
   };
   body: string;
