@@ -51,7 +51,6 @@ class Instance {
       ...(body && { body: JSON.stringify(body, replacer) }),
     };
 
-    console.log("BASE_URL", this.baseUrl);
     const res = await fetch(new URL(url, this.baseUrl).toString(), config);
 
     // response가 없는 경우

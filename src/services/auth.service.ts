@@ -6,9 +6,7 @@ export class AuthService {
   // 프로젝트 생성
   static async verifyAuth(): Promise<boolean> {
     try {
-      const response = await instance.get<{
-        authenticated: z.ZodType<boolean>;
-      }>("/auth/verify", {
+      const response = await instance.get("/auth/verify", {
         shape: {
           authenticated: z.boolean(),
         },
