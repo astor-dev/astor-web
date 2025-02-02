@@ -11,7 +11,7 @@ import imageminWebp from "imagemin-webp";
 import imageminPngquant from "imagemin-pngquant";
 
 export default defineConfig({
-  site: "https://astorverse.github.io",
+  site: "https://astorverse.com",
   output: "static",
   devToolbar: {
     enabled: true,
@@ -29,12 +29,6 @@ export default defineConfig({
     tailwind(),
   ],
   vite: {
-    server: {
-      allowedHosts: ["localhost", ".ngrok-free.app"],
-    },
-    preview: {
-      allowedHosts: ["localhost", ".ngrok-free.app"],
-    },
     plugins: [
       imagetools(),
       viteImagemin({

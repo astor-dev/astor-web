@@ -1,14 +1,11 @@
 ---
-import ImageWithSkeleton from "~components/Skeleton/ImageWithSkeleton";
 import Layout from "~layouts/BaseLayout.astro";
 import dayjs from "dayjs";
 import type { CollectionEntry } from "astro:content";
-import IconButton from "~components/Button/IconButton";
 import { render } from "astro:content";
-import StackGrid from "~components/Stack/StackGrid";
 import { getProjects } from "~utils/getProjects";
 import type { ProjectEntry } from "~types/project.type";
-import ProjectDetailContent from "~components/Project/ProjectDetailContent";
+import ProjectDetailContent from "~components/Section/ProjectDetailContent";
 
 interface Props {
   project: CollectionEntry<"projects">;

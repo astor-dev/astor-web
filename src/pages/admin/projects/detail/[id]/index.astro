@@ -16,7 +16,7 @@ export async function getStaticPaths() {
 const { project } = Astro.props;
 ---
 
-<ProjectDetail project={project} isAdmin={true} client:load>
+<ProjectDetail project={project} isAdmin={true}>
   <AdminOnly client:load>
     <></>
   </AdminOnly>
