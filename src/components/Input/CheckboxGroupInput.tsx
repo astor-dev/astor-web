@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import type { IconType } from "react-icons";
 import { FiSearch } from "react-icons/fi";
 
@@ -14,6 +14,7 @@ interface CheckboxOption {
 }
 
 interface CheckboxGroupInputProps {
+  id?: string;
   name: string;
   label: string;
   options: CheckboxOption[];
@@ -25,6 +26,7 @@ interface CheckboxGroupInputProps {
 }
 
 const CheckboxGroupInput: React.FC<CheckboxGroupInputProps> = ({
+  id,
   name,
   label,
   options,
@@ -34,6 +36,11 @@ const CheckboxGroupInput: React.FC<CheckboxGroupInputProps> = ({
   itemsPerPage = 9,
   onChange,
 }) => {
+  // selectedValues를 부모로부터 받은 defaultValues로 동기화
+  useEffect(() => {
+    setSelectedValues(defaultValues);
+  }, [defaultValues]);
+
   const [selectedValues, setSelectedValues] = useState<string[]>(defaultValues);
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedCategory, setSelectedCategory] = useState<string>("전체");
@@ -83,7 +90,7 @@ const CheckboxGroupInput: React.FC<CheckboxGroupInputProps> = ({
   };
 
   return (
-    <div>
+    <div id={id}>
       <label className="mb-2 block text-sm font-medium text-black-accent">
         {label} {required && <span className="text-danger">*</span>}
       </label>

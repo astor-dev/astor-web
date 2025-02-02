@@ -69,10 +69,11 @@ const ProjectForm: React.FC<ProjectFormProps> = ({ initialData }) => {
   // 폼 내용 변경 시마다 호출
   const handleFormChange = useCallback(
     (e: React.FormEvent<HTMLFormElement>) => {
-      // 이미지 입력과 무기한 체크박스의 경우 건너뛰기
+      // 이미지 입력, 무기한 체크박스, 스택 체크박스의 경우 건너뛰기
       if (
         (e.target as HTMLElement).id === "imageUrl" ||
-        (e.target as HTMLElement).id === "infiniteEndDate"
+        (e.target as HTMLElement).id === "infiniteEndDate" ||
+        (e.target as HTMLElement).id === "stackIds" // 스택 체크박스 제외
       ) {
         return;
       }
@@ -88,10 +89,10 @@ const ProjectForm: React.FC<ProjectFormProps> = ({ initialData }) => {
         siteUrl: fd.get("siteUrl") as string,
         companyName: fd.get("companyName") as string,
         startedAt: fd.get("startedAt") as string,
-        endedAt: formData.endedAt, // 종료일은 별도 핸들러로 처리
+        endedAt: formData.endedAt,
         roles: fd.getAll("roles") as ProjectRole[],
         shortDescription: fd.get("shortDescription") as string,
-        stackIds: fd.getAll("stackIds").map(id => Number(id)),
+        stackIds: formData.stackIds, // 스택은 별도 핸들러로 관리
       };
 
       setFormData(updatedData);
@@ -100,32 +101,32 @@ const ProjectForm: React.FC<ProjectFormProps> = ({ initialData }) => {
   );
 
   // 스택 ID 변경 핸들러
-  const handleStackIdsChange = (values: string[]) => {
-    setFormData(prev => ({
-      ...prev,
-      stackIds: values.map(id => Number(id)),
-    }));
-  };
+  const handleStackIdsChange = useCallback((values: string[]) => {
+    const newStackIds = values.map(id => Number(id));
+
+    // 직접 setFormData 호출
+    setFormData(prev => {
+      const updated = {
+        ...prev,
+        stackIds: newStackIds,
+      };
+      console.log("업데이트된 formData:", updated);
+      return updated;
+    });
+  }, []); // formData 의존성 제거
 
   // 폼 제출 처리
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    console.log("폼 제출 처리");
     try {
       const projectData = {
         frontmatter: formData,
         body: markdownContent,
       };
 
-      console.log("프로젝트 최종 데이터:", projectData);
-
       const response = await ProjectsService.createProject(projectData);
-      console.log("프로젝트 생성 성공:", response);
-
       window.location.href = "/admin/projects";
-    } catch (error) {
-      console.error("프로젝트 생성 실패:", error);
-    }
+    } catch (error) {}
   };
 
   // 월 선택 시 날짜를 해당 월의 첫날로 설정하는 핸들러
@@ -286,6 +287,7 @@ const ProjectForm: React.FC<ProjectFormProps> = ({ initialData }) => {
           <div className="lg:col-span-2">
             <CheckboxGroupInput
               name="stackIds"
+              id="stackIds"
               label="사용 기술"
               options={stacks
                 .sort((a, b) => a.name.localeCompare(b.name))
