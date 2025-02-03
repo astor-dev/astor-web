@@ -5,7 +5,7 @@ import ProjectForm from "~components/Form/ProjectForm";
 import AdminOnly from "~components/Auth/AdminOnly";
 ---
 
-<Layout title="새 프로젝트">
+<Layout title="새 프로젝트" useScrollHide={false}>
   <AdminOnly client:load>
     <div class="mx-auto w-full max-w-5xl px-4 py-8 sm:px-6 lg:px-8">
       <!-- 헤더 -->

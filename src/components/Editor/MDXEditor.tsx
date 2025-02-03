@@ -24,6 +24,12 @@ import {
   ChangeCodeMirrorLanguage,
   InsertCodeBlock,
   codeMirrorPlugin,
+  type MDXEditorMethods,
+  DialogButton,
+  ButtonWithTooltip,
+  ChangeAdmonitionType,
+  InsertThematicBreak,
+  InsertAdmonition,
 } from "@mdxeditor/editor";
 import "~styles/editor.css";
 import { ImageService } from "~services/image.service";
@@ -33,30 +39,36 @@ interface EditorProps {
   onChange: (markdown: string) => void;
   placeholder?: string;
 }
+
+const formatMarkdown = (markdownText: string) => {
+  // return markdownText.replace(/\n/g, "<br/>");
+  return markdownText;
+};
+
 const Editor: React.FC<EditorProps> = ({ markdown, onChange, placeholder }) => {
-  // 초기 마크다운 내용을 저장
-  const [initialMarkdown] = React.useState(markdown);
-  const olderMarkdown = initialMarkdown;
+  const mdxEditorRef = React.useRef<MDXEditorMethods>(null);
+  const oldMarkdownRef = React.useRef(markdown); // 이전 마크다운 값을 저장하기 위한 ref
 
   const handleChange = useCallback(
     (content: string) => {
       onChange(content);
     },
-    [onChange],
+    [onChange, markdown],
   );
 
   return (
     <MDXEditor
-      markdown={markdown}
+      markdown={formatMarkdown(markdown)}
       onChange={handleChange}
+      ref={mdxEditorRef}
       placeholder={placeholder}
       contentEditableClassName="prose max-w-none min-h-[500px] p-4"
+      trim={false}
       plugins={[
         headingsPlugin(),
         listsPlugin(),
         quotePlugin(),
         thematicBreakPlugin(),
-        markdownShortcutPlugin(),
         imagePlugin({
           imageUploadHandler: async file => {
             try {
@@ -72,7 +84,7 @@ const Editor: React.FC<EditorProps> = ({ markdown, onChange, placeholder }) => {
         linkDialogPlugin(),
         tablePlugin(),
         diffSourcePlugin({
-          diffMarkdown: olderMarkdown,
+          diffMarkdown: oldMarkdownRef.current,
           viewMode: "rich-text",
         }),
         codeBlockPlugin({ defaultCodeBlockLanguage: "ts" }),
@@ -88,14 +100,15 @@ const Editor: React.FC<EditorProps> = ({ markdown, onChange, placeholder }) => {
             json: "JSON",
           },
         }),
+        markdownShortcutPlugin(),
         toolbarPlugin({
           toolbarContents: () => (
             <DiffSourceToggleWrapper>
               <UndoRedo />
-
               <BoldItalicUnderlineToggles />
               <BlockTypeSelect />
               <CreateLink />
+              <InsertThematicBreak />
               <InsertImage />
               <InsertTable />
               <ConditionalContents

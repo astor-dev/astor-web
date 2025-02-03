@@ -6,11 +6,20 @@ import "~styles/global.css";
 import Hero from "~components/Hero/Hero";
 import { SkeletonProvider } from "~components/Skeleton/SkeletonProvider";
 import Seo from "~components/Seo/Seo.astro";
-// src/layouts/BaseLayout.astro
+
+interface Props {
+  useScrollHide: boolean;
+  title?: string;
+}
+
+const { useScrollHide = true, title } = Astro.props;
+
 const currentPath = Astro.url.pathname;
 const shouldRenderHero = currentPath === "/";
-const shouldShowBreadcrumb = currentPath !== "/" && currentPath !== "/about"; // 루트 및 특정 경로 제외
+const shouldShowBreadcrumb = currentPath !== "/"  // 루트 및 특정 경로 제외
+const shouldMakeSpaceForNavBar = useScrollHide === true && !shouldRenderHero;
 ---
+
 
 <!doctype html>
 <html lang="ko" data-theme="light" class="w-full">
@@ -26,12 +35,13 @@ const shouldShowBreadcrumb = currentPath !== "/" && currentPath !== "/about"; //
         client:load
         initialShowNav={!shouldRenderHero}
         pathname={currentPath}
+        useScrollHide={useScrollHide}
       />
       {shouldRenderHero && <Hero client:load />}
       <!-- 메인 콘텐츠 영역: 반응형 컨테이너 적용 예시 -->
       <main class="relative w-full flex-1 bg-skin-background px-[5vw]">
         <!-- Navbar를 보여주는 경우 Navbar+12px 띄워줌 -->
-        {!shouldRenderHero && <div class="h-[84px] w-full" />}
+        {shouldMakeSpaceForNavBar && <div class="h-[84px] w-full" />}
         {shouldShowBreadcrumb && <BreadcrumbNavigator pathname={currentPath} />}
         <!-- 페이지별 콘텐츠는 slot을 통해 들어옴 -->
         <slot />

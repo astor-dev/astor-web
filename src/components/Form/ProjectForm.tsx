@@ -7,7 +7,7 @@ import {
   type ProjectType,
 } from "~types/project.type";
 import { ProjectsService } from "~services/projects.service";
-import MDXEditor from "~components/Editor/MDXEditor";
+import Editor from "~components/Editor/MDXEditor";
 import IconButton from "~components/Button/IconButton";
 import { stacks } from "~constants/stacks";
 import Input from "~components/Input/Input";
@@ -61,9 +61,20 @@ const ProjectForm: React.FC<ProjectFormProps> = ({ initialData }) => {
     };
   });
 
-  // 마크다운 에디터에서 입력한 텍스트
-  const [markdownContent, setMarkdownContent] = useState<string>(
-    initialData?.body ?? "",
+  const [markdownContent, setMarkdownContent] = useState(() => {
+    return initialData?.body ?? "";
+  });
+
+  const handleMarkdownChange = useCallback(
+    (content: string) => {
+      setMarkdownContent(prev => {
+        if (prev === content) {
+          return prev;
+        }
+        return content;
+      });
+    },
+    [markdownContent],
   );
 
   // 폼 내용 변경 시마다 호출
@@ -326,9 +337,9 @@ const ProjectForm: React.FC<ProjectFormProps> = ({ initialData }) => {
 
       {/* 상세 설명(마크다운) 입력 영역 */}
       <div className="rounded-lg border border-skin-line bg-white p-6">
-        <MDXEditor
+        <Editor
           markdown={markdownContent}
-          onChange={setMarkdownContent}
+          onChange={handleMarkdownChange}
           placeholder="프로젝트에 대해 자세히 설명해주세요..."
         />
       </div>
