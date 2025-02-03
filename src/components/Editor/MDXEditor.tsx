@@ -81,7 +81,6 @@ const Editor: React.FC<EditorProps> = ({ markdown, onChange, placeholder }) => {
           imageAutocompleteSuggestions: [],
         }),
         linkPlugin(),
-        linkDialogPlugin(),
         tablePlugin(),
         diffSourcePlugin({
           diffMarkdown: oldMarkdownRef.current,

@@ -131,7 +131,6 @@ const ProjectForm: React.FC<ProjectFormProps> = ({ initialData }) => {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     try {
-      // URL이 비어있을 경우 빈 문자열로 설정
       const submissionData = {
         ...formData,
         siteUrl: formData.siteUrl || "",
@@ -145,8 +144,17 @@ const ProjectForm: React.FC<ProjectFormProps> = ({ initialData }) => {
       };
 
       const response = await ProjectsService.createProject(projectData);
+
+      // 성공시에만 리다이렉트
       window.location.href = "/admin/projects";
-    } catch (error) {}
+    } catch (error) {
+      // 에러 메시지 표시
+      if (error instanceof Error) {
+        alert(`프로젝트 저장에 실패했습니다: ${error.message}`);
+      } else {
+        alert("프로젝트 저장 중 오류가 발생했습니다. 다시 시도해주세요.");
+      }
+    }
   };
 
   // 월 선택 시 날짜를 해당 월의 첫날로 설정하는 핸들러
