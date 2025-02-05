@@ -8,7 +8,7 @@ import { SkeletonProvider } from "~components/Skeleton/SkeletonProvider";
 import Seo from "~components/Seo/Seo.astro";
 
 interface Props {
-  useScrollHide: boolean;
+  useScrollHide?: boolean;
   title?: string;
 }
 
@@ -39,7 +39,7 @@ const shouldMakeSpaceForNavBar = useScrollHide === true && !shouldRenderHero;
       />
       {shouldRenderHero && <Hero client:load />}
       <!-- 메인 콘텐츠 영역: 반응형 컨테이너 적용 예시 -->
-      <main class="relative w-full flex-1 bg-skin-background px-[5vw]">
+      <main class="relative w-full flex-1 bg-skin-background px-[5vw]  2xl:px-[15vw]">
         <!-- Navbar를 보여주는 경우 Navbar+12px 띄워줌 -->
         {shouldMakeSpaceForNavBar && <div class="h-[84px] w-full" />}
         {shouldShowBreadcrumb && <BreadcrumbNavigator pathname={currentPath} />}

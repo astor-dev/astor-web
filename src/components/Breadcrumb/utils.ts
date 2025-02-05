@@ -9,6 +9,7 @@ export const breadcrumbNameMap: Record<string, string> = {
   edit: "수정",
   new: "작성",
   blog: "블로그",
+  login: "로그인",
 };
 
 // 시각적으로 숨길 경로들

@@ -1,0 +1,46 @@
+---
+author: "Astor"
+createdAt: "2024-03-15"
+updatedAt: "2024-03-15"
+title: "블로그 시작하asds기"
+pinned: true
+draft: false
+tags: ["Blog", "Astro", "React"]
+series: "astrasdo"
+ogImage: "https://velog.velcdn.com/images%2Fkirin%2Fpost%2F5905735e-d16a-440e-bd7e-8cbe3df2cc41%2Fimage.png"
+description: "Astro와 React를 사용하여 개인 블로그를 만들게 된 계기와 기술 스택 선택 이유에 대해 이야기합니다."
+---
+
+# 블로그를 시작하며
+
+안녕하세요! 백엔드 개발자 Astor입니다.
+오랫동안 미루어왔던 개인 블로그를 드디어 시작하게 되었습니다.
+
+## 기술 스택 선택
+
+이 블로그는 다음과 같은 기술들로 만들어졌습니다:
+
+- **Astro**: 빠른 정적 사이트 생성과 부분적 하이드레이션
+- **React**: 동적인 UI 컴포넌트
+- **Tailwind CSS**: 효율적인 스타일링
+- **TypeScript**: 타입 안정성
+
+## 왜 Astro인가?
+
+Astro를 선택한 주된 이유는 다음과 같습니다:
+
+1. **성능**: 기본적으로 JavaScript를 제거하여 매우 빠른 페이지 로드
+2. **유연성**: React, Vue, Svelte 등 원하는 프레임워크 사용 가능
+3. **마크다운 지원**: 콘텐츠 작성이 매우 편리
+4. **부분적 하이드레이션**: 필요한 컴포넌트만 인터랙티브하게
+
+## 앞으로의 계획
+
+이 블로그를 통해 다음과 같은 내용을 공유하고자 합니다:
+
+- 프론트엔드 개발 경험과 노하우
+- 새로운 기술 학습 내용
+- 프로젝트 회고와 기술적 결정에 대한 이야기
+- 개발자로서의 성장 과정
+
+많은 관심 부탁드립니다! 🚀

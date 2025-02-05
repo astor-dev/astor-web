@@ -8,6 +8,7 @@ import { Particles as ReactParticles } from "react-tsparticles";
 import type { Engine } from "tsparticles-engine";
 import { useIntersectionObserver } from "~hooks/UseIntersectionObserver/UseIntersectionObserver";
 import type { ProjectEntry } from "~/types/project.type";
+import dayjs from "dayjs";
 
 const ProjectCard: React.FC<ProjectEntry> = props => {
   const [isLoading, setIsLoading] = useState(true);
@@ -43,6 +44,16 @@ const ProjectCard: React.FC<ProjectEntry> = props => {
   const particlesInit = useCallback(async (engine: Engine) => {
     await loadSlim(engine);
   }, []);
+
+  // 프로젝트 기간을 포맷팅하는 함수
+  const formatProjectPeriod = (startDate: string, endDate: string | null) => {
+    const start = dayjs(startDate).format("YYYY.MM");
+    if (!endDate) {
+      return `${start} ~ 진행중`;
+    }
+    const end = dayjs(endDate).format("YYYY.MM");
+    return `${start} ~ ${end}`;
+  };
 
   return (
     <a
@@ -150,24 +161,38 @@ const ProjectCard: React.FC<ProjectEntry> = props => {
           <ImageWithSkeleton
             src={props.data.imageUrl}
             alt={props.data.projectName}
-            className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+            className="h-full w-full object-cover transition-transform duration-500"
             onLoadComplete={handleImageLoad}
           />
         </div>
-        <div className="flex h-[6.5rem] flex-col justify-between p-4 lg:p-5">
-          <p className="line-clamp-2 text-sm font-medium uppercase tracking-wider text-black-base">
+        <div className="flex h-[8rem] flex-col justify-between p-4 lg:p-5">
+          <p className="line-clamp-2 min-h-[2.5rem] text-sm font-medium uppercase tracking-wider text-black-base">
             {isLoading ? <Skeleton count={2} /> : props.data.shortDescription}
           </p>
-          <div className="tags-scroll relative -mx-4 px-4 lg:-mx-5 lg:px-5">
-            <div className="hide-scrollbar flex overflow-x-scroll">
-              {props.data.roles.map((role, idx) => (
-                <span
-                  key={idx}
-                  className="mr-2 inline-flex shrink-0 items-center whitespace-nowrap rounded-full bg-skin-accent/10 px-2.5 py-0.5 text-xs font-medium text-skin-accent last:mr-0"
-                >
-                  {isLoading ? <Skeleton width={40} height={16} /> : role}
-                </span>
-              ))}
+
+          <div className="space-y-2">
+            <p className="text-xs text-black-muted">
+              {isLoading ? (
+                <Skeleton width={100} />
+              ) : (
+                formatProjectPeriod(
+                  props.data.startedAt,
+                  props.data.endedAt || null,
+                )
+              )}
+            </p>
+
+            <div className="tags-scroll relative -mx-4 px-4 lg:-mx-5 lg:px-5">
+              <div className="hide-scrollbar flex overflow-x-scroll">
+                {props.data.roles.map((role, idx) => (
+                  <span
+                    key={idx}
+                    className="mr-2 inline-flex shrink-0 items-center whitespace-nowrap rounded-full bg-skin-accent/10 px-2.5 py-0.5 text-xs font-medium text-skin-accent last:mr-0"
+                  >
+                    {isLoading ? <Skeleton width={40} height={16} /> : role}
+                  </span>
+                ))}
+              </div>
             </div>
           </div>
         </div>

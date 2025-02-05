@@ -1,0 +1,93 @@
+---
+import Layout from "~layouts/BaseLayout.astro";
+import BlogPostCard from "~components/Card/BlogPostCard";
+import SeriesCard from "~components/Card/SeriesCard";
+import Tag from "~components/Tag/Tag";
+import { getPosts, getAllTags, getAllSeries } from "~utils/getPosts";
+import FullImageBlogPostCard from "~components/Card/FullImageBlogPostCard";
+import SeriesScrollSection from "~components/Section/SeriesScrollSection";
+import BlogPostListItem from "~components/List/BlogPostListItem";
+// 태그 정보 가져오기
+const tags = await getAllTags();
+
+// 고정 포스트 가져오기
+const pinnedPosts = await getPosts({ 
+  filter: { 
+    pinned: true,
+    draft: false 
+  },
+  sort: { 
+    by: "createdAt", 
+    order: "desc" 
+  }
+});
+
+// 일반 포스트 가져오기
+const regularPosts = await getPosts({ 
+  filter: { 
+    draft: false 
+  },
+  sort: { 
+    by: "createdAt", 
+    order: "desc" 
+  },
+  paging:{
+    page: 1,
+    limit: 5
+  }
+});
+
+// 시리즈 정보 가져오기
+const series = await getAllSeries();
+
+---
+<Layout title="블로그">
+  <article class="mx-auto w-full">
+
+    {/* 태그 필터 섹션 */}
+    <div class="mb-8 overflow-x-auto">
+      <div class="flex gap-2 pb-4">
+        {tags.map(({ tag, count }) => (
+          <Tag 
+            text={tag} 
+            count={count} 
+            size="md" 
+            client:load
+          />
+        ))}
+      </div>
+    </div>
+
+
+    <SeriesScrollSection series={series} client:load/>
+
+
+    {/* 최근 포스트 섹션 */}
+    <section class="mb-12">
+      <h2 class="mb-6 text-2xl font-bold text-black-accent">최근 포스트</h2>
+      
+      <div class="divide-y divide-gray-100">
+        {regularPosts.map((post) => (
+          <BlogPostListItem 
+            {...post} 
+            client:load 
+          />
+        ))}
+      </div>
+    </section>
+
+    <!-- {/* 고정된 포스트 섹션 - 모던 카드 사용 */}
+    {pinnedPosts.length > 0 && (
+      <section class="mb-12">
+        <h2 class="mb-6 text-2xl font-bold text-black-accent">📌 주요 포스트</h2>
+        <div class="grid gap-6 sm:grid-cols-2">
+          {pinnedPosts.map(post => (
+            <BlogPostCard {...post} client:load />
+          ))}
+        </div>
+      </section>
+    )} -->
+
+  </article>
+</Layout>
+

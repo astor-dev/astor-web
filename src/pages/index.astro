@@ -5,10 +5,11 @@ import BlogPostCard from "~components/Card/BlogPostCard";
 import { PiShootingStarFill } from "react-icons/pi";
 import { getProjects } from "~/utils/getProjects";
 import { getPosts } from "~utils/getPosts";
+import FullImageBlogPostCard from "~components/Card/FullImageBlogPostCard";
 
 // 프로젝트 데이터 가져오기
 const recentProjects = await getProjects({
-  paging: { page: 0, limit: 6 },
+  paging: { page: 0, limit: 5 },
   sort: { field: "endedAt", order: "desc" },
   filter: {
     projectTypes: ["Company-project", "Side-project"],
@@ -39,7 +40,7 @@ const pinnedPosts = await getPosts({ filter: { pinned: true } });
       >
         {
           recentProjects.map((project, index) => (
-            <div class={`${index >= 3 ? "hidden md:block" : ""}`}>
+            <div class={`${index >= 3 ? "hidden sm:block" : ""}`}>
               <ProjectCard {...project} client:load />
             </div>
           ))
@@ -49,9 +50,11 @@ const pinnedPosts = await getPosts({ filter: { pinned: true } });
 
     <!-- 최근 블로그 글 섹션 -->
     <section class="mb-16 mt-16">
-      <div class="mb-8 flex items-center justify-between">
-        <h2 class="font-sans text-2xl font-bold text-black-base">
-          <span class="text-skin-accent">✦</span> 주목할만한 글
+      {/* 데스크톱 매거진 스타일 레이아웃 */}
+      <div class="hidden md:block w-full">
+        <div class="mb-8 flex items-center justify-between">
+          <h2 class="font-sans text-2xl font-bold text-black-base">
+            <span class="text-skin-accent">✦</span> 주목할만한 글
         </h2>
         <a
           href="/blog"
@@ -60,8 +63,30 @@ const pinnedPosts = await getPosts({ filter: { pinned: true } });
           More <PiShootingStarFill />
         </a>
       </div>
-      <div class="grid grid-cols-1 gap-6 md:grid-cols-2">
-        {pinnedPosts.map(post => <BlogPostCard {...post} client:load />)}
+      <div class="grid grid-cols-1 gap-4 sm:grid-cols-3 lg:gap-6">
+        {pinnedPosts.slice(0, 5).map((post, index) => (
+          <div class={` ${ index === 3 ? " sm:col-span-2" : ""}  h-full`}>
+            {index == 3 || index== 2 ? (
+              <FullImageBlogPostCard {...post} client:load />
+            ) : (
+              <BlogPostCard {...post} client:load />
+            )}
+          </div>
+        ))}
+      </div>  
+      </div>
+
+
+      {/* 모바일 심플 레이아웃 */}
+      <div class="md:hidden w-full">
+        <div class="flex flex-col gap-4">
+          {pinnedPosts.slice(0,3).map((post) => (
+            <BlogPostCard  
+              {...post} 
+              client:load 
+            />
+          ))}
+        </div>
       </div>
     </section>
   </div>
