@@ -24,7 +24,7 @@ const posts = defineCollection({
   loader: glob({ base: "./src/content/posts", pattern: "**/*.{md,mdx}" }),
   schema: ({ image }) =>
     z.object({
-      author: z.string().default("Astoir"),
+      author: z.string().default("Astor"),
       createdAt: z.string(),
       updatedAt: z.string(),
       title: z.string(),
