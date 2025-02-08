@@ -5,7 +5,18 @@ updatedAt: "2024-03-15"
 title: "블로그 시작하기"
 pinned: true
 draft: false
-tags: ["Blog", "Astro", "React"]
+tags:
+  [
+    "Blog",
+    "Astro",
+    "React",
+    "TypeScript",
+    "DevOps",
+    "Tag1",
+    "Tag2",
+    "Tag3",
+    "Tag4",
+  ]
 series: "블로그 개발기"
 ogImage: "https://velog.velcdn.com/images%2Fkirin%2Fpost%2F5905735e-d16a-440e-bd7e-8cbe3df2cc41%2Fimage.png"
 description: "Astro와 React를 사용하여 개 ㅇㅁ네ㅣㅏㅇㅁ니ㅏㅓㅇㄴ미언미언미ㅏ어ㅏㅣㄴㅁ어ㅏㅣㄴ머ㅏㅣㅇㄴ머ㅏㅣ어ㅏㅣㅁ너아ㅣㄴ머ㅏㅣㅇㄴ머ㅣㅏ언마ㅣㅏ인머아ㅣㄴ머아ㅣㄴ머ㅏㅣㅇㄴ머ㅏㅣ인."

@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { type Stack } from "~types/stack.type";
 import { useIntersectionObserver } from "~hooks/UseIntersectionObserver/UseIntersectionObserver";
 import type { ProjectEntry } from "~types/project.type";
-import RelatedProjects from "~components/Modal/RelatedProjects";
+import RelatedProjectsModal from "~components/Modal/RelatedProjectsModal";
 import { FiInfo, FiExternalLink } from "react-icons/fi";
 
 interface StackItemProps {
@@ -64,7 +64,7 @@ const StackItem: React.FC<StackItemProps> = ({
 
       <AnimatePresence>
         {showRelated && (
-          <RelatedProjects
+          <RelatedProjectsModal
             stack={stack}
             projects={relatedProjects}
             onClose={() => setShowRelated(false)}

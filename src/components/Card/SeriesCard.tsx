@@ -1,7 +1,8 @@
 import React, { useRef } from "react";
-import { FaBookmark, FaChevronRight, FaClock } from "react-icons/fa";
+import { FaBookmark, FaChevronRight } from "react-icons/fa";
 import { useIntersectionObserver } from "~hooks/UseIntersectionObserver/UseIntersectionObserver";
 import type { PostEntry } from "~/types/post.type";
+import ImageWithSkeleton from "~components/Skeleton/ImageWithSkeleton";
 
 interface SeriesCardProps {
   series: string;
@@ -20,9 +21,11 @@ const SeriesCard: React.FC<SeriesCardProps> = ({ series, posts }) => {
         isVisible ? "translate-y-0 opacity-100" : "translate-y-10 opacity-0"
       }`}
     >
-      <article className="group relative h-[380px] overflow-hidden rounded-2xl bg-white shadow-lg transition-all hover:-translate-y-1 hover:shadow-xl">
+      {/* overflow-hidden 제거하여 그림자 영역이 잘 보이도록 함 */}
+      <article className="group relative rounded-2xl bg-white transition-all hover:-translate-y-1 hover:shadow-xl">
+        {/* 이미지 영역: 고정 비율을 유지하고 overflow-hidden으로 이미지 넘침을 잘라냄 */}
         <div className="relative aspect-[16/9] w-full overflow-hidden">
-          <img
+          <ImageWithSkeleton
             src={coverImage.toString()}
             alt={series}
             className="h-full w-full object-cover transition-transform duration-500"
@@ -32,25 +35,23 @@ const SeriesCard: React.FC<SeriesCardProps> = ({ series, posts }) => {
           <div className="absolute bottom-0 w-full p-3">
             <div className="flex items-center gap-2">
               <FaBookmark className="h-4 w-4 text-skin-accent" />
-              <h3 className="text-base font-bold text-white-accent">
+              <h3 className="line-clamp-1 text-base font-bold text-white-accent">
                 {series}
               </h3>
-              {/* <span className="ml-auto text-sm text-white-base/80">
-                {posts.length}개의 포스트
-              </span> */}
             </div>
           </div>
         </div>
 
-        <div className="flex h-[196px] flex-col p-3">
-          <div className="h-[140px] overflow-hidden">
+        {/* 텍스트 영역: 고정 높이를 주어 내부 컨텐츠가 넘치면 잘리도록 함 */}
+        <div className="relative flex h-[210px] flex-col p-3">
+          <div className="overflow-hidden">
             <ul className="space-y-2">
               {posts.map((post, index) => (
                 <li key={post.id} className="flex items-center gap-2 text-sm">
                   <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-skin-accent/10 text-xs font-medium text-skin-accent">
                     {(index + 1).toString().padStart(2, "0")}
                   </span>
-                  <h4 className="flex-1 truncate font-medium text-black-accent">
+                  <h4 className="line-clamp-1 flex-1 truncate font-medium text-black-accent">
                     {post.data.title}
                   </h4>
                 </li>

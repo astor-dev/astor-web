@@ -11,16 +11,25 @@ import {
 } from "react-icons/fi";
 import SearchModal from "~components/Modal/SearchModal";
 // import logo from "~assets/svgs/logo.svg";
+import type { TagAndCount, SeriesAndCounts } from "~utils/getPosts";
+import type { PostEntry } from "~types/post.type";
+
 interface NavBarProps {
   pathname: string; // 현재 경로를 전달받음
   initialShowNav?: boolean; // 초기 표시 여부를 전달받음 (optional)
   useScrollHide?: boolean; // 스크롤 숨김 기능 사용 여부
+  tags: TagAndCount[];
+  series: SeriesAndCounts[];
+  posts: PostEntry[];
 }
 
 export default function NavBar({
   initialShowNav = false,
   pathname,
   useScrollHide = true, // 기본값은 true로 설정
+  tags,
+  series,
+  posts,
 }: NavBarProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [showNav, setShowNav] = useState(initialShowNav);
@@ -170,6 +179,9 @@ export default function NavBar({
       <SearchModal
         isOpen={isSearchOpen}
         onClose={() => setIsSearchOpen(false)}
+        tags={tags}
+        series={series}
+        posts={posts}
       />
     </>
   );

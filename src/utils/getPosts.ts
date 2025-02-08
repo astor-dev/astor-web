@@ -18,18 +18,25 @@ export interface GetPostsOptions {
   };
 }
 
-export interface TagCount {
+export interface TagAndCount {
   tag: string;
   count: number;
 }
+
+export interface PostData {}
 
 export interface SeriesAndPosts {
   series: string;
   posts: PostEntry[];
 }
 
+export interface SeriesAndCounts {
+  series: string;
+  count: number;
+}
+
 // 모든 태그와 각 태그의 포스트 수를 가져오는 함수
-export async function getAllTags(): Promise<TagCount[]> {
+export async function getAllTags(): Promise<TagAndCount[]> {
   const posts = await getCollection("posts");
   const tagCounts = posts
     .filter(post => !post.data.draft) // 공개된 포스트만 집계
@@ -64,6 +71,14 @@ export async function getAllSeries(): Promise<SeriesAndPosts[]> {
   return Array.from(seriesMap.entries()).map(([series, posts]) => ({
     series,
     posts,
+  }));
+}
+
+export async function getAllSeriesAndCounts(): Promise<SeriesAndCounts[]> {
+  const series = await getAllSeries();
+  return series.map(s => ({
+    series: s.series,
+    count: s.posts.length,
   }));
 }
 
@@ -118,6 +133,7 @@ export async function getPosts(
   return posts;
 }
 
+// export async function getAllPostData(): Promise<PostEntry[]> {
 // 단일 포스트 가져오기
 export async function getPostById(id: string): Promise<PostEntry | undefined> {
   const posts = await getCollection("posts");

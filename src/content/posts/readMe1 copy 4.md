@@ -5,7 +5,7 @@ updatedAt: "2024-03-15"
 title: "블로그 시작하기"
 pinned: true
 draft: false
-tags: ["Blog", "Astro", "React"]
+tags: ["Blog", "Astro", "React", "TTAG", "TTTAG", "TAGG", "TAGGGG", "SUPERTAG"]
 series: "astrsdo"
 ogImage: "https://velog.velcdn.com/images%2Fkirin%2Fpost%2F5905735e-d16a-440e-bd7e-8cbe3df2cc41%2Fimage.png"
 description: "Astro와 React를 사용하여 개인 블로그를 만들게 된 계기와 기술 스택 선택 이유에 대해 이야기합니다."

@@ -6,6 +6,8 @@ import "~styles/global.css";
 import Hero from "~components/Hero/Hero";
 import { SkeletonProvider } from "~components/Skeleton/SkeletonProvider";
 import Seo from "~components/Seo/Seo.astro";
+import { getAllSeriesAndCounts, getAllTags, getPosts, type SeriesAndCounts, type TagAndCount } from "~utils/getPosts";
+import type { PostEntry } from "~types/post.type";
 
 interface Props {
   useScrollHide?: boolean;
@@ -13,6 +15,10 @@ interface Props {
 }
 
 const { useScrollHide = true, title } = Astro.props;
+
+const tags: TagAndCount[] = await getAllTags();
+const series: SeriesAndCounts[] = await getAllSeriesAndCounts();
+const posts: PostEntry[] = await getPosts();
 
 const currentPath = Astro.url.pathname;
 const shouldRenderHero = currentPath === "/";
@@ -33,6 +39,9 @@ const shouldMakeSpaceForNavBar = useScrollHide === true && !shouldRenderHero;
     <SkeletonProvider>
       <NavBar
         client:load
+        tags={tags}
+        posts={posts}
+        series={series}
         initialShowNav={!shouldRenderHero}
         pathname={currentPath}
         useScrollHide={useScrollHide}
