@@ -46,7 +46,7 @@ const SeriesScrollSection = ({ series }: { series: Array<SeriesAndPosts> }) => {
         {/* PC 스크롤 인디케이터 */}
         <div className="hidden items-center gap-4 rounded-full border border-gray-100 bg-white px-5 py-2 shadow-sm md:flex">
           <span className="text-sm font-medium text-black-muted">
-            가로 스크롤
+            클릭 후 드래그
           </span>
           <div className="h-1 w-20 overflow-hidden rounded-full bg-gray-100">
             <motion.div
@@ -95,13 +95,13 @@ const SeriesScrollSection = ({ series }: { series: Array<SeriesAndPosts> }) => {
           <span className="text-xs font-medium text-black-muted">스와이프</span>
         </div>
 
-        <div className="overflow-x-hidden px-4">
+        <div className="overflow-hidden px-4">
           <motion.div
             ref={carouselRef}
             drag="x"
             dragConstraints={{ right: 0, left: -width }}
             onUpdate={handleUpdate}
-            className="flex cursor-grab select-none gap-6 pb-4"
+            className="flex h-fit cursor-grab select-none gap-6"
           >
             {series.map(({ series: seriesName, posts }, index) => (
               <motion.div

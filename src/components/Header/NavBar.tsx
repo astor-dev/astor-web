@@ -1,6 +1,15 @@
 import React, { useState, useEffect, useRef } from "react";
 import throttle from "lodash/throttle";
-import { FiGithub, FiMenu, FiSettings } from "react-icons/fi";
+import {
+  FiBookOpen,
+  FiBriefcase,
+  FiGithub,
+  FiMenu,
+  FiSettings,
+  FiUser,
+  FiSearch,
+} from "react-icons/fi";
+import SearchModal from "~components/Modal/SearchModal";
 // import logo from "~assets/svgs/logo.svg";
 interface NavBarProps {
   pathname: string; // 현재 경로를 전달받음
@@ -17,6 +26,7 @@ export default function NavBar({
   const [showNav, setShowNav] = useState(initialShowNav);
   const [isAdmin, setIsAdmin] = useState(false);
   const lastScrollY = useRef(0);
+  const [isSearchOpen, setIsSearchOpen] = useState(false);
 
   useEffect(() => {
     // TODO: 서버에서 관리자 여부 확인
@@ -44,9 +54,14 @@ export default function NavBar({
   }, [useScrollHide]);
 
   const menuItems = [
-    { name: "About", href: "/about" },
-    { name: "Projects", href: "/projects" },
-    { name: "Blog", href: "/blog" },
+    { name: "Blog", href: "/blog", icon: <FiBookOpen />, empathize: true },
+    { name: "About", href: "/about", icon: <FiUser />, empathize: false },
+    {
+      name: "Projects",
+      href: "/projects",
+      icon: <FiBriefcase />,
+      empathize: false,
+    },
   ];
 
   const isActive = (href: string) => {
@@ -86,10 +101,11 @@ export default function NavBar({
                 <a
                   key={item.name}
                   href={item.href}
-                  className={`text-lg font-medium transition hover:text-skin-secondary ${
+                  className={`flex items-center gap-2 text-lg font-medium transition hover:text-skin-secondary ${
                     isActive(item.href) ? "text-skin-accent" : "text-black-base"
-                  }`}
+                  } ${item.empathize ? "rounded-2xl bg-skin-accent/10 px-2 py-1" : ""}`}
                 >
+                  {item.empathize && item.icon}
                   {item.name}
                 </a>
               ))}
@@ -111,15 +127,13 @@ export default function NavBar({
               </a>
             )}
 
-            {/* GitHub 링크 */}
-            <a
-              href="https://github.com/astorverse"
-              target="_blank"
-              rel="noopener noreferrer"
+            {/* 검색 버튼 */}
+            <button
+              onClick={() => setIsSearchOpen(true)}
               className="hover:bg-skin-card-muted rounded p-2 text-skin-base transition hover:text-skin-accent focus:outline-none"
             >
-              <FiGithub className="h-6 w-6" />
-            </a>
+              <FiSearch className="h-6 w-6" />
+            </button>
 
             {/* 모바일 메뉴 토글 버튼 */}
             <button
@@ -151,6 +165,12 @@ export default function NavBar({
           </div>
         )}
       </header>
+
+      {/* 검색 모달 */}
+      <SearchModal
+        isOpen={isSearchOpen}
+        onClose={() => setIsSearchOpen(false)}
+      />
     </>
   );
 }
