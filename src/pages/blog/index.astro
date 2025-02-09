@@ -8,6 +8,8 @@ import FullImageBlogPostCard from "~components/Card/FullImageBlogPostCard";
 import BlogPostListItem from "~components/List/BlogPostListItem";
 import { FaArrowRight } from "react-icons/fa";
 import TagCard from "~components/Card/TagCard";
+import { FullImageSeriesCard } from "~components/Card/FullImageSeriesCard";
+import { PiShootingStarFill } from "react-icons/pi";
 // 태그 정보 가져오기
 const tags = await getAllTags();
 
@@ -43,7 +45,7 @@ const series = await getAllSeries();
 
 ---
 <Layout title="블로그">
-  <article class="mx-auto w-full">
+  <article class="mx-auto w-full mt-16">
     {/* 인기 태그 섹션 */}
     <section class="mb-12">
       <div class="mb-8">
@@ -60,10 +62,14 @@ const series = await getAllSeries();
           ))}
       </div>
     </section>
+   
 
     {/* 최근 포스트 섹션 */}
     <section class="mb-12">
-      <h2 class="mb-6 text-2xl font-bold text-black-accent">최근 포스트</h2>
+      <div class="mb-8">
+        <h2 class="text-2xl font-bold text-black-accent">최근 포스트</h2>
+        <p class="mt-1 text-black-muted">최근 업데이트된 포스트들이에요</p>
+      </div>
       
       <div class="divide-y divide-gray-100">
         {regularPosts.map((post) => (
@@ -71,6 +77,20 @@ const series = await getAllSeries();
             {...post} 
             client:load 
           />
+        ))}
+      </div>
+    </section>
+
+    <!-- 시리즈 섹션 -->
+    <section class="mb-16">
+      <div class="mb-8">
+        <h2 class="text-2xl font-bold text-black-accent">시리즈</h2>
+        <p class="mt-1 text-black-muted">연재 중인 시리즈들이에요</p>
+      </div>
+
+      <div class="grid auto-rows-fr gap-6 sm:grid-cols-2 lg:grid-cols-3">
+        {series.slice(0, 3).map((seriesData) => (
+          <FullImageSeriesCard {...seriesData} client:load />
         ))}
       </div>
     </section>

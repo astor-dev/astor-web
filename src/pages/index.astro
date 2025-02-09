@@ -2,11 +2,11 @@
 import Layout from "~layouts/BaseLayout.astro";
 import ProjectCard from "~components/Card/ProjectCard";
 import BlogPostCard from "~components/Card/BlogPostCard";
-import { PiShootingStarFill } from "react-icons/pi";
-import { getProjects } from "~/utils/getProjects";
-import { getPosts } from "~utils/getPosts";
-import FullImageBlogPostCard from "~components/Card/FullImageBlogPostCard";
 import BlogPostListItem from "~components/List/BlogPostListItem";
+import { FullImageSeriesCard } from "~components/Card/FullImageSeriesCard";
+import { ShootingStarHeader } from "~components/Header/ShootingStarHeader";
+import { getProjects } from "~/utils/getProjects";
+import { getPosts, getAllSeries } from "~utils/getPosts";
 
 // 프로젝트 데이터 가져오기
 const recentProjects = await getProjects({
@@ -19,68 +19,72 @@ const recentProjects = await getProjects({
 
 // 블로그 데이터 가져오기
 const pinnedPosts = await getPosts({ filter: { pinned: true } });
+
+const seriesList = await getAllSeries();
+
 ---
 
 <Layout title="홈">
   <div class="mx-auto w-full">
 
-    <!-- 최근 블로그 글 섹션 -->
-    <section class="mb-16 mt-16">
-      {/* 데스크톱 매거진 스타일 레이아웃 */}
-      <div class="w-full">
-        <div class="mb-8 flex items-center justify-between">
-          <h2 class="font-sans text-2xl font-bold text-black-base">
-            <span class="text-skin-accent">✦</span> 주목할만한 글
-          </h2>
-          <a
-            href="/blog"
-            class="inline-flex items-center gap-1 font-sans text-sm text-skin-accent hover:text-skin-accent/80"
-          >
-            More <PiShootingStarFill />
-          </a>
-        </div>
-        <div class="hidden md:block w-full">
-          <div class=" grid grid-cols-3 gap-4 lg:grid-cols-4 lg:gap-6">
-            {pinnedPosts.slice(0, 8).map((post) => (
-              <BlogPostCard {...post} client:load />
-            ))}
-          </div>  
-        </div>
-        <div class="md:hidden w-full">
-          <div class="flex flex-col">
-            {pinnedPosts.slice(0,4).map((post) => (
-              <BlogPostListItem {...post} client:load />
+        {/* 시리즈 섹션 */}
+        <section class="mt-16 mb-16">
+          <ShootingStarHeader
+            title="시리즈"
+            description="연재 중인 시리즈들이에요"
+            moreLink="/blog/series"
+            client:load
+          />
+          
+          <div class="grid auto-rows-fr gap-6 sm:grid-cols-2 lg:grid-cols-3">
+            {seriesList.slice(0, 3).map((seriesData) => (
+              <FullImageSeriesCard {...seriesData} client:load />
             ))}
           </div>
+        </section>
+
+        
+    {/* 주목할만한 글 섹션 */}
+    <section class="mb-16">
+      <ShootingStarHeader
+        title="주목할만한 글"
+        description="놓치면 아쉬운 글들이에요"
+        moreLink="/blog"
+        client:load
+      />
+      
+      <div class="hidden md:block w-full">
+        <div class="grid grid-cols-3 gap-4 lg:grid-cols-4 lg:gap-6">
+          {pinnedPosts.slice(0, 8).map((post) => (
+            <BlogPostCard {...post} client:load />
+          ))}
+        </div>  
+      </div>
+      <div class="md:hidden w-full">
+        <div class="flex flex-col">
+          {pinnedPosts.slice(0,4).map((post) => (
+            <BlogPostListItem {...post} client:load />
+          ))}
         </div>
       </div>
     </section>
 
-    <!-- 최근 프로젝트 섹션 -->
-    <section class="mb-16 mt-16">
-      <div class="mb-8 flex items-center justify-between">
-        <h2 class="font-sans text-2xl font-bold text-black-base">
-          <span class="text-skin-accent">✦</span> 프로젝트 모음
-        </h2>
-        <a
-          href="/projects"
-          class="inline-flex items-center gap-1 font-sans text-sm text-skin-accent hover:text-skin-accent/80"
-        >
-          More <PiShootingStarFill />
-        </a>
-      </div>
-      <div
-        class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 lg:gap-6"
-      >
-        {
-          recentProjects.map((project, index) => (
-            <div class={`${index >= 3 ? "hidden sm:block" : ""}`}>
-              <ProjectCard {...project} client:load />
-            </div>
-          ))
-        }
+    {/* 프로젝트 섹션 */}
+    <section class="mb-16">
+      <ShootingStarHeader
+        title="프로젝트 모음"
+        description="진행했던 프로젝트들이에요"
+        moreLink="/projects"
+        client:load
+      />
+      
+      <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 lg:gap-6">
+        {recentProjects.map((project, index) => (
+          <div class={`${index >= 3 ? "hidden sm:block" : ""}`}>
+            <ProjectCard {...project} client:load />
+          </div>
+        ))}
       </div>
     </section>
-
   </div>
 </Layout>
