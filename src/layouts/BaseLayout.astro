@@ -6,7 +6,7 @@ import "~styles/global.css";
 import Hero from "~components/Hero/Hero";
 import { SkeletonProvider } from "~components/Skeleton/SkeletonProvider";
 import Seo from "~components/Seo/Seo.astro";
-import { getAllSeriesAndCounts, getAllTags, getPosts, type SeriesAndCounts, type TagAndCount } from "~utils/getPosts";
+import { getAllSeries, getAllSeriesAndCounts, getAllTags, getPosts, type SeriesAndCounts, type TagAndCount } from "~utils/getPosts";
 import type { PostEntry } from "~types/post.type";
 
 interface Props {
@@ -57,7 +57,7 @@ const shouldMakeSpaceForNavBar = useScrollHide === true && !shouldRenderHero;
       </main>
 
       <!-- 푸터 (Footer) -->
-      <Footer />
+      <Footer client:load />
     </SkeletonProvider>
   </body>
 </html>

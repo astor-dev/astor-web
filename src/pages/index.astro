@@ -7,6 +7,7 @@ import { FullImageSeriesCard } from "~components/Card/FullImageSeriesCard";
 import { ShootingStarHeader } from "~components/Header/ShootingStarHeader";
 import { getProjects } from "~/utils/getProjects";
 import { getPosts, getAllSeries } from "~utils/getPosts";
+import SeriesCard from "~components/Card/SeriesCard";
 
 // 프로젝트 데이터 가져오기
 const recentProjects = await getProjects({
@@ -38,7 +39,7 @@ const seriesList = await getAllSeries();
           
           <div class="grid auto-rows-fr gap-6 sm:grid-cols-2 lg:grid-cols-3">
             {seriesList.slice(0, 3).map((seriesData) => (
-              <FullImageSeriesCard {...seriesData} client:load />
+              <SeriesCard {...seriesData} client:load />
             ))}
           </div>
         </section>

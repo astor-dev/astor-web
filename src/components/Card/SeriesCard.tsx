@@ -22,7 +22,7 @@ const SeriesCard: React.FC<SeriesCardProps> = ({ series, posts }) => {
       }`}
     >
       {/* overflow-hidden 제거하여 그림자 영역이 잘 보이도록 함 */}
-      <article className="group relative rounded-2xl bg-white transition-all hover:-translate-y-1 hover:shadow-xl">
+      <article className="group relative rounded-2xl bg-white shadow-lg transition-all hover:-translate-y-1 hover:shadow-xl">
         {/* 이미지 영역: 고정 비율을 유지하고 overflow-hidden으로 이미지 넘침을 잘라냄 */}
         <div className="relative aspect-[16/9] w-full overflow-hidden">
           <ImageWithSkeleton

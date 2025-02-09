@@ -70,6 +70,11 @@ export default {
           background: withOpacity("--color-background"),
         },
       },
+      /* Base 그라데이션 배경 유틸리티 추가 */
+      backgroundImage: {
+        "base-gradient":
+          "linear-gradient(270deg, rgb(var(--base-gradient-start)), rgb(var(--base-gradient-mid)), rgb(var(--base-gradient-end)))",
+      },
       keyframes: {
         loading: {
           "0%": { transform: "translateX(-100%)" },
@@ -89,65 +94,60 @@ export default {
           "100%": { transform: "translateY(0)", opacity: 1 },
         },
         "float-0": {
-          "0%": {
-            opacity: 1,
-          },
-          "25%": {
-            opacity: 0.5,
-          },
-          "50%": {
-            opacity: 0,
-          },
-          "75%": {
-            opacity: 0.5,
-          },
-          "100%": {
-            opacity: 1,
-          },
+          "0%": { opacity: 1 },
+          "25%": { opacity: 0.5 },
+          "50%": { opacity: 0 },
+          "75%": { opacity: 0.5 },
+          "100%": { opacity: 1 },
         },
         "float-1": {
           "0%": {
-            transform: "rotate(0deg) translate(-50%, -50%) ",
+            transform: "rotate(0deg) translate(-50%, -50%)",
             opacity: "1",
           },
           "25%": {
-            transform: "rotate(-90deg) translate(-75%, -75%) ",
+            transform: "rotate(-90deg) translate(-75%, -75%)",
             opacity: "1",
           },
           "50%": {
-            transform: "rotate(-180deg) translate(-100%, -100%) ",
+            transform: "rotate(-180deg) translate(-100%, -100%)",
             opacity: "1",
           },
           "75%": {
-            transform: "rotate(-270deg) translate(-75%, -75%) ",
+            transform: "rotate(-270deg) translate(-75%, -75%)",
             opacity: "1",
           },
           "100%": {
-            transform: "rotate(-360deg) translate(-50%, -50%) ",
+            transform: "rotate(-360deg) translate(-50%, -50%)",
             opacity: "1",
           },
         },
         "float-2": {
           "0%": {
-            transform: "rotate(0deg) translate(-50%, -50%) ",
+            transform: "rotate(0deg) translate(-50%, -50%)",
             opacity: "1",
           },
           "25%": {
-            transform: "rotate(90deg) translate(-25%, -25%) ",
+            transform: "rotate(90deg) translate(-25%, -25%)",
             opacity: "1",
           },
           "50%": {
-            transform: "rotate(180deg) translate(0%, 0%) ",
+            transform: "rotate(180deg) translate(0%, 0%)",
             opacity: "1",
           },
           "75%": {
-            transform: "rotate(270deg) translate(-25%, -25%) ",
+            transform: "rotate(270deg) translate(-25%, -25%)",
             opacity: "1",
           },
           "100%": {
-            transform: "rotate(360deg) translate(-50%, -50%) ",
+            transform: "rotate(360deg) translate(-50%, -50%)",
             opacity: "1",
           },
+        },
+        gradientShift: {
+          "0%": { "background-position": "0% 50%" },
+          "50%": { "background-position": "100% 50%" },
+          "100%": { "background-position": "0% 50%" },
         },
       },
       animation: {
@@ -159,14 +159,13 @@ export default {
         "float-0": "float-0 6s linear infinite",
         "float-1": "float-1 12s linear infinite",
         "float-2": "float-2 12s linear infinite",
+        gradientShift: "gradientShift 15s ease infinite",
       },
-      /* outline color */
       outlineColor: {
         skin: {
           fill: withOpacity("--color-accent"),
         },
       },
-      /* border color */
       borderColor: {
         skin: {
           line: withOpacity("--color-border"),
@@ -174,7 +173,6 @@ export default {
           accent: withOpacity("--color-accent"),
         },
       },
-      /* fill (SVG 등) */
       fill: {
         skin: {
           base: withOpacity("--color-text-base"),
@@ -182,27 +180,20 @@ export default {
         },
         transparent: "transparent",
       },
-      /* stroke (SVG 등) */
       stroke: {
         skin: {
           accent: withOpacity("--color-accent"),
         },
       },
-      /* 폰트 패밀리 설정 */
       fontFamily: {
         sans: ["SUIT Variable", "sans-serif"],
         mono: ["IBM Plex Mono", "monospace"],
       },
-      /* Typography 플러그인 설정 */
       typography: {
         DEFAULT: {
           css: {
-            pre: {
-              color: false,
-            },
-            code: {
-              color: false,
-            },
+            pre: { color: false },
+            code: { color: false },
           },
         },
       },
