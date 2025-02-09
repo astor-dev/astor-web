@@ -89,7 +89,7 @@ function NavBar({
           </div>
 
           {/* 아이콘 메뉴 – 드롭다운들을 IconDropdown 컴포넌트로 분리 */}
-          <div className="flex items-center space-x-4">
+          <div className={`flex items-center ${isMobile ? "" : "space-x-4"}`}>
             <IconDropdown
               title="태그"
               icon={<FiTag className="h-6 w-6" />}
