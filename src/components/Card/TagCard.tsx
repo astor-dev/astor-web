@@ -3,43 +3,24 @@ import { motion } from "framer-motion";
 import { FaArrowRight } from "react-icons/fa";
 import type { TagAndCount } from "~utils/getPosts";
 
-interface TagCardProps extends TagAndCount {
-  index: number;
-}
+interface TagCardProps extends TagAndCount {}
 
 const TagCard: React.FC<TagCardProps> = ({ tag, count }) => {
   return (
     <motion.a
       href={`/blog/tags/${tag}`}
-      whileHover={{ y: -2 }}
+      whileHover={{ scale: 1.02 }}
       whileTap={{ scale: 0.98 }}
-      transition={{
-        type: "tween",
-        ease: "easeInOut",
-        duration: 0.2,
-      }}
-      className="group relative overflow-hidden rounded-xl bg-white p-4 shadow-sm transition-shadow hover:shadow-md"
+      transition={{ type: "tween", duration: 0.2 }}
+      className="group relative flex flex-col justify-between rounded-lg bg-white p-4 shadow-md transition-shadow hover:shadow-lg"
     >
-      <div className="relative z-10 flex h-full flex-col justify-between">
-        {/* 태그 이름 */}
-        <h3 className="text-lg font-medium text-black-accent transition-colors group-hover:text-skin-accent">
-          {tag}
-        </h3>
-
-        {/* 하단 정보 */}
-        <div className="mt-2 flex items-center justify-between">
-          <span className="text-sm text-black-muted">{count}개의 포스트</span>
-
-          <motion.span className="flex h-6 w-6 items-center justify-center rounded-full bg-skin-accent/10 text-skin-accent">
-            <motion.div whileHover={{ x: 2 }} transition={{ type: "tween" }}>
-              <FaArrowRight className="h-3 w-3" />
-            </motion.div>
-          </motion.span>
-        </div>
+      <h3 className="text-lg font-semibold text-gray-800 transition-colors group-hover:text-skin-accent">
+        {tag}
+      </h3>
+      <div className="mt-3 flex items-center justify-between">
+        <span className="text-sm text-gray-500">{count}개의 포스트</span>
+        <FaArrowRight className="h-4 w-4 text-gray-400 transition-colors group-hover:text-skin-accent" />
       </div>
-
-      {/* 배경 효과 - 심플한 그라데이션 */}
-      <div className="absolute inset-0 bg-gradient-to-br from-skin-accent/5 via-transparent to-transparent opacity-0 transition-opacity duration-200 group-hover:opacity-100" />
     </motion.a>
   );
 };

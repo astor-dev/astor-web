@@ -42,24 +42,25 @@ const SeriesCard: React.FC<SeriesCardProps> = ({ series, posts }) => {
           </div>
         </div>
 
-        {/* 텍스트 영역: 고정 높이를 주어 내부 컨텐츠가 넘치면 잘리도록 함 */}
+        {/* 텍스트 영역: 고정 높이를 주어 내부 컨텐츠가 넘치면 스크롤되도록 함 */}
         <div className="relative flex h-[210px] flex-col p-3">
-          <div className="overflow-hidden">
+          {/* 리스트 영역 : flex-1을 주어 남은 영역을 모두 채우며, 오버플로우시 스크롤 */}
+          <div className="flex-1 overflow-y-auto">
             <ul className="space-y-2">
               {posts.map((post, index) => (
                 <li key={post.id} className="flex items-center gap-2 text-sm">
                   <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-skin-accent/10 text-xs font-medium text-skin-accent">
                     {(index + 1).toString().padStart(2, "0")}
                   </span>
-                  <h4 className="line-clamp-1 flex-1 truncate font-medium text-black-accent">
+                  <h4 className="line-clamp-1 min-w-0 flex-1 truncate font-medium text-black-accent">
                     {post.data.title}
                   </h4>
                 </li>
               ))}
             </ul>
           </div>
-
-          <div className="absolute bottom-3 left-3 right-3 border-t border-gray-100 pt-3">
+          {/* 하단 영역: 항상 보이는 "시리즈 보기" 버튼 */}
+          <div className="border-t border-gray-100 pt-3">
             <a
               href={`/series/${encodeURIComponent(series)}`}
               className="flex items-center justify-between"
