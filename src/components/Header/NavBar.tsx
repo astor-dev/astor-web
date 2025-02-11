@@ -102,7 +102,6 @@ function NavBar({
                   <ul className="grid grid-cols-2 gap-2">
                     {tags
                       .sort((a, b) => b.count - a.count)
-                      .slice(0, 12)
                       .map(tag => (
                         <li key={tag.tag}>
                           <a

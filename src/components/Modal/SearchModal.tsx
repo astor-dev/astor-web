@@ -65,11 +65,6 @@ const SearchModal = ({
     post.title.toLowerCase().includes(searchQuery.toLowerCase()),
   );
 
-  const handleSuggestionClick = (value: string) => {
-    setSearchQuery(value);
-    inputRef.current?.focus();
-  };
-
   const modalContent = (
     <motion.div
       initial={{ opacity: 0 }}
@@ -157,13 +152,13 @@ const SearchModal = ({
                   filteredPosts.length > 0 ? (
                     <div className="flex flex-col gap-2">
                       {filteredPosts.map(post => (
-                        <button
+                        <a
                           key={post.id}
-                          onClick={() => handleSuggestionClick(post.title)}
+                          href={`/blog/detail/${post.id}`}
                           className="rounded-lg bg-white p-3 text-left text-black-base hover:bg-skin-accent hover:text-white-base"
                         >
                           {post.title}
-                        </button>
+                        </a>
                       ))}
                     </div>
                   ) : (
@@ -182,16 +177,16 @@ const SearchModal = ({
             {activeTab === "tags" && (
               <div className="flex flex-wrap gap-2">
                 {tags.map(({ tag, count }) => (
-                  <button
+                  <a
                     key={tag}
-                    onClick={() => handleSuggestionClick(tag)}
+                    href={`/blog/tags/${tag}`}
                     className="flex items-center gap-2 rounded-full bg-white px-3 py-1 text-sm hover:bg-skin-accent hover:text-white-base"
                   >
                     <span>{tag}</span>
                     <span className="rounded-full bg-gray-100 px-2 py-0.5 text-xs text-gray-600">
                       {count}
                     </span>
-                  </button>
+                  </a>
                 ))}
               </div>
             )}
@@ -199,16 +194,16 @@ const SearchModal = ({
             {activeTab === "series" && (
               <div className="flex flex-col gap-2">
                 {series.map(({ series, count }) => (
-                  <button
+                  <a
                     key={series}
-                    onClick={() => handleSuggestionClick(series)}
+                    href={`/blog/series/${series}`}
                     className="flex flex-col gap-1 rounded-lg bg-white p-3 text-left text-black-base hover:bg-skin-accent hover:text-white-base"
                   >
                     <span className="font-medium">{series}</span>
                     <span className="text-xs text-skin-base">
                       {count}개의 포스트
                     </span>
-                  </button>
+                  </a>
                 ))}
               </div>
             )}

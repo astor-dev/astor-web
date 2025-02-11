@@ -7,6 +7,8 @@ import { repositoryContainer } from "~modules/repository.module";
 import { POST_REPOSITORY, type PostRepository } from "~modules/repositories/posts/PostRepository";
 import { isDefined } from "~utils/types.utils";
 import { POST_PER_PAGE } from "~constants/page";
+import TagList from "~components/Wrapper/TagList";
+import MobileTagScroll from "~components/Tag/MobileTagScroll";
 
 interface Props {
   currentTag?: string;
@@ -22,13 +24,15 @@ const posts = await postRepository.getPosts({
   paging: {page, limit: POST_PER_PAGE}
 });
 const tags = await postRepository.getAllTags();
+
 ---
 
 <div class="mx-auto w-full mt-16">
-  <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+  <div class="grid grid-cols-1 sm:grid-cols-4 gap-8">
     <!-- 좌측 사이드바: React 기반 태그 목록 컴포넌트 -->
-    <aside class="col-span-1">
-      <TagSidebar tags={tags} client:load />
+    <aside class="col-span-2 sm:col-span-1">  
+      <MobileTagScroll tags={tags} client:load className="sm:hidden" /> 
+      <TagSidebar tags={tags} client:load className="hidden sm:block" />
     </aside>
     
     <!-- 메인 콘텐츠 영역: 포스트 목록 -->

@@ -85,7 +85,7 @@ export default function Hero() {
                 className="rounded-full bg-skin-accent px-10 py-4 text-sm font-semibold text-white-base shadow-lg transition hover:bg-skin-accent/90 active:scale-95"
                 style={{ color: "#F5F5F7" }}
               >
-                게시글 보러가기
+                블로그 보러가기
               </a>
             </div>
           </div>

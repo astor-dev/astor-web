@@ -14,8 +14,8 @@ const Pagination: React.FC<PaginationProps> = ({
   // 태그가 있을 경우와 없을 경우의 링크를 지정
   const createLink = (page: number) => {
     return currentTag && currentTag.trim() !== ""
-      ? `/blog/tag/${encodeURIComponent(currentTag)}/page/${page}`
-      : `/blog/page/${page}`;
+      ? `/blog/tags/${encodeURIComponent(currentTag)}/pages/${page}`
+      : `/blog/pages/${page}`;
   };
 
   // 전체 페이지 수 만큼 페이지 배열 생성

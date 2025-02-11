@@ -21,7 +21,7 @@ const BlogPostListItem: React.FC<BlogPostListItemProps> = props => {
     >
       <article className="flex gap-6">
         {/* 썸네일 이미지 */}
-        <div className="relative aspect-[4/3] w-[120px] shrink-0 overflow-hidden rounded-lg md:w-[240px]">
+        <div className="relative hidden aspect-[4/3] w-[120px] shrink-0 overflow-hidden rounded-lg sm:block md:w-[240px]">
           <ImageWithSkeleton
             src={props.data.ogImage?.toString() || "/default-blog-image.jpg"}
             alt={props.data.title}
@@ -38,7 +38,7 @@ const BlogPostListItem: React.FC<BlogPostListItemProps> = props => {
         {/* 콘텐츠 */}
         <div className="flex min-w-0 flex-1 flex-col">
           <div className="mb-auto">
-            <h3 className="text-base font-bold text-black-accent md:text-xl">
+            <h3 className="line-clamp-1 text-base font-bold text-black-accent md:text-xl">
               {props.data.title}
             </h3>
             <p className="mt-1 line-clamp-1 text-xs text-black-base md:mt-2 md:line-clamp-2 md:text-base">
@@ -51,7 +51,7 @@ const BlogPostListItem: React.FC<BlogPostListItemProps> = props => {
             <div className="flex overflow-hidden">
               <div className="flex flex-nowrap gap-1.5">
                 {props.data.tags.map((tag, index) => (
-                  <Tag key={index} text={tag} size="sm" />
+                  <Tag key={index} tag={tag} />
                 ))}
               </div>
             </div>

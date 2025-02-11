@@ -53,39 +53,40 @@ const IconDropdown: React.FC<IconDropdownProps> = ({
     }
   };
 
-  // open 상태일 때, 마우스가 버튼과 드롭다운(투명 spacer 포함)의 영역을 벗어나면 닫기
   useEffect(() => {
     if (!open) return;
 
     const handleMouseMove = (e: MouseEvent) => {
-      // 버튼(컨테이너)의 bounding rect
       const containerRect = containerRef.current?.getBoundingClientRect();
-      // 드롭다운의 bounding rect (존재하는 경우)
       const dropdownRect = dropdownRef.current?.getBoundingClientRect();
-
       if (!containerRect) return;
 
-      // 두 영역의 union을 계산
-      let unionLeft = containerRect.left;
-      let unionRight = containerRect.right;
-      let unionTop = containerRect.top;
-      let unionBottom = containerRect.bottom;
+      // 수평은 버튼 영역만, 수직은 버튼과 드롭다운의 union 사용
+      const unionLeft = containerRect.left;
+      const unionRight = containerRect.right;
+      const unionTop = containerRect.top;
+      const unionBottom = dropdownRect
+        ? dropdownRect.bottom
+        : containerRect.bottom;
 
-      if (dropdownRect) {
-        unionLeft = Math.min(unionLeft, dropdownRect.left);
-        unionRight = Math.max(unionRight, dropdownRect.right);
-        unionTop = Math.min(unionTop, dropdownRect.top);
-        unionBottom = Math.max(unionBottom, dropdownRect.bottom);
-      }
-
-      // 마우스 좌표가 union 영역 밖이라면 닫기
       if (
         e.clientX < unionLeft ||
         e.clientX > unionRight ||
         e.clientY < unionTop ||
         e.clientY > unionBottom
       ) {
-        setOpen(false);
+        if (dropdownRect) {
+          if (
+            e.clientX < dropdownRect.left ||
+            e.clientX > dropdownRect.right ||
+            e.clientY < dropdownRect.top ||
+            e.clientY > dropdownRect.bottom
+          ) {
+            setOpen(false);
+          }
+        } else {
+          setOpen(false);
+        }
       }
     };
 

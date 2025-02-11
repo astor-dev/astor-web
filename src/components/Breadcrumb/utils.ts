@@ -2,23 +2,22 @@
 export const breadcrumbNameMap: Record<string, string> = {
   home: "홈", // 루트 경로
   projects: "프로젝트",
-  details: "상세정보",
+  blog: "블로그",
+  tags: "태그",
+  pages: "페이지",
   admin: "관리자",
   about: "소개",
   contact: "연락처",
   edit: "수정",
   new: "작성",
-  blog: "블로그",
   login: "로그인",
-  tag: "태그",
-  page: "페이지",
 };
 
 // 시각적으로 숨길 경로들
-export const HIDDEN_PATHS = ["detail", "details", "page", "tag"];
+export const HIDDEN_PATHS = ["detail", "pages", "tags"];
 
 // ✅ 특정 경로가 포함되면 그다음 경로도 함께 숨길 목록
-export const HIDDEN_WITH_NEXT_PATHS = ["page"];
+export const HIDDEN_WITH_NEXT_PATHS = ["pages"];
 
 // 경로 변환 함수
 export function getBreadcrumbPaths(pathname: string) {

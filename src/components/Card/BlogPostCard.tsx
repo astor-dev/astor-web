@@ -63,7 +63,7 @@ const BlogPostCard: React.FC<BlogPostCardProps> = props => {
               {/* 태그 영역 */}
               <div className="line-clamp-1 flex gap-1.5 overflow-hidden">
                 {props.data.tags.map((tag, index) => (
-                  <Tag key={index} text={tag} size="sm" />
+                  <Tag key={index} tag={tag} size="sm" />
                 ))}
               </div>
 
