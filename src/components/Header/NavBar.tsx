@@ -7,15 +7,14 @@ import {
   FiUser,
 } from "react-icons/fi";
 import SearchModal from "~components/Modal/SearchModal";
-import type { TagAndCount, SeriesAndCounts } from "~utils/getPosts";
-import type { PostEntry } from "~types/post.type";
+import type { PostEntry, PostTitleAndId, Series, Tag } from "~types/post.type";
 import IconDropdown from "~components/Dropdown/IconDropdown";
 
 interface NavBarProps {
   pathname: string;
-  tags: TagAndCount[];
-  series: SeriesAndCounts[];
-  posts: PostEntry[];
+  tags: Tag[];
+  series: Series[];
+  posts: PostTitleAndId[];
   /** 스크롤에 따라 hide되는 기능 사용 여부 (기본값: true) */
   useScrollHide?: boolean;
   /** 초기 네브바 보이는 상태 여부 (기본값: true) */

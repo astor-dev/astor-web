@@ -1,9 +1,11 @@
 ---
 import PostDetail from "~layouts/blog/PostDetail.astro";
-import { getPosts } from "~utils/getPosts";
+import { repositoryContainer } from "~modules/repository.module";
+import { POST_REPOSITORY, type PostRepository } from "~modules/repositories/posts/PostRepository";
 
 export async function getStaticPaths() {
-  const posts = await getPosts();
+  const postRepository = repositoryContainer.get<PostRepository>(POST_REPOSITORY);
+  const posts = await postRepository.getPosts();
   return posts.map(post => ({
     params: { id: post.id },
     props: { post },

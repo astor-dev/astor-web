@@ -17,7 +17,7 @@ const BlogPostListItem: React.FC<BlogPostListItemProps> = props => {
   return (
     <a
       href={`/blog/detail/${props.id}`}
-      className={`group block w-full border-b border-gray-100 py-6 transition-colors hover:bg-gray-50/50 ${props.className}`}
+      className={`group block w-full border-b border-gray-100 px-3 py-6 transition-colors hover:bg-gray-100 ${props.className}`}
     >
       <article className="flex gap-6">
         {/* 썸네일 이미지 */}
@@ -25,7 +25,7 @@ const BlogPostListItem: React.FC<BlogPostListItemProps> = props => {
           <ImageWithSkeleton
             src={props.data.ogImage?.toString() || "/default-blog-image.jpg"}
             alt={props.data.title}
-            className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
+            className="h-full w-full object-cover"
           />
           {props.data.series && (
             <div className="absolute left-1.5 top-1.5 rounded-full bg-skin-fill/95 px-1.5 py-0.5 text-[10px] font-medium text-skin-accent backdrop-blur-sm md:left-2 md:top-2 md:px-2 md:py-1 md:text-xs">
@@ -38,7 +38,7 @@ const BlogPostListItem: React.FC<BlogPostListItemProps> = props => {
         {/* 콘텐츠 */}
         <div className="flex min-w-0 flex-1 flex-col">
           <div className="mb-auto">
-            <h3 className="text-base font-bold text-black-accent transition-colors group-hover:text-skin-accent md:text-xl">
+            <h3 className="text-base font-bold text-black-accent md:text-xl">
               {props.data.title}
             </h3>
             <p className="mt-1 line-clamp-1 text-xs text-black-base md:mt-2 md:line-clamp-2 md:text-base">

@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
-import { AuthService } from "~services/auth.service";
+import { serviceContainer } from "~modules/service.module";
+import { AUTH_SERVICE, type AuthService } from "~modules/services/auth.service";
 
 interface AdminOnlyProps {
   children: React.ReactNode;
@@ -8,10 +9,11 @@ interface AdminOnlyProps {
 const AdminOnly: React.FC<AdminOnlyProps> = ({ children }) => {
   const [isLoading, setIsLoading] = useState(true);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const authService = serviceContainer.get<AuthService>(AUTH_SERVICE);
 
   useEffect(() => {
     const checkAuth = async () => {
-      const isAuth = await AuthService.verifyAuth();
+      const isAuth = await authService.verifyAuth();
       setIsAuthenticated(isAuth);
       setIsLoading(false);
 

@@ -1,7 +1,11 @@
 import React, { useEffect, useRef, useState } from "react";
-import { ImageService } from "~services/image.service";
-import type { ImageExtension, ImageKey } from "~types/image.type";
 import { RiImageAddFill, RiCheckFill, RiLoader2Fill } from "react-icons/ri";
+import { serviceContainer } from "~modules/service.module";
+import {
+  IMAGE_SERVICE,
+  type ImageService,
+} from "~modules/services/image.service";
+import type { ImageKey } from "~types/image.type";
 
 interface Props {
   id: string;
@@ -25,6 +29,7 @@ const ImageFileInput: React.FC<Props> = ({
   const [file, setFile] = useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const inputRef = useRef<HTMLInputElement>(null);
+  const imageService = serviceContainer.get<ImageService>(IMAGE_SERVICE);
 
   const isLoading = file !== null;
   const isPending = !value && !previewUrl;
@@ -35,7 +40,7 @@ const ImageFileInput: React.FC<Props> = ({
       const objectUrl = URL.createObjectURL(file);
       setPreviewUrl(objectUrl);
 
-      ImageService.uploadImage(type, file).then(newUrl => {
+      imageService.uploadImage(type, file).then(newUrl => {
         setFile(null);
         setPreviewUrl(null);
         setValue(newUrl);

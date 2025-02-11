@@ -1,13 +1,13 @@
 ---
 import Layout from "~layouts/BaseLayout.astro";
 import ProjectForm from "~components/Form/ProjectForm";
-import MDXEditor from "~components/Editor/MDXEditor";
-import IconButton from "~components/Button/IconButton";
-import { getProjects } from "~utils/getProjects";
+import { repositoryContainer } from "~modules/repository.module";
+import { PROJECT_REPOSITORY, type ProjectRepository } from "~modules/repositories/projects/ProjectRepository";
 import AdminOnly from "~components/Auth/AdminOnly";
 
 export async function getStaticPaths() {
-  const projects = await getProjects();
+  const projectRepository = repositoryContainer.get<ProjectRepository>(PROJECT_REPOSITORY);
+  const projects = await projectRepository.getProjects();
 
   const postResult = projects.map(project => ({
     params: { id: project.id },

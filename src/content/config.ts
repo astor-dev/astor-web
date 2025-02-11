@@ -22,7 +22,7 @@ const projects = defineCollection({
 const posts = defineCollection({
   type: "content_layer",
   loader: glob({ base: "./src/content/posts", pattern: "**/*.{md,mdx}" }),
-  schema: ({ image }) =>
+  schema: () =>
     z.object({
       author: z.string().default("Astor"),
       createdAt: z.string(),
@@ -31,12 +31,7 @@ const posts = defineCollection({
       pinned: z.boolean().default(false),
       draft: z.boolean().default(true),
       tags: z.array(z.string()).default(["others"]),
-      ogImage: image()
-        .refine(img => img.width >= 1200 && img.height >= 630, {
-          message: "OpenGraph image must be at least 1200 X 630 pixels!",
-        })
-        .or(z.string())
-        .optional(),
+      ogImage: z.string(),
       series: z.string().optional(),
       description: z.string(),
     }),

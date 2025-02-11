@@ -6,19 +6,19 @@ import "~styles/global.css";
 import Hero from "~components/Hero/Hero";
 import { SkeletonProvider } from "~components/Skeleton/SkeletonProvider";
 import Seo from "~components/Seo/Seo.astro";
-import { getAllSeries, getAllSeriesAndCounts, getAllTags, getPosts, type SeriesAndCounts, type TagAndCount } from "~utils/getPosts";
-import type { PostEntry } from "~types/post.type";
-
+import type { PostEntry, PostTitleAndId, Series, Tag } from "~types/post.type";
+import { repositoryContainer } from "~modules/repository.module";
+import { POST_REPOSITORY, type PostRepository } from "~modules/repositories/posts/PostRepository";
 interface Props {
   useScrollHide?: boolean;
   title?: string;
 }
 
 const { useScrollHide = true, title } = Astro.props;
-
-const tags: TagAndCount[] = await getAllTags();
-const series: SeriesAndCounts[] = await getAllSeriesAndCounts();
-const posts: PostEntry[] = await getPosts();
+const postRepository = repositoryContainer.get<PostRepository>(POST_REPOSITORY);
+const tags: Tag[] = await postRepository.getAllTags();
+const seriesList: Series[] = await postRepository.getAllSeries();
+const posts: PostTitleAndId[] = await postRepository.getAllPostTitleAndId();
 
 const currentPath = Astro.url.pathname;
 const shouldRenderHero = currentPath === "/";
@@ -35,13 +35,12 @@ const shouldMakeSpaceForNavBar = useScrollHide === true && !shouldRenderHero;
   <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-MFD92VH3"
   height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
   <!-- End Google Tag Manager (noscript) -->
-    <!-- 헤더 (NavBar) - 내부에서 Tailwind 반응형 유틸을 사용하여 메뉴 등을 숨기거나 보이도록 처리 가능 -->
     <SkeletonProvider>
       <NavBar
         client:load
         tags={tags}
         posts={posts}
-        series={series}
+        series={seriesList}
         initialShowNav={!shouldRenderHero}
         pathname={currentPath}
         useScrollHide={useScrollHide}

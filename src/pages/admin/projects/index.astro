@@ -1,11 +1,13 @@
 ---
 import Layout from "~layouts/BaseLayout.astro";
 import ProjectTable from "~components/Table/ProjectTable";
-import { getProjects } from "~utils/getProjects";
 import IconButton from "~components/Button/IconButton";
 import AdminOnly from "~components/Auth/AdminOnly";
+import { repositoryContainer } from "~modules/repository.module";
+import { PROJECT_REPOSITORY, type ProjectRepository } from "~modules/repositories/projects/ProjectRepository";
 
-const projects = await getProjects();
+const projectRepository = repositoryContainer.get<ProjectRepository>(PROJECT_REPOSITORY);
+const projects = await projectRepository.getProjects();
 ---
 
 <Layout title="프로젝트 관리">

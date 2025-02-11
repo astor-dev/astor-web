@@ -1,10 +1,12 @@
 ---
 import Layout from "~layouts/BaseLayout.astro";
 import ProjectCard from "~components/Card/ProjectCard";
-import { getProjects } from "~utils/getProjects";
 import { ProjectTypeEnum } from "~types/project.type";
+import { repositoryContainer } from "~modules/repository.module";
+import { PROJECT_REPOSITORY, type ProjectRepository } from "~modules/repositories/projects/ProjectRepository";
 
-const projects = await getProjects();
+const projectRepository = repositoryContainer.get<ProjectRepository>(PROJECT_REPOSITORY);
+const projects = await projectRepository.getProjects();
 
 // 프로젝트 타입별로 분류
 const companyProjects = projects.filter(

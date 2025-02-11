@@ -3,9 +3,11 @@ import Layout from "~layouts/BaseLayout.astro";
 import dayjs from "dayjs";
 import type { CollectionEntry } from "astro:content";
 import { render } from "astro:content";
-import { getProjects } from "~utils/getProjects";
 import type { ProjectEntry } from "~types/project.type";
 import ProjectDetailContent from "~components/Section/ProjectDetailContent";
+import { repositoryContainer } from "~modules/repository.module";
+import { PROJECT_REPOSITORY, type ProjectRepository } from "~modules/repositories/projects/ProjectRepository";
+
 
 interface Props {
   project: CollectionEntry<"projects">;
@@ -24,9 +26,10 @@ const { Content } = await render(project);
 const period = `${dayjs(project.data.startedAt).format("YYYY.MM")} - ${project.data.endedAt ? dayjs(project.data.endedAt).format("YYYY.MM") : "진행중"}`;
 
 // 각 스택별 관련 프로젝트 가져오기
+const projectRepository = repositoryContainer.get<ProjectRepository>(PROJECT_REPOSITORY);
 const relatedProjects: Record<number, ProjectEntry[]> = {};
 for (const stackId of project.data.stackIds) {
-  const projects = await getProjects({
+  const projects = await projectRepository.getProjects({
     filter: {
       stackIds: [stackId],
     },

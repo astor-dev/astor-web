@@ -6,7 +6,6 @@ import {
   type ProjectRole,
   type ProjectType,
 } from "~types/project.type";
-import { ProjectsService } from "~services/projects.service";
 import Editor from "~components/Editor/MDXEditor";
 import IconButton from "~components/Button/IconButton";
 import { stacks } from "~constants/stacks";
@@ -16,6 +15,11 @@ import TextareaInput from "~components/Input/TextareaInput";
 import CheckboxGroupInput from "~components/Input/CheckboxGroupInput";
 import ImageFileInput from "~components/Input/ImageFileInput";
 import dayjs from "dayjs";
+import { serviceContainer } from "~modules/service.module";
+import {
+  PROJECTS_SERVICE,
+  type ProjectsService,
+} from "~modules/services/projects.service";
 
 interface ProjectFormProps {
   initialData?: Partial<ProjectEntry>;
@@ -25,6 +29,8 @@ const PROJECT_TYPES = ProjectTypeEnum.options;
 const ROLES = ProjectRoleEnum.options;
 
 const ProjectForm: React.FC<ProjectFormProps> = ({ initialData }) => {
+  const projectsService =
+    serviceContainer.get<ProjectsService>(PROJECTS_SERVICE);
   // 날짜를 YYYY-MM 형식으로 안전하게 변환하는 헬퍼 함수
   const formatDateToYearMonth = (dateString: string) => {
     if (!dateString) return "";
@@ -143,7 +149,7 @@ const ProjectForm: React.FC<ProjectFormProps> = ({ initialData }) => {
         body: markdownContent,
       };
 
-      const response = await ProjectsService.createProject(projectData);
+      const response = await projectsService.createProject(projectData);
 
       // 성공시에만 리다이렉트
       window.location.href = "/admin/projects";

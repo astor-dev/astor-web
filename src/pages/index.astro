@@ -2,15 +2,23 @@
 import Layout from "~layouts/BaseLayout.astro";
 import ProjectCard from "~components/Card/ProjectCard";
 import BlogPostCard from "~components/Card/BlogPostCard";
-import BlogPostListItem from "~components/List/BlogPostListItem";
-import { FullImageSeriesCard } from "~components/Card/FullImageSeriesCard";
 import { ShootingStarHeader } from "~components/Header/ShootingStarHeader";
-import { getProjects } from "~/utils/getProjects";
-import { getPosts, getAllSeries } from "~utils/getPosts";
-import SeriesCard from "~components/Card/SeriesCard";
+import TagCard from "~components/Card/TagCard";
+import HorizontalSeriesCard from "~components/Card/HorizontalSeriesCard";
+import { repositoryContainer } from "~modules/repository.module";
+import { PROJECT_REPOSITORY, type ProjectRepository } from "~modules/repositories/projects/ProjectRepository";
+import { POST_REPOSITORY, type PostRepository } from "~modules/repositories/posts/PostRepository";
+import type { PostEntry, Tag , Series} from "~types/post.type";
+import type { ProjectEntry } from "~types/project.type";
 
-// 프로젝트 데이터 가져오기
-const recentProjects = await getProjects({
+const projectRepository = repositoryContainer.get<ProjectRepository>(
+  PROJECT_REPOSITORY
+);
+const postRepository = repositoryContainer.get<PostRepository>(
+  POST_REPOSITORY
+);
+
+const projects: ProjectEntry[] = await projectRepository.getProjects({
   paging: { page: 0, limit: 5 },
   sort: { field: "endedAt", order: "desc" },
   filter: {
@@ -19,53 +27,69 @@ const recentProjects = await getProjects({
 });
 
 // 블로그 데이터 가져오기
-const pinnedPosts = await getPosts({ filter: { pinned: true } });
-
-const seriesList = await getAllSeries();
-
+const pinnedPosts: PostEntry[] = await postRepository.getPosts({
+  filter: { pinned: true },
+});
+const tags: Tag[] = await postRepository.getAllTags();
+const seriesList: Series[] = await postRepository.getAllSeries();
 ---
 
 <Layout title="홈">
   <div class="mx-auto w-full">
+    {/* 인기 태그 섹션 */}
+    <section class="mt-16 mb-16">
+      <ShootingStarHeader
+        title="인기 태그"
+        description="자주 다루는 주제들이에요"
+        moreLink="/blog/series"
+        client:load
+      />
+      <div class="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6">
+        {tags
+          .sort((a, b) => b.count - a.count)
+          .slice(0, 12)
+          .map((tag) => (
+            <TagCard {...tag} client:load />
+          ))}
+      </div>
+    </section>
 
-        {/* 시리즈 섹션 */}
-        <section class="mt-16 mb-16">
+    {/* 시리즈와 주목할만한 글 영역 - PC에서는 2열, 모바일은 1열 */}
+    <section class="mb-16">
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-12 items-stretch">
+        {/* 시리즈 영역 - 다른 UI 스타일 적용 */}
+        <div class="flex flex-col space-y-4 h-full">
           <ShootingStarHeader
             title="시리즈"
             description="연재 중인 시리즈들이에요"
             moreLink="/blog/series"
             client:load
           />
-          
-          <div class="grid auto-rows-fr gap-6 sm:grid-cols-2 lg:grid-cols-3">
-            {seriesList.slice(0, 3).map((seriesData) => (
-              <SeriesCard {...seriesData} client:load />
-            ))}
+          <div class="h-full">
+            <!-- FullImageSeriesCard로 개성있는 UI 구현 -->
+            <div class="flex flex-col gap-4 h-full">
+              {seriesList.slice(0, 4).map((seriesData) => (
+                <HorizontalSeriesCard {...seriesData} client:load />
+              ))}
+            </div>
           </div>
-        </section>
+        </div>
 
-        
-    {/* 주목할만한 글 섹션 */}
-    <section class="mb-16">
-      <ShootingStarHeader
-        title="주목할만한 글"
-        description="놓치면 아쉬운 글들이에요"
-        moreLink="/blog"
-        client:load
-      />
-      
-      <div class="hidden md:block w-full">
-        <div class="grid grid-cols-3 gap-4 lg:grid-cols-4 lg:gap-6">
-          {pinnedPosts.slice(0, 8).map((post) => (
-            <BlogPostCard {...post} client:load />
-          ))}
-        </div>  
-      </div>
-      <div class="md:hidden w-full">
-        <div class="flex flex-col">
-          {pinnedPosts.slice(0,4).map((post) => (
-            <BlogPostListItem {...post} client:load />
-          ))}
+        {/* 주목할만한 글 영역 - 그리드 카드 형태 */}
+        <div class="flex flex-col space-y-4 h-full">
+          <ShootingStarHeader
+            title="주목할만한 글"
+            description="놓치면 아쉬운 글들이에요"
+            moreLink="/blog"
+            client:load
+          />
+          <div class="h-full">
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 h-full">
+              {pinnedPosts.slice(0, 4).map((post) => (
+                <BlogPostCard {...post} client:load />
+              ))}
+            </div>
+          </div>
         </div>
       </div>
     </section>
@@ -78,9 +102,8 @@ const seriesList = await getAllSeries();
         moreLink="/projects"
         client:load
       />
-      
       <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 lg:gap-6">
-        {recentProjects.map((project, index) => (
+        {projects.map((project, index) => (
           <div class={`${index >= 3 ? "hidden sm:block" : ""}`}>
             <ProjectCard {...project} client:load />
           </div>

@@ -1,0 +1,29 @@
+---
+import Layout from "~layouts/BaseLayout.astro";
+import BlogPostListItem from "~components/List/BlogPostListItem";
+import TagSidebar from "~components/Sidebar/TagSidebar";
+import PostList from "~layouts/blog/PostList.astro";
+import { repositoryContainer } from "~modules/repository.module";
+import { POST_REPOSITORY, type PostRepository } from "~modules/repositories/posts/PostRepository";
+import { POST_PER_PAGE } from "~constants/page";
+
+export async function getStaticPaths() {
+  const postRepository = repositoryContainer.get<PostRepository>(POST_REPOSITORY);
+  const allPosts = await postRepository.getPosts({
+    sort: { by: "createdAt", order: "desc" },
+  });
+  const totalPages = Math.ceil(allPosts.length / POST_PER_PAGE);
+
+  return Array.from({ length: totalPages }, (_, i) => ({
+    params: { page: (i + 1).toString() },
+    props: { page: i + 1 },
+  }));
+}
+
+const { page } = Astro.props;
+
+---
+<Layout title="블로그">
+  <PostList page={page} />
+</Layout>
+

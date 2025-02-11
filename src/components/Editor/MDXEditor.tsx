@@ -14,7 +14,6 @@ import {
   InsertImage,
   imagePlugin,
   linkPlugin,
-  linkDialogPlugin,
   tablePlugin,
   InsertTable,
   diffSourcePlugin,
@@ -25,14 +24,11 @@ import {
   InsertCodeBlock,
   codeMirrorPlugin,
   type MDXEditorMethods,
-  DialogButton,
-  ButtonWithTooltip,
-  ChangeAdmonitionType,
   InsertThematicBreak,
-  InsertAdmonition,
 } from "@mdxeditor/editor";
 import "~styles/editor.css";
-import { ImageService } from "~services/image.service";
+import { IMAGE_SERVICE, ImageService } from "~modules/services/image.service";
+import { serviceContainer } from "~modules/service.module";
 
 interface EditorProps {
   markdown: string;
@@ -48,7 +44,7 @@ const formatMarkdown = (markdownText: string) => {
 const Editor: React.FC<EditorProps> = ({ markdown, onChange, placeholder }) => {
   const mdxEditorRef = React.useRef<MDXEditorMethods>(null);
   const oldMarkdownRef = React.useRef(markdown); // 이전 마크다운 값을 저장하기 위한 ref
-
+  const imageService = serviceContainer.get<ImageService>(IMAGE_SERVICE);
   const handleChange = useCallback(
     (content: string) => {
       onChange(content);
@@ -72,7 +68,7 @@ const Editor: React.FC<EditorProps> = ({ markdown, onChange, placeholder }) => {
         imagePlugin({
           imageUploadHandler: async file => {
             try {
-              return await ImageService.uploadImage("projects", file);
+              return await imageService.uploadImage("projects", file);
             } catch (error) {
               console.error("이미지 업로드 실패:", error);
               throw error;

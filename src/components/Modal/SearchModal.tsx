@@ -1,15 +1,14 @@
 import React, { useState, useEffect, useRef } from "react";
 import { motion } from "framer-motion";
 import { createPortal } from "react-dom";
-import type { PostEntry } from "~types/post.type";
-import type { TagAndCount, SeriesAndCounts } from "~utils/getPosts";
+import type { PostTitleAndId, Series, Tag } from "~types/post.type";
 
 interface SearchModalProps {
   isOpen: boolean;
   onClose: () => void;
-  tags: TagAndCount[];
-  series: SeriesAndCounts[];
-  posts: PostEntry[];
+  tags: Tag[];
+  series: Series[];
+  posts: PostTitleAndId[];
 }
 
 const SearchModal = ({
@@ -63,7 +62,7 @@ const SearchModal = ({
 
   // 검색어에 따른 글(포스트) 필터링
   const filteredPosts = posts.filter(post =>
-    post.data.title.toLowerCase().includes(searchQuery.toLowerCase()),
+    post.title.toLowerCase().includes(searchQuery.toLowerCase()),
   );
 
   const handleSuggestionClick = (value: string) => {
@@ -160,10 +159,10 @@ const SearchModal = ({
                       {filteredPosts.map(post => (
                         <button
                           key={post.id}
-                          onClick={() => handleSuggestionClick(post.data.title)}
+                          onClick={() => handleSuggestionClick(post.title)}
                           className="rounded-lg bg-white p-3 text-left text-black-base hover:bg-skin-accent hover:text-white-base"
                         >
-                          {post.data.title}
+                          {post.title}
                         </button>
                       ))}
                     </div>

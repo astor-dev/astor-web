@@ -1,8 +1,8 @@
-import type { P } from "node_modules/@storybook/react/dist/public-types-8dd0ccdf";
 import { z } from "zod";
-import { instance } from "~services/core/config";
+import type { HttpInstance } from "~modules/services/core/http.instance";
 import type { ProjectRole, ProjectType } from "~types/project.type";
-import type { AstroGlobal } from "astro";
+
+export const PROJECTS_SERVICE = Symbol("PROJECTS_SERVICE");
 
 const ProjectCreateSchema = {
   data: z.object({
@@ -41,9 +41,11 @@ interface CreateProjectRequest {
 
 // 프로젝트 서비스 클래스
 export class ProjectsService {
+  constructor(private http: HttpInstance) {}
+
   // 프로젝트 생성
-  static async createProject(project: CreateProjectRequest) {
-    return await instance.put("/projects", project, {
+  async createProject(project: CreateProjectRequest) {
+    return await this.http.put("/projects", project, {
       shape: ProjectCreateSchema,
     });
   }

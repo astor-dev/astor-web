@@ -1,10 +1,14 @@
 import { z } from "zod";
-import { instance } from "~services/core/config";
+import type { HttpInstance } from "~modules/services/core/http.instance";
 import type { ImageKey, ImageExtension } from "~types/image.type";
 
+export const IMAGE_SERVICE = Symbol("IMAGE_SERVICE");
+
 export class ImageService {
-  static async getPresignedUrl(key: ImageKey, extension: ImageExtension) {
-    return await instance.get(
+  constructor(private http: HttpInstance) {}
+
+  async getPresignedUrl(key: ImageKey, extension: ImageExtension) {
+    return await this.http.get(
       `/image/presigned-url?key=${key}&extension=${extension}`,
       {
         shape: {
@@ -15,7 +19,7 @@ export class ImageService {
     );
   }
 
-  static async uploadImage(key: ImageKey, image: File) {
+  async uploadImage(key: ImageKey, image: File) {
     if (!image.type.startsWith("image/")) {
       throw new Error("Invalid file type");
     }

@@ -1,9 +1,12 @@
 ---
 import AdminOnly from "~components/Auth/AdminOnly";
 import ProjectDetail from "~layouts/projects/ProjectDetail.astro";
-import { getProjects } from "~utils/getProjects";
+import { repositoryContainer } from "~modules/repository.module";
+import { PROJECT_REPOSITORY, type ProjectRepository } from "~modules/repositories/projects/ProjectRepository";
+
 export async function getStaticPaths() {
-  const projects = await getProjects();
+  const projectRepository = repositoryContainer.get<ProjectRepository>(PROJECT_REPOSITORY);
+  const projects = await projectRepository.getProjects();
 
   const postResult = projects.map(project => ({
     params: { id: project.id },

@@ -11,7 +11,6 @@
       "~components/*": ["src/components/*"],
       "~layouts/*": ["src/layouts/*"],
       "~pages/*": ["src/pages/*"],
-      "~services/*": ["src/services/*"],
       "~types/*": ["src/types/*"],
       "~constants/*": ["src/constants/*"],
       "~styles/*": ["src/styles/*"],
@@ -19,6 +18,7 @@
       "~hooks/*": ["src/hooks/*"],
       "~content/*": ["src/content/*"],
       "~utils/*": ["src/utils/*"],
+      "~modules/*": ["src/modules/*"],
       "~/*": ["src/*"]
     }
   }

@@ -1,13 +1,12 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
-import replacer from "~services/core/replacer";
 import { z } from "zod";
-import { getAccessToken, logout } from "~services/core/auth";
-import type { AstroGlobal } from "astro";
-import { silentParse } from "~services/core/parser";
-import { AstorError } from "~services/core/Error";
+import replacer from "~modules/services/core/replacer";
+import { AstorError } from "~modules/services/core/Error";
+import { silentParse } from "~modules/services/core/parser";
 
 type HttpMethod = "GET" | "POST" | "PUT" | "PATCH" | "DELETE";
+export const HTTP_INSTANCE = Symbol("HTTP_INSTANCE");
 
 export const BASE_URL = import.meta.env.PUBLIC_BASE_URL;
 
@@ -23,7 +22,7 @@ const ApiResponseOkSchema = <T extends z.ZodRawShape>(rawShape: T) =>
     .merge(z.object(rawShape))
     .strict();
 
-class Instance {
+export class HttpInstance {
   constructor(private readonly baseUrl: string = BASE_URL ?? "") {}
 
   async fetchWithConfig<T extends z.ZodRawShape = EmptyShape>(
@@ -117,5 +116,3 @@ class Instance {
     return await this.fetchWithConfig<T>(url, "PATCH", body, options);
   }
 }
-
-export const instance = new Instance();

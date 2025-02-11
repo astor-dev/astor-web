@@ -1,12 +1,18 @@
 import { z } from "zod";
-import { instance } from "~services/core/config";
+import type { HttpInstance } from "~modules/services/core/http.instance";
+
+// AuthService 토큰 (DI용)
+export const AUTH_SERVICE = Symbol("AUTH_SERVICE");
 
 // 프로젝트 서비스 클래스
 export class AuthService {
+  // HTTP 인스턴스가 DI를 통해 주입됩니다.
+  constructor(private http: HttpInstance) {}
+
   // 프로젝트 생성
-  static async verifyAuth(): Promise<boolean> {
+  async verifyAuth(): Promise<boolean> {
     try {
-      const response = await instance.get("/auth/verify", {
+      const response = await this.http.get("/auth/verify", {
         shape: {
           authenticated: z.boolean(),
         },

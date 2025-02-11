@@ -2,17 +2,19 @@
 import Layout from "~layouts/BaseLayout.astro";
 import StackGrid from "~components/Stack/StackGrid";
 import { FEATURED_STACK_IDS, EXPERIENCES } from "~constants/about";
-import ExperienceItem from "~components/Experience/ExperienceItem";
+import ExperienceItem from "~components/Item/ExperienceItem";
 import profileImage from "~assets/images/image.png";
 import ProfileHeader from "~components/Header/ProfileHeader";
 import SectionWithHeader from "~components/Section/SectionWithHeader";
 import type { ProjectEntry } from "~types/project.type";
-import { getProjects } from "~utils/getProjects";
+import { repositoryContainer } from "~modules/repository.module";
+import { PROJECT_REPOSITORY, type ProjectRepository } from "~modules/repositories/projects/ProjectRepository";
 
 // 각 스택별 관련 프로젝트 가져오기
+const projectRepository = repositoryContainer.get<ProjectRepository>(PROJECT_REPOSITORY);
 const relatedProjects: Record<number, ProjectEntry[]> = {};
 for (const stackId of FEATURED_STACK_IDS) {
-  const projects = await getProjects({
+  const projects = await projectRepository.getProjects({
     filter: {
       stackIds: [stackId],
     },

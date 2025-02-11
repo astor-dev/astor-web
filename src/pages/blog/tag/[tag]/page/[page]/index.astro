@@ -1,0 +1,34 @@
+---
+import Layout from "~layouts/BaseLayout.astro";
+import PostList from "~layouts/blog/PostList.astro";
+import { repositoryContainer } from "~modules/repository.module";
+import { POST_REPOSITORY, type PostRepository } from "~modules/repositories/posts/PostRepository";
+import { POST_PER_PAGE } from "~constants/page";
+
+export async function getStaticPaths() {
+  const postRepository = repositoryContainer.get<PostRepository>(POST_REPOSITORY);
+  const allPosts = await postRepository.getPosts({
+    sort: { by: "createdAt", order: "desc" }
+  });
+  const totalPages = Math.ceil(allPosts.length / POST_PER_PAGE);
+  const tags = await postRepository.getAllTags();
+
+  const paths = [];
+  for (const tag of tags) {
+    for (let i = 1; i <= totalPages; i++) {
+      paths.push({
+        params: { tag: tag.tag, page: i.toString() },
+        props: { tag, page: i, totalPages },
+      });
+    }
+  }
+  return paths;
+}
+const { page, tag } = Astro.props;
+
+
+---
+<Layout title="블로그">
+  <PostList page={page} currentTag={tag.tag} />
+</Layout>
+

@@ -23,7 +23,7 @@ const SeriesCard: React.FC<SeriesCardProps> = ({ series, posts }) => {
     >
       {/* overflow-hidden 제거하여 그림자 영역이 잘 보이도록 함 */}
       <article className="group relative rounded-2xl bg-white shadow-lg transition-all hover:-translate-y-1 hover:shadow-xl">
-        {/* 이미지 영역: 고정 비율을 유지하고 overflow-hidden으로 이미지 넘침을 잘라냄 */}
+        {/* 이미지 영역 */}
         <div className="relative aspect-[16/9] w-full overflow-hidden">
           <ImageWithSkeleton
             src={coverImage.toString()}
@@ -42,9 +42,9 @@ const SeriesCard: React.FC<SeriesCardProps> = ({ series, posts }) => {
           </div>
         </div>
 
-        {/* 텍스트 영역: 고정 높이를 주어 내부 컨텐츠가 넘치면 스크롤되도록 함 */}
+        {/* 텍스트 영역: 고정 높이로 설정하고 내부 컨텐츠가 넘칠 경우 스크롤 */}
         <div className="relative flex h-[210px] flex-col p-3">
-          {/* 리스트 영역 : flex-1을 주어 남은 영역을 모두 채우며, 오버플로우시 스크롤 */}
+          {/* 리스트 영역: flex-1로 남은 공간을 채우게 함 */}
           <div className="flex-1 overflow-y-auto">
             <ul className="space-y-2">
               {posts.map((post, index) => (
@@ -59,8 +59,8 @@ const SeriesCard: React.FC<SeriesCardProps> = ({ series, posts }) => {
               ))}
             </ul>
           </div>
-          {/* 하단 영역: 항상 보이는 "시리즈 보기" 버튼 */}
-          <div className="border-t border-gray-100 pt-3">
+          {/* 하단바 영역: mt-auto를 추가하여 항상 하단에 위치 */}
+          <div className="mt-auto border-t border-gray-100 pt-3">
             <a
               href={`/series/${encodeURIComponent(series)}`}
               className="flex items-center justify-between"
