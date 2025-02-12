@@ -1,0 +1,37 @@
+---
+import type { IconType } from "react-icons";
+
+interface NavItem {
+  href: string;
+  label: string;
+  icon: IconType;
+}
+
+interface Props {
+  items: NavItem[];
+  currentPath: string;
+}
+
+const { items, currentPath } = Astro.props;
+---
+
+<nav class="mb-8">
+  <div class="mx-auto flex w-full max-w-4xl gap-2">
+    {
+      items.map(({ href, label, icon: Icon }) => (
+        <a
+          href={href}
+          class:list={[
+            "flex flex-1 items-center justify-center gap-2 px-4 py-3 text-sm font-medium transition-colors",
+            currentPath === href
+              ? "border-b-2 border-skin-accent text-skin-accent"
+              : "text-black-muted hover:text-black-base",
+          ]}
+        >
+          <Icon className="h-4 w-4" />
+          <span>{label}</span>
+        </a>
+      ))
+    }
+  </div>
+</nav>

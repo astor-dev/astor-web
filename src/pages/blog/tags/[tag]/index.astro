@@ -1,13 +1,17 @@
 ---
 import Layout from "~layouts/BaseLayout.astro";
-import BlogPostListItem from "~components/List/BlogPostListItem";
-import TagSidebar from "~components/Sidebar/TagSidebar";
 import PostList from "~layouts/blog/PostList.astro";
 import { repositoryContainer } from "~modules/repository.module";
-import { POST_REPOSITORY, type PostRepository } from "~modules/repositories/posts/PostRepository";
+import {
+  POST_REPOSITORY,
+  type PostRepository,
+} from "~modules/repositories/posts/PostRepository";
+import CenterNav from "~components/Nav/CenterNav.astro";
+import { navItems } from "~constants/blog";
 
 export async function getStaticPaths() {
-  const postRepository = repositoryContainer.get<PostRepository>(POST_REPOSITORY);
+  const postRepository =
+    repositoryContainer.get<PostRepository>(POST_REPOSITORY);
   const tags = await postRepository.getAllTags();
   return tags.map(tag => ({
     params: { tag: tag.tag },
@@ -15,10 +19,9 @@ export async function getStaticPaths() {
   }));
 }
 const { tag } = Astro.props;
+---
 
-
---- 
 <Layout title="블로그">
+  <CenterNav items={navItems} currentPath="/blog" />
   <PostList page={1} currentTag={tag.tag} />
 </Layout>
-

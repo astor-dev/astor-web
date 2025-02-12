@@ -36,7 +36,7 @@ const MobileTagScroll: React.FC<MobileTagScrollProps> = ({
         ref={scrollRef}
         drag="x"
         dragConstraints={{ right: 0, left: -scrollWidth }}
-        className="flex cursor-grab space-x-4 active:cursor-grabbing"
+        className="flex cursor-grab space-x-1 active:cursor-grabbing"
       >
         {tags.map((tag, index) => (
           <Tag

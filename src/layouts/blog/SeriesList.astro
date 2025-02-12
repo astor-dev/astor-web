@@ -1,0 +1,30 @@
+---
+import { FiLayers } from "react-icons/fi";
+import type { Series } from "~/types/post.type";
+import HorizontalSeriesCard from "~components/Card/HorizontalSeriesCard";
+import SeriesCard from "~components/Card/SeriesCard";
+
+// Props: series는 Series 타입 객체 배열입니다.
+// Series 타입은 예를 들어 { series: string; count: number } 형태라고 가정합니다.
+interface Props {
+  series: Series[];
+}
+
+const { series } = Astro.props;
+---
+
+<div class="mx-auto mt-16 w-full max-w-4xl px-4">
+  <h1 class="mb-8 text-3xl font-bold text-black-accent">연재 시리즈</h1>
+  <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+    {
+      series.map(item => (
+        <HorizontalSeriesCard
+          series={item.series}
+          count={item.count}
+          ogImage={item.ogImage}
+          client:load
+        />
+      ))
+    }
+  </div>
+</div>

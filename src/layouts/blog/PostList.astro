@@ -1,61 +1,70 @@
 ---
-import BlogPostListItem from "~components/List/BlogPostListItem";
 import TagSidebar from "~components/Sidebar/TagSidebar";
-import type { PostEntry, Tag } from "~types/post.type";
 import Pagination from "~components/Footer/Pagination";
 import { repositoryContainer } from "~modules/repository.module";
-import { POST_REPOSITORY, type PostRepository } from "~modules/repositories/posts/PostRepository";
+import {
+  POST_REPOSITORY,
+  type PostRepository,
+} from "~modules/repositories/posts/PostRepository";
 import { isDefined } from "~utils/types.utils";
 import { POST_PER_PAGE } from "~constants/page";
-import TagList from "~components/Wrapper/TagList";
 import MobileTagScroll from "~components/Tag/MobileTagScroll";
+import BlogPostListItem from "~components/List/BlogPostListItem.astro";
 
 interface Props {
   currentTag?: string;
   page: number;
 }
-const {  currentTag, page }: Props = Astro.props;
+const { currentTag, page }: Props = Astro.props;
 
 const postRepository = repositoryContainer.get<PostRepository>(POST_REPOSITORY);
-const allPosts = await postRepository.getPosts({filter: {tags: isDefined(currentTag) ? [currentTag] : undefined}});
+const allPosts = await postRepository.getPosts({
+  filter: { tags: isDefined(currentTag) ? [currentTag] : undefined },
+});
 const totalPages = Math.ceil(allPosts.length / POST_PER_PAGE);
 const posts = await postRepository.getPosts({
-  filter: {tags: isDefined(currentTag) ? [currentTag] : undefined},
-  paging: {page, limit: POST_PER_PAGE}
+  filter: { tags: isDefined(currentTag) ? [currentTag] : undefined },
+  paging: { page, limit: POST_PER_PAGE },
 });
 const tags = await postRepository.getAllTags();
-
 ---
 
-<div class="mx-auto w-full mt-16">
-  <div class="grid grid-cols-1 sm:grid-cols-4 gap-8">
+<div class="mx-auto mt-16 w-full">
+  <div class="grid grid-cols-1 gap-8 sm:grid-cols-4">
     <!-- 좌측 사이드바: React 기반 태그 목록 컴포넌트 -->
-    <aside class="col-span-2 sm:col-span-1">  
-      <MobileTagScroll tags={tags} client:load className="sm:hidden" /> 
+    <aside class="col-span-2 sm:col-span-1">
+      <MobileTagScroll tags={tags} client:load className="sm:hidden" />
       <TagSidebar tags={tags} client:load className="hidden sm:block" />
     </aside>
-    
+
     <!-- 메인 콘텐츠 영역: 포스트 목록 -->
     <main class="col-span-3">
       {/* 선택된 태그가 있다면, 상단에 태그명을 표시 */}
-      {currentTag && (
-        <div class="mb-8">
-          <h2 class="text-2xl font-bold text-black-accent">태그: {currentTag}</h2>
-        </div>
-      )}
+      {
+        currentTag && (
+          <div class="mb-8">
+            <h2 class="text-2xl font-bold text-black-accent">
+              태그: {currentTag}
+            </h2>
+          </div>
+        )
+      }
 
       {/* 포스트 섹션 */}
       <section class="mb-12">
         <div class="divide-y divide-gray-100">
-          {posts.map((post) => (
-            <BlogPostListItem {...post} client:load />
-          ))}
+          {posts.map(post => <BlogPostListItem {...post} />)}
         </div>
       </section>
     </main>
   </div>
   <!-- 페이지네이션을 화면 중앙에 배치 -->
   <div class="mt-8 flex justify-center">
-    <Pagination currentPage={page} totalPages={totalPages} currentTag={currentTag} client:load />
+    <Pagination
+      currentPage={page}
+      totalPages={totalPages}
+      currentTag={currentTag}
+      client:load
+    />
   </div>
 </div>

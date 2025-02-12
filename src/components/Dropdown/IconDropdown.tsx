@@ -24,7 +24,6 @@ interface IconDropdownProps {
   icon: React.ReactNode;
   dropdownContent: React.ReactNode;
   widthClass?: string;
-  isMobile: boolean;
 }
 
 const IconDropdown: React.FC<IconDropdownProps> = ({
@@ -32,7 +31,6 @@ const IconDropdown: React.FC<IconDropdownProps> = ({
   icon,
   dropdownContent,
   widthClass = "w-80",
-  isMobile,
 }) => {
   const [open, setOpen] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
@@ -47,8 +45,9 @@ const IconDropdown: React.FC<IconDropdownProps> = ({
     setOpen(prev => !prev);
   };
 
+  // hover 가능 디바이스일 경우에만 마우스 엔터 이벤트로 드롭다운 열기
   const handleMouseEnter = () => {
-    if (!isMobile) {
+    if (window.matchMedia("(hover: hover)").matches) {
       setOpen(true);
     }
   };
@@ -100,7 +99,7 @@ const IconDropdown: React.FC<IconDropdownProps> = ({
     <div
       ref={containerRef}
       className="relative inline-block"
-      onMouseEnter={handleMouseEnter}
+      onMouseEnter={handleMouseEnter} // hover 디바이스라면 드롭다운 열림
     >
       <button
         title={title}

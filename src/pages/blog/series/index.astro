@@ -1,0 +1,19 @@
+---
+import Layout from "~layouts/BaseLayout.astro";
+import { repositoryContainer } from "~modules/repository.module";
+import {
+  POST_REPOSITORY,
+  type PostRepository,
+} from "~modules/repositories/posts/PostRepository";
+import CenterNav from "~components/Nav/CenterNav.astro";
+import { navItems } from "~constants/blog";
+import SeriesList from "~layouts/blog/SeriesList.astro";
+
+const postRepository = repositoryContainer.get<PostRepository>(POST_REPOSITORY);
+const series = await postRepository.getAllSeries();
+---
+
+<Layout title="블로그">
+  <CenterNav items={navItems} currentPath="/blog/series" />
+  <SeriesList series={series} />
+</Layout>

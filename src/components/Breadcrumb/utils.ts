@@ -11,10 +11,11 @@ export const breadcrumbNameMap: Record<string, string> = {
   edit: "수정",
   new: "작성",
   login: "로그인",
+  series: "시리즈",
 };
 
 // 시각적으로 숨길 경로들
-export const HIDDEN_PATHS = ["detail", "pages", "tags"];
+export const HIDDEN_PATHS = ["detail", "pages", "tags", "series"];
 
 // ✅ 특정 경로가 포함되면 그다음 경로도 함께 숨길 목록
 export const HIDDEN_WITH_NEXT_PATHS = ["pages"];

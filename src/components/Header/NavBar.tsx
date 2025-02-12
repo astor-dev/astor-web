@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect } from "react";
 import {
   FiSearch,
   FiTag,
@@ -7,7 +7,7 @@ import {
   FiUser,
 } from "react-icons/fi";
 import SearchModal from "~components/Modal/SearchModal";
-import type { PostEntry, PostTitleAndId, Series, Tag } from "~types/post.type";
+import type { PostTitleAndId, Series, Tag } from "~types/post.type";
 import IconDropdown from "~components/Dropdown/IconDropdown";
 
 interface NavBarProps {
@@ -32,15 +32,6 @@ function NavBar({
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [showAdmin, setShowAdmin] = useState(false);
   const [showNav, setShowNav] = useState(initialShowNav);
-
-  // 모바일 여부 확인
-  const [isMobile, setIsMobile] = useState<boolean>(false);
-  useEffect(() => {
-    const handleResize = () => setIsMobile(window.innerWidth < 768);
-    handleResize();
-    window.addEventListener("resize", handleResize);
-    return () => window.removeEventListener("resize", handleResize);
-  }, []);
 
   // 로그인 쿠키 감지
   useEffect(() => {
@@ -88,11 +79,10 @@ function NavBar({
           </div>
 
           {/* 아이콘 메뉴 – 드롭다운들을 IconDropdown 컴포넌트로 분리 */}
-          <div className={`flex items-center ${isMobile ? "" : "space-x-4"}`}>
+          <div className="flex items-center sm:space-x-1 md:space-x-4">
             <IconDropdown
               title="태그"
               icon={<FiTag className="h-6 w-6" />}
-              isMobile={isMobile}
               widthClass="w-80"
               dropdownContent={
                 <div>
@@ -120,7 +110,6 @@ function NavBar({
             <IconDropdown
               title="시리즈"
               icon={<FiLayers className="h-6 w-6" />}
-              isMobile={isMobile}
               widthClass="w-64"
               dropdownContent={
                 <div>
@@ -146,7 +135,6 @@ function NavBar({
             <IconDropdown
               title="페이지 메뉴"
               icon={<FiMoreHorizontal className="h-6 w-6" />}
-              isMobile={isMobile}
               widthClass="w-40"
               dropdownContent={
                 <div>
