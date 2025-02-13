@@ -186,8 +186,8 @@ export default {
         },
       },
       fontFamily: {
-        sans: ["SUIT Variable", "sans-serif"],
-        mono: ["IBM Plex Mono", "monospace"],
+        sans: ["AppleSDGothicNeo", "sans-serif"],
+        mono: ["AppleSDGothicNeo", "monospace"],
       },
       typography: {
         DEFAULT: {

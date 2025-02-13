@@ -4,8 +4,6 @@ import type { PostEntry } from "~/types/post.type";
 import dayjs from "dayjs";
 import ImageWithSkeleton from "~components/Skeleton/ImageWithSkeleton";
 import Tag from "~components/Tag/Tag";
-// import Tag from "~components/Tag/Tag.astro"; // .astro로 변경 필요
-// import ImageWithSkeleton from "~components/Skeleton/ImageWithSkeleton.astro"; // .astro로 변경 필요
 
 interface Props extends PostEntry {
   className?: string;
@@ -21,20 +19,36 @@ const formatDate = (date: string) => {
 <a
   href={`/blog/detail/${id}`}
   class:list={[
-    "group block w-full border-b border-gray-100 px-3 py-6 hover:bg-gray-100",
+    "group block w-full border-b border-gray-100 px-3 hover:bg-gray-100",
     className,
   ]}
 >
-  <article class="flex gap-6">
-    {/* 썸네일 이미지 */}
+  {
+    /*
+    article에 고정 높이(h-48)를 지정하여 카드 전체의 높이를 일정하게 만듭니다.
+    이 경우 이미지 컨테이너는 부모 높이(12rem)를 상속받아 작동합니다.
+  */
+  }
+  <article class="flex items-stretch gap-6 sm:h-48">
+    {
+      /*
+      이미지 컨테이너:
+      - h-full으로 부모의 전체 높이를 상속받습니다.
+      - inline 스타일의 aspect-ratio: 4/3;로 가로:세로 비율을 강제합니다.
+      - 내부의 이미지는 absolute로 컨테이너 전체를 덮도록 합니다.
+    */
+    }
     <div
-      class="relative hidden aspect-[4/3] w-[120px] shrink-0 overflow-hidden rounded-lg sm:block md:w-[240px]"
+      class="relative hidden h-full shrink-0 overflow-hidden sm:block"
+      style="aspect-ratio: 4 / 3;"
     >
       <ImageWithSkeleton
         src={data.ogImage?.toString() || "/default-blog-image.jpg"}
         alt={data.title}
+        className="absolute inset-0 aspect-[4/3] object-cover"
         client:load
       />
+
       {
         data.series && (
           <div class="absolute left-1.5 top-1.5 rounded-full bg-skin-fill/95 px-1.5 py-0.5 text-[10px] font-medium text-skin-accent backdrop-blur-sm md:left-2 md:top-2 md:px-2 md:py-1 md:text-xs">
@@ -45,8 +59,8 @@ const formatDate = (date: string) => {
       }
     </div>
 
-    {/* 콘텐츠 */}
-    <div class="flex min-w-0 flex-1 flex-col">
+    {/* 텍스트 컨테이너 */}
+    <div class="flex min-w-0 flex-1 flex-col overflow-hidden py-3 md:py-6">
       <div class="mb-auto">
         <h3
           class="line-clamp-1 text-base font-bold text-black-accent md:text-xl"
@@ -61,7 +75,7 @@ const formatDate = (date: string) => {
       </div>
 
       <div class="mt-2 flex flex-col gap-2 md:mt-4 md:gap-3">
-        {/* 태그 */}
+        {/* 태그 영역 */}
         <div class="flex overflow-hidden">
           <div class="flex flex-nowrap gap-1.5">
             {data.tags.map((tag: string) => <Tag client:load tag={tag} />)}

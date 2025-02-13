@@ -6,17 +6,20 @@ import { ShootingStarHeader } from "~components/Header/ShootingStarHeader";
 import TagCard from "~components/Card/TagCard";
 import HorizontalSeriesCard from "~components/Card/HorizontalSeriesCard";
 import { repositoryContainer } from "~modules/repository.module";
-import { PROJECT_REPOSITORY, type ProjectRepository } from "~modules/repositories/projects/ProjectRepository";
-import { POST_REPOSITORY, type PostRepository } from "~modules/repositories/posts/PostRepository";
-import type { PostEntry, Tag , Series} from "~types/post.type";
+import {
+  PROJECT_REPOSITORY,
+  type ProjectRepository,
+} from "~modules/repositories/projects/ProjectRepository";
+import {
+  POST_REPOSITORY,
+  type PostRepository,
+} from "~modules/repositories/posts/PostRepository";
+import type { PostEntry, Tag, Series } from "~types/post.type";
 import type { ProjectEntry } from "~types/project.type";
 
-const projectRepository = repositoryContainer.get<ProjectRepository>(
-  PROJECT_REPOSITORY
-);
-const postRepository = repositoryContainer.get<PostRepository>(
-  POST_REPOSITORY
-);
+const projectRepository =
+  repositoryContainer.get<ProjectRepository>(PROJECT_REPOSITORY);
+const postRepository = repositoryContainer.get<PostRepository>(POST_REPOSITORY);
 
 const projects: ProjectEntry[] = await projectRepository.getProjects({
   paging: { page: 0, limit: 5 },
@@ -37,46 +40,58 @@ const seriesList: Series[] = await postRepository.getAllSeries();
 <Layout title="홈">
   <div class="mx-auto w-full">
     {/* 인기 태그 섹션 */}
-    <section class="mt-16 mb-16">
+    <section class="mb-16 mt-16">
       <ShootingStarHeader
         title="인기 태그"
         description="자주 다루는 주제들이에요"
         moreLink="/blog"
         client:load
       />
-      <div class="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6">
-        {tags
-          .sort((a, b) => b.count - a.count)
-          .slice(0, 12)
-          .map((tag) => (
-            <TagCard {...tag} client:load />
-          ))}
+      <div
+        class="grid grid-cols-2 gap-4 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-6"
+      >
+        {
+          tags
+            .sort((a, b) => b.count - a.count)
+            .slice(0, 12)
+            .map((tag, index) => (
+              <TagCard
+                {...tag}
+                className={`${index > 7 ? "hidden lg:block" : ""}`}
+                client:load
+              />
+            ))
+        }
       </div>
     </section>
 
     {/* 시리즈와 주목할만한 글 영역 - PC에서는 2열, 모바일은 1열 */}
     <section class="mb-16">
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-12 items-stretch">
+      <div class="grid grid-cols-1 items-stretch gap-12 md:grid-cols-2">
         {/* 시리즈 영역 - 다른 UI 스타일 적용 */}
-        <div class="flex flex-col space-y-4 h-full">
+        <div class="flex h-full flex-col space-y-4">
           <ShootingStarHeader
             title="시리즈"
             description="연재 중인 시리즈들이에요"
-            moreLink="/blog"
+            moreLink="/blog/series"
             client:load
           />
           <div class="h-full">
             <!-- FullImageSeriesCard로 개성있는 UI 구현 -->
-            <div class="flex flex-col gap-4 h-full">
-              {seriesList.slice(0, 4).map((seriesData) => (
-                <HorizontalSeriesCard {...seriesData} client:load />
-              ))}
+            <div class="flex h-full flex-col gap-4">
+              {
+                seriesList
+                  .slice(0, 4)
+                  .map(seriesData => (
+                    <HorizontalSeriesCard {...seriesData} client:load />
+                  ))
+              }
             </div>
           </div>
         </div>
 
         {/* 주목할만한 글 영역 - 그리드 카드 형태 */}
-        <div class="flex flex-col space-y-4 h-full">
+        <div class="flex h-full flex-col space-y-4">
           <ShootingStarHeader
             title="주목할만한 글"
             description="놓치면 아쉬운 글들이에요"
@@ -84,10 +99,12 @@ const seriesList: Series[] = await postRepository.getAllSeries();
             client:load
           />
           <div class="h-full">
-            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 h-full">
-              {pinnedPosts.slice(0, 4).map((post) => (
-                <BlogPostCard {...post} client:load />
-              ))}
+            <div class="grid h-full grid-cols-1 gap-4 sm:grid-cols-2">
+              {
+                pinnedPosts
+                  .slice(0, 4)
+                  .map(post => <BlogPostCard {...post} client:load />)
+              }
             </div>
           </div>
         </div>
@@ -102,12 +119,16 @@ const seriesList: Series[] = await postRepository.getAllSeries();
         moreLink="/projects"
         client:load
       />
-      <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 lg:gap-6">
-        {projects.map((project, index) => (
-          <div class={`${index >= 3 ? "hidden sm:block" : ""}`}>
-            <ProjectCard {...project} client:load />
-          </div>
-        ))}
+      <div
+        class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 lg:gap-6"
+      >
+        {
+          projects.map((project, index) => (
+            <div class={`${index >= 3 ? "hidden sm:block" : ""}`}>
+              <ProjectCard {...project} client:load />
+            </div>
+          ))
+        }
       </div>
     </section>
   </div>

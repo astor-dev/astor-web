@@ -82,7 +82,7 @@ export default function FloatingIcons({
           floatingAnimation={it.floatingAnimation}
           // 애니메이션 지연 시간 설정 (100ms 간격)
           delay={
-            width < 640 ? index * 80 : width < 1024 ? index * 60 : index * 40
+            width < 640 ? index * 40 : width < 1024 ? index * 30 : index * 25
           }
         />
       ))}

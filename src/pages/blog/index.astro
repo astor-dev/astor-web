@@ -3,9 +3,16 @@ import Layout from "~layouts/BaseLayout.astro";
 import CenterNav from "~components/Nav/CenterNav.astro";
 import PostList from "~layouts/blog/PostList.astro";
 import { navItems } from "~constants/blog";
+import CommonHeader from "~components/Header/CommonHeader.astro";
+import blogHeader from "~assets/images/blog-header.jpg";
 ---
 
 <Layout title="블로그">
+  <CommonHeader
+    title="Astor's Devlog"
+    description="**구조**, **알고리즘**, **코딩** 등에 대해 적어보는 블로그입니다."
+    imageSrc={blogHeader.src}
+  />
   <CenterNav items={navItems} currentPath="/blog" />
   <PostList page={1} />
 </Layout>

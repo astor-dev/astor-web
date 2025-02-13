@@ -3,9 +3,15 @@ import Layout from "~layouts/BaseLayout.astro";
 import ProjectCard from "~components/Card/ProjectCard";
 import { ProjectTypeEnum } from "~types/project.type";
 import { repositoryContainer } from "~modules/repository.module";
-import { PROJECT_REPOSITORY, type ProjectRepository } from "~modules/repositories/projects/ProjectRepository";
+import {
+  PROJECT_REPOSITORY,
+  type ProjectRepository,
+} from "~modules/repositories/projects/ProjectRepository";
+import CommonHeader from "~components/Header/CommonHeader.astro";
+import projectHeader from "~assets/images/project-header.jpg";
 
-const projectRepository = repositoryContainer.get<ProjectRepository>(PROJECT_REPOSITORY);
+const projectRepository =
+  repositoryContainer.get<ProjectRepository>(PROJECT_REPOSITORY);
 const projects = await projectRepository.getProjects();
 
 // 프로젝트 타입별로 분류
@@ -20,19 +26,11 @@ const toyProjects = projects.filter(p => p.data.projectType === "Toy-project");
 
 <Layout title="프로젝트">
   <div class="mx-auto w-full">
-    <!-- 헤더 섹션 -->
-    <section class="relative mb-24 mt-16 overflow-hidden px-8">
-      <div class="relative z-10">
-        <h1 class="mb-6 text-4xl font-bold text-black-accent sm:text-5xl">
-          프로젝트 갤러리
-        </h1>
-        <p class="max-w-2xl text-lg leading-relaxed text-black-base/80">
-          하나하나 정성을 담아 만든 프로젝트들이에요. 예쁘게 봐주세요 :)
-        </p>
-      </div>
-
-      </div>
-    </section>
+    <CommonHeader
+      title="프로젝트 갤러리"
+      description="하나하나 정성을 담아 만든 프로젝트들이에요. 예쁘게 봐주세요 :)"
+      imageSrc={projectHeader.src}
+    />
 
     <!-- 회사 프로젝트 섹션 -->
     {
@@ -58,7 +56,7 @@ const toyProjects = projects.filter(p => p.data.projectType === "Toy-project");
     <!-- 사이드 프로젝트 섹션 -->
     {
       sideProjects.length > 0 && (
-        <section class="mb-24  px-8 py-24">
+        <section class="mb-24 px-8 py-24">
           <div class="mb-12">
             <h2 class="mb-4 text-3xl font-bold text-black-accent">
               사이드 프로젝트

@@ -1,12 +1,14 @@
 import React, { useRef } from "react";
 import { motion } from "framer-motion";
 import { FaArrowRight } from "react-icons/fa";
-import type { TagAndCount } from "~utils/getPosts";
 import { useIntersectionObserver } from "~hooks/UseIntersectionObserver/UseIntersectionObserver";
+import type { Tag } from "~types/post.type";
 
-interface TagCardProps extends TagAndCount {}
+interface TagCardProps extends Tag {
+  className?: string;
+}
 
-const TagCard: React.FC<TagCardProps> = ({ tag, count }) => {
+const TagCard: React.FC<TagCardProps> = ({ tag, count, className }) => {
   const cardRef = useRef<HTMLDivElement>(null);
   const isVisible = useIntersectionObserver(cardRef);
 
@@ -15,14 +17,14 @@ const TagCard: React.FC<TagCardProps> = ({ tag, count }) => {
       ref={cardRef}
       className={`transition-all duration-700 ease-out ${
         isVisible ? "translate-y-0 opacity-100" : "translate-y-10 opacity-0"
-      }`}
+      } ${className}`}
     >
       <motion.a
         href={`/blog/tags/${tag}`}
         whileHover={{ scale: 1.02 }}
         whileTap={{ scale: 0.98 }}
         transition={{ type: "tween", duration: 0.2 }}
-        className="group relative flex flex-col justify-between rounded-lg bg-white p-4 shadow-md transition-shadow hover:shadow-lg"
+        className="group relative flex flex-col justify-between rounded-lg bg-white p-4 shadow-lg transition-shadow delay-200 hover:shadow-xl"
       >
         <h3 className="text-lg font-semibold text-gray-800 transition-colors group-hover:text-skin-accent">
           {tag}

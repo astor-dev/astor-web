@@ -9,6 +9,8 @@ import {
 import { POST_PER_PAGE } from "~constants/page";
 import CenterNav from "~components/Nav/CenterNav.astro";
 import { navItems } from "~constants/blog";
+import blogHeader from "~assets/images/blog-header.jpg";
+import CommonHeader from "~components/Header/CommonHeader.astro";
 
 export async function getStaticPaths() {
   const postRepository =
@@ -28,6 +30,11 @@ const { page } = Astro.props;
 ---
 
 <Layout title="블로그">
+  <CommonHeader
+    title="Astor's Devlog"
+    description="더 많은 이야기를 찾아서\n끝없이 펼쳐지는 **아이디어**의 여정을 즐겨보세요."
+    imageSrc={blogHeader.src}
+  />
   <CenterNav items={navItems} currentPath="/blog" />
   <PostList page={page} />
 </Layout>
