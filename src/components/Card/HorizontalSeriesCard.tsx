@@ -23,7 +23,7 @@ const HorizontalSeriesCard: React.FC<HorizontalSeriesCardProps> = ({
       }`}
     >
       <a
-        href={`/series/${encodeURIComponent(series)}`}
+        href={`/blog/series/${encodeURIComponent(series)}`}
         className="group relative flex h-full flex-row overflow-hidden rounded-2xl bg-gradient-to-br from-white via-white to-skin-fill/5 shadow-lg transition-all duration-300 hover:-translate-y-1 hover:shadow-xl"
       >
         <div className="flex h-full w-full">

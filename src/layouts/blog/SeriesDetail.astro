@@ -1,5 +1,7 @@
 ---
 import type { Series, PostEntry } from '~types/post.type';
+import Layout from '~layouts/BaseLayout.astro';
+import dayjs from 'dayjs';
 
 interface Props {
     series: Series
@@ -14,5 +16,44 @@ const {
 if (!series) {
   return Astro.redirect("/404");
 }
+---
 
---
+<Layout title={series.series}>
+  <section class="relative w-full h-[66vh] overflow-hidden" slot="hero">
+    <div class="absolute inset-0 z-0">
+      <img 
+        src={series.ogImage} 
+        alt={series.series} 
+        class="object-cover w-full h-full"
+      />
+    </div>
+    <div class="absolute inset-0 z-10 bg-black opacity-60"></div>
+    <div class="relative z-20 flex items-center justify-center h-full">
+      <h1 class="text-4xl font-bold text-white-accent">
+        {series.series}
+      </h1>
+    </div>
+  </section>
+
+  <article class="mx-auto max-w-4xl px-4 py-8 sm:px-6 lg:px-8">
+    <h2 class="mb-6 text-2xl font-semibold text-black-accent">포스트 목록</h2>
+    {posts.length > 0 ? (
+      <ul class="space-y-4">
+        {posts.map(post => (
+          <li class="border-b border-gray-200 py-4">
+            <a href={`/blog/detail/${post.id}`} class="block hover:underline">
+              <span class="block text-xl font-bold">
+                {post.data.title}
+              </span>
+              <span class="block text-sm text-black-muted">
+                {dayjs(post.data.createdAt).format("YYYY년 MM월 DD일")}
+              </span>
+            </a>
+          </li>
+        ))}
+      </ul>
+    ) : (
+      <p>아직 등록된 포스트가 없습니다.</p>
+    )}
+  </article>
+</Layout>

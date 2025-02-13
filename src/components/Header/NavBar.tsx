@@ -28,7 +28,7 @@ function NavBar({ pathname, tags, series, posts }: NavBarProps) {
   const [isInHero, setIsInHero] = useState(true);
   const [isRoot, setIsRoot] = useState(true);
   useEffect(() => {
-    if (pathname === "/" || pathname === "/about") {
+    if (pathname === "/about") {
       setIsRoot(true);
     } else {
       setIsRoot(false);

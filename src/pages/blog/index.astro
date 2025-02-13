@@ -5,13 +5,15 @@ import PostList from "~layouts/blog/PostList.astro";
 import { navItems } from "~constants/blog";
 import CommonHeader from "~components/Header/CommonHeader.astro";
 import blogHeader from "~assets/images/blog-header.jpg";
+import Hero from "~components/Hero/Hero.astro";
 ---
 
 <Layout title="블로그">
-  <CommonHeader
+  <Hero
     title="Astor's Devlog"
     description="**구조**, **알고리즘**, **코딩** 등에 대해 적어보는 블로그입니다."
     imageSrc={blogHeader.src}
+    slot="hero"
   />
   <CenterNav items={navItems} currentPath="/blog" />
   <PostList page={1} />

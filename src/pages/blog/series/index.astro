@@ -8,17 +8,18 @@ import {
 import CenterNav from "~components/Nav/CenterNav.astro";
 import { navItems } from "~constants/blog";
 import SeriesList from "~layouts/blog/SeriesList.astro";
-import CommonHeader from "~components/Header/CommonHeader.astro";
 import blogHeader from "~assets/images/blog-header.jpg";
+import Hero from "~components/Hero/Hero.astro";
 const postRepository = repositoryContainer.get<PostRepository>(POST_REPOSITORY);
 const series = await postRepository.getAllSeries();
 ---
 
 <Layout title="블로그">
-  <CommonHeader
+  <Hero
     title="Astor's Devlog"
-    description="**아이디어가 코드가 되는 순간**,\n 작은 아이디어들이 큰 변화를 이끄는 공간입니다."
+    description="**아이디어가 코드가 되는 순간**\n 작은 아이디어들이 큰 변화를 이끄는 공간입니다."
     imageSrc={blogHeader.src}
+    slot="hero"
   />
   <CenterNav items={navItems} currentPath="/blog/series" />
   <SeriesList series={series}  />

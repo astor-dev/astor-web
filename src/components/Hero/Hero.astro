@@ -18,11 +18,11 @@ const { title, subtitle, description, imageSrc, buttonText, buttonLink, classNam
 
 const parsedDescription = description
   ? description
-      .replace(/\*\*(.*?)\*\*/g, "<strong>$1</strong>")
+      .replace(/\*\*(.*?)\*\*/g, "<strong class='text-white-accent'>$1</strong>")
       .replace(/\n/g, "<br>")
   : "";
 ---
-<section class={`relative w-full h-screen overflow-hidden ${className ?? ""}`}>
+<section class={`relative w-full h-[66vh] overflow-hidden ${className ?? ""}`}>
   <!-- 배경 이미지 (맨 뒤) -->
   <div class="absolute inset-0 z-0">
     <ImageWithSkeleton
@@ -41,24 +41,24 @@ const parsedDescription = description
     id="hero-content"
     class="relative z-20 flex flex-col items-center justify-center h-full px-4 text-center opacity-0 transition-opacity duration-700"
   >
-    <h1 class="mb-4 text-5xl font-extrabold text-white sm:text-6xl md:text-7xl">
+    <h1 class="mb-4 text-5xl font-extrabold text-white-accent sm:text-6xl md:text-7xl font-logo">
       {title}
     </h1>
     {subtitle && (
-      <h2 class="mb-4 text-3xl font-semibold text-white">
+      <h2 class="mb-4 text-3xl font-semibold text-white-base">
         {subtitle}
       </h2>
     )}
     {description && (
       <p
-        class="mb-8 max-w-2xl text-lg text-white"
+        class="mb-8 max-w-2xl text-lg text-black-muted"
         set:html={parsedDescription}
       ></p>
     )}
     {buttonText && buttonLink && (
       <a
         href={buttonLink}
-        class="rounded-full bg-skin-accent px-8 py-3 text-base font-semibold text-white shadow-lg transition hover:bg-skin-accent/90 active:scale-95"
+        class="rounded-full bg-skin-accent px-8 py-3 text-base font-semibold text-white-accent shadow-lg transition hover:bg-skin-accent/90 active:scale-95"
       >
         {buttonText}
       </a>

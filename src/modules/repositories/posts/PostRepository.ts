@@ -24,6 +24,9 @@ export class PostRepository {
           filter.tags!.every(tag => post.data.tags.includes(tag)),
         );
       }
+      if (isDefined(filter.series)) {
+        posts = posts.filter(post => post.data.series === filter.series);
+      }
       if (isDefined(filter.pinned)) {
         posts = posts.filter(post => post.data.pinned === filter.pinned);
       }

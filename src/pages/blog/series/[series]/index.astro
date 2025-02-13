@@ -1,0 +1,27 @@
+---
+import { POST_REPOSITORY, type PostRepository } from '~modules/repositories/posts/PostRepository';
+import { repositoryContainer } from '~modules/repository.module';
+import type { PostEntry, Series } from '~types/post.type';
+import SeriesDetail from '~layouts/blog/SeriesDetail.astro';
+
+export async function getStaticPaths() {
+    const postRepository =
+      repositoryContainer.get<PostRepository>(POST_REPOSITORY);
+    const seriesList: Series[] = await postRepository.getAllSeries();
+    const paths: { params: { series: string }, props: { series: Series, posts: PostEntry[] } }[] = [];
+
+    for (const series of seriesList) {
+      const paginatedPosts = await postRepository.getPosts({
+        filter: { series: series.series },
+      });
+      paths.push({
+        params: { series: series.series },
+        props: { series, posts: paginatedPosts.items },
+      });
+    }
+    return paths;
+}
+const { series, posts } = Astro.props;
+---
+
+<SeriesDetail series={series} posts={posts} />

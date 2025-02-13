@@ -7,6 +7,7 @@ export interface GetPostsOptions {
     tags?: string[];
     pinned?: boolean;
     draft?: boolean;
+    series?: string;
   };
   sort?: {
     by: "createdAt" | "updatedAt";

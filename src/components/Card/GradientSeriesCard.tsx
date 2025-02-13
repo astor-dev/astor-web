@@ -1,4 +1,3 @@
-import type { SeriesAndPosts } from "~utils/getPosts";
 import { FaBookmark } from "react-icons/fa";
 import ImageWithSkeleton from "~components/Skeleton/ImageWithSkeleton";
 import { useRef, useCallback } from "react";
@@ -6,8 +5,15 @@ import { useIntersectionObserver } from "~hooks/UseIntersectionObserver/UseInter
 import { loadSlim } from "tsparticles-slim";
 import { Particles as ReactParticles } from "react-tsparticles";
 import type { Engine } from "tsparticles-engine";
+import type { PostEntry } from "~types/post.type";
 
-export const GradientSeriesCard = ({ series, posts }: SeriesAndPosts) => {
+export const GradientSeriesCard = ({
+  series,
+  posts,
+}: {
+  series: string;
+  posts: PostEntry[];
+}) => {
   const cardRef = useRef<HTMLDivElement>(null);
   const isVisible = useIntersectionObserver(cardRef);
   // coverImage는 썸네일 용도로만 사용합니다.
@@ -131,7 +137,7 @@ export const GradientSeriesCard = ({ series, posts }: SeriesAndPosts) => {
             </div>
             {/* 최근 포스트 목록 */}
             <div className="space-y-3">
-              {posts.slice(0, 3).map((post, index) => (
+              {posts.slice(0, 3).map((post: PostEntry, index: number) => (
                 <div
                   key={post.id}
                   className="flex items-center gap-3 transition-all duration-300 group-hover:translate-x-2"
