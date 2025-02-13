@@ -16,6 +16,7 @@ import {
 } from "~modules/repositories/posts/PostRepository";
 import type { PostEntry, Tag, Series } from "~types/post.type";
 import type { ProjectEntry } from "~types/project.type";
+import Hero from "~components/Hero/Hero";
 
 const projectRepository =
   repositoryContainer.get<ProjectRepository>(PROJECT_REPOSITORY);
@@ -30,17 +31,20 @@ const projects: ProjectEntry[] = await projectRepository.getProjects({
 });
 
 // 블로그 데이터 가져오기
-const pinnedPosts: PostEntry[] = await postRepository.getPosts({
+const pinnedPosts: PostEntry[] = (await postRepository.getPosts({
   filter: { pinned: true },
-});
+})).items;
 const tags: Tag[] = await postRepository.getAllTags();
 const seriesList: Series[] = await postRepository.getAllSeries();
 ---
 
 <Layout title="홈">
+  <Fragment slot="hero">
+    <Hero client:load />
+  </Fragment>
   <div class="mx-auto w-full">
     {/* 인기 태그 섹션 */}
-    <section class="mb-16 mt-16">
+    <section class="mb-16">
       <ShootingStarHeader
         title="인기 태그"
         description="자주 다루는 주제들이에요"

@@ -18,10 +18,6 @@ interface Props {
 const { currentTag, page }: Props = Astro.props;
 
 const postRepository = repositoryContainer.get<PostRepository>(POST_REPOSITORY);
-const allPosts = await postRepository.getPosts({
-  filter: { tags: isDefined(currentTag) ? [currentTag] : undefined },
-});
-const totalPages = Math.ceil(allPosts.length / POST_PER_PAGE);
 const posts = await postRepository.getPosts({
   filter: { tags: isDefined(currentTag) ? [currentTag] : undefined },
   paging: { page, limit: POST_PER_PAGE },
@@ -36,7 +32,7 @@ const tags = await postRepository.getAllTags();
       <MobileTagScroll tags={tags} client:load className="sm:hidden" />
       <TagSidebar
         tags={tags}
-        totalPosts={allPosts.length}
+        totalPosts={posts.total}
         client:load
         className="hidden sm:block"
       />
@@ -46,19 +42,20 @@ const tags = await postRepository.getAllTags();
     <main class="col-span-3">
       {/* 선택된 태그가 있다면, 상단에 태그명을 표시 */}
       {
-        currentTag && (
           <div class="mb-8">
             <h2 class="text-2xl font-bold text-black-accent">
-              태그: {currentTag}
+              {currentTag ? `태그: ${currentTag}` : "전체 게시글"}
+              <span class="text-sm text-black-muted">
+                ({posts.total})
+              </span>
             </h2>
           </div>
-        )
       }
 
       {/* 포스트 섹션 */}
       <section class="mb-12">
         <div class="divide-y divide-gray-100">
-          {posts.map(post => <BlogPostListItem {...post} />)}
+          {posts.items.map(post => <BlogPostListItem {...post} />)}
         </div>
       </section>
     </main>
@@ -67,7 +64,7 @@ const tags = await postRepository.getAllTags();
   <div class="mt-8 flex justify-center">
     <Pagination
       currentPage={page}
-      totalPages={totalPages}
+      totalPages={Math.ceil(posts.total / POST_PER_PAGE)}
       currentTag={currentTag}
       client:load
     />

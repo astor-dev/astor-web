@@ -1,0 +1,18 @@
+---
+import type { Series, PostEntry } from '~types/post.type';
+
+interface Props {
+    series: Series
+    posts: PostEntry[]
+  }
+
+const {
+  series,
+  posts
+} = Astro.props;
+
+if (!series) {
+  return Astro.redirect("/404");
+}
+
+--

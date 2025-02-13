@@ -3,27 +3,23 @@ import Footer from "~components/Footer/Footer";
 import NavBar from "~components/Header/NavBar";
 import BreadcrumbNavigator from "~components/Breadcrumb/BreadcrumbNavigator";
 import "~styles/global.css";
-import Hero from "~components/Hero/Hero";
 import { SkeletonProvider } from "~components/Skeleton/SkeletonProvider";
 import Seo from "~components/Seo/Seo.astro";
-import type { PostEntry, PostTitleAndId, Series, Tag } from "~types/post.type";
+import type { PostTitleAndId, Series, Tag } from "~types/post.type";
 import { repositoryContainer } from "~modules/repository.module";
 import { POST_REPOSITORY, type PostRepository } from "~modules/repositories/posts/PostRepository";
 interface Props {
-  useScrollHide?: boolean;
   title?: string;
 }
 
-const { useScrollHide = true, title } = Astro.props;
 const postRepository = repositoryContainer.get<PostRepository>(POST_REPOSITORY);
 const tags: Tag[] = await postRepository.getAllTags();
 const seriesList: Series[] = await postRepository.getAllSeries();
 const posts: PostTitleAndId[] = await postRepository.getAllPostTitleAndId();
 
 const currentPath = Astro.url.pathname;
-const shouldRenderHero = currentPath === "/";
-const shouldShowBreadcrumb = currentPath !== "/"  // 루트 및 특정 경로 제외
-const shouldMakeSpaceForNavBar = useScrollHide === true && !shouldRenderHero;
+const shouldShowBreadcrumb = currentPath !== "/";
+
 ---
 
 
@@ -41,16 +37,14 @@ const shouldMakeSpaceForNavBar = useScrollHide === true && !shouldRenderHero;
         tags={tags}
         posts={posts}
         series={seriesList}
-        initialShowNav={!shouldRenderHero}
         pathname={currentPath}
-        useScrollHide={useScrollHide}
+        client:load
       />
-      {shouldRenderHero && <Hero client:load />}
+      <slot name="hero" />
       <!-- 메인 콘텐츠 영역: 반응형 컨테이너 적용 예시 -->
-      <main class="relative w-full flex-1 bg-skin-background px-[5vw]  2xl:px-[15vw]">
+      <main class="relative w-full flex-1 bg-skin-background px-[5vw]  2xl:px-[15vw] mt-16">
         <!-- Navbar를 보여주는 경우 Navbar+12px 띄워줌 -->
-        {shouldMakeSpaceForNavBar && <div class="h-[84px] w-full" />}
-        {shouldShowBreadcrumb && <BreadcrumbNavigator pathname={currentPath} />}
+        <!-- {shouldShowBreadcrumb && <BreadcrumbNavigator pathname={currentPath} client:load />} -->
         <!-- 페이지별 콘텐츠는 slot을 통해 들어옴 -->
         <slot />
       </main>
@@ -59,4 +53,37 @@ const shouldMakeSpaceForNavBar = useScrollHide === true && !shouldRenderHero;
       <Footer client:load />
     </SkeletonProvider>
   </body>
+  <script is:inline data-astro-rerun>
+    /** Create a progress indicator at the top */
+    function createProgressBar() {
+      const progressContainer = document.createElement("div");
+      progressContainer.className =
+        "progress-container fixed top-0 z-[999] h-0.5 w-full";
+  
+      const progressBar = document.createElement("div");
+      progressBar.className = "progress-bar h-0.5 w-0 bg-skin-accent";
+      progressBar.id = "myBar";
+  
+      progressContainer.appendChild(progressBar);
+      document.body.appendChild(progressContainer);
+    }
+    createProgressBar();
+  
+    /** Update the progress bar when user scrolls */
+    function updateScrollProgress() {
+      document.addEventListener("scroll", () => {
+        const winScroll =
+          document.body.scrollTop || document.documentElement.scrollTop;
+        const height =
+          document.documentElement.scrollHeight -
+          document.documentElement.clientHeight;
+        const scrolled = (winScroll / height) * 100;
+        const myBar = document.getElementById("myBar");
+        if (myBar) {
+          myBar.style.width = scrolled + "%";
+        }
+      });
+    }
+    updateScrollProgress();
+  </script>
 </html>

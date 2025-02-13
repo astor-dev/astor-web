@@ -64,6 +64,7 @@ export default {
       gradientColorStops: {
         skin: {
           fill: withOpacity("--color-fill"),
+          base: withOpacity("--color-base"),
           accent: withOpacity("--color-accent"),
           secondary: withOpacity("--color-secondary"),
           inverted: withOpacity("--color-text-base"),
@@ -188,10 +189,12 @@ export default {
       fontFamily: {
         sans: ["AppleSDGothicNeo", "sans-serif"],
         mono: ["AppleSDGothicNeo", "monospace"],
+        logo: ["BOKEH", "sans-serif"],
       },
       typography: {
         DEFAULT: {
           css: {
+            a: { color: false },
             pre: { color: false },
             code: { color: false },
           },

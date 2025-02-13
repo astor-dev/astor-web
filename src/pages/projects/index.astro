@@ -7,9 +7,8 @@ import {
   PROJECT_REPOSITORY,
   type ProjectRepository,
 } from "~modules/repositories/projects/ProjectRepository";
-import CommonHeader from "~components/Header/CommonHeader.astro";
 import projectHeader from "~assets/images/project-header.jpg";
-
+import Hero from "~components/Hero/Hero.astro";
 const projectRepository =
   repositoryContainer.get<ProjectRepository>(PROJECT_REPOSITORY);
 const projects = await projectRepository.getProjects();
@@ -25,13 +24,13 @@ const toyProjects = projects.filter(p => p.data.projectType === "Toy-project");
 ---
 
 <Layout title="프로젝트">
+  <Hero
+    title="프로젝트 갤러리"
+    description="하나하나 정성을 담아 만든 프로젝트들이에요. 예쁘게 봐주세요 :)"
+    imageSrc={projectHeader.src}
+    slot="hero"
+  />
   <div class="mx-auto w-full">
-    <CommonHeader
-      title="프로젝트 갤러리"
-      description="하나하나 정성을 담아 만든 프로젝트들이에요. 예쁘게 봐주세요 :)"
-      imageSrc={projectHeader.src}
-    />
-
     <!-- 회사 프로젝트 섹션 -->
     {
       companyProjects.length > 0 && (

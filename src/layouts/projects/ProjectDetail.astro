@@ -4,10 +4,12 @@ import dayjs from "dayjs";
 import type { CollectionEntry } from "astro:content";
 import { render } from "astro:content";
 import type { ProjectEntry } from "~types/project.type";
-import ProjectDetailContent from "~components/Section/ProjectDetailContent";
 import { repositoryContainer } from "~modules/repository.module";
 import { PROJECT_REPOSITORY, type ProjectRepository } from "~modules/repositories/projects/ProjectRepository";
-
+import StackGrid from "~components/Stack/StackGrid";
+import ImageWithSkeleton from "~components/Skeleton/ImageWithSkeleton";
+import { FaCalendar, FaBuilding } from "react-icons/fa";
+import IconButton from "~components/Button/IconButton";
 
 interface Props {
   project: CollectionEntry<"projects">;
@@ -22,8 +24,10 @@ if (!project) {
 
 const { Content } = await render(project);
 
-// 날짜 포맷팅
-const period = `${dayjs(project.data.startedAt).format("YYYY.MM")} - ${project.data.endedAt ? dayjs(project.data.endedAt).format("YYYY.MM") : "진행중"}`;
+// const readTime = Math.ceil((project.body?.length as number) / 1000);
+const period = `${dayjs(project.data.startedAt).format("YYYY.MM")} - ${
+  project.data.endedAt ? dayjs(project.data.endedAt).format("YYYY.MM") : "진행중"
+}`;
 
 // 각 스택별 관련 프로젝트 가져오기
 const projectRepository = repositoryContainer.get<ProjectRepository>(PROJECT_REPOSITORY);
@@ -43,31 +47,95 @@ for (const stackId of project.data.stackIds) {
 ---
 
 <Layout title={project.data.projectName}>
-  <ProjectDetailContent
-    client:load
-    project={project}
-    isAdmin={isAdmin}
-    period={period}
-    relatedProjects={relatedProjects}
-  >
-    <Content />
-  </ProjectDetailContent>
+
+  <!-- Hero 섹션: 전체 화면을 채우면서 프로젝트 요약 정보를 보여줌 -->
+  <section slot="hero" class="relative w-full h-[66vh] overflow-hidden">
+    <!-- 배경 이미지 (절대 위치로 부모 안에 배치) -->
+    <div class="absolute inset-0 z-0">
+      <ImageWithSkeleton
+        src={project.data.imageUrl}
+        alt={project.data.projectName}
+        className="object-cover w-full h-full"
+        client:load
+      />
+    </div>
+  
+    <!-- 배경 오버레이 (이미지 위) -->
+    <div class="absolute inset-0 z-10 bg-black opacity-80"></div>
+  
+    <!-- 중앙 콘텐츠 (최상위, 이미지 위에 겹침) -->
+    <div
+      id="hero-content"
+      class="relative z-20 flex flex-col items-center justify-center h-full px-4 text-center transition-opacity duration-700"
+    >
+      <div class="text-skin-base">{project.data.projectType}</div>
+      <h1 class="mt-2 mb-6 text-5xl font-bold text-white-accent">
+        {project.data.projectName}
+      </h1>
+      <p class="mb-4 text-sm text-black-muted flex items-center gap-4">
+        <span class="flex items-center gap-2"><FaCalendar className="h-4 w-4" />{period}</span>
+        <span class="flex items-center gap-2"><FaBuilding className="h-4 w-4" />{project.data.companyName}</span>
+      </p>
+    </div>
+  </section>
+  
+
+  <!-- 프로젝트 상세 내용 -->
+  <div class="mx-auto max-w-4xl px-4 py-8 sm:px-6 lg:px-8 space-y-12">
+    <!-- {isAdmin && (
+      <a
+        href={`/admin/projects/detail/${project.id}/edit`}
+        class="rounded bg-blue-500 px-3 py-2 text-white hover:bg-blue-600"
+      >
+        프로젝트 수정
+      </a>
+    )} --> 
+      <section class="flex flex-col justify-between gap-4 sm:flex-row sm:items-center">
+        <p class="border-l-4 border-skin-accent pl-4 text-lg leading-relaxed text-black-base">
+          {project.data.shortDescription}
+        </p>
+        <div class="flex shrink-0 flex-col items-end gap-3">
+          <IconButton
+            icon="FiExternalLink"
+            text="사이트 방문"
+            href={project.data.siteUrl}
+            target="_blank"
+            variant={project.data.siteUrl ? "primary" : "muted"}
+            disabled={!project.data.siteUrl}
+            rel="noopener noreferrer"
+            client:load
+          />
+        </div>
+      </section>
+      <!-- 기술 스택 섹션 -->
+      <section class="transition-all duration-700">
+        <h2 class="mb-6 text-2xl font-bold text-black-accent">사용 기술</h2>
+        <StackGrid
+          stackIds={project.data.stackIds}
+          relatedProjects={relatedProjects}
+          client:load
+        />
+      </section>
+
+      <!-- 프로젝트 설명 섹션 -->
+      <section class="prose prose-lg max-w-none transition-all duration-700">
+      <Content />
+    </section>
+  </div>
 </Layout>
 
 <style>
   /* 4:3 비율 유지를 위한 유틸리티 클래스 */
   :global(.aspect-4\/3) {
-    aspect-ratio: 4/3;
+    aspect-ratio: 4 / 3;
   }
 
-  /* 작은 화면에서 최소 높이 설정 */
   @media (max-height: 600px) {
     :global(.aspect-4\/3) {
       min-height: 200px;
     }
   }
 
-  /* 큰 화면에서 최대 높이 제한 */
   @media (min-height: 1200px) {
     :global(.aspect-4\/3) {
       max-height: 700px;

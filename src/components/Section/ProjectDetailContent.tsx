@@ -46,7 +46,9 @@ const ProjectDetailContent: React.FC<ProjectDetailContentProps> = ({
             <span className="text-sm font-medium text-skin-accent">
               {project.data.projectType === "Company-project"
                 ? "회사 프로젝트"
-                : "사이드 프로젝트"}
+                : project.data.projectType === "Side-project"
+                  ? "사이드 프로젝트"
+                  : "토이 프로젝트"}
             </span>
             <h1 className="text-3xl font-bold text-black-accent">
               {project.data.projectName}

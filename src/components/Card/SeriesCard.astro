@@ -1,0 +1,24 @@
+---
+export interface Props {
+  series: string;
+  count: number;
+  ogImage?: string;
+}
+
+const { series, count, ogImage } = Astro.props;
+const imageUrl = ogImage || "/default-series.jpg";
+---
+
+<div class="group relative overflow-hidden rounded-2xl bg-white shadow-lg transition-all ease-out duration-300 hover:-translate-y-1 hover:shadow-xl">
+  <!-- 이미지 영역 -->
+  <div 
+    class="h-48 w-full bg-cover bg-center" 
+    style={`background-image: url(${imageUrl})`}>
+  </div>
+  <!-- 카드 내용 -->
+  <div class="p-4">
+    <h2 class="text-xl font-bold text-black-accent">{series}</h2>
+    <p class="mt-1 text-sm text-gray-600">{count}개의 포스트</p>
+  </div>
+
+</div> 

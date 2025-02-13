@@ -9,6 +9,7 @@ import viteImagemin from "@vheemstra/vite-plugin-imagemin";
 import imageminMozjpeg from "imagemin-mozjpeg";
 import imageminWebp from "imagemin-webp";
 import imageminPngquant from "imagemin-pngquant";
+import remarkMath from "remark-math";
 
 export default defineConfig({
   site: "https://astorverse.com",
@@ -21,8 +22,17 @@ export default defineConfig({
   },
   integrations: [
     mdx({
-      remarkPlugins: [],
       gfm: true,
+      remarkPlugins: [
+        remarkMath,
+        // [
+        //   remarkCollapse,
+        //   {
+        //     test: "목차",
+        //     summary: "목차 자세히",
+        //   },
+        // ],
+      ],
     }),
     sitemap(),
     react(),

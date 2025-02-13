@@ -17,8 +17,9 @@ const parsedDescription = description
   : "";
 ---
 
+<!-- 고정 높이(예: 500px)로 적용 -->
 <section
-  class={`relative w-full overflow-hidden py-12 md:py-20 my-12 text-center ${className ?? ""}`}
+  class={`relative w-full h-screen overflow-hidden py-12 md:py-20 mb-3 md:mb-12 text-center ${className ?? ""}`}
 >
   <!-- 배경 이미지 감싸는 래퍼: 절대 위치 & 섹션 전체 덮음 -->
   <div class="-z-1 absolute inset-0">
@@ -32,10 +33,7 @@ const parsedDescription = description
   {/* 어두운 오버레이 */}
   <div class="absolute inset-0 z-10 bg-black opacity-70"></div>
 
-  <!-- 
-    실제 컨텐츠: z-기본값(또는 z-10)으로 배경 위에 표시되도록
-    여기서 intersection observer 애니메이션도 적용 
-  -->
+  <!-- 실제 컨텐츠: z-기본값(또는 z-10)으로 배경 위에 표시되도록 -->
   <div
     id="hero-content"
     data-visible="false"

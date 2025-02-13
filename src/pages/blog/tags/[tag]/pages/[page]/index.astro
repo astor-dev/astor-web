@@ -18,7 +18,7 @@ export async function getStaticPaths() {
   const allPosts = await postRepository.getPosts({
     sort: { by: "createdAt", order: "desc" },
   });
-  const totalPages = Math.ceil(allPosts.length / POST_PER_PAGE);
+  const totalPages = Math.ceil(allPosts.total / POST_PER_PAGE);
   const tags = await postRepository.getAllTags();
 
   const paths = [];

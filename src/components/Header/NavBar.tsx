@@ -1,11 +1,5 @@
-import React, { useState, useEffect } from "react";
-import {
-  FiSearch,
-  FiTag,
-  FiLayers,
-  FiMoreHorizontal,
-  FiUser,
-} from "react-icons/fi";
+import React, { useState, useEffect, useRef } from "react";
+import { FiSearch, FiTag, FiLayers, FiMoreHorizontal } from "react-icons/fi";
 import SearchModal from "~components/Modal/SearchModal";
 import type { PostTitleAndId, Series, Tag } from "~types/post.type";
 import IconDropdown from "~components/Dropdown/IconDropdown";
@@ -15,23 +9,13 @@ interface NavBarProps {
   tags: Tag[];
   series: Series[];
   posts: PostTitleAndId[];
-  /** 스크롤에 따라 hide되는 기능 사용 여부 (기본값: true) */
-  useScrollHide?: boolean;
-  /** 초기 네브바 보이는 상태 여부 (기본값: true) */
-  initialShowNav?: boolean;
 }
 
-function NavBar({
-  pathname,
-  tags,
-  series,
-  posts,
-  useScrollHide = true,
-  initialShowNav = true,
-}: NavBarProps) {
+function NavBar({ pathname, tags, series, posts }: NavBarProps) {
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [showAdmin, setShowAdmin] = useState(false);
-  const [showNav, setShowNav] = useState(initialShowNav);
+
+  const navBarRef = useRef<HTMLDivElement>(null);
 
   // 로그인 쿠키 감지
   useEffect(() => {
@@ -40,63 +24,68 @@ function NavBar({
     }
   }, []);
 
-  // 스크롤에 따라 네브바 show/hide 처리
+  // 추가: Hero 영역에 있을 때 네브바 숨김 처리 (홈페이지일 경우)
+  const [isInHero, setIsInHero] = useState(true);
+  const [isRoot, setIsRoot] = useState(true);
   useEffect(() => {
-    if (!useScrollHide) {
-      setShowNav(true);
-      return;
+    if (pathname === "/" || pathname === "/about") {
+      setIsRoot(true);
+    } else {
+      setIsRoot(false);
     }
-    let lastScrollY = window.scrollY;
+  }, [pathname]);
+  useEffect(() => {
     const handleScroll = () => {
-      if (window.scrollY < lastScrollY) {
-        setShowNav(true);
+      // 홈 페이지가 아니라면 네브바를 항상 보여줍니다.
+      // window.innerHeight는 Hero 컴포넌트의 높이(h-screen)라고 가정합니다.
+      if (window.scrollY < window.innerHeight && !pathname.includes("/admin")) {
+        setIsInHero(true);
       } else {
-        setShowNav(false);
+        setIsInHero(false);
       }
-      lastScrollY = window.scrollY;
     };
+
+    // 초기 scroll 상태 반영
+    handleScroll();
+
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
-  }, [useScrollHide]);
+  }, [pathname]);
 
   return (
     <>
       <header
-        className={`fixed left-0 top-0 z-50 w-full bg-skin-fill shadow-md transition-transform duration-300 ${
-          showNav ? "translate-y-0" : "-translate-y-full"
-        }`}
+        ref={navBarRef}
+        className={`left-1/2 z-30 w-full max-w-screen-xl -translate-x-1/2 transform duration-200 ${
+          isInHero
+            ? isRoot
+              ? "absolute opacity-0"
+              : "absolute bg-opacity-0 text-white-base"
+            : "fixed bg-skin-fill bg-opacity-90 text-black-muted shadow-md"
+        } sm:top-4 sm:rounded-3xl`}
       >
-        <nav className="mx-auto flex max-w-5xl items-center justify-between px-6 py-4">
-          {/* 로고 */}
-          <div>
-            <a
-              href="/"
-              title="홈"
-              className="text-2xl font-bold text-black-accent"
-            >
-              astorverse
-            </a>
-          </div>
-
-          {/* 아이콘 메뉴 – 드롭다운들을 IconDropdown 컴포넌트로 분리 */}
-          <div className="flex items-center sm:space-x-1 md:space-x-4">
+        {/* container 클래스로 좌우 여백을 지정 (모바일 대응) */}
+        <nav className="container mx-auto flex items-center justify-between px-4 py-4 sm:px-6 lg:px-8">
+          {/* 왼쪽 아이콘 그룹: 태그, 시리즈 */}
+          <div className="flex items-center sm:space-x-4">
             <IconDropdown
               title="태그"
-              icon={<FiTag className="h-6 w-6" />}
-              widthClass="w-80"
+              icon={<FiTag className="h-5 w-5 sm:h-6 sm:w-6" />}
+              widthClass="w-72"
+              parentContainerRef={navBarRef as React.RefObject<HTMLElement>}
               dropdownContent={
                 <div>
-                  <h5 className="mb-2 text-sm font-semibold text-black-base">
+                  <h5 className="mb-2 text-xs font-semibold text-black-base sm:text-sm">
                     태그 모음
                   </h5>
-                  <ul className="grid grid-cols-2 gap-2">
+                  <ul className="grid grid-cols-2 gap-1 sm:gap-2">
                     {tags
                       .sort((a, b) => b.count - a.count)
                       .map(tag => (
                         <li key={tag.tag}>
                           <a
                             href={`/blog/tags/${encodeURIComponent(tag.tag)}`}
-                            className="cursor-pointer text-sm text-black-base hover:underline"
+                            className="cursor-pointer text-[10px] text-black-base hover:underline sm:text-xs"
                           >
                             #{tag.tag} ({tag.count})
                           </a>
@@ -109,11 +98,12 @@ function NavBar({
 
             <IconDropdown
               title="시리즈"
-              icon={<FiLayers className="h-6 w-6" />}
-              widthClass="w-64"
+              icon={<FiLayers className="h-5 w-5 sm:h-6 sm:w-6" />}
+              widthClass="w-60"
+              parentContainerRef={navBarRef as React.RefObject<HTMLElement>}
               dropdownContent={
                 <div>
-                  <h5 className="mb-2 text-sm font-semibold text-black-base">
+                  <h5 className="mb-2 text-xs font-semibold text-black-base sm:text-sm">
                     연재 시리즈
                   </h5>
                   <ul className="space-y-1">
@@ -121,7 +111,7 @@ function NavBar({
                       <li key={item.series}>
                         <a
                           href={`/blog/series/${encodeURIComponent(item.series)}`}
-                          className="cursor-pointer text-sm text-black-base hover:underline"
+                          className="cursor-pointer text-[10px] text-black-base hover:underline sm:text-xs"
                         >
                           {item.series} ({item.count})
                         </a>
@@ -131,18 +121,35 @@ function NavBar({
                 </div>
               }
             />
+          </div>
 
+          {/* 중앙 로고 */}
+          <div className="flex-shrink-0">
+            <a
+              href="/"
+              title="홈"
+              className={`font-logo transform text-lg duration-200 sm:text-xl md:text-2xl ${
+                isInHero ? "text-white-base" : "text-black-base"
+              }`}
+            >
+              astorverse
+            </a>
+          </div>
+
+          {/* 오른쪽 아이콘 그룹: 페이지 메뉴, 검색 */}
+          <div className="flex items-center space-x-4">
             <IconDropdown
               title="페이지 메뉴"
-              icon={<FiMoreHorizontal className="h-6 w-6" />}
+              icon={<FiMoreHorizontal className="h-5 w-5 sm:h-6 sm:w-6" />}
               widthClass="w-40"
+              parentContainerRef={navBarRef as React.RefObject<HTMLElement>}
               dropdownContent={
                 <div>
-                  <ul className="space-y-2">
+                  <ul className="space-y-1">
                     <li>
                       <a
                         href="/blog"
-                        className="block text-sm text-black-base hover:underline"
+                        className="block text-[10px] text-black-base hover:underline sm:text-xs"
                         title="블로그"
                       >
                         블로그
@@ -151,7 +158,7 @@ function NavBar({
                     <li>
                       <a
                         href="/about"
-                        className="block text-sm text-black-base hover:underline"
+                        className="block text-[10px] text-black-base hover:underline sm:text-xs"
                         title="소개"
                       >
                         소개
@@ -160,7 +167,7 @@ function NavBar({
                     <li>
                       <a
                         href="/projects"
-                        className="block text-sm text-black-base hover:underline"
+                        className="block text-[10px] text-black-base hover:underline sm:text-xs"
                         title="프로젝트"
                       >
                         프로젝트
@@ -170,7 +177,7 @@ function NavBar({
                       <li>
                         <a
                           href="/admin"
-                          className="block text-sm text-black-base hover:underline"
+                          className="block text-[10px] text-black-base hover:underline sm:text-xs"
                           title="관리자"
                         >
                           관리자
@@ -182,14 +189,13 @@ function NavBar({
               }
             />
 
-            {/* 검색 아이콘 (드롭다운 필요 없음) */}
-            <div className="flex h-10 w-10 items-center justify-center">
+            <div className="flex h-8 w-8 items-center justify-center sm:h-10 sm:w-10">
               <button
                 title="검색"
                 onClick={() => setIsSearchOpen(true)}
                 className="flex h-full w-full items-center justify-center hover:text-skin-accent"
               >
-                <FiSearch className="h-6 w-6" />
+                <FiSearch className="h-5 w-5 sm:h-6 sm:w-6" />
               </button>
             </div>
           </div>

@@ -1,5 +1,6 @@
 import { getCollection } from "astro:content";
 import type { GetPostsOptions } from "~modules/repositories/posts/dto/GetPosts/GetPostsOptions";
+import type { Paginated } from "~types/page.type";
 import type { PostEntry, PostTitleAndId, Series, Tag } from "~types/post.type";
 import { isDefined } from "~utils/types.utils";
 
@@ -10,7 +11,9 @@ export class PostRepository {
    * 포스트 목록을 가져옵니다.
    * @param options 필터, 정렬, 페이징 옵션
    */
-  public async getPosts(options?: GetPostsOptions): Promise<PostEntry[]> {
+  public async getPosts(
+    options?: GetPostsOptions,
+  ): Promise<Paginated<PostEntry>> {
     let posts = await getCollection("posts");
 
     // 필터 적용
@@ -31,6 +34,9 @@ export class PostRepository {
         posts = posts.filter(post => !post.data.draft);
       }
     }
+
+    // 필터만 적용한 전체 포스트 수 계산
+    const total = posts.length;
 
     // 정렬 적용
     if (options?.sort) {
@@ -56,7 +62,12 @@ export class PostRepository {
       );
     }
 
-    return posts;
+    return {
+      items: posts,
+      total,
+      page: options?.paging?.page || 1,
+      limit: options?.paging?.limit || total,
+    };
   }
 
   /**
@@ -89,7 +100,7 @@ export class PostRepository {
     const posts = await this.getPosts({
       sort: { by: "createdAt", order: "asc" },
     });
-    const seriesInfo = posts.reduce(
+    const seriesInfo = posts.items.reduce(
       (acc, post) => {
         if (post.data.series) {
           if (!acc[post.data.series]) {
