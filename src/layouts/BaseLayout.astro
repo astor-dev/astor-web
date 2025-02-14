@@ -1,13 +1,16 @@
 ---
 import Footer from "~components/Footer/Footer";
-import NavBar from "~components/Header/NavBar";
+import NavBar from "~components/Nav/NavBar";
 import BreadcrumbNavigator from "~components/Breadcrumb/BreadcrumbNavigator";
 import "~styles/global.css";
 import { SkeletonProvider } from "~components/Skeleton/SkeletonProvider";
 import Seo from "~components/Seo/Seo.astro";
 import type { PostTitleAndId, Series, Tag } from "~types/post.type";
 import { repositoryContainer } from "~modules/repository.module";
-import { POST_REPOSITORY, type PostRepository } from "~modules/repositories/posts/PostRepository";
+import {
+  POST_REPOSITORY,
+  type PostRepository,
+} from "~modules/repositories/posts/PostRepository";
 interface Props {
   title?: string;
 }
@@ -19,18 +22,21 @@ const posts: PostTitleAndId[] = await postRepository.getAllPostTitleAndId();
 
 const currentPath = Astro.url.pathname;
 const shouldShowBreadcrumb = currentPath !== "/";
-
 ---
-
 
 <!doctype html>
 <html lang="ko" data-theme="light" class="w-full">
   <Seo />
   <body class="flex w-full flex-col text-skin-base">
     <!-- Google Tag Manager (noscript) -->
-  <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-MFD92VH3"
-  height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
-  <!-- End Google Tag Manager (noscript) -->
+    <noscript
+      ><iframe
+        src="https://www.googletagmanager.com/ns.html?id=GTM-MFD92VH3"
+        height="0"
+        width="0"
+        style="display:none;visibility:hidden"></iframe></noscript
+    >
+    <!-- End Google Tag Manager (noscript) -->
     <SkeletonProvider>
       <NavBar
         client:load
@@ -42,7 +48,9 @@ const shouldShowBreadcrumb = currentPath !== "/";
       />
       <slot name="hero" />
       <!-- 메인 콘텐츠 영역: 반응형 컨테이너 적용 예시 -->
-      <main class="relative w-full flex-1 bg-skin-background px-[5vw]  2xl:px-[15vw] mt-16">
+      <main
+        class="relative mt-16 w-full flex-1 bg-skin-background px-[5vw] 2xl:px-[15vw]"
+      >
         <!-- Navbar를 보여주는 경우 Navbar+12px 띄워줌 -->
         <!-- {shouldShowBreadcrumb && <BreadcrumbNavigator pathname={currentPath} client:load />} -->
         <!-- 페이지별 콘텐츠는 slot을 통해 들어옴 -->
@@ -52,23 +60,22 @@ const shouldShowBreadcrumb = currentPath !== "/";
       <!-- 푸터 (Footer) -->
       <Footer client:load />
     </SkeletonProvider>
-  </body>
-  <script is:inline data-astro-rerun>
+  </body><script is:inline data-astro-rerun>
     /** Create a progress indicator at the top */
     function createProgressBar() {
       const progressContainer = document.createElement("div");
       progressContainer.className =
         "progress-container fixed top-0 z-[999] h-0.5 w-full";
-  
+
       const progressBar = document.createElement("div");
       progressBar.className = "progress-bar h-0.5 w-0 bg-skin-accent";
       progressBar.id = "myBar";
-  
+
       progressContainer.appendChild(progressBar);
       document.body.appendChild(progressContainer);
     }
     createProgressBar();
-  
+
     /** Update the progress bar when user scrolls */
     function updateScrollProgress() {
       document.addEventListener("scroll", () => {

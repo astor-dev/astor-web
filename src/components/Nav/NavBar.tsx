@@ -56,7 +56,7 @@ function NavBar({ pathname, tags, series, posts }: NavBarProps) {
     <>
       <header
         ref={navBarRef}
-        className={`left-1/2 z-30 w-full max-w-screen-xl -translate-x-1/2 transform duration-200 ${
+        className={`left-1/2 z-30 w-full max-w-screen-lg -translate-x-1/2 transform duration-200 2xl:max-w-screen-xl ${
           isInHero
             ? isRoot
               ? "absolute opacity-0"
@@ -65,12 +65,12 @@ function NavBar({ pathname, tags, series, posts }: NavBarProps) {
         } sm:top-4 sm:rounded-3xl`}
       >
         {/* container 클래스로 좌우 여백을 지정 (모바일 대응) */}
-        <nav className="container mx-auto flex items-center justify-between px-4 py-4 sm:px-6 lg:px-8">
+        <nav className="container mx-auto flex items-center justify-between px-4 py-1 sm:px-6 sm:py-2 lg:px-8">
           {/* 왼쪽 아이콘 그룹: 태그, 시리즈 */}
           <div className="flex items-center sm:space-x-4">
             <IconDropdown
               title="태그"
-              icon={<FiTag className="h-5 w-5 sm:h-6 sm:w-6" />}
+              icon={<FiTag className="h-4 w-4 sm:h-5 sm:w-5" />}
               widthClass="w-72"
               parentContainerRef={navBarRef as React.RefObject<HTMLElement>}
               dropdownContent={
@@ -98,7 +98,7 @@ function NavBar({ pathname, tags, series, posts }: NavBarProps) {
 
             <IconDropdown
               title="시리즈"
-              icon={<FiLayers className="h-5 w-5 sm:h-6 sm:w-6" />}
+              icon={<FiLayers className="h-4 w-4 sm:h-5 sm:w-5" />}
               widthClass="w-60"
               parentContainerRef={navBarRef as React.RefObject<HTMLElement>}
               dropdownContent={
@@ -128,7 +128,7 @@ function NavBar({ pathname, tags, series, posts }: NavBarProps) {
             <a
               href="/"
               title="홈"
-              className={`font-logo transform text-lg duration-200 sm:text-xl md:text-2xl ${
+              className={`transform font-logo text-lg duration-200 sm:text-lg md:text-xl ${
                 isInHero ? "text-white-base" : "text-black-base"
               }`}
             >
@@ -137,10 +137,10 @@ function NavBar({ pathname, tags, series, posts }: NavBarProps) {
           </div>
 
           {/* 오른쪽 아이콘 그룹: 페이지 메뉴, 검색 */}
-          <div className="flex items-center space-x-4">
+          <div className="flex items-center sm:space-x-4">
             <IconDropdown
               title="페이지 메뉴"
-              icon={<FiMoreHorizontal className="h-5 w-5 sm:h-6 sm:w-6" />}
+              icon={<FiMoreHorizontal className="h-4 w-4 sm:h-5 sm:w-5" />}
               widthClass="w-40"
               parentContainerRef={navBarRef as React.RefObject<HTMLElement>}
               dropdownContent={
@@ -189,13 +189,13 @@ function NavBar({ pathname, tags, series, posts }: NavBarProps) {
               }
             />
 
-            <div className="flex h-8 w-8 items-center justify-center sm:h-10 sm:w-10">
+            <div className="flex h-10 w-10 items-center justify-center sm:h-10 sm:w-10">
               <button
                 title="검색"
                 onClick={() => setIsSearchOpen(true)}
                 className="flex h-full w-full items-center justify-center hover:text-skin-accent"
               >
-                <FiSearch className="h-5 w-5 sm:h-6 sm:w-6" />
+                <FiSearch className="h-4 w-4 sm:h-5 sm:w-5" />
               </button>
             </div>
           </div>
