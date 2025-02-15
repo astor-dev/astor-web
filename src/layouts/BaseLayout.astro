@@ -20,13 +20,14 @@ const tags: Tag[] = await postRepository.getAllTags();
 const seriesList: Series[] = await postRepository.getAllSeries();
 const posts: PostTitleAndId[] = await postRepository.getAllPostTitleAndId();
 
+const { title } = Astro.props;
 const currentPath = Astro.url.pathname;
 const shouldShowBreadcrumb = currentPath !== "/";
 ---
 
 <!doctype html>
 <html lang="ko" data-theme="light" class="w-full">
-  <Seo />
+  <Seo title={title} />
   <body class="flex w-full flex-col text-skin-base">
     <!-- Google Tag Manager (noscript) -->
     <noscript

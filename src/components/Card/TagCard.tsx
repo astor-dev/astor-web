@@ -24,7 +24,7 @@ const TagCard: React.FC<TagCardProps> = ({ tag, count, className }) => {
         whileHover={{ scale: 1.02 }}
         whileTap={{ scale: 0.98 }}
         transition={{ type: "tween", duration: 0.2 }}
-        className="group relative flex flex-col justify-between rounded-lg bg-white p-4 shadow-lg transition-shadow delay-200 hover:shadow-xl"
+        className="group relative flex flex-col justify-between rounded-lg bg-transparent p-4 transition-shadow delay-200"
       >
         <h3 className="text-lg font-semibold text-gray-800 transition-colors group-hover:text-skin-accent">
           {tag}

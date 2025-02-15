@@ -12,7 +12,7 @@ const ProjectTable: React.FC<ProjectTableProps> = ({ projects }) => {
   };
 
   return (
-    <div className="overflow-hidden rounded-lg border border-skin-line bg-white shadow-sm">
+    <div className="overflow-hidden rounded-lg border border-skin-line bg-transparent">
       <div className="overflow-x-auto">
         <table className="min-w-full divide-y divide-skin-line">
           <thead className="bg-skin-fill">

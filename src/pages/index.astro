@@ -31,14 +31,16 @@ const projects: ProjectEntry[] = await projectRepository.getProjects({
 });
 
 // 블로그 데이터 가져오기
-const pinnedPosts: PostEntry[] = (await postRepository.getPosts({
-  filter: { pinned: true },
-})).items;
+const pinnedPosts: PostEntry[] = (
+  await postRepository.getPosts({
+    filter: { pinned: true },
+  })
+).items;
 const tags: Tag[] = await postRepository.getAllTags();
 const seriesList: Series[] = await postRepository.getAllSeries();
 ---
 
-<Layout title="홈">
+<Layout>
   <Fragment slot="hero">
     <Hero client:load />
   </Fragment>

@@ -1,7 +1,7 @@
 ---
 import logo from "~assets/svgs/favicon.png";
 const {
-  title = "astorverse",
+  title,
   description = "astor의 개발 및 기술 관련 블로그입니다.",
   url = "https://astorverse.com",
   favicon = logo.src,
@@ -17,18 +17,18 @@ const {
       w[l] = w[l] || [];
       w[l].push({ "gtm.start": new Date().getTime(), event: "gtm.js" });
       var f = d.getElementsByTagName(s)[0],
-      j = d.createElement(s),
-      dl = l != 'dataLayer' ? '&l=' + l : '';
+        j = d.createElement(s),
+        dl = l != "dataLayer" ? "&l=" + l : "";
       j.async = true;
-      j.src = 'https://www.googletagmanager.com/gtm.js?id=' + i + dl;
+      j.src = "https://www.googletagmanager.com/gtm.js?id=" + i + dl;
       f.parentNode.insertBefore(j, f);
-    })(window, document, 'script', 'dataLayer', 'GTM-MFD92VH3');
+    })(window, document, "script", "dataLayer", "GTM-MFD92VH3");
   </script>
   <!-- End Google Tag Manager -->
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-  <title>{title}</title>
+  <title>{title ? title + " | astorverse" : "astorverse"}</title>
   <meta name="description" content={description} />
   <meta name="keywords" content={keywords} />
   <link rel="canonical" href={url} />

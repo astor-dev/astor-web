@@ -34,7 +34,7 @@ const StackItem: React.FC<StackItemProps> = ({
           layout: { duration: 0.2 },
         }}
         onClick={() => setShowRelated(true)}
-        className="group relative flex cursor-pointer items-center gap-3 rounded-lg bg-white/50 px-3 py-2.5 shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:bg-white/80 hover:shadow-md active:translate-y-0 active:bg-white/70 active:shadow"
+        className="group relative flex cursor-pointer items-center gap-3 rounded-lg bg-transparent px-3 py-2.5 transition-all duration-200 hover:-translate-y-0.5 hover:bg-white/80 active:translate-y-0 active:bg-white/70 active:shadow"
       >
         <div className="text-xl text-skin-accent">
           <stack.icon

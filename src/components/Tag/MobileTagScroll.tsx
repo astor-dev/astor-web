@@ -40,7 +40,7 @@ const MobileTagScroll: React.FC<MobileTagScrollProps> = ({
         dragConstraints={{ right: 0, left: -scrollWidth }}
         className="flex cursor-grab space-x-1 active:cursor-grabbing"
       >
-        <div className="h-full w-[5vw]" />
+        <div className="h-full w-[10vw]" />
         <Tag tag="전체보기" href="/blog" count={tags.length} size="sm" />
         {tags.map((tag, index) => (
           <Tag

@@ -63,9 +63,9 @@ const ProjectCard: React.FC<ProjectEntry> = props => {
     >
       <article
         ref={cardRef}
-        className={`bg-skin-card relative h-full overflow-hidden rounded-2xl shadow-lg transition-all duration-700 ease-out ${
+        className={`relative h-full overflow-hidden rounded-2xl bg-transparent transition-all duration-700 ease-out ${
           isVisible ? "translate-y-0 opacity-100" : "translate-y-10 opacity-0"
-        } hover:-translate-y-1 hover:shadow-xl`}
+        } hover:-translate-y-1`}
       >
         <ReactParticles
           id={`particles-${props.id}`}

@@ -62,7 +62,7 @@ const RelatedProjects: React.FC<RelatedProjectsProps> = ({
         animate={{ scale: 1 }}
         exit={{ scale: 0.95 }}
         transition={{ duration: 0.2 }}
-        className="max-h-[80vh] w-full max-w-2xl overflow-auto rounded-lg bg-white p-6 shadow-xl"
+        className="max-h-[80vh] w-full max-w-2xl overflow-auto rounded-lg bg-white p-6"
         onClick={e => e.stopPropagation()}
       >
         <div className="mb-8 flex items-start gap-4">
@@ -104,20 +104,15 @@ const RelatedProjects: React.FC<RelatedProjectsProps> = ({
                   <a
                     key={project.id}
                     href={`/projects/${project.id}`}
-                    className={`group block overflow-hidden rounded-lg border bg-white transition-all duration-300 hover:-translate-y-0.5 hover:shadow-md ${
-                      isRoleRelated
-                        ? "border-skin-accent/20 bg-gradient-to-br from-skin-accent/5 to-transparent"
-                        : "border-skin-line"
-                    }`}
+                    className={`"border-skin-line" } group block overflow-hidden rounded-lg border bg-white transition-all duration-300`}
                   >
                     <div className="flex items-start gap-4 p-4">
                       <div className="aspect-4/3 relative w-32 overflow-hidden rounded-md">
                         <img
                           src={project.data.imageUrl}
                           alt={project.data.projectName}
-                          className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
+                          className="h-full w-full object-cover transition-transform duration-300"
                         />
-                        <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
                       </div>
                       <div className="min-w-0 flex-1">
                         <div className="mb-2">

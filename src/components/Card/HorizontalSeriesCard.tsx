@@ -24,7 +24,7 @@ const HorizontalSeriesCard: React.FC<HorizontalSeriesCardProps> = ({
     >
       <a
         href={`/blog/series/${encodeURIComponent(series)}`}
-        className="group relative flex h-full flex-row overflow-hidden rounded-2xl bg-gradient-to-br from-white via-white to-skin-fill/5 shadow-lg transition-all duration-300 hover:-translate-y-1 hover:shadow-xl"
+        className="group relative flex h-full flex-row overflow-hidden rounded-2xl bg-gradient-to-br from-transparent via-transparent to-skin-fill/5 transition-all duration-300 hover:-translate-y-1"
       >
         <div className="flex h-full w-full">
           {/* 이미지 영역 */}
@@ -36,7 +36,7 @@ const HorizontalSeriesCard: React.FC<HorizontalSeriesCardProps> = ({
             />
           </div>
           {/* 텍스트 영역 */}
-          <div className="flex w-2/3 flex-col justify-center overflow-hidden bg-white p-4">
+          <div className="flex w-2/3 flex-col justify-center overflow-hidden p-4">
             <div className="flex items-center gap-2">
               <FaBookmark className="h-4 w-4 text-skin-accent" />
               <h3 className="truncate text-lg font-bold text-black-accent">

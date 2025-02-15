@@ -23,7 +23,7 @@ const BlogPostCard: React.FC<BlogPostCardProps> = props => {
     >
       <a
         href={`/blog/detail/${props.id}`}
-        className="group relative flex h-full flex-col overflow-hidden rounded-2xl bg-gradient-to-br from-white via-white to-skin-fill/5 shadow-lg transition-all duration-300 hover:-translate-y-1 hover:shadow-xl"
+        className="group relative flex h-full flex-col overflow-hidden rounded-2xl bg-gradient-to-br from-transparent via-transparent to-skin-fill/5 transition-all duration-300 hover:-translate-y-1"
       >
         {/* 상단: 이미지 영역 (전체 높이의 2/3) */}
         <div className="relative h-2/3 w-full overflow-hidden">

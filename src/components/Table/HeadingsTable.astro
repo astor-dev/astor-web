@@ -1,6 +1,6 @@
 ---
-import type { MarkdownHeading } from 'astro';
-import { FaList } from 'react-icons/fa';
+import type { MarkdownHeading } from "astro";
+import { FaList } from "react-icons/fa";
 
 interface Props {
   headings: MarkdownHeading[];
@@ -24,7 +24,7 @@ function computeNumbering(headings: MarkdownHeading[]) {
       counters[level] = (counters[level] || 0) + 1;
       counters.length = level + 1;
     }
-    return { ...heading, numbering: counters.join('.') };
+    return { ...heading, numbering: counters.join(".") };
   });
 }
 
@@ -33,29 +33,30 @@ const minDepth = headings.length ? Math.min(...headings.map(h => h.depth)) : 1;
 ---
 
 <nav class="table-of-contents">
-  <table class="w-full border border-skin-line rounded-lg overflow-hidden shadow-lg">
+  <table class="w-full overflow-hidden rounded-lg border border-skin-line">
     <thead class="bg-skin-accent">
       <tr>
-        <th class="px-4 py-3 text-left text-white-accent text-lg font-bold flex items-center gap-2">
+        <th
+          class="flex items-center gap-2 px-4 py-3 text-left text-lg font-bold text-white-accent"
+        >
           <FaList className="inline-block" />
           <span>목차</span>
         </th>
       </tr>
     </thead>
     <tbody class="divide-y divide-skin-line">
-      {computedHeadings.map((item) => (
-        <tr class="transition-colors hover:bg-skin-accent/10">
-          <td style={`padding-left: ${(item.depth - minDepth) * 1.5}rem;`}>
-            <a
-              href={`#${item.slug}`}
-              class="block px-4 py-2 no-underline"
-            >
-              <span class="mr-2 text-skin-accent">{item.numbering}</span>
-              <span class="text-black-accent">{item.text}</span>
-            </a>
-          </td>
-        </tr>
-      ))}
+      {
+        computedHeadings.map(item => (
+          <tr class="transition-colors hover:bg-skin-accent/10">
+            <td style={`padding-left: ${(item.depth - minDepth) * 1.5}rem;`}>
+              <a href={`#${item.slug}`} class="block px-4 py-2 no-underline">
+                <span class="mr-2 text-skin-accent">{item.numbering}</span>
+                <span class="text-black-accent">{item.text}</span>
+              </a>
+            </td>
+          </tr>
+        ))
+      }
     </tbody>
   </table>
 </nav>
