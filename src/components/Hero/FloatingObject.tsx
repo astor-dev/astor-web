@@ -5,30 +5,20 @@ export default function FloatingObject({
   color,
   top,
   left,
-  floatingAnimation,
-  delay = 0, // 애니메이션 지연 시간 (밀리초)
+  delay = 40, // 애니메이션 지연 시간 (밀리초)
 }: {
   icon: React.ReactNode;
   color: string;
   top: string;
   left: string;
-  floatingAnimation: string;
   delay?: number;
 }) {
   const [isSpread, setIsSpread] = useState(false);
-  const [isFloating, setIsFloating] = useState(false);
 
   useEffect(() => {
     // 초기 스프레드 애니메이션
     const spreadTimeout = setTimeout(() => {
       setIsSpread(true);
-
-      // 스프레드 애니메이션 완료 0.5초 후 플로팅 시작
-      const floatTimeout = setTimeout(() => {
-        setIsFloating(true);
-      }, 500);
-
-      return () => clearTimeout(floatTimeout);
     }, delay);
 
     return () => clearTimeout(spreadTimeout);
@@ -51,9 +41,7 @@ export default function FloatingObject({
 
   return (
     <div
-      className={`absolute z-0 transition-all duration-1000 ease-out ${
-        isFloating ? floatingAnimation : ""
-      }`}
+      className={`absolute z-0 transition-all duration-1000 ease-out`}
       style={isSpread ? finalStyle : initialStyle}
     >
       <div className={`transition-opacity duration-300`} style={{ color }}>

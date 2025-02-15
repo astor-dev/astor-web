@@ -46,7 +46,7 @@ export default function HomeHero() {
     // 자동완성 제안 업데이트 함수 (원래 updateAutocomplete)
     function updateAutocomplete(suggestions: string[], index: number) {
       setAutocompleteSuggestions(suggestions);
-      if (index === 2) {
+      if (index === 1) {
         setAutocompleteVisible(true);
       }
       if (
