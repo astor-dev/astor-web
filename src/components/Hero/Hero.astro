@@ -22,7 +22,7 @@ const parsedDescription = description
       .replace(/\n/g, "<br>")
   : "";
 ---
-<section class={`relative w-full h-[66vh] overflow-hidden ${className ?? ""}`}>
+<section class={`relative w-full h-[30vh] sm:h-[40vh] overflow-hidden ${className ?? ""}`}>
   <!-- 배경 이미지 (맨 뒤) -->
   <div class="absolute inset-0 z-0">
     <ImageWithSkeleton
@@ -33,6 +33,7 @@ const parsedDescription = description
     />
   </div>
 
+
   <!-- 배경 오버레이 (중간) -->
   <div class="absolute inset-0 z-10 bg-black opacity-80"></div>
 
@@ -41,17 +42,19 @@ const parsedDescription = description
     id="hero-content"
     class="relative z-20 flex flex-col items-center justify-center h-full px-4 text-center opacity-0 transition-opacity duration-700"
   >
-    <h1 class="mb-4 text-5xl font-extrabold text-white-accent sm:text-6xl md:text-7xl font-logo">
+    <!-- Navbar 만큼 공간을 줌 -->
+    <div class="h-[48px] sm:h-[56px]"></div>
+    <h1 class="mb-4 text-4xl font-extrabold text-white-accent sm:text-5xl md:text-6xl font-logo">
       {title}
     </h1>
     {subtitle && (
-      <h2 class="mb-4 text-3xl font-semibold text-white-base">
+        <h2 class="mb-4 text-3xl font-semibold text-white-base">
         {subtitle}
       </h2>
     )}
     {description && (
       <p
-        class="mb-8 max-w-2xl text-lg text-black-muted"
+        class="mb-8 max-w-2xl text-base text-black-muted"
         set:html={parsedDescription}
       ></p>
     )}

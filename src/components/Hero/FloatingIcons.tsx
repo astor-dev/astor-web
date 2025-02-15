@@ -2,6 +2,7 @@
 import React, { useMemo } from "react";
 import { useViewport } from "../../hooks/UseViewport/UseViewport";
 import FloatingObject from "./FloatingObject";
+import { stacks } from "~constants/stacks";
 
 // 랜덤한 각도와 반지름을 생성하는 유틸리티 함수
 const generateRandomPosition = (
@@ -21,20 +22,18 @@ const generateRandomPosition = (
   };
 };
 
-export default function FloatingIcons({
-  icons,
-  iconSizes,
-}: {
-  icons: { icon: React.ElementType; color: string }[];
-  iconSizes: string[];
-}) {
-  const { width } = useViewport();
+export default function FloatingIcons() {
+  const icons = stacks.map(stack => ({
+    icon: stack.icon,
+    color: stack.color,
+  }));
 
+  const { width } = useViewport();
   // 브레이크포인트에 따른 아이콘 개수 설정
   const getCounter = () => {
-    if (width < 640) return 12; // 모바일
-    if (width < 1024) return 16; // 태블릿
-    return 20; // 데스크탑 이상
+    if (width < 640) return 8; // 모바일
+    if (width < 1024) return 12; // 태블릿
+    return 16; // 데스크탑 이상
   };
 
   const counter = getCounter();
@@ -51,11 +50,15 @@ export default function FloatingIcons({
       usedIcons.add(randomIndex);
       const Icon = icons[randomIndex].icon;
       const color = icons[randomIndex].color;
-      const size = iconSizes[Math.floor(Math.random() * iconSizes.length)];
       const position = generateRandomPosition(i, counter);
-      const floatingAnimation = `animate-float-${Math.floor(
-        Math.random() * 3,
-      )}`;
+      const randomValue = Math.floor(Math.random() * 3);
+      const floatingAnimation = `animate-float-${randomValue}`;
+      const size =
+        randomValue === 0
+          ? "h-5 w-5 sm:h-7 sm:w-7"
+          : randomValue === 1
+            ? "h-4 w-4 sm:h-6 sm:w-6"
+            : "h-3 w-3 sm:h-5 sm:w-5";
       data.push({
         Icon,
         color,
@@ -67,15 +70,14 @@ export default function FloatingIcons({
       });
     }
     return data;
-  }, [icons, iconSizes, counter]);
+  }, [icons, counter]);
 
   return (
     <>
       {iconsData.map((it, index) => (
         <FloatingObject
           key={index}
-          icon={<it.Icon />}
-          size={it.size}
+          icon={<it.Icon className={it.size} />}
           color={it.color}
           top={it.top}
           left={it.left}

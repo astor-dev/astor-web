@@ -16,7 +16,7 @@ import {
 } from "~modules/repositories/posts/PostRepository";
 import type { PostEntry, Tag, Series } from "~types/post.type";
 import type { ProjectEntry } from "~types/project.type";
-import Hero from "~components/Hero/Hero";
+import HomeHero from "~components/Hero/HomeHero.astro";
 
 const projectRepository =
   repositoryContainer.get<ProjectRepository>(PROJECT_REPOSITORY);
@@ -42,7 +42,7 @@ const seriesList: Series[] = await postRepository.getAllSeries();
 
 <Layout>
   <Fragment slot="hero">
-    <Hero client:load />
+    <HomeHero  />
   </Fragment>
   <div class="mx-auto w-full">
     {/* 인기 태그 섹션 */}

@@ -37,8 +37,12 @@ function NavBar({ pathname, tags, series, posts }: NavBarProps) {
   useEffect(() => {
     const handleScroll = () => {
       // 홈 페이지가 아니라면 네브바를 항상 보여줍니다.
-      // window.innerHeight는 Hero 컴포넌트의 높이(h-screen)라고 가정합니다.
-      if (window.scrollY < window.innerHeight && !pathname.includes("/admin")) {
+      // Hero 컴포넌트의 높이(66vh)를 픽셀로 변환
+      let heroHeight = window.innerHeight * 0.66;
+      if (window.innerWidth < 768) {
+        heroHeight = window.innerHeight * 0.5; // 모바일 대응
+      }
+      if (window.scrollY < heroHeight && !pathname.includes("/admin")) {
         setIsInHero(true);
       } else {
         setIsInHero(false);
@@ -75,7 +79,7 @@ function NavBar({ pathname, tags, series, posts }: NavBarProps) {
               parentContainerRef={navBarRef as React.RefObject<HTMLElement>}
               dropdownContent={
                 <div>
-                  <h5 className="mb-2 text-xs font-semibold text-black-base sm:text-sm">
+                  <h5 className="mb-2 text-base font-semibold text-black-base sm:text-lg">
                     태그 모음
                   </h5>
                   <ul className="grid grid-cols-2 gap-1 sm:gap-2">
@@ -85,7 +89,7 @@ function NavBar({ pathname, tags, series, posts }: NavBarProps) {
                         <li key={tag.tag}>
                           <a
                             href={`/blog/tags/${encodeURIComponent(tag.tag)}`}
-                            className="cursor-pointer text-[10px] text-black-base hover:underline sm:text-xs"
+                            className="cursor-pointer text-sm text-black-base hover:underline sm:text-base"
                           >
                             #{tag.tag} ({tag.count})
                           </a>
@@ -103,7 +107,7 @@ function NavBar({ pathname, tags, series, posts }: NavBarProps) {
               parentContainerRef={navBarRef as React.RefObject<HTMLElement>}
               dropdownContent={
                 <div>
-                  <h5 className="mb-2 text-xs font-semibold text-black-base sm:text-sm">
+                  <h5 className="mb-2 text-base font-semibold text-black-base sm:text-lg">
                     연재 시리즈
                   </h5>
                   <ul className="space-y-1">
@@ -111,7 +115,7 @@ function NavBar({ pathname, tags, series, posts }: NavBarProps) {
                       <li key={item.series}>
                         <a
                           href={`/blog/series/${encodeURIComponent(item.series)}`}
-                          className="cursor-pointer text-[10px] text-black-base hover:underline sm:text-xs"
+                          className="cursor-pointer text-sm text-black-base hover:underline sm:text-base"
                         >
                           {item.series} ({item.count})
                         </a>
@@ -149,7 +153,7 @@ function NavBar({ pathname, tags, series, posts }: NavBarProps) {
                     <li>
                       <a
                         href="/blog"
-                        className="block text-[10px] text-black-base hover:underline sm:text-xs"
+                        className="block text-sm text-black-base hover:underline sm:text-base"
                         title="블로그"
                       >
                         블로그
@@ -158,7 +162,7 @@ function NavBar({ pathname, tags, series, posts }: NavBarProps) {
                     <li>
                       <a
                         href="/about"
-                        className="block text-[10px] text-black-base hover:underline sm:text-xs"
+                        className="block text-sm text-black-base hover:underline sm:text-base"
                         title="소개"
                       >
                         소개
@@ -167,7 +171,7 @@ function NavBar({ pathname, tags, series, posts }: NavBarProps) {
                     <li>
                       <a
                         href="/projects"
-                        className="block text-[10px] text-black-base hover:underline sm:text-xs"
+                        className="block text-sm text-black-base hover:underline sm:text-base"
                         title="프로젝트"
                       >
                         프로젝트
@@ -177,7 +181,7 @@ function NavBar({ pathname, tags, series, posts }: NavBarProps) {
                       <li>
                         <a
                           href="/admin"
-                          className="block text-[10px] text-black-base hover:underline sm:text-xs"
+                          className="block text-sm text-black-base hover:underline sm:text-base"
                           title="관리자"
                         >
                           관리자

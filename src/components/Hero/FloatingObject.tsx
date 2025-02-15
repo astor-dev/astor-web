@@ -2,7 +2,6 @@ import React, { useState, useEffect } from "react";
 
 export default function FloatingObject({
   icon,
-  size,
   color,
   top,
   left,
@@ -10,7 +9,6 @@ export default function FloatingObject({
   delay = 0, // 애니메이션 지연 시간 (밀리초)
 }: {
   icon: React.ReactNode;
-  size: string;
   color: string;
   top: string;
   left: string;
@@ -58,10 +56,7 @@ export default function FloatingObject({
       }`}
       style={isSpread ? finalStyle : initialStyle}
     >
-      <div
-        className={`${size} transition-opacity duration-300`}
-        style={{ color }}
-      >
+      <div className={`transition-opacity duration-300`} style={{ color }}>
         {icon}
       </div>
     </div>

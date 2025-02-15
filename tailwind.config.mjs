@@ -17,6 +17,7 @@ export default {
     "./storybook/**/*.{astro,html,js,jsx,md,mdx,svelte,ts,tsx,vue,css}",
   ],
   screens: {
+    xs: "375px", // iphone se보다 작은 화면
     sm: "640px",
     md: "768px",
     lg: "1024px",
@@ -94,57 +95,49 @@ export default {
           "0%": { transform: "translateY(20px)", opacity: 0 },
           "100%": { transform: "translateY(0)", opacity: 1 },
         },
-        "float-0": {
-          "0%": { opacity: 1 },
-          "25%": { opacity: 0.5 },
-          "50%": { opacity: 0 },
-          "75%": { opacity: 0.5 },
-          "100%": { opacity: 1 },
-        },
-        "float-1": {
-          "0%": {
-            transform: "rotate(0deg) translate(-50%, -50%)",
-            opacity: "1",
-          },
-          "25%": {
-            transform: "rotate(-90deg) translate(-75%, -75%)",
-            opacity: "1",
-          },
-          "50%": {
-            transform: "rotate(-180deg) translate(-100%, -100%)",
-            opacity: "1",
-          },
-          "75%": {
-            transform: "rotate(-270deg) translate(-75%, -75%)",
-            opacity: "1",
-          },
-          "100%": {
-            transform: "rotate(-360deg) translate(-50%, -50%)",
-            opacity: "1",
-          },
-        },
-        "float-2": {
-          "0%": {
-            transform: "rotate(0deg) translate(-50%, -50%)",
-            opacity: "1",
-          },
-          "25%": {
-            transform: "rotate(90deg) translate(-25%, -25%)",
-            opacity: "1",
-          },
-          "50%": {
-            transform: "rotate(180deg) translate(0%, 0%)",
-            opacity: "1",
-          },
-          "75%": {
-            transform: "rotate(270deg) translate(-25%, -25%)",
-            opacity: "1",
-          },
-          "100%": {
-            transform: "rotate(360deg) translate(-50%, -50%)",
-            opacity: "1",
-          },
-        },
+        // "float-0": {
+        //   "0%": { opacity: 1 },
+        //   "25%": { opacity: 0.5 },
+        //   "50%": { opacity: 0 },
+        //   "75%": { opacity: 0.5 },
+        //   "100%": { opacity: 1 },
+        // },
+        // "float-1": {
+        //   "0%": {
+        //     transform: "rotate(0deg) translate(-50%, -50%)",
+        //     opacity: "1",
+        //   },
+        //   // "25%": {
+        //   //   transform: "rotate(-90deg) translate(-100%, -100%)",
+        //   //   opacity: "1",
+        //   // },
+        //   "50%": {
+        //     transform: "rotate(-180deg) translate(-150%, -150%)",
+        //     opacity: "1",
+        //   },
+        //   // "75%": {
+        //   //   transform: "rotate(-270deg) translate(-100%, -100%)",
+        //   //   opacity: "1",
+        //   // },
+        //   "100%": {
+        //     transform: "rotate(-360deg) translate(-50%, -50%)",
+        //     opacity: "1",
+        //   },
+        // },
+        // "float-2": {
+        //   "0%": {
+        //     transform: "rotate(0deg) translate(-50%, -50%)",
+        //     opacity: "1",
+        //   },
+        //   "50%": {
+        //     transform: "rotate(180deg) translate(50%, 50%)",
+        //     opacity: "1",
+        //   },
+        //   "100%": {
+        //     transform: "rotate(360deg) translate(-50%, -50%)",
+        //     opacity: "1",
+        //   },
+        // },
         gradientShift: {
           "0%": { "background-position": "0% 50%" },
           "50%": { "background-position": "100% 50%" },
@@ -157,9 +150,9 @@ export default {
         "fadeInUp-1s": "fadeInUp 1s ease forwards",
         "fadeInUp-1.2s": "fadeInUp 1.2s ease forwards",
         "fadeInUp-1.4s": "fadeInUp 1.4s ease forwards",
-        "float-0": "float-0 6s linear infinite",
-        "float-1": "float-1 12s linear infinite",
-        "float-2": "float-2 12s linear infinite",
+        // "float-0": "float-0 6s linear infinite",
+        // "float-1": "float-1 12s linear infinite",
+        // "float-2": "float-2 12s linear infinite",
         gradientShift: "gradientShift 15s ease infinite",
       },
       outlineColor: {
@@ -190,6 +183,7 @@ export default {
         sans: ["AppleSDGothicNeo", "sans-serif"],
         mono: ["AppleSDGothicNeo", "monospace"],
         logo: ["BOKEH", "sans-serif"],
+        code: ["Fira Code", "monospace"],
       },
       typography: {
         DEFAULT: {
@@ -203,5 +197,5 @@ export default {
     },
   },
   plugins: [typography],
-  safelist: ["animate-float-0", "animate-float-1", "animate-float-2"],
+  // safelist: ["animate-float-0", "animate-float-1", "animate-float-2"],
 };

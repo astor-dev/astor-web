@@ -69,7 +69,7 @@ const FullImageBlogPostCard: React.FC<FullImageBlogPostCardProps> = props => {
               {props.data.tags.map((tag, index) => (
                 <Tag
                   key={index}
-                  text={tag}
+                  tag={tag}
                   size="sm"
                   className="bg-white/20 text-white-base hover:bg-white/30"
                 />

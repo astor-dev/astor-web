@@ -24,15 +24,15 @@ const HorizontalSeriesCard: React.FC<HorizontalSeriesCardProps> = ({
     >
       <a
         href={`/blog/series/${encodeURIComponent(series)}`}
-        className="group relative flex h-full flex-row overflow-hidden rounded-2xl bg-gradient-to-br from-transparent via-transparent to-skin-fill/5 transition-all duration-300 hover:-translate-y-1"
+        className="group relative flex h-full flex-row overflow-hidden bg-gradient-to-br from-transparent via-transparent to-skin-fill/5 transition-all duration-300 hover:-translate-y-1"
       >
         <div className="flex h-full w-full">
           {/* 이미지 영역 */}
-          <div className="relative h-full w-1/3 min-w-[150px] overflow-hidden">
+          <div className="relative h-full w-1/3 min-w-[150px] overflow-hidden rounded-2xl">
             <ImageWithSkeleton
               src={coverImage.toString()}
               alt={series}
-              className="h-full w-full object-cover"
+              className="w-fullobject-cover h-full"
             />
           </div>
           {/* 텍스트 영역 */}

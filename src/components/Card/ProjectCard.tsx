@@ -63,7 +63,7 @@ const ProjectCard: React.FC<ProjectEntry> = props => {
     >
       <article
         ref={cardRef}
-        className={`relative h-full overflow-hidden rounded-2xl bg-transparent transition-all duration-700 ease-out ${
+        className={`relative h-full overflow-hidden rounded-2xl border border-black/10 bg-transparent shadow-lg transition-all duration-700 ease-out ${
           isVisible ? "translate-y-0 opacity-100" : "translate-y-10 opacity-0"
         } hover:-translate-y-1`}
       >
