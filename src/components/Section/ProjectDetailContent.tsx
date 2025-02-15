@@ -157,7 +157,7 @@ const ProjectDetailContent: React.FC<ProjectDetailContentProps> = ({
           {/* 프로젝트 설명 */}
           <section
             ref={descriptionRef}
-            className={`prose prose-lg max-w-none transform-gpu transition-all duration-700 ${
+            className={`prose prose-sm max-w-none transform-gpu transition-all duration-700 md:prose-base lg:prose-lg ${
               isDescriptionVisible
                 ? "translate-y-0 opacity-100"
                 : "translate-y-20 opacity-0"

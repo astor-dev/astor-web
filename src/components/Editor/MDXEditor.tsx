@@ -58,7 +58,7 @@ const Editor: React.FC<EditorProps> = ({ markdown, onChange, placeholder }) => {
       onChange={handleChange}
       ref={mdxEditorRef}
       placeholder={placeholder}
-      contentEditableClassName="prose max-w-none min-h-[500px] p-4"
+      contentEditableClassName="prose prose-sm max-w-none min-h-[500px] p-4 md:prose lg:prose-lg"
       trim={false}
       plugins={[
         headingsPlugin(),

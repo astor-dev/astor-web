@@ -22,7 +22,7 @@ const parsedDescription = description
       .replace(/\n/g, "<br>")
   : "";
 ---
-<section class={`relative w-full h-[30vh] sm:h-[40vh] overflow-hidden ${className ?? ""}`}>
+<section class={`relative w-full h-[30vh] overflow-hidden ${className ?? ""}`}>
   <!-- 배경 이미지 (맨 뒤) -->
   <div class="absolute inset-0 z-0">
     <ImageWithSkeleton

@@ -32,7 +32,7 @@ const computedHeadings = computeNumbering(headings);
 const minDepth = headings.length ? Math.min(...headings.map(h => h.depth)) : 1;
 ---
 
-<nav class="table-of-contents">
+<nav class="table-of-contents not-prose">
   <table class="w-full overflow-hidden rounded-lg border border-skin-line">
     <thead class="bg-skin-accent">
       <tr>

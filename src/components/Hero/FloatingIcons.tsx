@@ -1,5 +1,5 @@
 // components/Icon/FloatingIcons.jsx
-import React, { useMemo } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { useViewport } from "../../hooks/UseViewport/UseViewport";
 import FloatingObject from "./FloatingObject";
 import { stacks } from "~constants/stacks";
@@ -23,6 +23,16 @@ const generateRandomPosition = (
 };
 
 export default function FloatingIcons() {
+  const [isMounted, setIsMounted] = useState(false);
+
+  useEffect(() => {
+    if (!isMounted) {
+      setIsMounted(true);
+    }
+  }, [isMounted]);
+
+  if (!isMounted) return null; // 한 번만 렌더링되도록 제한
+
   const icons = stacks.map(stack => ({
     icon: stack.icon,
     color: stack.color,
@@ -31,9 +41,8 @@ export default function FloatingIcons() {
   const { width } = useViewport();
   // 브레이크포인트에 따른 아이콘 개수 설정
   const getCounter = () => {
-    if (width < 640) return 8; // 모바일
-    if (width < 1024) return 12; // 태블릿
-    return 16; // 데스크탑 이상
+    if (width < 640) return 16;
+    return 20;
   };
 
   const counter = getCounter();
@@ -77,7 +86,7 @@ export default function FloatingIcons() {
       {iconsData.map((it, index) => (
         <FloatingObject
           key={index}
-          icon={<it.Icon className={it.size} />}
+          icon={<it.Icon className={`bg-white-accent ${it.size}`} />}
           color={it.color}
           top={it.top}
           left={it.left}

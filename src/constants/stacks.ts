@@ -125,7 +125,7 @@ export const stacks: Stack[] = [
     name: "Next.js",
     icon: SiNextdotjs,
     description: "React 기반 프레임워크로 SSR 및 정적 사이트 생성",
-    color: "#000000",
+    color: "#0070F3",
     featured: false,
   },
   {
@@ -260,7 +260,7 @@ export const stacks: Stack[] = [
     name: "Notion",
     icon: SiNotion,
     description: "문서 작성과 지식 관리를 위한 올인원 워크스페이스",
-    color: "#000000",
+    color: "#9B59B6",
     featured: false,
   },
   {
