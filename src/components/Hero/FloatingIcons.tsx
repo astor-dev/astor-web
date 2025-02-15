@@ -22,16 +22,18 @@ const generateRandomPosition = (
   };
 };
 
-export default function FloatingIcons() {
-  const [isMounted, setIsMounted] = useState(false);
+export default function FloatingIcons(props: { isVisible: boolean }) {
+  const [isVisible, setIsVisible] = useState(props.isVisible);
+  // animationSeed를 통해 컴포넌트 재마운트 시 새로운 키를 부여합니다.
+  const [animationSeed, setAnimationSeed] = useState(Date.now());
 
   useEffect(() => {
-    if (!isMounted) {
-      setIsMounted(true);
+    setIsVisible(props.isVisible);
+    // isVisible이 true로 전환될 때마다 seed 업데이트
+    if (props.isVisible) {
+      setAnimationSeed(Date.now());
     }
-  }, [isMounted]);
-
-  if (!isMounted) return null; // 한 번만 렌더링되도록 제한
+  }, [props.isVisible]);
 
   const icons = stacks.map(stack => ({
     icon: stack.icon,
@@ -74,7 +76,6 @@ export default function FloatingIcons() {
         size,
         top: position.top,
         left: position.left,
-        // floatingAnimation: "animate-float-2",
         floatingAnimation,
       });
     }
@@ -83,20 +84,26 @@ export default function FloatingIcons() {
 
   return (
     <>
-      {iconsData.map((it, index) => (
-        <FloatingObject
-          key={index}
-          icon={<it.Icon className={`bg-white-accent ${it.size}`} />}
-          color={it.color}
-          top={it.top}
-          left={it.left}
-          floatingAnimation={it.floatingAnimation}
-          // 애니메이션 지연 시간 설정 (100ms 간격)
-          delay={
-            width < 640 ? index * 40 : width < 1024 ? index * 30 : index * 25
-          }
-        />
-      ))}
+      {isVisible &&
+        iconsData.map((it, index) => (
+          <FloatingObject
+            // animationSeed와 index를 결합하여 키를 재생성
+            key={`${animationSeed}-${index}`}
+            icon={<it.Icon className={`bg-white-accent ${it.size}`} />}
+            color={it.color}
+            top={it.top}
+            left={it.left}
+            floatingAnimation={it.floatingAnimation}
+            // 애니메이션 지연 시간 설정 (화면 크기에 따른 간격)
+            delay={
+              40 + width < 640
+                ? index * 40
+                : width < 1024
+                  ? index * 30
+                  : index * 25
+            }
+          />
+        ))}
     </>
   );
 }
