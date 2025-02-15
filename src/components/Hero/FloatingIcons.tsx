@@ -89,13 +89,7 @@ export default function FloatingIcons(props: { isVisible: boolean }) {
             top={it.top}
             left={it.left}
             // 애니메이션 지연 시간 설정 (화면 크기에 따른 간격)
-            delay={
-              40 + width < 640
-                ? index * 40
-                : width < 1024
-                  ? index * 30
-                  : index * 25
-            }
+            delay={40 + index * 40}
           />
         ))}
     </>

@@ -37,6 +37,9 @@ export default function HomeHero() {
   }
 
   useEffect(() => {
+    // 이미지가 로딩되지 않았다면 타이핑 애니메이션 실행하지 않음
+    if (!isImageLoaded) return;
+
     // 타이핑 애니메이션 종료 후 실행할 효과 (iconsVisible 노출, 코드 커서 숨김)
     function executeAstorverse() {
       setIconsVisible(true);
@@ -133,7 +136,7 @@ export default function HomeHero() {
     }
 
     typeClass();
-  }, []);
+  }, [isImageLoaded]);
 
   return (
     <div>
