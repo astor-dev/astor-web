@@ -42,7 +42,7 @@ function NavBar({ pathname, tags, series, posts }: NavBarProps) {
       if (window.innerWidth < 768) {
         heroHeight = window.innerHeight * 0.5; // 모바일 대응
       }
-      if (window.scrollY < heroHeight && !pathname.includes("/admin")) {
+      if (window.scrollY < heroHeight || pathname.includes("/admin")) {
         setIsInHero(true);
       } else {
         setIsInHero(false);

@@ -1,52 +1,35 @@
 import { z } from "zod";
 import type { HttpInstance } from "~modules/services/core/http.instance";
-import type { ProjectRole, ProjectType } from "~types/project.type";
 
 export const POSTS_SERVICE = Symbol("POSTS_SERVICE");
 
-const PostCreateSchema = {
+// ✅ Zod 스키마 정의
+const PostCreateSchema = z.object({
   data: z.object({
     frontmatter: z.object({
-      projectType: z.string() as z.ZodType<ProjectType>,
-      imageUrl: z.string(),
-      siteUrl: z.string(),
-      roles: z.array(z.string() as z.ZodType<ProjectRole>),
-      companyName: z.string(),
-      projectName: z.string(),
-      shortDescription: z.string(),
-      startedAt: z.string(),
-      endedAt: z.string(),
-      stackIds: z.array(z.number()),
+      author: z.string(),
+      title: z.string(),
+      pinned: z.boolean(),
+      draft: z.boolean(),
+      tags: z.array(z.string()),
+      ogImage: z.string(),
+      series: z.string(),
+      description: z.string(),
     }),
     body: z.string(),
   }),
-};
+});
 
-// 프로젝트 생성 요청 타입
-interface CreatePostRequest {
-  frontmatter: {
-    projectType: ProjectType;
-    imageUrl: string;
-    siteUrl: string;
-    roles: ProjectRole[];
-    companyName: string;
-    projectName: string;
-    shortDescription: string;
-    startedAt: string;
-    endedAt?: string;
-    stackIds: number[];
-  };
-  body: string;
-}
+// ✅ 스키마를 기반으로 타입 추론
+type PostCreateType = z.infer<typeof PostCreateSchema>;
 
-// 포스트 서비스 클래스
 export class PostsService {
   constructor(private http: HttpInstance) {}
 
   // 포스트 생성
-  async createPost(post: CreatePostRequest) {
+  async createPost(post: PostCreateType) {
     return await this.http.put("/posts", post, {
-      shape: PostCreateSchema,
+      shape: PostCreateSchema.shape.data.shape,
     });
   }
 }

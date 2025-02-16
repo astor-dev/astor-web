@@ -10,13 +10,17 @@ import {
   POSTS_SERVICE,
   type PostsService,
 } from "~modules/services/posts.service";
+import CheckboxGroupInput from "~components/Input/CheckboxGroupInput";
+import type { Series, Tag } from "~types/post.type";
+import AutoCompleteMultiInput from "~components/Input/AutoCompleteMultiInput";
+import AutoCompleteInput from "~components/Input/AutoCompleteInput";
 
 interface PostFormProps {
+  series: Series[];
+  tags: Tag[];
   initialData?: Partial<{
     data: {
       author: string;
-      createdAt: string;
-      updatedAt: string;
       title: string;
       pinned: boolean;
       draft: boolean;
@@ -29,22 +33,18 @@ interface PostFormProps {
   }>;
 }
 
-const PostForm: React.FC<PostFormProps> = ({ initialData }) => {
+const PostForm: React.FC<PostFormProps> = ({ initialData, tags, series }) => {
   const postsService = serviceContainer.get<PostsService>(POSTS_SERVICE);
 
-  // 기본 날짜 형식: YYYY-MM-DD
-  const getDefaultDate = () => dayjs().format("YYYY-MM-DD");
-
   const [formData, setFormData] = useState(() => {
-    const defaultDate = getDefaultDate();
     return {
       author: initialData?.data?.author ?? "Astor",
-      createdAt: initialData?.data?.createdAt ?? defaultDate,
-      updatedAt: initialData?.data?.updatedAt ?? defaultDate,
       title: initialData?.data?.title ?? "",
-      pinned: initialData?.data?.pinned ?? false,
-      draft: initialData?.data?.draft ?? true,
-      tags: initialData?.data?.tags ?? ["others"],
+      options: {
+        pinned: initialData?.data?.pinned ?? false,
+        draft: initialData?.data?.draft ?? false,
+      },
+      tags: initialData?.data?.tags ?? [],
       ogImage: initialData?.data?.ogImage ?? "",
       series: initialData?.data?.series ?? "",
       description: initialData?.data?.description ?? "",
@@ -76,12 +76,17 @@ const PostForm: React.FC<PostFormProps> = ({ initialData }) => {
 
       const form = e.currentTarget;
       const fd = new FormData(form);
+      const optionsValues = fd.getAll("options") as string[];
+      const pinned = optionsValues.includes("pinned");
+      const draft = optionsValues.includes("draft");
 
       const updatedData = {
         ...formData,
+        options: {
+          pinned,
+          draft,
+        },
         author: fd.get("author") as string,
-        createdAt: fd.get("createdAt") as string,
-        updatedAt: fd.get("updatedAt") as string,
         title: fd.get("title") as string,
         series: fd.get("series") as string,
         description: fd.get("description") as string,
@@ -92,44 +97,27 @@ const PostForm: React.FC<PostFormProps> = ({ initialData }) => {
     [formData],
   );
 
-  // 날짜 입력 필드 변경 핸들러 (작성일, 수정일)
-  const handleDateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    setFormData(prev => ({
-      ...prev,
-      [name]: value,
-    }));
-  };
-
-  // 태그 입력: 쉼표(,)로 구분하여 배열로 저장
-  const handleTagsChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.value;
-    const tags = value
-      .split(",")
-      .map(tag => tag.trim())
-      .filter(tag => tag !== "");
-    setFormData(prev => ({
-      ...prev,
-      tags,
-    }));
-  };
-
   // 폼 제출 핸들러
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     try {
       const submissionData = {
-        ...formData,
-        // 필요한 경우 여기서 추가 가공 가능
+        author: formData.author,
+        title: formData.title,
+        series: formData.series,
+        tags: formData.tags,
+        ogImage: formData.ogImage,
+        description: formData.description,
+        pinned: formData.options.pinned,
+        draft: formData.options.draft,
       };
 
       const postData = {
         frontmatter: submissionData,
         body: markdownContent,
       };
-
-      await postsService.createPost(postData);
-      window.location.href = "/admin/posts";
+      console.log(postData);
+      await postsService.createPost({ data: postData });
     } catch (error) {
       if (error instanceof Error) {
         alert(`포스트 저장에 실패했습니다: ${error.message}`);
@@ -150,6 +138,27 @@ const PostForm: React.FC<PostFormProps> = ({ initialData }) => {
           기본 정보
         </h2>
         <div className="grid gap-6 lg:grid-cols-2">
+          <div className="lg:col-span-2">
+            <CheckboxGroupInput
+              name="options"
+              label="옵션"
+              options={[
+                {
+                  value: "pinned",
+                  label: "상단 고정",
+                },
+                {
+                  value: "draft",
+                  label: "임시 저장",
+                },
+              ]}
+              required
+              defaultValues={[
+                formData.options.pinned ? "pinned" : "",
+                formData.options.draft ? "draft" : "",
+              ]}
+            />
+          </div>
           <Input
             id="title"
             name="title"
@@ -164,88 +173,52 @@ const PostForm: React.FC<PostFormProps> = ({ initialData }) => {
             required
             defaultValue={formData.author}
           />
-          <Input
+          <AutoCompleteInput
             id="series"
             name="series"
             label="시리즈 (선택)"
             defaultValue={formData.series}
+            allOptions={series?.map(series => series.series) ?? []}
+            onValueChange={value => {
+              setFormData(prev => ({ ...prev, series: value }));
+            }}
           />
-          <Input
-            id="createdAt"
-            name="createdAt"
-            label="작성일"
-            type="date"
-            required
-            defaultValue={formData.createdAt}
-            onChange={handleDateChange}
-          />
-          <Input
-            id="updatedAt"
-            name="updatedAt"
-            label="수정일"
-            type="date"
-            required
-            defaultValue={formData.updatedAt}
-            onChange={handleDateChange}
-          />
-          <TextareaInput
-            id="description"
-            name="description"
-            label="포스트 간단 설명"
-            required
-            defaultValue={formData.description}
-          />
-          <div className="flex items-center gap-4">
-            <div className="flex items-center">
-              <input
-                type="checkbox"
-                id="pinned"
-                name="pinned"
-                checked={formData.pinned}
-                onChange={e =>
-                  setFormData(prev => ({ ...prev, pinned: e.target.checked }))
-                }
-                className="focus:ring-skin-accent h-4 w-4 rounded border-skin-line text-skin-accent"
-              />
-              <label htmlFor="pinned" className="ml-2 text-sm text-black-base">
-                상단 고정
-              </label>
-            </div>
-            <div className="flex items-center">
-              <input
-                type="checkbox"
-                id="draft"
-                name="draft"
-                checked={formData.draft}
-                onChange={e =>
-                  setFormData(prev => ({ ...prev, draft: e.target.checked }))
-                }
-                className="focus:ring-skin-accent h-4 w-4 rounded border-skin-line text-skin-accent"
-              />
-              <label htmlFor="draft" className="ml-2 text-sm text-black-base">
-                임시 저장 (초안)
-              </label>
-            </div>
-          </div>
-          <Input
+          <AutoCompleteMultiInput
             id="tags"
             name="tags"
-            label="태그 (쉼표로 구분)"
+            label="태그"
             required
-            defaultValue={formData.tags.join(", ")}
-            onChange={handleTagsChange}
+            placeholder="태그를 입력하고 Enter나 ','로 확정"
+            allTags={tags?.map(tag => tag.tag) ?? []} // 태그 후보 목록
+            defaultValue={formData.tags} // 기존에 선택된 태그들
+            onTagsChange={newTags => {
+              // 상위 formData를 업데이트
+              setFormData(prev => ({ ...prev, tags: newTags }));
+            }}
           />
-          <ImageFileInput
-            id="ogImage"
-            name="ogImage"
-            label="OG 이미지"
-            type="posts"
-            required
-            value={formData.ogImage}
-            setValue={url =>
-              setFormData(prev => ({ ...prev, ogImage: url || "" }))
-            }
-          />
+
+          <div className="lg:col-span-2">
+            <ImageFileInput
+              id="ogImage"
+              name="ogImage"
+              label="OG 이미지"
+              type="posts"
+              required
+              value={formData.ogImage}
+              setValue={url =>
+                setFormData(prev => ({ ...prev, ogImage: url || "" }))
+              }
+            />
+          </div>
+          <div className="lg:col-span-2">
+            <TextareaInput
+              id="description"
+              name="description"
+              label="간단 설명"
+              required
+              defaultValue={formData.description}
+            />
+          </div>
         </div>
       </div>
 

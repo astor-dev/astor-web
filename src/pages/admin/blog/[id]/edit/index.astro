@@ -11,16 +11,18 @@ import PostForm from "~components/Form/PostForm";
 export async function getStaticPaths() {
   const postRepository = repositoryContainer.get<PostRepository>(POST_REPOSITORY);
   const posts = await postRepository.getPosts();
+  const tags = await postRepository.getAllTags();
+  const series = await postRepository.getAllSeries();
 
   const postResult = posts.items.map(post => ({
     params: { id: post.id },
-    props: { post },
+    props: { post, tags, series },
   }));
 
   return postResult;
 }
 
-const { post } = Astro.props;
+const { post, tags, series } = Astro.props;
 ---
 
 <Layout title="포스트 수정">
@@ -31,7 +33,7 @@ const { post } = Astro.props;
         <h1 class="text-3xl font-bold text-black-accent">포스트 수정</h1>
         <p class="mt-2 text-black-muted">포스트 정보를 수정합니다</p>
       </div>
-      <PostForm client:only="react" initialData={post} />
+      <PostForm client:only="react" initialData={post} tags={tags} series={series} />
     </div>
   </AdminOnly>
 </Layout>
