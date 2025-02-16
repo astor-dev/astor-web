@@ -5,21 +5,28 @@ import IconButton from "~components/Button/IconButton";
 import AdminOnly from "~components/Wrapper/AdminOnly";
 import { repositoryContainer } from "~modules/repository.module";
 import { POST_REPOSITORY, type PostRepository } from "~modules/repositories/posts/PostRepository";
-
+import Hero from "~components/Hero/Hero.astro";
+import blogHeader from "~assets/images/blog-header.jpg";
 
 const postRepository = repositoryContainer.get<PostRepository>(POST_REPOSITORY);
 const posts = await postRepository.getPosts();
 ---
 
 <Layout title="포스트 관리">
+  <Hero
+    title="포스트 관리"
+    description="포스트를 추가, 수정, 삭제할 수 있습니다"
+    imageSrc={blogHeader.src}
+    slot="hero"
+  />
   <AdminOnly client:load>
     <div class="mx-auto w-full max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
       <!-- 헤더 -->
       <div class="mb-8 flex items-center justify-between">
         <div>
-          <h1 class="text-3xl font-bold text-black-accent">프로젝트 관리</h1>
+          <h1 class="text-3xl font-bold text-black-accent">블로그 테이블</h1>
           <p class="mt-2 text-black-muted">
-            포스트를 추가, 수정, 삭제할 수 있습니다
+            한주에 하나씩 꾸준히 씁시다..!
           </p>
         </div>
         <IconButton

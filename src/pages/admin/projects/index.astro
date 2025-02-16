@@ -7,12 +7,20 @@ import { repositoryContainer } from "~modules/repository.module";
 import { PROJECT_REPOSITORY, type ProjectRepository } from "~modules/repositories/projects/ProjectRepository";
 import type { Paginated } from "~types/page.type";
 import type { ProjectEntry } from "~types/project.type";
+import projectHeader from "~assets/images/project-header.jpg";
+import Hero from "~components/Hero/Hero.astro";
 
 const projectRepository = repositoryContainer.get<ProjectRepository>(PROJECT_REPOSITORY);
 const projects: Paginated<ProjectEntry> = await projectRepository.getProjects();
 ---
 
 <Layout title="프로젝트 관리">
+  <Hero
+    title="프로젝트 관리"
+    description="프로젝트를 추가, 수정, 삭제할 수 있습니다"
+    imageSrc={projectHeader.src}
+    slot="hero"
+  />
   <AdminOnly client:load>
     <div class="mx-auto w-full max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
       <!-- 헤더 -->
