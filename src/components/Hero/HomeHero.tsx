@@ -3,6 +3,8 @@ import heroMilkyway from "~assets/images/hero-milkyway.jpg";
 import FloatingIcons from "~components/Hero/FloatingIcons";
 import LoadingSpinner from "~components/LoadingSpinner/LoadingSpinner";
 
+type AutoCompleteType = "class" | "method";
+
 export default function HomeHero() {
   // 이미지 로드 및 기타 UI 요소 상태값 관리
   const [isImageLoaded, setIsImageLoaded] = useState(false);
@@ -22,121 +24,163 @@ export default function HomeHero() {
   });
   const [iconsVisible, setIconsVisible] = useState(false);
   const [cursorVisible, setCursorVisible] = useState(true);
+  const [classText, setClassText] = useState("astorverse");
+  // typedIndex를 상태로 관리하여 클래스 타이핑 진행 상황을 기록합니다.
+  const [typedIndex, setTypedIndex] = useState(0);
+  // autoComplete의 종류: class 또는 method
+  const [autocompleteType, setAutocompleteType] =
+    useState<AutoCompleteType>("class");
 
   // ref 설정 (자동완성 위치 산출용)
   const codeEditorRef = useRef<HTMLDivElement>(null);
   const codeCursorRef = useRef<HTMLSpanElement>(null);
   const autocompleteRef = useRef<HTMLDivElement>(null);
-  const iRef = useRef(0);
 
-  // onLoad 이벤트: 이미지 로드 후 state 업데이트 (원래 window.handleImageLoad 역할)
+  // onLoad 이벤트: 이미지 로드 후 state 업데이트
   function handleImageLoad() {
     setIsImageLoaded(true);
     setSpinnerVisible(false);
     setOverlayVisible(true);
   }
 
+  // 자동완성 업데이트 함수 수정
+  function updateAutocomplete(suggestions: string[], index: number) {
+    setAutocompleteSuggestions(suggestions);
+    // 클래스 타입인 경우, 인덱스가 1일 때만 보이도록 하고,
+    // 메서드 타입인 경우에는 항상 보이도록 설정합니다.
+    if (
+      (autocompleteType === "class" && index === 1) ||
+      autocompleteType === "method"
+    ) {
+      setAutocompleteVisible(true);
+    }
+    if (
+      codeEditorRef.current &&
+      codeCursorRef.current &&
+      autocompleteRef.current
+    ) {
+      const editorRect = codeEditorRef.current.getBoundingClientRect();
+      const cursorRect = codeCursorRef.current.getBoundingClientRect();
+      let offsetX = cursorRect.left - editorRect.left;
+      let offsetY = cursorRect.bottom - editorRect.top;
+      const acWidth = autocompleteRef.current.offsetWidth;
+      const acHeight = autocompleteRef.current.offsetHeight;
+      const viewportWidth = window.innerWidth;
+      const viewportHeight = window.innerHeight;
+      if (cursorRect.left + acWidth > viewportWidth) {
+        offsetX = viewportWidth - acWidth - editorRect.left;
+      }
+      if (cursorRect.bottom + acHeight > viewportHeight) {
+        offsetY = viewportHeight - acHeight - editorRect.top;
+      }
+      setAutocompletePosition({ left: offsetX, top: offsetY });
+    }
+  }
+
+  // 클래스 자동완성 제안
+  function showClassSuggestions(index: number, sliceText: string) {
+    setAutocompleteType("class");
+    const classSuggestions = [
+      "aggregateRoot",
+      "aspect",
+      "assigner",
+      "astor",
+      "astorAdapter",
+      "astorCommand",
+      "astorEntity",
+      "astorEvent",
+      "astorHandler",
+      "astorQuery",
+      "astorService",
+      "astorverse",
+    ];
+    const sliceSuggestions = classSuggestions.filter(item =>
+      item.startsWith(sliceText),
+    );
+    updateAutocomplete(sliceSuggestions, index);
+  }
+
+  // 메서드 자동완성 제안
+  function showMethodSuggestions(index: number) {
+    setAutocompleteType("method");
+    const methodSuggestions = [
+      "execute()",
+      "initialize()",
+      "persist()",
+      "query()",
+      "registerEvent()",
+      "resolve()",
+      "rollback()",
+      "transform()",
+      "validate()",
+    ];
+    updateAutocomplete(methodSuggestions, index);
+  }
+
+  // 클래스 타이핑 효과 (상태 업데이트 기반)
   useEffect(() => {
-    // 이미지가 로딩되지 않았다면 타이핑 애니메이션 실행하지 않음
     if (!isImageLoaded) return;
 
-    // 타이핑 애니메이션 종료 후 실행할 효과 (iconsVisible 노출, 코드 커서 숨김)
-    function executeAstorverse() {
-      setIconsVisible(true);
-      setCursorVisible(false);
-    }
-
-    // 자동완성 제안 업데이트 함수 (원래 updateAutocomplete)
-    function updateAutocomplete(suggestions: string[], index: number) {
-      setAutocompleteSuggestions(suggestions);
-      if (index === 1) {
-        setAutocompleteVisible(true);
-      }
-      if (
-        codeEditorRef.current &&
-        codeCursorRef.current &&
-        autocompleteRef.current
-      ) {
-        const editorRect = codeEditorRef.current.getBoundingClientRect();
-        const cursorRect = codeCursorRef.current.getBoundingClientRect();
-        let offsetX = cursorRect.left - editorRect.left;
-        let offsetY = cursorRect.bottom - editorRect.top;
-        const acWidth = autocompleteRef.current.offsetWidth;
-        const acHeight = autocompleteRef.current.offsetHeight;
-        const viewportWidth = window.innerWidth;
-        const viewportHeight = window.innerHeight;
-        if (cursorRect.left + acWidth > viewportWidth) {
-          offsetX = viewportWidth - acWidth - editorRect.left;
-        }
-        if (cursorRect.bottom + acHeight > viewportHeight) {
-          offsetY = viewportHeight - acHeight - editorRect.top;
-        }
-        setAutocompletePosition({ left: offsetX, top: offsetY });
-      }
-    }
-
-    // 클래스 자동완성 제안 (원래 showClassSuggestions)
-    function showClassSuggestions(index: number, sliceText: string) {
-      const classSuggestions = [
-        "aggregateRoot",
-        "aspect",
-        "assigner",
-        "astor",
-        "astorAdapter",
-        "astorCommand",
-        "astorEntity",
-        "astorEvent",
-        "astorHandler",
-        "astorQuery",
-        "astorService",
-        "astorverse",
-      ];
-      const sliceSuggestions = classSuggestions.filter(item =>
-        item.startsWith(sliceText),
-      );
-      updateAutocomplete(sliceSuggestions, index);
-    }
-
-    // 메서드 자동완성 제안 (원래 showMethodSuggestions)
-    function showMethodSuggestions(index: number) {
-      const methodSuggestions = [
-        "execute()",
-        "initialize()",
-        "persist()",
-        "query()",
-        "registerEvent()",
-        "resolve()",
-        "rollback()",
-        "transform()",
-        "validate()",
-      ];
-      updateAutocomplete(methodSuggestions, index);
-    }
-
-    function typeClass() {
-      const classText = "astorverse";
-      if (iRef.current < classText.length) {
-        const sliceText = classText.slice(0, iRef.current + 1);
-        showClassSuggestions(iRef.current, sliceText);
-        setTypedClass(sliceText);
-        iRef.current++;
-        setTimeout(typeClass, 100);
-      } else {
+    if (typedIndex < classText.length) {
+      const sliceText = classText.slice(0, typedIndex + 1);
+      showClassSuggestions(typedIndex, sliceText);
+      setTypedClass(sliceText);
+      const timer = setTimeout(() => {
+        setTypedIndex(typedIndex + 1);
+      }, 100);
+      return () => clearTimeout(timer);
+    } else {
+      // 클래스 타이핑 완료 후 후속 효과
+      const timer = setTimeout(() => {
+        setTypedDot(".");
+        setClassHighlighted(true);
+        showMethodSuggestions(typedIndex);
         setTimeout(() => {
-          setTypedDot(".");
-          setClassHighlighted(true);
-          showMethodSuggestions(iRef.current);
-          setTimeout(() => {
-            setTypedMethod("execute()");
-            setAutocompleteVisible(false);
-            executeAstorverse();
-          }, 1000);
-        }, 500);
-      }
+          setAutocompleteVisible(false);
+          setIconsVisible(true);
+          setCursorVisible(false);
+          // 단, 이미 메서드가 선택된 경우 덮어쓰지 않음.
+          setTypedMethod(prev => (prev ? prev : "execute()"));
+        }, 1000);
+      }, 500);
+      return () => clearTimeout(timer);
     }
+  }, [isImageLoaded, typedIndex, classText]);
 
-    typeClass();
-  }, [isImageLoaded]);
+  // 타이핑 도중에 Tab 또는 Enter 키를 누르면 자동완성 제안의 첫 번째 항목으로 완료되도록 함
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Tab" || e.key === "Enter") {
+        // 클래스 단계: 아직 타이핑이 진행 중이면 첫 번째 제안을 적용
+        if (
+          autocompleteType === "class" &&
+          typedIndex < classText.length &&
+          autocompleteSuggestions.length > 0
+        ) {
+          e.preventDefault();
+          const suggestion = autocompleteSuggestions[0];
+          setClassText(suggestion);
+          setTypedClass(suggestion);
+          setTypedIndex(suggestion.length);
+          showClassSuggestions(suggestion.length, suggestion);
+        }
+        // 메서드 단계: 첫 번째 메서드 제안을 적용
+        else if (
+          autocompleteType === "method" &&
+          autocompleteSuggestions.length > 0
+        ) {
+          e.preventDefault();
+          const suggestion = autocompleteSuggestions[0];
+          setTypedMethod(suggestion);
+          setAutocompleteVisible(false);
+          setIconsVisible(true);
+          setCursorVisible(false);
+        }
+      }
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [typedIndex, classText, autocompleteType, autocompleteSuggestions]);
 
   return (
     <div>
@@ -199,7 +243,7 @@ export default function HomeHero() {
               </div>
               <p
                 id="hero-text"
-                className={`mt-4 font-sans text-xs font-light text-gray-200 sm:mt-12 sm:text-sm md:text-base lg:text-lg xl:text-xl 2xl:text-2xl`}
+                className="mt-4 font-sans text-xs font-light text-gray-200 sm:mt-12 sm:text-sm md:text-base lg:text-lg xl:text-xl 2xl:text-2xl"
               >
                 안녕하세요!{" "}
                 <span className="font-bold">백엔드 개발자 Astor, 김도훈</span>
@@ -227,6 +271,21 @@ export default function HomeHero() {
                     className={`cursor-pointer px-2 py-1 hover:bg-gray-600 ${
                       idx === 0 ? "bg-gray-600" : ""
                     }`}
+                    onClick={() => {
+                      if (autocompleteType === "class") {
+                        // 클래스 타이핑 단계에서는 클릭한 텍스트(item)로 바로 완성되도록 설정합니다.
+                        setClassText(item);
+                        setTypedClass(item);
+                        setTypedIndex(item.length);
+                        showClassSuggestions(item.length, item);
+                      } else {
+                        // 메서드 타이핑 단계: 클릭한 텍스트가 메서드에 바로 들어갑니다.
+                        setTypedMethod(item);
+                        setAutocompleteVisible(false);
+                        setIconsVisible(true);
+                        setCursorVisible(false);
+                      }
+                    }}
                   >
                     {item}
                   </div>
