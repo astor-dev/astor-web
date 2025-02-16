@@ -30,7 +30,7 @@ export default function HomeHero() {
   // autoComplete의 종류: class 또는 method
   const [autocompleteType, setAutocompleteType] =
     useState<AutoCompleteType>("class");
-
+  const [isAstora, setIsAstora] = useState(false);
   // ref 설정 (자동완성 위치 산출용)
   const codeEditorRef = useRef<HTMLDivElement>(null);
   const codeCursorRef = useRef<HTMLSpanElement>(null);
@@ -83,15 +83,14 @@ export default function HomeHero() {
     const classSuggestions = [
       "aggregateRoot",
       "aspect",
-      "assigner",
       "astor",
+      "astora",
       "astorAdapter",
       "astorCommand",
       "astorEntity",
       "astorEvent",
       "astorHandler",
       "astorQuery",
-      "astorService",
       "astorverse",
     ];
     const sliceSuggestions = classSuggestions.filter(item =>
@@ -106,6 +105,7 @@ export default function HomeHero() {
     const methodSuggestions = [
       "execute()",
       "initialize()",
+      "implode()",
       "persist()",
       "query()",
       "registerEvent()",
@@ -216,7 +216,7 @@ export default function HomeHero() {
             id="floating-icons-container"
             className="pointer-events-none absolute inset-0 z-0 overflow-hidden opacity-80"
           >
-            <FloatingIcons isVisible={iconsVisible} />
+            <FloatingIcons isAstora={isAstora} isVisible={iconsVisible} />
           </div>
 
           <div className="relative z-20 mx-auto flex flex-col items-center space-y-6 px-4 text-center">
@@ -224,7 +224,7 @@ export default function HomeHero() {
               id="code-editor"
               ref={codeEditorRef}
               // "whitespace-pre-wrap break-all" 대신 아래와 같이 수정
-              className="// 줄바꿈 관련 설정 (Tailwind 3.2 기준) relative block w-full whitespace-normal break-words rounded-lg p-4 text-center font-code text-2xl text-white-accent sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl 2xl:text-7xl"
+              className="relative block w-full whitespace-normal break-words rounded-lg p-4 text-center font-code text-xl text-white-accent sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl 2xl:text-7xl"
             >
               <div className="flex w-full flex-wrap items-center justify-center gap-1">
                 <span
@@ -298,6 +298,10 @@ export default function HomeHero() {
                         setIconsVisible(true);
                         setCursorVisible(false);
                         setAutocompleteSuggestions([]);
+
+                        if (typedClass === "astora" && item === "implode()") {
+                          setIsAstora(true);
+                        }
                       }
                     }}
                   >

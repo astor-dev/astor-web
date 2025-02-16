@@ -1,5 +1,6 @@
 import { getCollection } from "astro:content";
 import type { GetProjectsOptions } from "~modules/repositories/projects/dto/GetProjects/GetProjectsOptions";
+import type { Paginated } from "~types/page.type";
 import type {
   ProjectEntry,
   ProjectRole,
@@ -16,7 +17,7 @@ export class ProjectRepository {
    */
   public async getProjects(
     options?: GetProjectsOptions,
-  ): Promise<ProjectEntry[]> {
+  ): Promise<Paginated<ProjectEntry>> {
     let projects = await getCollection("projects");
 
     // 필터 적용
@@ -53,6 +54,8 @@ export class ProjectRepository {
         );
       }
     }
+
+    const total = projects.length;
 
     // 정렬 적용
     if (options?.sort) {
@@ -96,7 +99,12 @@ export class ProjectRepository {
       );
     }
 
-    return projects;
+    return {
+      items: projects,
+      total,
+      page: options?.paging?.page ?? 1,
+      limit: options?.paging?.limit ?? total,
+    };
   }
 
   /**

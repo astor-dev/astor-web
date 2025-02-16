@@ -1,4 +1,5 @@
 import { getCollection } from "astro:content";
+import dayjs from "dayjs";
 import type { GetPostsOptions } from "~modules/repositories/posts/dto/GetPosts/GetPostsOptions";
 import type { Paginated } from "~types/page.type";
 import type { PostEntry, PostTitleAndId, Series, Tag } from "~types/post.type";
@@ -35,6 +36,22 @@ export class PostRepository {
         posts = posts.filter(post => post.data.draft === filter.draft);
       } else {
         posts = posts.filter(post => !post.data.draft);
+      }
+      if (isDefined(filter.createdAt)) {
+        posts = posts.filter(post => {
+          const postDate = dayjs(post.data.createdAt);
+          if (filter.createdAt?.$gte && filter.createdAt?.$lte) {
+            return (
+              postDate.isAfter(filter.createdAt.$gte) &&
+              postDate.isBefore(filter.createdAt.$lte)
+            );
+          } else if (filter.createdAt?.$gte) {
+            return postDate.isAfter(filter.createdAt.$gte);
+          } else if (filter.createdAt?.$lte) {
+            return postDate.isBefore(filter.createdAt.$lte);
+          }
+          return true;
+        });
       }
     }
 

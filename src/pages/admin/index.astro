@@ -6,6 +6,26 @@ import ActivityItem, {
   type ActivityItemProps,
 } from "~components/Item/ActivityItem";
 import AdminOnly from "~components/Wrapper/AdminOnly";
+import { repositoryContainer } from "~modules/repository.module";
+import { PROJECT_REPOSITORY, type ProjectRepository } from "~modules/repositories/projects/ProjectRepository";
+import { POST_REPOSITORY, type PostRepository } from "~modules/repositories/posts/PostRepository";
+import type { Paginated } from "~types/page.type";
+import type { ProjectEntry } from "~types/project.type";
+import type { PostEntry } from "~types/post.type";
+import dayjs from "dayjs";
+const projectRepository = repositoryContainer.get<ProjectRepository>(PROJECT_REPOSITORY);
+const projects:Paginated<ProjectEntry> = await projectRepository.getProjects({paging:{limit:1, page:1}});
+
+const postRepository = repositoryContainer.get<PostRepository>(POST_REPOSITORY);
+const posts:Paginated<PostEntry> = await postRepository.getPosts({paging:{limit:1, page:1}});
+const thisMonthPosts = await postRepository.getPosts({
+  filter:{
+    createdAt:{
+      $gte:dayjs().subtract(1, "month"),
+      $lte:dayjs(),
+    },
+  },
+});
 
 const QUICK_ACTIONS: ActionCardProps[] = [
   {
@@ -15,17 +35,17 @@ const QUICK_ACTIONS: ActionCardProps[] = [
     description: "프로젝트를 관리합니다",
   },
   {
-    href: "/admin/posts/new",
+    href: "/admin/blog",
     icon: "FaPen",
-    title: "새 글 작성",
-    description: "새로운 블로그 글을 작성합니다",
+    title: "블로그 관리",
+    description: "블로그를 관리합니다",
   },
 ];
 
 const STATS: StatCardProps[] = [
-  { label: "총 프로젝트", value: 12 },
-  { label: "총 게시글", value: 24 },
-  { label: "이번 달 조회수", value: 1234 },
+  { label: "총 프로젝트", value: projects.total },
+  { label: "총 게시글", value: posts.total },
+  { label: "이번 달 작성글", value: thisMonthPosts.total },
   { label: "총 방문자", value: 5678 },
 ];
 

@@ -5,14 +5,16 @@ import IconButton from "~components/Button/IconButton";
 import AdminOnly from "~components/Wrapper/AdminOnly";
 import { repositoryContainer } from "~modules/repository.module";
 import { PROJECT_REPOSITORY, type ProjectRepository } from "~modules/repositories/projects/ProjectRepository";
-import type { Paginated } from "~types/page.type";
-import type { ProjectEntry } from "~types/project.type";
+import { POST_REPOSITORY, type PostRepository } from "~modules/repositories/posts/PostRepository";
 
 const projectRepository = repositoryContainer.get<ProjectRepository>(PROJECT_REPOSITORY);
-const projects: Paginated<ProjectEntry> = await projectRepository.getProjects();
+const projects = await projectRepository.getProjects();
+
+const postRepository = repositoryContainer.get<PostRepository>(POST_REPOSITORY);
+const posts = await postRepository.getPosts();
 ---
 
-<Layout title="프로젝트 관리">
+<Layout title="포스트 관리">
   <AdminOnly client:load>
     <div class="mx-auto w-full max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
       <!-- 헤더 -->
@@ -20,7 +22,7 @@ const projects: Paginated<ProjectEntry> = await projectRepository.getProjects();
         <div>
           <h1 class="text-3xl font-bold text-black-accent">프로젝트 관리</h1>
           <p class="mt-2 text-black-muted">
-            프로젝트를 추가, 수정, 삭제할 수 있습니다
+            포스트를 추가, 수정, 삭제할 수 있습니다
           </p>
         </div>
         <IconButton
@@ -32,7 +34,7 @@ const projects: Paginated<ProjectEntry> = await projectRepository.getProjects();
         />
       </div>
 
-      <ProjectTable projects={projects.items} client:load />
+      <PostTable posts={posts} client:load />
     </div>
   </AdminOnly>
 </Layout>

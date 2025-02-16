@@ -1,4 +1,5 @@
 ---
+import AdminOnly from "~components/Wrapper/AdminOnly";
 import ProjectDetail from "~layouts/projects/ProjectDetail.astro";
 import { repositoryContainer } from "~modules/repository.module";
 import { PROJECT_REPOSITORY, type ProjectRepository } from "~modules/repositories/projects/ProjectRepository";
@@ -7,7 +8,7 @@ export async function getStaticPaths() {
   const projectRepository = repositoryContainer.get<ProjectRepository>(PROJECT_REPOSITORY);
   const projects = await projectRepository.getProjects();
 
-  const postResult = projects.items.map(project => ({
+  const postResult = projects.map(project => ({
     params: { id: project.id },
     props: { project },
   }));
@@ -18,4 +19,8 @@ export async function getStaticPaths() {
 const { project } = Astro.props;
 ---
 
-<ProjectDetail project={project} isAdmin={false} />
+<ProjectDetail project={project} isAdmin={true}>
+  <AdminOnly client:load>
+    <></>
+  </AdminOnly>
+</ProjectDetail>

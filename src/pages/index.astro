@@ -17,12 +17,12 @@ import {
 import type { PostEntry, Tag, Series } from "~types/post.type";
 import type { ProjectEntry } from "~types/project.type";
 import HomeHero from "~components/Hero/HomeHero";
-
+import type { Paginated } from "~types/page.type";
 const projectRepository =
   repositoryContainer.get<ProjectRepository>(PROJECT_REPOSITORY);
 const postRepository = repositoryContainer.get<PostRepository>(POST_REPOSITORY);
 
-const projects: ProjectEntry[] = await projectRepository.getProjects({
+const projects: Paginated<ProjectEntry> = await projectRepository.getProjects({
   paging: { page: 0, limit: 5 },
   sort: { field: "endedAt", order: "desc" },
   filter: {
@@ -129,7 +129,7 @@ const seriesList: Series[] = await postRepository.getAllSeries();
         class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 lg:gap-6"
       >
         {
-          projects.map((project, index) => (
+          projects.items.map((project, index) => (
             <div class={`${index >= 3 ? "hidden sm:block" : ""}`}>
               <ProjectCard {...project} client:load />
             </div>

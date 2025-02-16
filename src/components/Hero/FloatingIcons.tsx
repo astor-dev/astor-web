@@ -3,8 +3,9 @@ import React, { useEffect, useMemo, useState, useRef } from "react";
 import { useViewport } from "../../hooks/UseViewport/UseViewport";
 import FloatingObject from "./FloatingObject";
 import { stacks } from "~constants/stacks";
+// (예시) Font Awesome Heart 아이콘을 임포트했다고 가정합니다.
+import { FaHeart } from "react-icons/fa";
 
-// 랜덤한 각도와 반지름을 생성하는 유틸리티 함수
 const generateRandomPosition = (
   index: number,
   total: number,
@@ -22,20 +23,17 @@ const generateRandomPosition = (
   };
 };
 
-export default function FloatingIcons(props: { isVisible: boolean }) {
+export default function FloatingIcons(props: {
+  isAstora: boolean; // true면 하트 아이콘으로!
+  isVisible: boolean;
+}) {
   const [isVisible, setIsVisible] = useState(props.isVisible);
   // animationSeed를 useRef로 관리하여 초기값을 고정합니다.
   const animationSeed = useRef(Date.now());
 
   useEffect(() => {
     setIsVisible(props.isVisible);
-    // isVisible이 true로 전환되어도 animationSeed는 업데이트하지 않습니다.
   }, [props.isVisible]);
-
-  const icons = useMemo(
-    () => stacks.map(stack => ({ icon: stack.icon, color: stack.color })),
-    [],
-  );
 
   const { width } = useViewport();
   // 브레이크포인트에 따른 아이콘 개수 설정
@@ -43,22 +41,47 @@ export default function FloatingIcons(props: { isVisible: boolean }) {
     if (width < 640) return 16;
     return 20;
   };
-
   const counter = getCounter();
 
-  // useMemo를 사용하여 랜덤 아이콘 데이터 생성
+  /**
+   * isAstora일 때: 하트만 들어있는 배열을 만들어서 icons로 사용
+   * isAstora가 false면: 기존 stacks 배열을 사용
+   */
+  const icons = useMemo(() => {
+    if (props.isAstora) {
+      // ex) 하트 색상은 빨간색으로 통일
+      return new Array(stacks.length).fill({
+        icon: FaHeart,
+        color: "#ff5050",
+      });
+    } else {
+      return stacks.map(stack => ({
+        icon: stack.icon,
+        color: stack.color,
+      }));
+    }
+    // isAstora가 바뀌면 다시 계산
+  }, [props.isAstora]);
+
+  /**
+   * iconsData 생성 로직
+   * icons 배열이 바뀌면(즉, isAstora 값이 바뀌면) 새로 아이콘 정보 생성
+   */
   const iconsData = useMemo(() => {
     const usedIcons = new Set();
     const data = [];
     for (let i = 0; i < counter; i++) {
       let randomIndex;
+      // 중복 아이콘 사용 방지
       do {
         randomIndex = Math.floor(Math.random() * icons.length);
       } while (usedIcons.has(randomIndex));
       usedIcons.add(randomIndex);
+
       const Icon = icons[randomIndex].icon;
       const color = icons[randomIndex].color;
       const position = generateRandomPosition(i, counter);
+
       const randomValue = Math.floor(Math.random() * 3);
       const size =
         randomValue === 0
@@ -66,6 +89,7 @@ export default function FloatingIcons(props: { isVisible: boolean }) {
           : randomValue === 1
             ? "h-4 w-4 sm:h-6 sm:w-6"
             : "h-3 w-3 sm:h-5 sm:w-5";
+
       data.push({
         Icon,
         color,
@@ -82,7 +106,6 @@ export default function FloatingIcons(props: { isVisible: boolean }) {
       {isVisible &&
         iconsData.map((it, index) => (
           <FloatingObject
-            // animationSeed.current를 사용하여 키가 고정되도록 함
             key={`${animationSeed.current}-${index}`}
             icon={<it.Icon className={`bg-white-accent ${it.size}`} />}
             color={it.color}
