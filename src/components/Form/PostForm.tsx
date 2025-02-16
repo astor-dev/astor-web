@@ -28,6 +28,8 @@ interface PostFormProps {
       ogImage: string;
       series?: string;
       description: string;
+      createdAt: string; // ← 날짜
+      updatedAt: string; // ← 날짜
     };
     body: string;
   }>;
@@ -36,6 +38,8 @@ interface PostFormProps {
 const PostForm: React.FC<PostFormProps> = ({ initialData, tags, series }) => {
   const postsService = serviceContainer.get<PostsService>(POSTS_SERVICE);
 
+  // 기본 날짜 문자열(YYYY-MM-DD HH:mm:ss)
+  const defaultDate = dayjs().format("YYYY-MM-DD HH:mm:ss");
   const [formData, setFormData] = useState(() => {
     return {
       author: initialData?.data?.author ?? "Astor",
@@ -48,6 +52,11 @@ const PostForm: React.FC<PostFormProps> = ({ initialData, tags, series }) => {
       ogImage: initialData?.data?.ogImage ?? "",
       series: initialData?.data?.series ?? "",
       description: initialData?.data?.description ?? "",
+      // createdAt, updatedAt 기본값 세팅
+      createdAt:
+        dayjs(initialData?.data?.createdAt).format("YYYY-MM-DD HH:mm:ss") ??
+        defaultDate,
+      updatedAt: defaultDate,
     };
   });
 
@@ -57,20 +66,21 @@ const PostForm: React.FC<PostFormProps> = ({ initialData, tags, series }) => {
 
   // 마크다운 에디터 내용 업데이트
   const handleMarkdownChange = useCallback((content: string) => {
-    setMarkdownContent(prev => {
-      if (prev === content) {
-        return prev;
-      }
-      return content;
-    });
+    setMarkdownContent(prev => (prev === content ? prev : content));
   }, []);
 
   // 폼의 기본적인 텍스트 입력 필드 변경 핸들러
   const handleFormChange = useCallback(
     (e: React.FormEvent<HTMLFormElement>) => {
       const target = e.target as HTMLElement;
-      // ogImage 및 태그 입력은 별도로 처리
-      if (target.id === "ogImage" || target.id === "tags") {
+
+      // createdAt, updatedAt, ogImage, tags 등 특정 필드는 이 로직에 포함시키지 않음
+      if (
+        target.id === "ogImage" ||
+        target.id === "tags" ||
+        target.id === "createdAt" ||
+        target.id === "updatedAt"
+      ) {
         return;
       }
 
@@ -80,8 +90,8 @@ const PostForm: React.FC<PostFormProps> = ({ initialData, tags, series }) => {
       const pinned = optionsValues.includes("pinned");
       const draft = optionsValues.includes("draft");
 
-      const updatedData = {
-        ...formData,
+      setFormData(prev => ({
+        ...prev,
         options: {
           pinned,
           draft,
@@ -90,17 +100,20 @@ const PostForm: React.FC<PostFormProps> = ({ initialData, tags, series }) => {
         title: fd.get("title") as string,
         series: fd.get("series") as string,
         description: fd.get("description") as string,
-      };
-
-      setFormData(updatedData);
+        // createdAt, updatedAt 은 여기서 갱신하지 않음
+      }));
     },
-    [formData],
+    [],
   );
 
   // 폼 제출 핸들러
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     try {
+      // 필요하다면, 제출 시 updatedAt을 현재 시각으로 갱신
+      // const now = dayjs().format("YYYY-MM-DD");
+      // setFormData(prev => ({ ...prev, updatedAt: now }));
+
       const submissionData = {
         author: formData.author,
         title: formData.title,
@@ -110,14 +123,17 @@ const PostForm: React.FC<PostFormProps> = ({ initialData, tags, series }) => {
         description: formData.description,
         pinned: formData.options.pinned,
         draft: formData.options.draft,
+        createdAt: formData.createdAt, // readOnly이지만 전송 포함
+        updatedAt: formData.updatedAt,
       };
 
       const postData = {
         frontmatter: submissionData,
         body: markdownContent,
       };
-      console.log(postData);
-      await postsService.createPost({ data: postData });
+
+      await postsService.createPost(postData);
+      // ... 이후 페이지 이동 or 알림
     } catch (error) {
       if (error instanceof Error) {
         alert(`포스트 저장에 실패했습니다: ${error.message}`);
@@ -143,14 +159,8 @@ const PostForm: React.FC<PostFormProps> = ({ initialData, tags, series }) => {
               name="options"
               label="옵션"
               options={[
-                {
-                  value: "pinned",
-                  label: "상단 고정",
-                },
-                {
-                  value: "draft",
-                  label: "임시 저장",
-                },
+                { value: "pinned", label: "상단 고정" },
+                { value: "draft", label: "임시 저장" },
               ]}
               required
               defaultValues={[
@@ -159,6 +169,29 @@ const PostForm: React.FC<PostFormProps> = ({ initialData, tags, series }) => {
               ]}
             />
           </div>
+
+          {/* createdAt (읽기 전용 + date) */}
+          <Input
+            id="createdAt"
+            name="createdAt"
+            label="작성일"
+            type="datetime-local"
+            required
+            defaultValue={formData.createdAt}
+            disabled
+          />
+
+          {/* updatedAt (읽기 전용 + date) */}
+          <Input
+            id="updatedAt"
+            name="updatedAt"
+            label="수정일"
+            type="datetime-local"
+            required
+            defaultValue={formData.updatedAt}
+            disabled
+          />
+
           <Input
             id="title"
             name="title"
@@ -166,6 +199,7 @@ const PostForm: React.FC<PostFormProps> = ({ initialData, tags, series }) => {
             required
             defaultValue={formData.title}
           />
+
           <Input
             id="author"
             name="author"
@@ -173,26 +207,29 @@ const PostForm: React.FC<PostFormProps> = ({ initialData, tags, series }) => {
             required
             defaultValue={formData.author}
           />
+
+          {/* 시리즈 자동완성 */}
           <AutoCompleteInput
             id="series"
             name="series"
             label="시리즈 (선택)"
             defaultValue={formData.series}
-            allOptions={series?.map(series => series.series) ?? []}
+            allOptions={series?.map(s => s.series) ?? []}
             onValueChange={value => {
               setFormData(prev => ({ ...prev, series: value }));
             }}
           />
+
+          {/* 태그 다중 자동완성 */}
           <AutoCompleteMultiInput
             id="tags"
             name="tags"
             label="태그"
             required
             placeholder="태그를 입력하고 Enter나 ','로 확정"
-            allTags={tags?.map(tag => tag.tag) ?? []} // 태그 후보 목록
-            defaultValue={formData.tags} // 기존에 선택된 태그들
+            allTags={tags?.map(t => t.tag) ?? []}
+            defaultValue={formData.tags}
             onTagsChange={newTags => {
-              // 상위 formData를 업데이트
               setFormData(prev => ({ ...prev, tags: newTags }));
             }}
           />
@@ -205,11 +242,12 @@ const PostForm: React.FC<PostFormProps> = ({ initialData, tags, series }) => {
               type="posts"
               required
               value={formData.ogImage}
-              setValue={url =>
-                setFormData(prev => ({ ...prev, ogImage: url || "" }))
-              }
+              setValue={url => {
+                setFormData(prev => ({ ...prev, ogImage: url || "" }));
+              }}
             />
           </div>
+
           <div className="lg:col-span-2">
             <TextareaInput
               id="description"
@@ -231,7 +269,6 @@ const PostForm: React.FC<PostFormProps> = ({ initialData, tags, series }) => {
         />
       </div>
 
-      {/* 폼 제출/취소 버튼 영역 */}
       <div className="flex justify-end gap-3">
         <IconButton text="취소" href="/admin/posts" variant="secondary" />
         <IconButton text="저장하기" variant="primary" type="submit" />

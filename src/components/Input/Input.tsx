@@ -4,7 +4,7 @@ interface InputProps {
   id: string;
   name: string;
   label: string;
-  type?: "text" | "url" | "date" | "month";
+  type?: "text" | "url" | "date" | "month" | "datetime-local";
   required?: boolean;
   defaultValue?: string;
   placeholder?: string;
