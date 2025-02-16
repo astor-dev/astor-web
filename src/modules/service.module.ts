@@ -6,6 +6,7 @@ import {
   HttpInstance,
 } from "~modules/services/core/http.instance";
 import { IMAGE_SERVICE, ImageService } from "~modules/services/image.service";
+import { POSTS_SERVICE, PostsService } from "~modules/services/posts.service";
 import {
   PROJECTS_SERVICE,
   ProjectsService,
@@ -22,5 +23,8 @@ serviceContainer.registerWithDependencies(PROJECTS_SERVICE, ProjectsService, [
   HTTP_INSTANCE,
 ]);
 serviceContainer.registerWithDependencies(IMAGE_SERVICE, ImageService, [
+  HTTP_INSTANCE,
+]);
+serviceContainer.registerWithDependencies(POSTS_SERVICE, PostsService, [
   HTTP_INSTANCE,
 ]);

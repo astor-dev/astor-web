@@ -1,14 +1,14 @@
 import type { CollectionEntry } from "astro:content";
 import React from "react";
-import { FaPen, FaTrash, FaExternalLinkAlt } from "react-icons/fa";
+import { FaPen, FaTrash } from "react-icons/fa";
 
-interface ProjectTableProps {
-  projects: CollectionEntry<"projects">[];
+interface PostTableProps {
+  posts: CollectionEntry<"posts">[];
 }
 
-const ProjectTable: React.FC<ProjectTableProps> = ({ projects }) => {
-  const handleRowClick = (projectId: string) => {
-    window.location.href = `/admin/projects/detail/${projectId}`;
+const PostTable: React.FC<PostTableProps> = ({ posts }) => {
+  const handleRowClick = (postId: string) => {
+    window.location.href = `/admin/blog/${postId}`;
   };
 
   return (
@@ -18,19 +18,16 @@ const ProjectTable: React.FC<ProjectTableProps> = ({ projects }) => {
           <thead className="bg-skin-fill">
             <tr>
               <th className="px-6 py-3 text-left text-sm font-medium text-black-muted">
-                프로젝트명
+                제목
               </th>
               <th className="px-6 py-3 text-left text-sm font-medium text-black-muted">
-                유형
+                작성자
               </th>
               <th className="px-6 py-3 text-left text-sm font-medium text-black-muted">
-                회사
+                작성일
               </th>
               <th className="px-6 py-3 text-left text-sm font-medium text-black-muted">
-                기간
-              </th>
-              <th className="px-6 py-3 text-left text-sm font-medium text-black-muted">
-                역할
+                태그
               </th>
               <th className="px-6 py-3 text-right text-sm font-medium text-black-muted">
                 관리
@@ -38,47 +35,31 @@ const ProjectTable: React.FC<ProjectTableProps> = ({ projects }) => {
             </tr>
           </thead>
           <tbody className="divide-y divide-skin-line">
-            {projects.map(project => (
+            {posts.map(post => (
               <tr
-                key={project.id}
-                onClick={() => handleRowClick(project.id)}
+                key={post.id}
+                onClick={() => handleRowClick(post.id)}
                 className="cursor-pointer hover:bg-skin-fill/50"
               >
                 <td className="whitespace-nowrap px-6 py-4">
-                  <div className="flex items-center gap-2">
-                    <span className="font-medium text-black-accent">
-                      {project.data.projectName}
-                    </span>
-                    {project.data.siteUrl && (
-                      <a
-                        href={project.data.siteUrl}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="text-skin-accent hover:text-skin-accent/80"
-                        onClick={e => e.stopPropagation()}
-                      >
-                        <FaExternalLinkAlt className="text-sm" />
-                      </a>
-                    )}
-                  </div>
+                  <span className="font-medium text-black-accent">
+                    {post.data.title}
+                  </span>
                 </td>
                 <td className="whitespace-nowrap px-6 py-4 text-sm text-black-base">
-                  {project.data.projectType}
+                  {post.data.author}
                 </td>
                 <td className="whitespace-nowrap px-6 py-4 text-sm text-black-base">
-                  {project.data.companyName}
-                </td>
-                <td className="whitespace-nowrap px-6 py-4 text-sm text-black-base">
-                  {project.data.startedAt} ~ {project.data.endedAt}
+                  {post.data.createdAt}
                 </td>
                 <td className="px-6 py-4">
                   <div className="flex flex-wrap gap-1">
-                    {project.data.roles.map(role => (
+                    {post.data.tags.map(tag => (
                       <span
-                        key={role}
+                        key={tag}
                         className="inline-flex items-center rounded-full bg-skin-accent/10 px-2 py-0.5 text-xs font-medium text-skin-accent"
                       >
-                        {role}
+                        {tag}
                       </span>
                     ))}
                   </div>
@@ -86,7 +67,7 @@ const ProjectTable: React.FC<ProjectTableProps> = ({ projects }) => {
                 <td className="whitespace-nowrap px-6 py-4 text-right">
                   <div className="flex items-center justify-end gap-2">
                     <a
-                      href={`/admin/projects/detail/${project.id}/edit`}
+                      href={`/admin/blog/${post.id}/edit`}
                       className="inline-flex items-center rounded p-1 text-black-muted hover:text-skin-accent"
                       title="수정"
                       onClick={e => e.stopPropagation()}
@@ -98,7 +79,7 @@ const ProjectTable: React.FC<ProjectTableProps> = ({ projects }) => {
                       title="삭제"
                       onClick={e => {
                         e.stopPropagation();
-                        // 삭제 로직
+                        // 삭제 로직 구현
                       }}
                     >
                       <FaTrash className="text-sm" />
@@ -114,4 +95,4 @@ const ProjectTable: React.FC<ProjectTableProps> = ({ projects }) => {
   );
 };
 
-export default ProjectTable;
+export default PostTable;

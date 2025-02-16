@@ -298,7 +298,6 @@ export default function HomeHero() {
                         setIconsVisible(true);
                         setCursorVisible(false);
                         setAutocompleteSuggestions([]);
-
                         if (typedClass === "astora" && item === "implode()") {
                           setIsAstora(true);
                         }

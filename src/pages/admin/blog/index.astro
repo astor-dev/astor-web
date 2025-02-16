@@ -1,14 +1,11 @@
 ---
 import Layout from "~layouts/BaseLayout.astro";
-import ProjectTable from "~components/Table/ProjectTable";
+import PostTable from "~components/Table/PostTable";
 import IconButton from "~components/Button/IconButton";
 import AdminOnly from "~components/Wrapper/AdminOnly";
 import { repositoryContainer } from "~modules/repository.module";
-import { PROJECT_REPOSITORY, type ProjectRepository } from "~modules/repositories/projects/ProjectRepository";
 import { POST_REPOSITORY, type PostRepository } from "~modules/repositories/posts/PostRepository";
 
-const projectRepository = repositoryContainer.get<ProjectRepository>(PROJECT_REPOSITORY);
-const projects = await projectRepository.getProjects();
 
 const postRepository = repositoryContainer.get<PostRepository>(POST_REPOSITORY);
 const posts = await postRepository.getPosts();
@@ -28,13 +25,13 @@ const posts = await postRepository.getPosts();
         <IconButton
           client:load
           icon="FaPlus"
-          text="새 프로젝트"
-          href="/admin/projects/new"
+          text="새 포스트"
+          href="/admin/blog/new"
           variant="primary"
         />
       </div>
 
-      <PostTable posts={posts} client:load />
+      <PostTable posts={posts.items} client:load />
     </div>
   </AdminOnly>
 </Layout>

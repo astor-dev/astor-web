@@ -1,6 +1,6 @@
 import React from "react";
 import { FaCode, FaPen, FaPlus, FaShare } from "react-icons/fa";
-import { FiExternalLink } from "react-icons/fi";
+import { FiEdit, FiExternalLink } from "react-icons/fi";
 
 const IconRecord: Record<string, React.ElementType> = {
   FaCode: FaCode,
@@ -8,6 +8,7 @@ const IconRecord: Record<string, React.ElementType> = {
   FaPlus: FaPlus,
   FaShare: FaShare,
   FiExternalLink: FiExternalLink,
+  FiEdit: FiEdit,
 };
 
 interface IconButtonProps {

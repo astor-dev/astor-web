@@ -42,7 +42,7 @@ for (const stackId of project.data.stackIds) {
       order: "desc",
     },
   });
-  relatedProjects[stackId] = projects;
+  relatedProjects[stackId] = projects.items;
 }
 ---
 
@@ -82,19 +82,20 @@ for (const stackId of project.data.stackIds) {
 
   <!-- 프로젝트 상세 내용 -->
   <div class="mx-auto max-w-4xl px-4 py-8 sm:px-6 lg:px-8 space-y-12">
-    <!-- {isAdmin && (
-      <a
-        href={`/admin/projects/detail/${project.id}/edit`}
-        class="rounded bg-blue-500 px-3 py-2 text-white hover:bg-blue-600"
-      >
-        프로젝트 수정
-      </a>
-    )} --> 
       <section class="flex flex-col justify-between gap-4 sm:flex-row sm:items-center">
         <p class="border-l-4 border-skin-accent pl-4 text-lg leading-relaxed text-black-base">
           {project.data.shortDescription}
         </p>
         <div class="flex shrink-0 flex-col items-end gap-3">
+          {isAdmin && (
+            <IconButton
+              icon="FiEdit"
+              text="프로젝트 수정"
+              href={`/admin/projects/detail/${project.id}/edit`}
+              variant="primary"
+              client:load
+            />
+          )} 
           <IconButton
             icon="FiExternalLink"
             text="사이트 방문"

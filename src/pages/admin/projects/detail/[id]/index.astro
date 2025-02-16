@@ -8,7 +8,7 @@ export async function getStaticPaths() {
   const projectRepository = repositoryContainer.get<ProjectRepository>(PROJECT_REPOSITORY);
   const projects = await projectRepository.getProjects();
 
-  const postResult = projects.map(project => ({
+  const postResult = projects.items.map(project => ({
     params: { id: project.id },
     props: { project },
   }));
