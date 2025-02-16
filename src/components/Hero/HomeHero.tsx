@@ -139,6 +139,7 @@ export default function HomeHero() {
           setAutocompleteVisible(false);
           setIconsVisible(true);
           setCursorVisible(false);
+          setAutocompleteSuggestions([]);
           // 단, 이미 메서드가 선택된 경우 덮어쓰지 않음.
           setTypedMethod(prev => (prev ? prev : "execute()"));
         }, 1000);
@@ -147,34 +148,35 @@ export default function HomeHero() {
     }
   }, [isImageLoaded, typedIndex, classText]);
 
-  // 타이핑 도중에 Tab 또는 Enter 키를 누르면 자동완성 제안의 첫 번째 항목으로 완료되도록 함
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === "Tab" || e.key === "Enter") {
-        // 클래스 단계: 아직 타이핑이 진행 중이면 첫 번째 제안을 적용
-        if (
-          autocompleteType === "class" &&
-          typedIndex < classText.length &&
-          autocompleteSuggestions.length > 0
-        ) {
-          e.preventDefault();
+      const isClassTyping =
+        autocompleteType === "class" &&
+        typedIndex < classText.length &&
+        autocompleteSuggestions.length > 0;
+      const isMethodTyping =
+        autocompleteType === "method" && autocompleteSuggestions.length > 0;
+
+      if (
+        (isClassTyping || isMethodTyping) &&
+        (e.key === "Tab" || e.key === "Enter")
+      ) {
+        console.log("isClassTyping", isClassTyping);
+        console.log("isMethodTyping", isMethodTyping);
+        e.preventDefault();
+        if (isClassTyping) {
           const suggestion = autocompleteSuggestions[0];
           setClassText(suggestion);
           setTypedClass(suggestion);
           setTypedIndex(suggestion.length);
           showClassSuggestions(suggestion.length, suggestion);
-        }
-        // 메서드 단계: 첫 번째 메서드 제안을 적용
-        else if (
-          autocompleteType === "method" &&
-          autocompleteSuggestions.length > 0
-        ) {
-          e.preventDefault();
+        } else if (isMethodTyping) {
           const suggestion = autocompleteSuggestions[0];
           setTypedMethod(suggestion);
           setAutocompleteVisible(false);
           setIconsVisible(true);
           setCursorVisible(false);
+          setAutocompleteSuggestions([]);
         }
       }
     };
@@ -221,26 +223,37 @@ export default function HomeHero() {
             <div
               id="code-editor"
               ref={codeEditorRef}
-              className="relative block w-full whitespace-pre-wrap break-all rounded-lg p-4 text-center font-code text-2xl text-white-accent sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl 2xl:text-7xl"
+              // "whitespace-pre-wrap break-all" 대신 아래와 같이 수정
+              className="// 줄바꿈 관련 설정 (Tailwind 3.2 기준) relative block w-full whitespace-normal break-words rounded-lg p-4 text-center font-code text-2xl text-white-accent sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl 2xl:text-7xl"
             >
-              <div className="flex w-full items-center justify-center">
+              <div className="flex w-full flex-wrap items-center justify-center gap-1">
                 <span
                   id="code-class"
                   className={classHighlighted ? "text-[#a3e635]" : ""}
+                  // span 내부는 항상 붙여쓰기 되게 하려면
+                  style={{ whiteSpace: "nowrap" }}
                 >
                   {typedClass}
                 </span>
-                <span id="code-dot">{typedDot}</span>
-                <span id="code-method">{typedMethod}</span>
+                <span id="code-dot" style={{ whiteSpace: "nowrap" }}>
+                  {typedDot}
+                </span>
+                <span id="code-method" style={{ whiteSpace: "nowrap" }}>
+                  {typedMethod}
+                </span>
                 <span
                   id="code-cursor"
                   ref={codeCursorRef}
                   className="animate-blink"
-                  style={{ display: cursorVisible ? "inline" : "none" }}
+                  style={{
+                    display: cursorVisible ? "inline" : "none",
+                    whiteSpace: "nowrap",
+                  }}
                 >
                   |
                 </span>
               </div>
+
               <p
                 id="hero-text"
                 className="mt-4 font-sans text-xs font-light text-gray-200 sm:mt-12 sm:text-sm md:text-base lg:text-lg xl:text-xl 2xl:text-2xl"
@@ -284,6 +297,7 @@ export default function HomeHero() {
                         setAutocompleteVisible(false);
                         setIconsVisible(true);
                         setCursorVisible(false);
+                        setAutocompleteSuggestions([]);
                       }
                     }}
                   >
