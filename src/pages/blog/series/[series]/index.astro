@@ -12,7 +12,7 @@ export async function getStaticPaths() {
 
     for (const series of seriesList) {
       const paginatedPosts = await postRepository.getPosts({
-        filter: { series: series.series },
+        filter: { series: series.series, draft: false },
       });
       paths.push({
         params: { series: series.series },

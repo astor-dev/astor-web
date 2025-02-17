@@ -5,7 +5,7 @@ import { POST_REPOSITORY, type PostRepository } from "~modules/repositories/post
 
 export async function getStaticPaths() {
   const postRepository = repositoryContainer.get<PostRepository>(POST_REPOSITORY);
-  const posts = await postRepository.getPosts();
+  const posts = await postRepository.getPosts({ filter: { draft: false } });
   return posts.items.map(post => ({
     params: { id: post.id },
     props: { post },

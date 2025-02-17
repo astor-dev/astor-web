@@ -19,7 +19,7 @@ const { currentTag, page }: Props = Astro.props;
 
 const postRepository = repositoryContainer.get<PostRepository>(POST_REPOSITORY);
 const posts = await postRepository.getPosts({
-  filter: { tags: isDefined(currentTag) ? [currentTag] : undefined },
+  filter: { tags: isDefined(currentTag) ? [currentTag] : undefined, draft: false },
   paging: { page, limit: POST_PER_PAGE },
 });
 const tags = await postRepository.getAllTags();

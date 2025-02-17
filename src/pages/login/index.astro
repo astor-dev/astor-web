@@ -2,9 +2,18 @@
 import Layout from "~layouts/BaseLayout.astro";
 import { FaLock } from "react-icons/fa";
 import kakaoLogo from "~/assets/svgs/KakaoTalk_logo.svg";
+import Hero from "~components/Hero/Hero.astro";
+import HeroMilkyway from "~/assets/images/hero-milkyway.jpg";
 ---
 
 <Layout title="로그인">
+  <Hero
+    title="Login"
+    subtitle="관리자 로그인"
+    description="관리자 로그인을 위한 페이지입니다."
+    imageSrc={HeroMilkyway.src}
+    slot="hero"
+  />
   <div
     class="mx-auto flex min-h-[60vh] w-full max-w-md flex-col items-center justify-center px-4"
   >

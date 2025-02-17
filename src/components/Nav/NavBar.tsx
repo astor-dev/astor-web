@@ -14,13 +14,19 @@ interface NavBarProps {
 function NavBar({ pathname, tags, series, posts }: NavBarProps) {
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [showAdmin, setShowAdmin] = useState(false);
-
+  const [showLogin, setShowLogin] = useState(false);
   const navBarRef = useRef<HTMLDivElement>(null);
 
   // 로그인 쿠키 감지
   useEffect(() => {
     if (document.cookie.indexOf("isLoggedIn=true") !== -1) {
       setShowAdmin(true);
+    }
+    if (
+      document.cookie.indexOf("hasLoggedInOnce=true") !== -1 && // 최초 로그인 후 30일 동안 유지
+      document.cookie.indexOf("isLoggedIn=true") === -1 // 로그인이 되어있지 않다면
+    ) {
+      setShowLogin(true);
     }
   }, []);
 
@@ -185,6 +191,16 @@ function NavBar({ pathname, tags, series, posts }: NavBarProps) {
                           title="관리자"
                         >
                           관리자
+                        </a>
+                      </li>
+                    )}
+                    {showLogin && (
+                      <li>
+                        <a
+                          href="/login"
+                          className="block text-sm text-black-base hover:underline sm:text-base"
+                        >
+                          로그인
                         </a>
                       </li>
                     )}

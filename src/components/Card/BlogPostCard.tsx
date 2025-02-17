@@ -26,7 +26,7 @@ const BlogPostCard: React.FC<BlogPostCardProps> = props => {
         className="group relative flex h-full flex-col overflow-hidden rounded-2xl bg-gradient-to-br from-transparent via-transparent to-skin-fill/5 transition-all duration-300 hover:-translate-y-1"
       >
         {/* 상단: 이미지 영역 (전체 높이의 2/3) */}
-        <div className="relative h-2/3 w-full overflow-hidden rounded-2xl">
+        <div className="relative aspect-[16/9] h-2/3 w-full overflow-hidden rounded-2xl">
           <ImageWithSkeleton
             src={props.data.ogImage?.toString() || "/default-blog-image.jpg"}
             alt={props.data.title}
