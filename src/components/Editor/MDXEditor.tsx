@@ -45,11 +45,13 @@ const Editor: React.FC<EditorProps> = ({ markdown, onChange, placeholder }) => {
   const mdxEditorRef = React.useRef<MDXEditorMethods>(null);
   const oldMarkdownRef = React.useRef(markdown); // 이전 마크다운 값을 저장하기 위한 ref
   const imageService = serviceContainer.get<ImageService>(IMAGE_SERVICE);
+
+  // onChange 콜백: markdown 의존성 제거!
   const handleChange = useCallback(
     (content: string) => {
       onChange(content);
     },
-    [onChange, markdown],
+    [onChange],
   );
 
   return (
@@ -129,4 +131,5 @@ const Editor: React.FC<EditorProps> = ({ markdown, onChange, placeholder }) => {
   );
 };
 
-export default Editor;
+// MDXEditor 컴포넌트를 React.memo로 감싸서 props가 동일하면 재렌더링 방지
+export default React.memo(Editor);

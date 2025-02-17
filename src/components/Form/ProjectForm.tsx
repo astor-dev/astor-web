@@ -31,10 +31,10 @@ const ROLES = ProjectRoleEnum.options;
 const ProjectForm: React.FC<ProjectFormProps> = ({ initialData }) => {
   const projectsService =
     serviceContainer.get<ProjectsService>(PROJECTS_SERVICE);
+
   // 날짜를 YYYY-MM 형식으로 안전하게 변환하는 헬퍼 함수
   const formatDateToYearMonth = (dateString: string) => {
     if (!dateString) return "";
-
     try {
       const date = dayjs(dateString);
       return date.isValid()
@@ -71,122 +71,107 @@ const ProjectForm: React.FC<ProjectFormProps> = ({ initialData }) => {
     return initialData?.body ?? "";
   });
 
-  const handleMarkdownChange = useCallback(
-    (content: string) => {
-      setMarkdownContent(prev => {
-        if (prev === content) {
-          return prev;
-        }
-        return content;
-      });
-    },
-    [markdownContent],
-  );
+  // MDXEditor의 변경 이벤트 최적화를 위해 handleMarkdownChange에서 함수형 업데이트 사용 + 의존성 최소화
+  const handleMarkdownChange = useCallback((content: string) => {
+    setMarkdownContent(prev => (prev === content ? prev : content));
+  }, []);
 
-  // 폼 내용 변경 시마다 호출
+  // 폼 내용 변경 시마다 호출 (이미지, 무기한 체크박스, 스택 체크박스 영역은 제외)
   const handleFormChange = useCallback(
     (e: React.FormEvent<HTMLFormElement>) => {
       const target = e.target as HTMLElement;
-
-      // 이미지 입력, 무기한 체크박스, 스택 체크박스의 경우 건너뛰기
       if (
         target.id === "imageUrl" ||
         target.id === "infiniteEndDate" ||
-        target.closest("#stackIds") // 스택 체크박스 영역 전체를 제외
+        target.closest("#stackIds")
       ) {
         return;
       }
-
       const form = e.currentTarget;
       const fd = new FormData(form);
-
-      const updatedData: ProjectEntry["data"] = {
-        ...formData,
+      setFormData(prev => ({
+        ...prev,
         projectName: fd.get("projectName") as string,
         projectType: fd.get("projectType") as ProjectType,
-        imageUrl: formData.imageUrl,
+        imageUrl: prev.imageUrl, // 기존 값을 유지
         siteUrl: (fd.get("siteUrl") as string) || "",
         companyName: fd.get("companyName") as string,
         startedAt: fd.get("startedAt") as string,
         endedAt: fd.get("endedAt") as string,
         roles: fd.getAll("roles") as ProjectRole[],
         shortDescription: fd.get("shortDescription") as string,
-        stackIds: formData.stackIds,
-      };
-
-      setFormData(updatedData);
+        stackIds: prev.stackIds, // 변경 없음
+      }));
     },
-    [formData],
+    [],
   );
 
-  // 스택 ID 변경 핸들러
-  const handleStackIdsChange = useCallback(
-    (values: string[]) => {
-      setFormData(prev => {
-        const newStackIds = values.map(id => Number(id));
-        return {
-          ...prev,
-          stackIds: newStackIds,
-        };
-      });
-    },
-    [formData],
-  ); // formData를 의존성 배열에 추가
-
-  // 폼 제출 처리
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    try {
-      const submissionData = {
-        ...formData,
-        siteUrl: formData.siteUrl || "",
-        endedAt: formData.endedAt || "",
-        stackIds: formData.stackIds || [],
-      };
-
-      const projectData = {
-        frontmatter: submissionData,
-        body: markdownContent,
-      };
-
-      const response = await projectsService.createProject(projectData);
-
-      // 성공시에만 리다이렉트
-      window.location.href = "/admin/projects";
-    } catch (error) {
-      // 에러 메시지 표시
-      if (error instanceof Error) {
-        alert(`프로젝트 저장에 실패했습니다: ${error.message}`);
-      } else {
-        alert("프로젝트 저장 중 오류가 발생했습니다. 다시 시도해주세요.");
-      }
-    }
-  };
-
-  // 월 선택 시 날짜를 해당 월의 첫날로 설정하는 핸들러
-  const handleMonthChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    try {
-      const date = dayjs(value + "-01")
-        .hour(12)
-        .format("YYYY-MM");
-
-      setFormData(prev => ({
-        ...prev,
-        [name]: date,
-      }));
-    } catch (error) {
-      console.error("날짜 변환 오류:", error);
-    }
-  };
-
-  // 종료일 무기한 설정 핸들러
-  const handleEndDateInfinite = (e: React.ChangeEvent<HTMLInputElement>) => {
+  // 스택 ID 변경 핸들러 (함수형 업데이트 사용)
+  const handleStackIdsChange = useCallback((values: string[]) => {
     setFormData(prev => ({
       ...prev,
-      endedAt: e.target.checked ? "" : dayjs().hour(12).format("YYYY-MM"),
+      stackIds: values.map(id => Number(id)),
     }));
-  };
+  }, []);
+
+  // 폼 제출 처리
+  const handleSubmit = useCallback(
+    async (e: React.FormEvent<HTMLFormElement>) => {
+      e.preventDefault();
+      try {
+        const submissionData = {
+          ...formData,
+          siteUrl: formData.siteUrl || "",
+          endedAt: formData.endedAt || "",
+          stackIds: formData.stackIds || [],
+        };
+        const projectData = {
+          frontmatter: submissionData,
+          body: markdownContent,
+        };
+        await projectsService.createProject(projectData);
+        // 성공 시 리다이렉트
+        window.location.href = "/admin/projects";
+      } catch (error) {
+        if (error instanceof Error) {
+          alert(`프로젝트 저장에 실패했습니다: ${error.message}`);
+        } else {
+          alert("프로젝트 저장 중 오류가 발생했습니다. 다시 시도해주세요.");
+        }
+      }
+    },
+    [formData, markdownContent, projectsService],
+  );
+
+  // 월 선택 시 날짜를 해당 월의 첫날로 설정하는 핸들러
+  const handleMonthChange = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      const { name, value } = e.target;
+      try {
+        const date = dayjs(value + "-01")
+          .hour(12)
+          .format("YYYY-MM");
+        setFormData(prev => ({
+          ...prev,
+          [name]: date,
+        }));
+      } catch (error) {
+        console.error("날짜 변환 오류:", error);
+      }
+    },
+    [],
+  );
+
+  // 종료일 무기한 설정 핸들러
+  const handleEndDateInfinite = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      setFormData(prev => ({
+        ...prev,
+        endedAt: e.target.checked ? "" : dayjs().hour(12).format("YYYY-MM"),
+      }));
+    },
+    [],
+  );
 
   return (
     <form
@@ -279,7 +264,7 @@ const ProjectForm: React.FC<ProjectFormProps> = ({ initialData }) => {
               name="endedAt"
               label="종료일"
               type="month"
-              required={!formData.endedAt === false}
+              required={!formData.endedAt}
               defaultValue={formatDateToYearMonth(formData.endedAt)}
               onChange={handleMonthChange}
               min={formatDateToYearMonth(formData.startedAt)}

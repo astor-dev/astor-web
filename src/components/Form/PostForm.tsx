@@ -64,7 +64,7 @@ const PostForm: React.FC<PostFormProps> = ({ initialData, tags, series }) => {
     () => initialData?.body ?? "",
   );
 
-  // 마크다운 에디터 내용 업데이트
+  // 마크다운 에디터 내용 업데이트: 이미 useCallback으로 최적화됨
   const handleMarkdownChange = useCallback((content: string) => {
     setMarkdownContent(prev => (prev === content ? prev : content));
   }, []);
