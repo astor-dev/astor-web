@@ -261,7 +261,7 @@ const PostForm: React.FC<PostFormProps> = ({ initialData, tags, series }) => {
       </div>
 
       {/* 상세 내용 (마크다운) 입력 영역 */}
-      <div className="rounded-lg border border-skin-line bg-white p-6">
+      <div className="items-center justify-center rounded-lg border border-skin-line bg-white">
         <Editor
           markdown={markdownContent}
           onChange={handleMarkdownChange}

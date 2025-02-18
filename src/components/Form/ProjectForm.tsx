@@ -335,7 +335,7 @@ const ProjectForm: React.FC<ProjectFormProps> = ({ initialData }) => {
       </div>
 
       {/* 상세 설명(마크다운) 입력 영역 */}
-      <div className="rounded-lg border border-skin-line bg-white p-6">
+      <div className="items-center rounded-lg border border-skin-line bg-white">
         <Editor
           markdown={markdownContent}
           onChange={handleMarkdownChange}

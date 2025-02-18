@@ -81,6 +81,7 @@ const Editor: React.FC<EditorProps> = ({ markdown, onChange, placeholder }) => {
   // Debounce 적용된 onChange 콜백
   const debouncedOnChange = useDebouncedCallback((content: string) => {
     onChange(content);
+    console.log("content", content);
   }, 300);
 
   // 툴바의 렌더링 함수 메모이제이션
@@ -154,9 +155,12 @@ const Editor: React.FC<EditorProps> = ({ markdown, onChange, placeholder }) => {
       onChange={debouncedOnChange}
       ref={mdxEditorRef}
       placeholder={placeholder}
-      contentEditableClassName="prose prose-sm max-w-none min-h-[500px] p-4 md:prose lg:prose-lg"
+      contentEditableClassName="prose prose-sm max-w-none min-h-[500px] md:prose lg:prose-lg mx-auto"
       trim={false}
       plugins={plugins}
+      toMarkdownOptions={{
+        bullet: "-",
+      }}
     />
   );
 };
