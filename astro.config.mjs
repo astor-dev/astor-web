@@ -10,6 +10,7 @@ import imageminMozjpeg from "imagemin-mozjpeg";
 import imageminWebp from "imagemin-webp";
 import imageminPngquant from "imagemin-pngquant";
 import remarkMath from "remark-math";
+import rehypeUnwrapList from "./src/utils/rehype.utils";
 
 export default defineConfig({
   site: "https://astorverse.com",
@@ -23,16 +24,8 @@ export default defineConfig({
   integrations: [
     mdx({
       gfm: true,
-      remarkPlugins: [
-        remarkMath,
-        // [
-        //   remarkCollapse,
-        //   {
-        //     test: "목차",
-        //     summary: "목차 자세히",
-        //   },
-        // ],
-      ],
+      remarkPlugins: [remarkMath],
+      rehypePlugins: [rehypeUnwrapList],
     }),
     sitemap(),
     react(),
