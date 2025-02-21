@@ -46,8 +46,6 @@ export class ProjectsService {
   // 프로젝트 생성
   async createProject(project: CreateProjectRequest) {
     console.log(project);
-    return await this.http.put("/projects", project, {
-      shape: ProjectCreateSchema,
-    });
+    return await this.http.put("/projects", project);
   }
 }

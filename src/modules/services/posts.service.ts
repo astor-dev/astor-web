@@ -43,8 +43,6 @@ export class PostsService {
 
   // 포스트 생성
   async createPost(post: CreatePostRequest) {
-    return await this.http.put("/posts", post, {
-      shape: PostCreateSchema,
-    });
+    return await this.http.put("/posts", post);
   }
 }
