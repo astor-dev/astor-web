@@ -6,18 +6,24 @@ import type { Tag } from "~types/post.type";
 
 interface TagCardProps extends Tag {
   className?: string;
+  showInitialAnimation?: boolean;
 }
 
-const TagCard: React.FC<TagCardProps> = ({ tag, count, className }) => {
+const TagCard: React.FC<TagCardProps> = ({
+  tag,
+  count,
+  className,
+  showInitialAnimation,
+}) => {
   const cardRef = useRef<HTMLDivElement>(null);
   const isVisible = useIntersectionObserver(cardRef);
 
   return (
     <div
       ref={cardRef}
-      className={`transition-all duration-700 ease-out ${
-        isVisible ? "translate-y-0 opacity-100" : "translate-y-10 opacity-0"
-      } ${className}`}
+      className={` ${
+        showInitialAnimation ? "transition-all duration-700 ease-out" : ""
+      } ${isVisible ? "translate-y-0 opacity-100" : "translate-y-10 opacity-0"} ${className}`}
     >
       <motion.a
         href={`/blog/tags/${tag}`}

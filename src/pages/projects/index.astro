@@ -46,7 +46,7 @@ const toyProjects = projects.items.filter(p => p.data.projectType === "Toy-proje
           </div>
           <div class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
             {companyProjects.map(project => (
-              <ProjectCard {...project} client:load />
+              <ProjectCard {...project} client:load showInitialAnimation={true} />
             ))}
           </div>
         </section>
@@ -67,7 +67,7 @@ const toyProjects = projects.items.filter(p => p.data.projectType === "Toy-proje
           </div>
           <div class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
             {sideProjects.map(project => (
-              <ProjectCard {...project} client:load />
+              <ProjectCard {...project} client:load showInitialAnimation={true} />
             ))}
           </div>
         </section>
@@ -88,7 +88,7 @@ const toyProjects = projects.items.filter(p => p.data.projectType === "Toy-proje
           </div>
           <div class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
             {toyProjects.map(project => (
-              <ProjectCard {...project} client:load />
+              <ProjectCard {...project} client:load showInitialAnimation={true} />
             ))}
           </div>
         </section>

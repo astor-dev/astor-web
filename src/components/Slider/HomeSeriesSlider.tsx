@@ -2,11 +2,12 @@ import { useRef } from "react";
 import "swiper/css";
 import "swiper/css/autoplay";
 import "swiper/css/navigation";
-import { Autoplay, Navigation } from "swiper/modules";
+import "swiper/css/pagination";
+import { Autoplay, Navigation, Pagination, Scrollbar } from "swiper/modules";
 import { Swiper, SwiperSlide, type SwiperRef } from "swiper/react";
 import type { Series } from "~types/post.type";
 import FullImageSeriesCard from "~components/Card/FullImageSeriesCard";
-import { CgArrowLeft, CgArrowRight } from "react-icons/cg";
+
 const MagazineCarousel = (props: { seriesList: Series[] }) => {
   const { seriesList } = props;
   const swiperRef = useRef<SwiperRef>(null);
@@ -28,10 +29,6 @@ const MagazineCarousel = (props: { seriesList: Series[] }) => {
       <Swiper
         ref={swiperRef}
         modules={[Navigation, Autoplay]}
-        navigation={{
-          nextEl: ".swiper-button-next",
-          prevEl: ".swiper-button-prev",
-        }}
         autoplay={{ delay: 3000, disableOnInteraction: false }}
         loop={true}
         spaceBetween={30}
@@ -52,6 +49,11 @@ const MagazineCarousel = (props: { seriesList: Series[] }) => {
           768: {
             //md
             slidesPerView: 3,
+            navigation: {
+              enabled: true,
+              nextEl: ".swiper-button-next",
+              prevEl: ".swiper-button-prev",
+            },
           },
         }}
       >

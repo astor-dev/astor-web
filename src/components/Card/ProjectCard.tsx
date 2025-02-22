@@ -10,7 +10,11 @@ import { useIntersectionObserver } from "~hooks/UseIntersectionObserver/UseInter
 import type { ProjectEntry } from "~/types/project.type";
 import dayjs from "dayjs";
 
-const ProjectCard: React.FC<ProjectEntry> = props => {
+interface ProjectCardProps extends ProjectEntry {
+  showInitialAnimation?: boolean;
+}
+
+const ProjectCard = (props: ProjectCardProps) => {
   const [isLoading, setIsLoading] = useState(true);
   const [isTouched, setIsTouched] = useState(false);
   const cardRef = useRef<HTMLDivElement>(null);
@@ -63,9 +67,11 @@ const ProjectCard: React.FC<ProjectEntry> = props => {
     >
       <article
         ref={cardRef}
-        className={`relative h-full overflow-hidden bg-transparent transition-all duration-700 ease-out ${
-          isVisible ? "translate-y-0 opacity-100" : "translate-y-10 opacity-0"
-        } hover:-translate-y-1`}
+        className={`relative h-full overflow-hidden bg-transparent ${
+          props.showInitialAnimation
+            ? "transition-all duration-700 ease-out"
+            : ""
+        } ${isVisible ? "translate-y-0 opacity-100" : "translate-y-10 opacity-0"} hover:-translate-y-1`}
       >
         <div className="relative overflow-hidden rounded-xl">
           <div className="aspect-[4/3] h-full w-full overflow-hidden">
