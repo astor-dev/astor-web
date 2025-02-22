@@ -29,6 +29,9 @@ importers:
       '@mdxeditor/editor':
         specifier: ^3.21.1
         version: 3.21.1(@codemirror/language@6.10.8)(@lezer/highlight@1.2.1)(@types/react-dom@19.0.3(@types/react@19.0.8))(@types/react@19.0.8)(react-dom@19.0.0(react@19.0.0))(react@19.0.0)(yjs@13.6.23)
+      '@types/react-slick':
+        specifier: ^0.23.13
+        version: 0.23.13
       astro:
         specifier: ^5.1.9
         version: 5.1.10(@types/node@22.12.0)(jiti@1.21.7)(rollup@4.32.1)(typescript@5.7.3)(yaml@2.7.0)
@@ -44,6 +47,9 @@ importers:
       lodash:
         specifier: ^4.17.21
         version: 4.17.21
+      modules:
+        specifier: link:@types/swiper/modules
+        version: link:@types/swiper/modules
       react:
         specifier: ^19.0.0
         version: 19.0.0
@@ -74,6 +80,9 @@ importers:
       strip-markdown:
         specifier: ^6.0.0
         version: 6.0.0
+      swiper:
+        specifier: ^11.2.4
+        version: 11.2.4
       tsparticles:
         specifier: ^3.8.0
         version: 3.8.0
@@ -2078,6 +2087,9 @@ packages:
     resolution: {integrity: sha512-0Knk+HJiMP/qOZgMyNFamlIjw9OFCsyC2ZbigmEEyXXixgre6IQpm/4V+r3qH4GC1JPvRJKInw+on2rV6YZLeA==}
     peerDependencies:
       '@types/react': ^19.0.0
+
+  '@types/react-slick@0.23.13':
+    resolution: {integrity: sha512-bNZfDhe/L8t5OQzIyhrRhBr/61pfBcWaYJoq6UDqFtv5LMwfg4NsVDD2J8N01JqdAdxLjOt66OZEp6PX+dGs/A==}
 
   '@types/react@19.0.8':
     resolution: {integrity: sha512-9P/o1IGdfmQxrujGbIMDyYaaCykhLKc0NGCtYcECNUr9UAaDe4gwvV9bR6tvd5Br1SG0j+PBpbKr2UYY8CwqSw==}
@@ -5206,6 +5218,10 @@ packages:
   supports-preserve-symlinks-flag@1.0.0:
     resolution: {integrity: sha512-ot0WnXS9fgdkgIcePe6RHNk1WA8+muPa6cSjeR3V8K27q9BB1rTE3R1p7Hv0z1ZyAc8s6Vvv8DIyWf681MAt0w==}
     engines: {node: '>= 0.4'}
+
+  swiper@11.2.4:
+    resolution: {integrity: sha512-DTtglrsFfMYytid+oNy4QI3t2N2+XhhwSYbnyOhlwBmvY8Bkoj3ombK1/b80w8vDpQ+Lqlnbm+0737+i32MrcA==}
+    engines: {node: '>= 4.7.0'}
 
   synckit@0.9.2:
     resolution: {integrity: sha512-vrozgXDQwYO72vHjUb/HnFbQx1exDjoKzqx23aXEg2a9VIg2TSFZ8FmeZpTjUCFMYw7mpX4BE2SFu8wI7asYsw==}
@@ -8383,6 +8399,10 @@ snapshots:
       undici-types: 6.20.0
 
   '@types/react-dom@19.0.3(@types/react@19.0.8)':
+    dependencies:
+      '@types/react': 19.0.8
+
+  '@types/react-slick@0.23.13':
     dependencies:
       '@types/react': 19.0.8
 
@@ -12230,6 +12250,8 @@ snapshots:
       has-flag: 4.0.0
 
   supports-preserve-symlinks-flag@1.0.0: {}
+
+  swiper@11.2.4: {}
 
   synckit@0.9.2:
     dependencies:

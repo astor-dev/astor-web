@@ -18,6 +18,8 @@ import type { PostEntry, Tag, Series } from "~types/post.type";
 import type { ProjectEntry } from "~types/project.type";
 import HomeHero from "~components/Hero/HomeHero";
 import type { Paginated } from "~types/page.type";
+import HomeSeriesCarousel from "~components/Slider/HomeSeriesSlider";
+import HomeProjectSlider from "~components/Slider/HomeProjectSlider";
 const projectRepository =
   repositoryContainer.get<ProjectRepository>(PROJECT_REPOSITORY);
 const postRepository = repositoryContainer.get<PostRepository>(POST_REPOSITORY);
@@ -38,6 +40,7 @@ const pinnedPosts: PostEntry[] = (
 ).items;
 const tags: Tag[] = await postRepository.getAllTags();
 const seriesList: Series[] = await postRepository.getAllSeries();
+
 ---
 
 <Layout>
@@ -70,50 +73,34 @@ const seriesList: Series[] = await postRepository.getAllSeries();
         }
       </div>
     </section>
-
+    <section class="mb-16">
+      <div class="flex flex-col space-y-4">
+        <ShootingStarHeader
+          title="시리즈"
+          description="연재 중인 시리즈들이에요"
+          moreLink="/blog/series"
+          client:load
+        />
+        <HomeSeriesCarousel seriesList={seriesList} client:only="react" />
+      </div>
+    </section>
     {/* 시리즈와 주목할만한 글 영역 - PC에서는 2열, 모바일은 1열 */}
     <section class="mb-16">
-      <div class="grid grid-cols-1 items-stretch gap-12 md:grid-cols-2">
-        {/* 시리즈 영역 - 다른 UI 스타일 적용 */}
-        <div class="flex h-full flex-col space-y-4">
-          <ShootingStarHeader
-            title="시리즈"
-            description="연재 중인 시리즈들이에요"
-            moreLink="/blog/series"
-            client:load
-          />
-          <div class="h-full">
-            <!-- FullImageSeriesCard로 개성있는 UI 구현 -->
-            <div class="flex h-full flex-col gap-4">
-              {
-                seriesList
-                  .slice(0, 4)
-                  .map(seriesData => (
-                    <HorizontalSeriesCard {...seriesData} client:load />
-                  ))
-              }
-            </div>
+      {/* 주목할만한 글 영역 - 그리드 카드 형태 */}
+        <ShootingStarHeader
+          title="주목할만한 글"
+          description="놓치면 아쉬운 글들이에요"
+          moreLink="/blog"
+          client:load
+        />
+        <div class="h-full">
+          <div class="grid h-full grid-cols-1 gap-4 sm:grid-cols-2">
+            {
+              pinnedPosts
+                .slice(0, 4)
+                .map(post => <BlogPostCard {...post} client:load />)
+            }
           </div>
-        </div>
-
-        {/* 주목할만한 글 영역 - 그리드 카드 형태 */}
-        <div class="flex h-full flex-col space-y-4">
-          <ShootingStarHeader
-            title="주목할만한 글"
-            description="놓치면 아쉬운 글들이에요"
-            moreLink="/blog"
-            client:load
-          />
-          <div class="h-full">
-            <div class="grid h-full grid-cols-1 gap-4 sm:grid-cols-2">
-              {
-                pinnedPosts
-                  .slice(0, 4)
-                  .map(post => <BlogPostCard {...post} client:load />)
-              }
-            </div>
-          </div>
-        </div>
       </div>
     </section>
 
@@ -125,17 +112,7 @@ const seriesList: Series[] = await postRepository.getAllSeries();
         moreLink="/projects"
         client:load
       />
-      <div
-        class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 lg:gap-6"
-      >
-        {
-          projects.items.map((project, index) => (
-            <div class={`${index >= 3 ? "hidden sm:block" : ""}`}>
-              <ProjectCard {...project} client:load />
-            </div>
-          ))
-        }
-      </div>
+      <HomeProjectSlider projects={projects.items} client:only="react" />
     </section>
   </div>
 </Layout>
