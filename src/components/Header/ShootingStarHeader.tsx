@@ -22,13 +22,14 @@ export const ShootingStarHeader = ({
   return (
     <div
       ref={headerRef}
-      className={`mb-8 flex flex-col ${
+      className={`mb-4 flex flex-col ${
         showInitialAnimation ? "transition-all duration-700 ease-out" : ""
       } ${isVisible ? "translate-y-0 opacity-100" : "translate-y-10 opacity-0"}`}
     >
       <div className="flex items-center justify-between">
         <motion.h2 className="font-sans text-2xl font-bold text-black-base">
-          <span className="text-skin-accent">✦</span> {title}
+          {/* <span className="text-skin-accent">✦</span>  */}
+          {title}
         </motion.h2>
 
         {moreLink && (

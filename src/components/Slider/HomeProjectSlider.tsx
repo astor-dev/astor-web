@@ -1,11 +1,11 @@
 import { useRef } from "react";
-import "swiper/css";
-import "swiper/css/autoplay";
-import "swiper/css/navigation";
-import { Autoplay, Navigation } from "swiper/modules";
+import { Autoplay, EffectFade, Navigation, Pagination } from "swiper/modules";
 import { Swiper, SwiperSlide, type SwiperRef } from "swiper/react";
 import type { ProjectEntry } from "~types/project.type";
-import ProjectCard from "~components/Card/ProjectCard";
+import FullImageProjectCard from "~components/Card/FullImageProjectCard";
+import "swiper/css/effect-fade";
+import { FaArrowLeft, FaArrowRight } from "react-icons/fa";
+
 const HomeProjectSlider = (props: { projects: ProjectEntry[] }) => {
   const { projects } = props;
   const swiperRef = useRef<SwiperRef>(null);
@@ -23,38 +23,27 @@ const HomeProjectSlider = (props: { projects: ProjectEntry[] }) => {
   };
 
   return (
-    <div className="h-508 relative">
+    <div className="h-full w-full">
       <Swiper
         ref={swiperRef}
-        modules={[Navigation, Autoplay]}
-        navigation={{
-          nextEl: ".swiper-button-next",
-          prevEl: ".swiper-button-prev",
-        }}
+        modules={[Navigation, Pagination, Autoplay, EffectFade]}
         autoplay={{ delay: 3000, disableOnInteraction: false }}
         loop={true}
+        effect={"fade"}
         spaceBetween={30}
-        // slidesPerView={3}
+        slidesPerView={1}
         slidesPerGroup={1}
-        pagination={{ clickable: true }}
-        scrollbar={{ draggable: true }}
-        className="h-full w-full"
-        breakpoints={{
-          768: {
-            slidesPerView: 1,
-          },
-          1024: {
-            slidesPerView: 2,
-          },
-          1280: {
-            slidesPerView: 3,
+        pagination={{
+          clickable: true,
+          renderBullet: (index, className) => {
+            return `<span class="${className} swiper-pagination-bullet-custom"></span>`;
           },
         }}
       >
         {projects?.map((project, index) => {
           return (
             <SwiperSlide key={project.id} virtualIndex={index}>
-              <ProjectCard key={project.id} {...project} />
+              <FullImageProjectCard key={project.id} {...project} />
             </SwiperSlide>
           );
         })}

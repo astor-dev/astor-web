@@ -188,7 +188,7 @@ export default function HomeHero() {
     <div>
       <section
         id="hero-section"
-        className="relative flex h-[66vh] w-full flex-col items-center justify-center overflow-hidden bg-skin-fill"
+        className="relative flex h-[40vh] w-full flex-col items-center justify-center overflow-hidden bg-skin-fill sm:h-[66vh]"
       >
         <picture>
           <img

@@ -71,9 +71,9 @@ const ProjectCard = (props: ProjectCardProps) => {
           props.showInitialAnimation
             ? "transition-all duration-700 ease-out"
             : ""
-        } ${isVisible ? "translate-y-0 opacity-100" : "translate-y-10 opacity-0"} hover:-translate-y-1`}
+        } ${isVisible ? "translate-y-0 opacity-100" : "translate-y-10 opacity-0"} `}
       >
-        <div className="relative overflow-hidden rounded-xl">
+        <div className="relative overflow-hidden">
           <div className="aspect-[4/3] h-full w-full overflow-hidden">
             <ReactParticles
               id={`particles-${props.id}`}

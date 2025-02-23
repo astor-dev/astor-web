@@ -1,11 +1,11 @@
 import { useRef } from "react";
-import { Autoplay, Navigation, Pagination, Scrollbar } from "swiper/modules";
+import { Autoplay, Grid, Navigation, Scrollbar } from "swiper/modules";
 import { Swiper, SwiperSlide, type SwiperRef } from "swiper/react";
-import type { Series } from "~types/post.type";
-import FullImageSeriesCard from "~components/Card/FullImageSeriesCard";
+import type { Tag } from "~types/post.type";
+import TagCard from "~components/Card/TagCard";
 
-const MagazineCarousel = (props: { seriesList: Series[] }) => {
-  const { seriesList } = props;
+const MagazineCarousel = (props: { tagList: Tag[] }) => {
+  const { tagList } = props;
   const swiperRef = useRef<SwiperRef>(null);
 
   const handlePrev = () => {
@@ -24,41 +24,45 @@ const MagazineCarousel = (props: { seriesList: Series[] }) => {
     <div className="relative">
       <Swiper
         ref={swiperRef}
-        modules={[Navigation, Autoplay]}
-        autoplay={{ delay: 3000, disableOnInteraction: false }}
-        loop={true}
+        modules={[Navigation, Autoplay, Grid]}
+        // autoplay={{ delay: 3000, disableOnInteraction: false }}
+        loop={false}
         spaceBetween={30}
         slidesPerGroup={1}
+        grid={{
+          fill: "row",
+          rows: 2,
+        }}
         grabCursor={true}
         centeredSlidesBounds={true}
         pagination={{
+          enabled: true,
           clickable: true,
+          renderBullet: (index, className) => {
+            return `<span class="${className} swiper-pagination-bullet-custom"></span>`;
+          },
         }}
+        navigation={{ nextEl: null, prevEl: null }}
         // scrollbar={{ draggable: true }}
         className="h-full w-full"
         breakpoints={{
           0: {
-            slidesPerView: 1.2,
+            slidesPerView: 1.4,
           },
           640: {
             //sm
-            slidesPerView: 2,
+            slidesPerView: 2.4,
           },
           768: {
             //md
-            slidesPerView: 4,
-            navigation: {
-              enabled: true,
-              nextEl: ".swiper-button-next",
-              prevEl: ".swiper-button-prev",
-            },
+            slidesPerView: 3.4,
           },
         }}
       >
-        {seriesList?.map((series, index) => {
+        {tagList?.map((tag, index) => {
           return (
-            <SwiperSlide key={series.series} virtualIndex={index}>
-              <FullImageSeriesCard key={series.series} {...series} />
+            <SwiperSlide key={tag.tag} virtualIndex={index}>
+              <TagCard key={tag.tag} {...tag} />
             </SwiperSlide>
           );
         })}

@@ -1,10 +1,7 @@
 ---
 import Layout from "~layouts/BaseLayout.astro";
-import ProjectCard from "~components/Card/ProjectCard";
 import BlogPostCard from "~components/Card/BlogPostCard";
 import { ShootingStarHeader } from "~components/Header/ShootingStarHeader";
-import TagCard from "~components/Card/TagCard";
-import HorizontalSeriesCard from "~components/Card/HorizontalSeriesCard";
 import { repositoryContainer } from "~modules/repository.module";
 import {
   PROJECT_REPOSITORY,
@@ -20,6 +17,9 @@ import HomeHero from "~components/Hero/HomeHero";
 import type { Paginated } from "~types/page.type";
 import HomeSeriesCarousel from "~components/Slider/HomeSeriesSlider";
 import HomeProjectSlider from "~components/Slider/HomeProjectSlider";
+import HomeTagsSlider from "~components/Slider/HomeTagsSlider";
+import HomePinnedPostsSlider from "~components/Slider/HomePinnedPostsSlider";
+import HomeProjectIntroSection from "~components/Section/HomeProjectInroSection";
 const projectRepository =
   repositoryContainer.get<ProjectRepository>(PROJECT_REPOSITORY);
 const postRepository = repositoryContainer.get<PostRepository>(POST_REPOSITORY);
@@ -48,6 +48,32 @@ const seriesList: Series[] = await postRepository.getAllSeries();
     <HomeHero client:only="react" />
   </Fragment>
   <div class="mx-auto w-full">
+    <section class="mb-16">
+      <div class="flex flex-col space-y-4">
+        <ShootingStarHeader
+          title="시리즈"  
+          moreLink="/blog/series"
+          client:load
+        />
+        <HomeSeriesCarousel seriesList={seriesList} client:only="react" />
+      </div>
+    </section>
+    <section class="mb-16">
+      <ShootingStarHeader
+        title="주목할만한 글"
+        moreLink="/blog"
+        client:load
+      />
+      <HomePinnedPostsSlider pinnedPosts={pinnedPosts} client:only="react" />
+    </section>
+
+    {/* 프로젝트 섹션 */}
+    <section class="mb-16">
+      <div class="grid h-full -ml-[5vw] 2xl:-ml-[15vw] -mr-[5vw] 2xl:-mr-[15vw] w-[calc(100%+10vw)] 2xl:w-[calc(100%+30vw)] grid-cols-1 md:grid-cols-2 ">
+        <HomeProjectIntroSection client:only="react" />
+        <HomeProjectSlider projects={projects.items} client:only="react" />
+      </div>
+    </section>
     {/* 인기 태그 섹션 */}
     <section class="mb-16">
       <ShootingStarHeader
@@ -56,63 +82,7 @@ const seriesList: Series[] = await postRepository.getAllSeries();
         moreLink="/blog"
         client:load
       />
-      <div
-        class="grid grid-cols-2 gap-4 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-6"
-      >
-        {
-          tags
-            .sort((a, b) => b.count - a.count)
-            .slice(0, 12)
-            .map((tag, index) => (
-              <TagCard
-                {...tag}
-                className={`${index > 7 ? "hidden lg:block" : ""}`}
-                client:load
-              />
-            ))
-        }
-      </div>
-    </section>
-    <section class="mb-16">
-      <div class="flex flex-col space-y-4">
-        <ShootingStarHeader
-          title="시리즈"
-          description="연재 중인 시리즈들이에요"
-          moreLink="/blog/series"
-          client:load
-        />
-        <HomeSeriesCarousel seriesList={seriesList} client:only="react" />
-      </div>
-    </section>
-    {/* 시리즈와 주목할만한 글 영역 - PC에서는 2열, 모바일은 1열 */}
-    <section class="mb-16">
-      {/* 주목할만한 글 영역 - 그리드 카드 형태 */}
-        <ShootingStarHeader
-          title="주목할만한 글"
-          description="놓치면 아쉬운 글들이에요"
-          moreLink="/blog"
-          client:load
-        />
-        <div class="h-full">
-          <div class="grid h-full grid-cols-1 gap-4 sm:grid-cols-2">
-            {
-              pinnedPosts
-                .slice(0, 4)
-                .map(post => <BlogPostCard {...post} client:load />)
-            }
-          </div>
-      </div>
-    </section>
-
-    {/* 프로젝트 섹션 */}
-    <section class="mb-16">
-      <ShootingStarHeader
-        title="프로젝트 모음"
-        description="진행했던 프로젝트들이에요"
-        moreLink="/projects"
-        client:load
-      />
-      <HomeProjectSlider projects={projects.items} client:only="react" />
+      <HomeTagsSlider    tagList={tags} client:only="react" />
     </section>
   </div>
 </Layout>

@@ -1,32 +1,38 @@
-import React, { useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { FaClock, FaBookmark, FaUser } from "react-icons/fa";
 import type { PostEntry } from "~/types/post.type";
 import dayjs from "dayjs";
 import Tag from "~components/Tag/Tag";
 import { useIntersectionObserver } from "~hooks/UseIntersectionObserver/UseIntersectionObserver";
 import ImageWithSkeleton from "~components/Skeleton/ImageWithSkeleton";
-
+import { remark } from "remark";
+import strip from "strip-markdown";
 interface BlogPostCardProps extends PostEntry {
   className?: string;
 }
 
 const BlogPostCard: React.FC<BlogPostCardProps> = props => {
   const cardRef = useRef<HTMLDivElement>(null);
-  const isVisible = useIntersectionObserver(cardRef);
+  const [body, setBody] = useState("");
+  useEffect(() => {
+    remark()
+      .use(strip)
+      .process(props.body)
+      .then(result => {
+        setBody(result.toString());
+      });
+  }, [props.body]);
 
   const formatDate = (date: string) => dayjs(date).format("YYYY.MM.DD");
 
   return (
-    <div
-      ref={cardRef}
-      className={`transition-all duration-700 ease-out ${isVisible ? "translate-y-0 opacity-100" : "translate-y-10 opacity-0"} ${props.className ?? ""} h-full w-full`}
-    >
+    <div ref={cardRef} className={` ${props.className ?? ""} h-full w-full`}>
       <a
         href={`/blog/detail/${props.id}`}
-        className="group relative flex h-full flex-col overflow-hidden rounded-2xl bg-gradient-to-br from-transparent via-transparent to-skin-fill/5 transition-all duration-300 hover:-translate-y-1"
+        className="group relative flex h-full flex-col overflow-hidden bg-gradient-to-br from-transparent via-transparent to-skin-fill/5"
       >
         {/* 상단: 이미지 영역 (전체 높이의 2/3) */}
-        <div className="relative aspect-[16/9] h-2/3 w-full overflow-hidden rounded-2xl">
+        <div className="relative aspect-[16/9] h-2/3 w-full overflow-hidden">
           <ImageWithSkeleton
             src={props.data.ogImage?.toString() || "/default-blog-image.jpg"}
             alt={props.data.title}
@@ -48,9 +54,12 @@ const BlogPostCard: React.FC<BlogPostCardProps> = props => {
             <h3 className="mb-1 line-clamp-1 text-lg font-bold text-black-accent md:text-xl">
               {props.data.title}
             </h3>
-            <p className="line-clamp-2 text-sm text-black-muted">
+            <p className="line-clamp-3 min-h-[3.75rem] text-sm">
               {props.data.description}
             </p>
+          </div>
+          <div className="line-clamp-6 min-h-[7.5rem] text-sm text-black-muted">
+            {body}
           </div>
           <div className="flex items-center gap-1 text-xs text-gray-500">
             <FaClock className="h-3 w-3" />
