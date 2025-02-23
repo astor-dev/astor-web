@@ -81,7 +81,6 @@ const Editor: React.FC<EditorProps> = ({ markdown, onChange, placeholder }) => {
   // Debounce 적용된 onChange 콜백
   const debouncedOnChange = useDebouncedCallback((content: string) => {
     onChange(content);
-    console.log("content", content);
   }, 300);
 
   // 툴바의 렌더링 함수 메모이제이션

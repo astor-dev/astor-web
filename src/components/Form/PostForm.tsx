@@ -134,6 +134,8 @@ const PostForm: React.FC<PostFormProps> = ({ initialData, tags, series }) => {
 
       await postsService.createPost(postData);
       // ... 이후 페이지 이동 or 알림
+      alert("포스트가 저장되었습니다.");
+      window.location.href = "/admin/posts";
     } catch (error) {
       if (error instanceof Error) {
         alert(`포스트 저장에 실패했습니다: ${error.message}`);

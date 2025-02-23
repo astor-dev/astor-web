@@ -131,6 +131,7 @@ const ProjectForm: React.FC<ProjectFormProps> = ({ initialData }) => {
         };
         await projectsService.createProject(projectData);
         // 성공 시 리다이렉트
+        alert("프로젝트가 저장되었습니다.");
         window.location.href = "/admin/projects";
       } catch (error) {
         if (error instanceof Error) {
