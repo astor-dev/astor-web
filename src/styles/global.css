@@ -157,13 +157,7 @@
 /* 슬라이더 페이지네이션 */
 .swiper-pagination {
   text-align: start !important;
-  margin-left: 52px;
-  margin-bottom: 52px;
-
-  @media screen and (max-width: 787px) {
-    margin-left: 16px;
-    margin-bottom: 16px;
-  }
+  @apply mb-4 ml-4 md:mb-8 md:ml-8;
 }
 
 .swiper-pagination .swiper-pagination-bullet-custom {

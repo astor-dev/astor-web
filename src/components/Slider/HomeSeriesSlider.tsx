@@ -1,12 +1,20 @@
-import { useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Autoplay, Navigation, Pagination, Scrollbar } from "swiper/modules";
 import { Swiper, SwiperSlide, type SwiperRef } from "swiper/react";
 import type { Series } from "~types/post.type";
 import FullImageSeriesCard from "~components/Card/FullImageSeriesCard";
+import Skeleton from "react-loading-skeleton";
 
 const MagazineCarousel = (props: { seriesList: Series[] }) => {
   const { seriesList } = props;
   const swiperRef = useRef<SwiperRef>(null);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    if (seriesList.length > 0) {
+      setIsLoading(false);
+    }
+  }, [seriesList]);
 
   const handlePrev = () => {
     if (swiperRef.current) {
@@ -58,7 +66,11 @@ const MagazineCarousel = (props: { seriesList: Series[] }) => {
         {seriesList?.map((series, index) => {
           return (
             <SwiperSlide key={series.series} virtualIndex={index}>
-              <FullImageSeriesCard key={series.series} {...series} />
+              {isLoading ? (
+                <Skeleton className="h-[200px] w-full" />
+              ) : (
+                <FullImageSeriesCard key={series.series} {...series} />
+              )}
             </SwiperSlide>
           );
         })}

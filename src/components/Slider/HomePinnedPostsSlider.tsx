@@ -1,4 +1,4 @@
-import { useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Autoplay, Navigation, Pagination, Scrollbar } from "swiper/modules";
 import { Swiper, SwiperSlide, type SwiperRef } from "swiper/react";
 import type { PostEntry, Series } from "~types/post.type";
@@ -6,9 +6,18 @@ import FullImageSeriesCard from "~components/Card/FullImageSeriesCard";
 import BlogPostCard from "~components/Card/BlogPostCard";
 import { FaArrowLeft, FaArrowRight } from "react-icons/fa";
 import { IoIosArrowBack, IoIosArrowForward } from "react-icons/io";
+import Skeleton from "react-loading-skeleton";
+
 const MagazineCarousel = (props: { pinnedPosts: PostEntry[] }) => {
   const { pinnedPosts } = props;
   const swiperRef = useRef<SwiperRef>(null);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    if (pinnedPosts.length > 0) {
+      setIsLoading(false);
+    }
+  }, [pinnedPosts]);
 
   const handlePrev = () => {
     if (swiperRef.current) {
@@ -57,7 +66,11 @@ const MagazineCarousel = (props: { pinnedPosts: PostEntry[] }) => {
         {pinnedPosts?.map((post, index) => {
           return (
             <SwiperSlide key={post.id} virtualIndex={index}>
-              <BlogPostCard key={post.id} {...post} />
+              {isLoading ? (
+                <Skeleton className="h-[400px] w-full" />
+              ) : (
+                <BlogPostCard key={post.id} {...post} />
+              )}
             </SwiperSlide>
           );
         })}

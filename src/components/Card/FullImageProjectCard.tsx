@@ -24,17 +24,17 @@ const FullImageProjectCard = (props: ProjectCardProps) => {
         {/* 그라데이션 Overlay (상단-좌측-하단 투명) */}
         {/* <div className="absolute inset-0 h-full w-full bg-gradient-to-t from-black via-transparent to-transparent opacity-80" /> */}
 
-        <div className="absolute bottom-0 left-0 w-full pb-14 pl-4 pt-4 md:pb-24 md:pl-14">
+        <div className="absolute bottom-0 left-0 w-full pb-14 pl-4 pt-4 md:pb-16 md:pl-8">
           <div className="absolute inset-0 z-0 h-full w-full bg-black opacity-60" />
           {/* <h4 className="text-18 font-500 text-white mb-4 opacity-70">
           에디터 큐레이션
         </h4> */}
           {/* 둘째 줄(프로젝트명) */}
-          <div className="line-clamp-1 flex flex-col text-lg font-bold text-white-base opacity-90 md:text-2xl">
+          <div className="line-clamp-1 flex flex-col text-lg font-bold text-white-base opacity-90 md:text-xl">
             <span>{projectName}</span>
           </div>
           {/* 셋째 줄(회사명 | 짧은 설명 등) */}
-          <div className="line-clamp-2 flex min-h-[3rem] flex-col gap-1 text-base text-white-base opacity-80 md:min-h-[3.75rem] md:text-lg">
+          <div className="line-clamp-2 flex min-h-[3rem] flex-col gap-1 text-base text-white-base opacity-80">
             {/* 예: "회사명 | 짧은 설명" 형태 */}
             <span>
               {companyName} | {shortDescription}

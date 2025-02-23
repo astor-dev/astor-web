@@ -1,14 +1,22 @@
-import { useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Autoplay, EffectFade, Navigation, Pagination } from "swiper/modules";
 import { Swiper, SwiperSlide, type SwiperRef } from "swiper/react";
 import type { ProjectEntry } from "~types/project.type";
 import FullImageProjectCard from "~components/Card/FullImageProjectCard";
 import "swiper/css/effect-fade";
 import { FaArrowLeft, FaArrowRight } from "react-icons/fa";
+import Skeleton from "react-loading-skeleton";
 
 const HomeProjectSlider = (props: { projects: ProjectEntry[] }) => {
   const { projects } = props;
   const swiperRef = useRef<SwiperRef>(null);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    if (projects.length > 0) {
+      setIsLoading(false);
+    }
+  }, [projects]);
 
   const handlePrev = () => {
     if (swiperRef.current) {
@@ -43,7 +51,11 @@ const HomeProjectSlider = (props: { projects: ProjectEntry[] }) => {
         {projects?.map((project, index) => {
           return (
             <SwiperSlide key={project.id} virtualIndex={index}>
-              <FullImageProjectCard key={project.id} {...project} />
+              {isLoading ? (
+                <Skeleton className="h-[66vh] w-full" />
+              ) : (
+                <FullImageProjectCard key={project.id} {...project} />
+              )}
             </SwiperSlide>
           );
         })}
