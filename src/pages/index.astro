@@ -45,7 +45,7 @@ const seriesList: Series[] = await postRepository.getAllSeries();
 
 <Layout>
   <Fragment slot="hero">
-    <HomeHero client:only="react" />
+    <HomeHero client:load />
   </Fragment>
   <div class="mx-auto w-full">
     <section class="mb-16">
@@ -55,7 +55,7 @@ const seriesList: Series[] = await postRepository.getAllSeries();
           moreLink="/blog/series"
           client:load
         />
-        <HomeSeriesCarousel seriesList={seriesList} client:only="react" />
+        <HomeSeriesCarousel seriesList={seriesList} client:visible/>
       </div>
     </section>
     <section class="mb-16">
@@ -64,14 +64,14 @@ const seriesList: Series[] = await postRepository.getAllSeries();
         moreLink="/blog"
         client:load
       />
-      <HomePinnedPostsSlider pinnedPosts={pinnedPosts} client:only="react" />
+      <HomePinnedPostsSlider pinnedPosts={pinnedPosts} client:visible />
     </section>
 
     {/* 프로젝트 섹션 */}
     <section class="mb-16">
       <div class="grid h-full -ml-[5vw] 2xl:-ml-[15vw] -mr-[5vw] 2xl:-mr-[15vw] w-[calc(100%+10vw)] 2xl:w-[calc(100%+30vw)] grid-cols-1 md:grid-cols-2 ">
-        <HomeProjectIntroSection client:only="react" />
-        <HomeProjectSlider projects={projects.items} client:only="react" />
+        <HomeProjectIntroSection client:load />
+        <HomeProjectSlider projects={projects.items} client:load />
       </div>
     </section>
     {/* 인기 태그 섹션 */}
@@ -82,7 +82,7 @@ const seriesList: Series[] = await postRepository.getAllSeries();
         moreLink="/blog"
         client:load
       />
-      <HomeTagsSlider    tagList={tags} client:only="react" />
+      <HomeTagsSlider tagList={tags} client:load />
     </section>
   </div>
 </Layout>

@@ -2,6 +2,7 @@ import React, { useEffect, useState, useRef } from "react";
 import heroMilkyway from "~assets/images/hero-milkyway.jpg";
 import FloatingIcons from "~components/Hero/FloatingIcons";
 import LoadingSpinner from "~components/LoadingSpinner/LoadingSpinner";
+import ImageWithSkeleton from "~components/Skeleton/ImageWithSkeleton";
 
 type AutoCompleteType = "class" | "method";
 
@@ -188,18 +189,17 @@ export default function HomeHero() {
     <div>
       <section
         id="hero-section"
-        className="relative flex h-[40vh] w-full flex-col items-center justify-center overflow-hidden bg-skin-fill sm:h-[66vh]"
+        className="relative flex h-[66vh] w-full flex-col items-center justify-center overflow-hidden bg-skin-fill sm:h-[66vh]"
       >
-        <picture>
-          <img
-            id="hero-img"
-            src={heroMilkyway.src}
-            alt="Hero 배경 이미지"
-            className="absolute inset-0 z-0 h-full w-full object-cover"
-            style={{ display: isImageLoaded ? "block" : "none" }}
-            onLoad={handleImageLoad}
-          />
-        </picture>
+        <ImageWithSkeleton
+          id="hero-img"
+          src={heroMilkyway.src}
+          alt="Hero 배경 이미지"
+          className={`absolute inset-0 flex h-full w-full items-center justify-center object-cover ${
+            isImageLoaded ? "" : "hidden"
+          }`}
+          onLoadComplete={handleImageLoad}
+        />
 
         <div
           id="spinner"

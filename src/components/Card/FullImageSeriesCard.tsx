@@ -49,7 +49,7 @@ const SeriesCard: React.FC<SeriesCardProps> = ({ series, count, ogImage }) => {
       >
         {/* 이미지 영역 */}
         <div
-          className="h-48 w-full bg-cover bg-center"
+          className="h-32 w-full bg-cover bg-center md:h-48"
           style={{ backgroundImage: `url(${imageUrl})` }}
         />
         {/* 카드 내용 */}

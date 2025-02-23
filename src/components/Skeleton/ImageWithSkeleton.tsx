@@ -26,7 +26,7 @@ export default function ImageWithSkeleton({
     img.src = src;
 
     // 캐시에 존재할 경우 바로 처리
-    if (img.complete) {
+    if (img.complete === true) {
       setIsLoading(false);
       if (onLoadComplete) {
         onLoadComplete();
@@ -42,7 +42,6 @@ export default function ImageWithSkeleton({
       img.onerror = () => {
         setIsLoading(false);
         if (onLoadComplete) {
-          console.log("onLoadComplete (로드 실패)");
           onLoadComplete();
         }
       };
@@ -50,7 +49,7 @@ export default function ImageWithSkeleton({
   }, [src, onLoadComplete]);
 
   return (
-    <div className={`relative ${className}`} style={style}>
+    <div className={`${className}`} style={style}>
       {isLoading && (
         <Skeleton
           className="absolute inset-0 h-full w-full"

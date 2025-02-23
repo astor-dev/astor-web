@@ -64,13 +64,13 @@ const MagazineCarousel = (props: { pinnedPosts: PostEntry[] }) => {
       </Swiper>
       <button
         onClick={handlePrev}
-        className="z-base absolute -left-10 top-1/2 z-30 rounded-full bg-skin-fill p-6 text-3xl text-black-accent opacity-70"
+        className="z-base absolute -left-10 top-1/2 z-30 hidden rounded-full bg-skin-fill p-6 text-3xl text-black-accent opacity-70 md:block"
       >
         <IoIosArrowBack />
       </button>
       <button
         onClick={handleNext}
-        className="z-base absolute -right-10 top-1/2 z-30 rounded-full bg-skin-fill p-6 text-3xl text-black-accent opacity-70"
+        className="z-base absolute -right-10 top-1/2 z-30 hidden rounded-full bg-skin-fill p-6 text-3xl text-black-accent opacity-70 md:block"
       >
         <IoIosArrowForward />
       </button>

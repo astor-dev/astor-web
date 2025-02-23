@@ -1,7 +1,8 @@
 import { motion } from "framer-motion";
 import { PiShootingStarFill } from "react-icons/pi";
-import { useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useIntersectionObserver } from "~hooks/UseIntersectionObserver/UseIntersectionObserver";
+import Skeleton from "react-loading-skeleton";
 
 interface ShootingStarHeaderProps {
   title: string;
@@ -16,9 +17,20 @@ export const ShootingStarHeader = ({
   moreLink,
   showInitialAnimation = false,
 }: ShootingStarHeaderProps) => {
+  const [isLoading, setIsLoading] = useState(true);
+  const hasMounted = useRef(false);
   const headerRef = useRef<HTMLDivElement>(null);
   const isVisible = useIntersectionObserver(headerRef);
 
+  useEffect(() => {
+    hasMounted.current = true;
+  }, []);
+
+  useEffect(() => {
+    if (isVisible && (title || description || moreLink) && hasMounted.current) {
+      setIsLoading(false);
+    }
+  }, [isVisible, title, description, moreLink]);
   return (
     <div
       ref={headerRef}
@@ -29,7 +41,7 @@ export const ShootingStarHeader = ({
       <div className="flex items-center justify-between">
         <motion.h2 className="font-sans text-2xl font-bold text-black-base">
           {/* <span className="text-skin-accent">✦</span>  */}
-          {title}
+          {isLoading ? <Skeleton /> : title}
         </motion.h2>
 
         {moreLink && (
@@ -38,7 +50,13 @@ export const ShootingStarHeader = ({
             href={moreLink}
             className="inline-flex items-center gap-1 font-sans text-sm text-skin-accent hover:text-skin-accent/80"
           >
-            More <PiShootingStarFill />
+            {isLoading ? (
+              <Skeleton />
+            ) : (
+              <>
+                More <PiShootingStarFill />
+              </>
+            )}
           </motion.a>
         )}
       </div>
