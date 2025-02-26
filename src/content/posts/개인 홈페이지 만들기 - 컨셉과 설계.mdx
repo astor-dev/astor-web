@@ -7,12 +7,12 @@ tags:
   - Astro
   - NestJS
   - 블로그
-ogImage: "https://d2r0pavv0lsiqc.cloudfront.net/posts/images/7be8f60f-9fb3-456d-ad56-20fc380511c0.jpeg"
+ogImage: "https://d2r0pavv0lsiqc.cloudfront.net/posts/images/3df46c3d-6d7f-40ff-9c81-a3bd345ac148.jpeg"
 description: "개인 블로그 겸 홈페이지를 만들게 된 계기와, 컨셉, 아키텍처를 설명합니다."
 pinned: true
 draft: false
 createdAt: "2025-02-16 18:06:02"
-updatedAt: "2025-02-18 00:20:16"
+updatedAt: "2025-02-26 19:02:17"
 ---
 
 ## 들어가며
@@ -29,27 +29,22 @@ updatedAt: "2025-02-18 00:20:16"
 
 특히, **데이터를 어디에 저장할 것인가?** 하는 문제는 생각보다 애매합니다.
 
-* **데이터베이스?**
-
+- **데이터베이스?**
   → 유지보수 부담
-* **자체 API?**
-
+- **자체 API?**
   → 비용과 복잡성 증가
-* **완전 정적인 사이트?**
-
+- **완전 정적인 사이트?**
   → 유연성이 부족
 
 그래서 결정한 제 홈페이지의 메인 컨셉은, **`Decoupled Backend`**&#xC785;니다.
 
 ### **Decoupled Backend**
 
-* 백엔드가 있지만, 전통적인 백엔드처럼 데이터를 저장하는 역할이 아니라 프론트의 배포를 보조하고, 이미지 저장소와 프론트를 매개하는 역할만 수행한다.
-* 프론트엔드가 저장소의 역할을 겸하며, SSG(Static Site Generation) 중심으로
-
+- 백엔드가 있지만, 전통적인 백엔드처럼 데이터를 저장하는 역할이 아니라 프론트의 배포를 보조하고, 이미지 저장소와 프론트를 매개하는 역할만 수행한다.
+- 프론트엔드가 저장소의 역할을 겸하며, SSG(Static Site Generation) 중심으로
   **프론트엔드가 데이터를 직접 저장/처리**
-
   한다.
-* 서버와 관련없이 프론트엔드의 모든 기능이 온전하게 작동한다.
+- 서버와 관련없이 프론트엔드의 모든 기능이 온전하게 작동한다.
 
 ![](https://d2r0pavv0lsiqc.cloudfront.net/projects/images/0991237a-000f-46d6-9050-732cdfbce36f.png)
 
@@ -71,11 +66,14 @@ FE 배포는 githubPage를 통해 처리하기 때문에 비용도 적으며, �
 
 #### **프론트엔드**
 
-* **Framework**
+- **Framework**
+
   : Astro (SSG 활용 서버 없이 SEO)
-* **Styling**
+- **Styling**
+
   : Tailwind CSS
-* **Deployment**
+- **Deployment**
+
   : GitHub Pages
 
 가장 핵심인 포인트는 FE 프레임 워크로 **Astro**를 썼다는 점입니다..! Astro 프레임워크의 철학이 제 프로젝트 컨셉과 가장 잘 맞아서 결정하게 되었습니다.
@@ -85,14 +83,11 @@ Astro의 내장된 mdx 프론트 메터 기반 data저장, mdx->html 렌더링 �
 
 #### 백엔드
 
-* **Framework:**
-   
+- **Framework:**
   NestJs (가볍고 빠른 개발)
-* **Infra:**
-   
+- **Infra:**
   ec2 or local, s3, cloudFront (프리티어 + 스토리지만 활용해 비용 절감)
-* **DB:**
-   
+- **DB:**
   X
 
 백엔드는 최대한 라이트하게 구성했습니다. 아무래도 t2-micro 혹은 nano 환경에서도 돌아갈 수 있는 경량 서버를 띄워야 하고, 복잡한 기능은 들어가지 않을 예정이여서 가볍게 nest.js를 사용했습니다.&#x20;
