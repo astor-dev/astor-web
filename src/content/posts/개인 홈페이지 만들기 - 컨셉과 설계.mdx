@@ -9,7 +9,7 @@ tags:
   - 블로그
 ogImage: "https://d2r0pavv0lsiqc.cloudfront.net/posts/images/3df46c3d-6d7f-40ff-9c81-a3bd345ac148.jpeg"
 description: "개인 블로그 겸 홈페이지를 만들게 된 계기와, 컨셉, 아키텍처를 설명합니다."
-pinned: true
+pinned: false
 draft: false
 createdAt: "2025-02-16 18:06:02"
 updatedAt: "2025-02-26 19:02:17"
@@ -60,7 +60,11 @@ FE 배포는 githubPage를 통해 처리하기 때문에 비용도 적으며, �
 
 전체적인 테마색은 astor 닉네임에 어울리게 우주 느낌을 내고 싶었습니다. 우주 사진을 unspash에서 몇장 고른 후 사진과 어울리는 색상 디자인 시스템을 구축했습니다. 그렇게 고른 색들은 아래와 같습니다.
 
-<img height="587" width="711" src="https://d2r0pavv0lsiqc.cloudfront.net/projects/images/48bb3d43-89f9-4e72-9d90-0abbcb408e21.png" />
+<img
+  height="587"
+  width="711"
+  src="https://d2r0pavv0lsiqc.cloudfront.net/projects/images/48bb3d43-89f9-4e72-9d90-0abbcb408e21.png"
+/>
 
 ### 기술스택과 아키텍처
 
@@ -69,9 +73,11 @@ FE 배포는 githubPage를 통해 처리하기 때문에 비용도 적으며, �
 - **Framework**
 
   : Astro (SSG 활용 서버 없이 SEO)
+
 - **Styling**
 
   : Tailwind CSS
+
 - **Deployment**
 
   : GitHub Pages
@@ -92,7 +98,7 @@ Astro의 내장된 mdx 프론트 메터 기반 data저장, mdx->html 렌더링 �
 
 백엔드는 최대한 라이트하게 구성했습니다. 아무래도 t2-micro 혹은 nano 환경에서도 돌아갈 수 있는 경량 서버를 띄워야 하고, 복잡한 기능은 들어가지 않을 예정이여서 가볍게 nest.js를 사용했습니다.&#x20;
 
-또한 기능이 가볍고, 사용자가 저 밖에 없다보니 유지보수나 확장성, 안정성이 크게 중요하지 않기 때문에, 최소한의 layering, 모듈화만 하였습니다. 전통적인 `application`/ `presentation` / `infrastructure` 3개의 레이어 기반에 최소한의 데이터 정합성과 로직 재활용 및 애플리케이션 레이어 책임 집중 방지를 위한  `domain` 레이어까지 4개만 두고 최대한 빠르게 개발하는 걸 목표로 하였습니다.
+또한 기능이 가볍고, 사용자가 저 밖에 없다보니 유지보수나 확장성, 안정성이 크게 중요하지 않기 때문에, 최소한의 layering, 모듈화만 하였습니다. 전통적인 `application`/ `presentation` / `infrastructure` 3개의 레이어 기반에 최소한의 데이터 정합성과 로직 재활용 및 애플리케이션 레이어 책임 집중 방지를 위한 `domain` 레이어까지 4개만 두고 최대한 빠르게 개발하는 걸 목표로 하였습니다.
 
 ## 마무리
 

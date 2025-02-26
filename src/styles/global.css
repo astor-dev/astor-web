@@ -1,6 +1,15 @@
-@import url("https://cdn.jsdelivr.net/gh/fonts-archive/AppleSDGothicNeo/AppleSDGothicNeo.css");
+/* @import url("https://cdn.jsdelivr.net/gh/fonts-archive/AppleSDGothicNeo/AppleSDGothicNeo.css"); */
+@import url("https://fonts.googleapis.com/css2?family=Nanum+Gothic&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@100..900&display=swap");
 @import url("https://cdn.jsdelivr.net/gh/fonts-archive/BOKEH/BOKEH.css");
 @import url("https://fonts.googleapis.com/css2?family=Fira+Code:wght@300..700&display=swap");
+@font-face {
+  font-family: "PurenJeonnam";
+  src: url("https://fastly.jsdelivr.net/gh/projectnoonnu/noonfonts_two@1.0/PureunJeonnam.woff")
+    format("woff");
+  font-weight: normal;
+  font-style: normal;
+}
 
 @tailwind base;
 @tailwind components;
@@ -135,6 +144,26 @@
 
   .hide-scrollbar::-webkit-scrollbar {
     display: none; /* Chrome, Safari, Opera */
+  }
+  .prose-headings {
+    @apply font-sans text-black-accent;
+  }
+
+  .prose-a {
+    @apply text-skin-accent;
+  }
+
+  .prose-blockquote {
+    @apply border-skin-accent bg-skin-fill/50 text-black-base/80;
+  }
+  .prose-code {
+    @apply text-skin-accent;
+  }
+  .prose-strong {
+    @apply text-black-accent;
+  }
+  .prose {
+    @apply font-body;
   }
 }
 

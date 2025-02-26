@@ -25,24 +25,24 @@ const headings = renderResult.headings;
 
 const formattedDate = dayjs(post.data.createdAt).format("YYYY년 MM월 DD일");
 ---
+
 <Layout title={post.data.title}>
   <PostHero post={post} slot="hero" />
 
-  <article class="relative mx-auto max-w-4xl px-4  sm:px-6 lg:px-8">
+  <article class="relative mx-auto">
     {/* 본문 */}
-    <div class="prose prose-sm md:prose lg:prose-lg mx-auto max-w-none">
+    <div class="prose prose-sm mx-auto max-w-none md:prose">
       <HeadingsTable headings={headings} />
 
       {/* 마크다운 콘텐츠 */}
-      <div class="prose-headings:text-black-accent prose-a:text-skin-accent prose-blockquote:border-skin-accent prose-blockquote:bg-skin-fill/50 prose-blockquote:text-black-base/80 prose-strong:text-black-accent prose-code:text-skin-accent">
+      <div>
         <Content />
       </div>
     </div>
 
     {/* 하단 공유 버튼 */}
-    <div class="mt-16 mb-16 flex justify-center gap-4">
+    <div class="mb-16 mt-16 flex justify-center gap-4">
       <IconButton icon="FaShare" text="공유하기" />
     </div>
   </article>
 </Layout>
-

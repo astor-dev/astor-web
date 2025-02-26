@@ -26,6 +26,10 @@ export default defineConfig({
       gfm: true,
       remarkPlugins: [remarkMath],
       rehypePlugins: [rehypeUnwrapList],
+      shikiConfig: {
+        theme: "github-dark",
+        wrap: true,
+      },
     }),
     sitemap(),
     react(),
