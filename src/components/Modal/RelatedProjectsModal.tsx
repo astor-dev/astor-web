@@ -62,7 +62,7 @@ const RelatedProjects: React.FC<RelatedProjectsProps> = ({
         animate={{ scale: 1 }}
         exit={{ scale: 0.95 }}
         transition={{ duration: 0.2 }}
-        className="max-h-[80vh] w-full max-w-2xl overflow-auto rounded-lg bg-white p-6"
+        className="max-h-[80dvh] w-full max-w-2xl overflow-auto rounded-lg bg-white p-6"
         onClick={e => e.stopPropagation()}
       >
         <div className="mb-8 flex items-start gap-4">

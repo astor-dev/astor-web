@@ -32,7 +32,7 @@ const MobileTagScroll: React.FC<MobileTagScrollProps> = ({
 
   return (
     <div
-      className={`my-4 -ml-[5vw] -mr-[5vw] w-[calc(100%+10vw)] overflow-hidden 2xl:-mx-[15vw] ${className}`}
+      className={`my-4 -ml-[5dvw] -mr-[5dvw] w-[calc(100%+10dvw)] overflow-hidden 2xl:-mx-[15dvw] ${className}`}
     >
       <motion.div
         ref={scrollRef}
@@ -40,7 +40,7 @@ const MobileTagScroll: React.FC<MobileTagScrollProps> = ({
         dragConstraints={{ right: 0, left: -scrollWidth }}
         className="flex cursor-grab space-x-1 active:cursor-grabbing"
       >
-        <div className="h-full w-[10vw]" />
+        <div className="h-full w-[10dvw]" />
         <Tag tag="전체보기" href="/blog" count={tags.length} size="sm" />
         {tags.map((tag, index) => (
           <Tag

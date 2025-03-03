@@ -51,11 +51,7 @@ const HomeProjectSlider = (props: { projects: ProjectEntry[] }) => {
         {projects?.map((project, index) => {
           return (
             <SwiperSlide key={project.id} virtualIndex={index}>
-              {isLoading ? (
-                <Skeleton className="h-[66vh] w-full" />
-              ) : (
-                <FullImageProjectCard key={project.id} {...project} />
-              )}
+              <FullImageProjectCard key={project.id} {...project} />
             </SwiperSlide>
           );
         })}

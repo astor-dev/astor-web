@@ -189,7 +189,7 @@ export default function HomeHero() {
     <div>
       <section
         id="hero-section"
-        className="relative flex h-[66vh] w-full flex-col items-center justify-center overflow-hidden bg-skin-fill sm:h-[66vh]"
+        className="relative flex h-[66dvh] w-full flex-col items-center justify-center overflow-hidden bg-skin-fill sm:h-[66dvh]"
       >
         <ImageWithSkeleton
           id="hero-img"

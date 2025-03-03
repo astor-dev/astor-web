@@ -27,7 +27,7 @@ export const ShootingStarHeader = ({
   }, []);
 
   useEffect(() => {
-    if (isVisible && (title || description || moreLink) && hasMounted.current) {
+    if (isVisible && title && hasMounted.current) {
       setIsLoading(false);
     }
   }, [isVisible, title, description, moreLink]);
@@ -41,7 +41,7 @@ export const ShootingStarHeader = ({
       <div className="flex items-center justify-between">
         <motion.h2 className="font-sans text-2xl font-bold text-black-base">
           {/* <span className="text-skin-accent">✦</span>  */}
-          {isLoading ? <Skeleton /> : title}
+          {isLoading ? <Skeleton className="w-full" /> : title}
         </motion.h2>
 
         {moreLink && (

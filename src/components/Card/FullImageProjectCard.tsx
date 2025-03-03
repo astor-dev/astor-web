@@ -13,7 +13,9 @@ const FullImageProjectCard = (props: ProjectCardProps) => {
   const { imageUrl, projectName, companyName, shortDescription } = data;
 
   return (
-    <div className={`relative h-[66vh] w-full flex-col md:aspect-square`}>
+    <div
+      className={`relative h-[400px] w-full flex-col md:aspect-square md:h-[600px]`}
+    >
       <a href={`/projects/${projectName}`}>
         {/* 이미지 */}
         <ImageWithSkeleton

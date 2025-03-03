@@ -99,7 +99,7 @@ const StackGrid: React.FC<StackGridProps> = ({
 
       {/* 스택 그리드 */}
       <div className="relative">
-        <div className="grid max-h-[60vh] grid-cols-2 gap-4 overflow-y-auto pb-4 md:max-h-none md:grid-cols-3 md:overflow-visible lg:grid-cols-4">
+        <div className="grid max-h-[60dvh] grid-cols-2 gap-4 overflow-y-auto pb-4 md:max-h-none md:grid-cols-3 md:overflow-visible lg:grid-cols-4">
           <AnimatePresence mode="sync">
             {filteredStacks.length > 0 ? (
               filteredStacks.map(stack => (

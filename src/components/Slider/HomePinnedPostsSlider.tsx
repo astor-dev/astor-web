@@ -66,11 +66,7 @@ const MagazineCarousel = (props: { pinnedPosts: PostEntry[] }) => {
         {pinnedPosts?.map((post, index) => {
           return (
             <SwiperSlide key={post.id} virtualIndex={index}>
-              {isLoading ? (
-                <Skeleton className="h-[400px] w-full" />
-              ) : (
-                <BlogPostCard key={post.id} {...post} />
-              )}
+              <BlogPostCard key={post.id} {...post} />
             </SwiperSlide>
           );
         })}

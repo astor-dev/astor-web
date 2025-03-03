@@ -191,7 +191,7 @@ const IconDropdown: React.FC<IconDropdownProps> = ({
           />
           <div
             ref={dropdownRef}
-            className={`absolute rounded-lg bg-white p-4 shadow-lg ${widthClass} max-w-[calc(100vw-1rem)] ${
+            className={`absolute rounded-lg bg-white p-4 shadow-lg ${widthClass} max- w-[calc(100dvw-1rem)] ${
               dropdownDirection === "down"
                 ? "top-full mt-2"
                 : "bottom-full mb-2"

@@ -66,11 +66,7 @@ const MagazineCarousel = (props: { seriesList: Series[] }) => {
         {seriesList?.map((series, index) => {
           return (
             <SwiperSlide key={series.series} virtualIndex={index}>
-              {isLoading ? (
-                <Skeleton className="h-[200px] w-full" />
-              ) : (
-                <FullImageSeriesCard key={series.series} {...series} />
-              )}
+              <FullImageSeriesCard key={series.series} {...series} />
             </SwiperSlide>
           );
         })}

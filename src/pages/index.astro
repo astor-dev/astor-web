@@ -40,7 +40,6 @@ const pinnedPosts: PostEntry[] = (
 ).items;
 const tags: Tag[] = await postRepository.getAllTags();
 const seriesList: Series[] = await postRepository.getAllSeries();
-
 ---
 
 <Layout>
@@ -51,25 +50,23 @@ const seriesList: Series[] = await postRepository.getAllSeries();
     <section class="mb-16">
       <div class="flex flex-col space-y-4">
         <ShootingStarHeader
-          title="시리즈"  
+          title="시리즈"
           moreLink="/blog/series"
           client:load
         />
-        <HomeSeriesCarousel seriesList={seriesList} client:visible/>
+        <HomeSeriesCarousel seriesList={seriesList} client:visible />
       </div>
     </section>
     <section class="mb-16">
-      <ShootingStarHeader
-        title="주목할만한 글"
-        moreLink="/blog"
-        client:load
-      />
+      <ShootingStarHeader title="주목할만한 글" moreLink="/blog" client:load />
       <HomePinnedPostsSlider pinnedPosts={pinnedPosts} client:visible />
     </section>
 
     {/* 프로젝트 섹션 */}
     <section class="mb-16">
-      <div class="grid h-full -ml-[5vw] 2xl:-ml-[15vw] -mr-[5vw] 2xl:-mr-[15vw] w-[calc(100%+10vw)] 2xl:w-[calc(100%+30vw)] grid-cols-1 md:grid-cols-2 ">
+      <div
+        class="-ml-[5dvw] -mr-[5dvw] grid h-full w-[calc(100%+10dvw)] grid-cols-1 md:grid-cols-2 2xl:-ml-[15dvw] 2xl:-mr-[15dvw] 2xl:w-[calc(100%+30dvw)]"
+      >
         <HomeProjectIntroSection client:load />
         <HomeProjectSlider projects={projects.items} client:load />
       </div>

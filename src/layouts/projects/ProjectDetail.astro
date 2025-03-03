@@ -5,7 +5,10 @@ import type { CollectionEntry } from "astro:content";
 import { render } from "astro:content";
 import type { ProjectEntry } from "~types/project.type";
 import { repositoryContainer } from "~modules/repository.module";
-import { PROJECT_REPOSITORY, type ProjectRepository } from "~modules/repositories/projects/ProjectRepository";
+import {
+  PROJECT_REPOSITORY,
+  type ProjectRepository,
+} from "~modules/repositories/projects/ProjectRepository";
 import StackGrid from "~components/Stack/StackGrid";
 import ImageWithSkeleton from "~components/Skeleton/ImageWithSkeleton";
 import { FaCalendar, FaBuilding } from "react-icons/fa";
@@ -26,11 +29,14 @@ const { Content } = await render(project);
 
 // const readTime = Math.ceil((project.body?.length as number) / 1000);
 const period = `${dayjs(project.data.startedAt).format("YYYY.MM")} - ${
-  project.data.endedAt ? dayjs(project.data.endedAt).format("YYYY.MM") : "진행중"
+  project.data.endedAt
+    ? dayjs(project.data.endedAt).format("YYYY.MM")
+    : "진행중"
 }`;
 
 // 각 스택별 관련 프로젝트 가져오기
-const projectRepository = repositoryContainer.get<ProjectRepository>(PROJECT_REPOSITORY);
+const projectRepository =
+  repositoryContainer.get<ProjectRepository>(PROJECT_REPOSITORY);
 const relatedProjects: Record<number, ProjectEntry[]> = {};
 for (const stackId of project.data.stackIds) {
   const projects = await projectRepository.getProjects({
@@ -47,47 +53,54 @@ for (const stackId of project.data.stackIds) {
 ---
 
 <Layout title={project.data.projectName}>
-
   <!-- Hero 섹션: 전체 화면을 채우면서 프로젝트 요약 정보를 보여줌 -->
-  <section slot="hero" class="relative w-full h-[66vh] overflow-hidden">
+  <section slot="hero" class="relative h-[66dvh] w-full overflow-hidden">
     <!-- 배경 이미지 (절대 위치로 부모 안에 배치) -->
     <div class="absolute inset-0 z-0">
       <ImageWithSkeleton
         src={project.data.imageUrl}
         alt={project.data.projectName}
-        className="object-cover w-full h-full"
+        className="h-full w-full object-cover"
         client:load
       />
     </div>
-  
+
     <!-- 배경 오버레이 (이미지 위) -->
     <div class="absolute inset-0 z-10 bg-black opacity-80"></div>
-  
+
     <!-- 중앙 콘텐츠 (최상위, 이미지 위에 겹침) -->
     <div
       id="hero-content"
-      class="relative z-20 flex flex-col items-center justify-center h-full px-4 text-center transition-opacity duration-700"
+      class="relative z-20 flex h-full flex-col items-center justify-center px-4 text-center transition-opacity duration-700"
     >
       <div class="text-skin-base">{project.data.projectType}</div>
-      <h1 class="mt-2 mb-6 text-5xl font-bold text-white-accent">
+      <h1 class="mb-6 mt-2 text-5xl font-bold text-white-accent">
         {project.data.projectName}
       </h1>
-      <p class="mb-4 text-sm text-black-muted flex items-center gap-4">
-        <span class="flex items-center gap-2"><FaCalendar className="h-4 w-4" />{period}</span>
-        <span class="flex items-center gap-2"><FaBuilding className="h-4 w-4" />{project.data.companyName}</span>
+      <p class="mb-4 flex items-center gap-4 text-sm text-black-muted">
+        <span class="flex items-center gap-2"
+          ><FaCalendar className="h-4 w-4" />{period}</span
+        >
+        <span class="flex items-center gap-2"
+          ><FaBuilding className="h-4 w-4" />{project.data.companyName}</span
+        >
       </p>
     </div>
   </section>
-  
 
   <!-- 프로젝트 상세 내용 -->
-  <div class="mx-auto max-w-4xl px-4 py-8 sm:px-6 lg:px-8 space-y-12">
-      <section class="flex flex-col justify-between gap-4 sm:flex-row sm:items-center">
-        <p class="border-l-4 border-skin-accent pl-4 text-lg leading-relaxed text-black-base">
-          {project.data.shortDescription}
-        </p>
-        <div class="flex shrink-0 flex-col items-end gap-3">
-          {isAdmin && (
+  <div class="mx-auto max-w-4xl space-y-12 px-4 py-8 sm:px-6 lg:px-8">
+    <section
+      class="flex flex-col justify-between gap-4 sm:flex-row sm:items-center"
+    >
+      <p
+        class="border-l-4 border-skin-accent pl-4 text-lg leading-relaxed text-black-base"
+      >
+        {project.data.shortDescription}
+      </p>
+      <div class="flex shrink-0 flex-col items-end gap-3">
+        {
+          isAdmin && (
             <IconButton
               icon="FiEdit"
               text="프로젝트 수정"
@@ -95,31 +108,34 @@ for (const stackId of project.data.stackIds) {
               variant="primary"
               client:load
             />
-          )} 
-          <IconButton
-            icon="FiExternalLink"
-            text="사이트 방문"
-            href={project.data.siteUrl}
-            target="_blank"
-            variant={project.data.siteUrl ? "primary" : "muted"}
-            disabled={!project.data.siteUrl}
-            rel="noopener noreferrer"
-            client:load
-          />
-        </div>
-      </section>
-      <!-- 기술 스택 섹션 -->
-      <section class="transition-all duration-700">
-        <h2 class="mb-6 text-2xl font-bold text-black-accent">사용 기술</h2>
-        <StackGrid
-          stackIds={project.data.stackIds}
-          relatedProjects={relatedProjects}
+          )
+        }
+        <IconButton
+          icon="FiExternalLink"
+          text="사이트 방문"
+          href={project.data.siteUrl}
+          target="_blank"
+          variant={project.data.siteUrl ? "primary" : "muted"}
+          disabled={!project.data.siteUrl}
+          rel="noopener noreferrer"
           client:load
         />
-      </section>
+      </div>
+    </section>
+    <!-- 기술 스택 섹션 -->
+    <section class="transition-all duration-700">
+      <h2 class="mb-6 text-2xl font-bold text-black-accent">사용 기술</h2>
+      <StackGrid
+        stackIds={project.data.stackIds}
+        relatedProjects={relatedProjects}
+        client:load
+      />
+    </section>
 
-      <!-- 프로젝트 설명 섹션 -->
-      <section class="prose prose-sm md:prose lg:prose-lg max-w-none transition-all duration-700">
+    <!-- 프로젝트 설명 섹션 -->
+    <section
+      class="prose prose-sm max-w-none transition-all duration-700 md:prose lg:prose-lg"
+    >
       <Content />
     </section>
   </div>
