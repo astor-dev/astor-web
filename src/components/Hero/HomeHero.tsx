@@ -267,6 +267,29 @@ export default function HomeHero() {
                 <br />
                 현실에 녹아들 수 있는 솔루션을 만듭니다.
               </p>
+
+              <div className="animate-fadeIn mt-6 opacity-90 md:mt-2">
+                <a
+                  href="/about"
+                  className="group inline-flex items-center justify-center gap-1.5 rounded-lg border border-gray-400 bg-black bg-opacity-20 px-2 py-1 text-xs font-medium text-gray-100 backdrop-blur-sm transition duration-200 hover:border-gray-300 hover:bg-white hover:bg-opacity-10 hover:text-white-base md:px-4 md:py-2 md:text-sm"
+                >
+                  <span>소개 페이지</span>
+                  <svg
+                    className="h-3.5 w-3.5 transition-transform duration-200 group-hover:translate-x-0.5"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M14 5l7 7m0 0l-7 7m7-7H3"
+                    />
+                  </svg>
+                </a>
+              </div>
+
               <div
                 id="autocomplete"
                 ref={autocompleteRef}

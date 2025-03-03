@@ -185,8 +185,7 @@
 
 /* 슬라이더 페이지네이션 */
 .swiper-pagination {
-  text-align: start !important;
-  @apply mb-4 ml-4 md:mb-8 md:ml-8;
+  @apply ml-4 mt-32;
 }
 
 .swiper-pagination .swiper-pagination-bullet-custom {
@@ -203,4 +202,21 @@
 .swiper-pagination-bullet-custom.swiper-pagination-bullet-active {
   width: 40px;
   background-color: rgba(255, 255, 255, 1);
+}
+
+.swiper-pagination .swiper-pagination-bullet-basic {
+  @apply h-2 w-2 rounded-full bg-skin-accent transition-all duration-300;
+}
+
+.swiper-pagination-bullet-basic.swiper-pagination-bullet-active {
+  @apply h-2 w-2 rounded-full bg-skin-accent;
+}
+
+.stack-progress-slider .swiper-pagination-progressbar {
+  /* 2px 높이(-16기준 짤림) */
+  @apply absolute bottom-[-14px] top-auto h-4 w-full rounded-2xl bg-skin-fill !important;
+}
+
+.stack-progress-slider .swiper-pagination-progressbar-fill {
+  @apply bg-skin-accent !important;
 }

@@ -8,10 +8,15 @@ import ProfileHeader from "~components/Header/ProfileHeader";
 import SectionWithHeader from "~components/Section/SectionWithHeader";
 import type { ProjectEntry } from "~types/project.type";
 import { repositoryContainer } from "~modules/repository.module";
-import { PROJECT_REPOSITORY, type ProjectRepository } from "~modules/repositories/projects/ProjectRepository";
+import {
+  PROJECT_REPOSITORY,
+  type ProjectRepository,
+} from "~modules/repositories/projects/ProjectRepository";
+import StackSlider from "~components/Slider/StackSlider";
 
 // 각 스택별 관련 프로젝트 가져오기
-const projectRepository = repositoryContainer.get<ProjectRepository>(PROJECT_REPOSITORY);
+const projectRepository =
+  repositoryContainer.get<ProjectRepository>(PROJECT_REPOSITORY);
 const relatedProjects: Record<number, ProjectEntry[]> = {};
 for (const stackId of FEATURED_STACK_IDS) {
   const projects = await projectRepository.getProjects({
@@ -60,7 +65,13 @@ for (const stackId of FEATURED_STACK_IDS) {
         className="from-white-base to-skin-card/20 relative bg-gradient-to-b"
         client:load
       >
-        <StackGrid
+        <!-- <StackGrid
+          client:load
+          stackIds={FEATURED_STACK_IDS}
+          enableFeatured={true}
+          relatedProjects={relatedProjects}
+        /> -->
+        <StackSlider
           client:load
           stackIds={FEATURED_STACK_IDS}
           enableFeatured={true}
@@ -87,7 +98,9 @@ for (const stackId of FEATURED_STACK_IDS) {
         description="아래 링크를 통해 저와 소통하거나 제 작업을 확인해보세요."
         client:load
       >
-        <div class="prose prose-sm md:prose lg:prose-lg max-w-none prose-headings:text-black-accent">
+        <div
+          class="prose prose-sm max-w-none md:prose lg:prose-lg prose-headings:text-black-accent"
+        >
           <ul>
             <li>
               Email: <a href="mailto:astoir@example.com">astoir@example.com</a>
