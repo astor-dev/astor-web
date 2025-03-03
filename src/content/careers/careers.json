@@ -1,0 +1,24 @@
+[
+  {
+    "id": 1,
+    "role": "Backend Developer",
+    "organizationName": "핸디버스",
+    "startedAt": "2024-08",
+    "endedAt": null,
+    "body": [
+      {
+        "heading": "핸디버스",
+        "description": "블로그 꾸미기 기능 개발",
+        "lists": [
+          "블로그 꾸미기 기능 개발",
+          "블로그 관리 기능 개발",
+          "블로그 통계 기능 개발",
+          "블로그 검색 기능 개발",
+          "블로그 카테고리 기능 개발",
+          "블로그 태그 기능 개발"
+        ]
+      }
+    ],
+    "relatedProjectNames": ["핸디버스"]
+  }
+]

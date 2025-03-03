@@ -7,10 +7,6 @@ import type { ProjectEntry } from "~types/project.type";
 import { Swiper, SwiperSlide, type SwiperRef } from "swiper/react";
 import { Autoplay, Navigation, Grid, Pagination } from "swiper/modules";
 
-// 필요한 Swiper 스타일을 가져옵니다
-import "swiper/css";
-import "swiper/css/navigation";
-import "swiper/css/grid";
 // import "swiper/css/pagination";
 import StackItem from "~components/Stack/StackItem";
 
@@ -127,7 +123,7 @@ const StackSlider: React.FC<StackSliderProps> = ({
               rows: 4,
               fill: "row",
             }}
-            autoplay={{ delay: 5000, disableOnInteraction: false }}
+            // autoplay={{ delay: 5000, disableOnInteraction: false }}
             spaceBetween={16}
             slidesPerGroup={1}
             grabCursor={true}
@@ -136,7 +132,7 @@ const StackSlider: React.FC<StackSliderProps> = ({
               enabled: true,
               type: "progressbar",
             }}
-            className="stack-progress-slider h-full w-full"
+            className="stack-progress-slider h-[300px] w-full pb-5"
             breakpoints={{
               0: {
                 slidesPerView: 2,
@@ -158,13 +154,13 @@ const StackSlider: React.FC<StackSliderProps> = ({
                   nextEl: ".swiper-button-next",
                   prevEl: ".swiper-button-prev",
                 },
-                grid: { rows: 4 },
+                grid: { rows: 4, fill: "row" },
               },
               1024: {
                 // lg
                 slidesPerView: 5,
                 spaceBetween: 16,
-                grid: { rows: 4 },
+                grid: { rows: 4, fill: "row" },
               },
             }}
           >

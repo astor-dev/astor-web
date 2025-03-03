@@ -1,0 +1,52 @@
+[
+  {
+    "id": 1,
+    "role": "Backend Developer",
+    "organizationName": "Team Sprint",
+    "startedAt": "2024-03",
+    "endedAt": "2024-09",
+    "body": [
+      {
+        "heading": "꾸미기 특화형 블로그 서비스 개발",
+        "description": "블로그 꾸미기 기능 개발",
+        "lists": [
+          "블로그 꾸미기 기능 개발",
+          "블로그 관리 기능 개발",
+          "블로그 통계 기능 개발",
+          "블로그 검색 기능 개발",
+          "블로그 카테고리 기능 개발",
+          "블로그 태그 기능 개발"
+        ]
+      }
+    ],
+    "relatedProjectNames": ["Devkor"]
+  },
+  {
+    "id": 2,
+    "role": "운영진 | Infrastructure Manager",
+    "organizationName": "고려대학교 소프트웨어 개발 학회 Devkor",
+    "startedAt": "2025-02",
+    "endedAt": null,
+    "body": [
+      {
+        "heading": "학회 내 서비스 인프라 관리",
+        "description": "학회 내 서비스 인프라 관리",
+        "lists": ["학회 내 서비스 인프라 관리", "학회 내 서비스 배포 및 운영"]
+      },
+      {
+        "heading": "학회 내 서비스 인프라 관리",
+        "description": "학회 내 서비스 인프라 관리",
+        "lists": ["학회 내 서비스 인프라 관리", "학회 내 서비스 배포 및 운영"]
+      },
+      {
+        "heading": "학회 내 서비스 인프라 관리 관리 관리관리 관리 관리 관리 관리",
+        "description": null,
+        "lists": [
+          "학회 내 서비스 인프라 관리학회 내 서비스 인프라 관리학회 내 서비스 인프라 관리학회 내 서비스 인프라 관리학회 내 서비스 인프라 관리학회 내 서비스 인프라 관리학회 내 서비스 인프라 관리",
+          "학회 내 서비스 배포 및 운영"
+        ]
+      }
+    ],
+    "relatedProjectNames": ["블꾸"]
+  }
+]

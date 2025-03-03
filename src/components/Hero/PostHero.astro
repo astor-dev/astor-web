@@ -35,7 +35,7 @@ const formattedDate = dayjs(post.data.createdAt).format("YYYY년 MM월 DD일");
       {
         post.data.tags.map(tag => (
           <span class="inline-flex items-center gap-1.5 rounded-full bg-skin-accent px-3 py-1 text-sm font-medium text-white-accent">
-            <a href={`/blog/tag/${tag}`}>
+            <a href={`/blog/tags/${tag}`} class="flex items-center gap-1">
               <FaHashtag className="h-3 w-3 opacity-70" />
               {tag}
             </a>

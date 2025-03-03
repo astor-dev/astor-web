@@ -220,3 +220,7 @@
 .stack-progress-slider .swiper-pagination-progressbar-fill {
   @apply bg-skin-accent !important;
 }
+
+.swiper-wrapper {
+  @apply content-baseline !important;
+}

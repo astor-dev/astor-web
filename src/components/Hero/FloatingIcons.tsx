@@ -39,6 +39,7 @@ export default function FloatingIcons(props: {
   // 브레이크포인트에 따른 아이콘 개수 설정
   const getCounter = () => {
     if (width < 640) return 16;
+    if (props.isAstora) return 30;
     return 20;
   };
   const counter = getCounter();

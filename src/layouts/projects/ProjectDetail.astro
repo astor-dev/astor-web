@@ -9,10 +9,10 @@ import {
   PROJECT_REPOSITORY,
   type ProjectRepository,
 } from "~modules/repositories/projects/ProjectRepository";
-import StackGrid from "~components/Stack/StackGrid";
 import ImageWithSkeleton from "~components/Skeleton/ImageWithSkeleton";
 import { FaCalendar, FaBuilding } from "react-icons/fa";
 import IconButton from "~components/Button/IconButton";
+import StackSlider from "~components/Slider/StackSlider";
 
 interface Props {
   project: CollectionEntry<"projects">;
@@ -125,7 +125,7 @@ for (const stackId of project.data.stackIds) {
     <!-- 기술 스택 섹션 -->
     <section class="transition-all duration-700">
       <h2 class="mb-6 text-2xl font-bold text-black-accent">사용 기술</h2>
-      <StackGrid
+      <StackSlider
         stackIds={project.data.stackIds}
         relatedProjects={relatedProjects}
         client:load

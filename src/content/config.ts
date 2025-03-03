@@ -1,4 +1,4 @@
-import { glob } from "astro/loaders";
+import { file, glob } from "astro/loaders";
 import { ProjectRoleEnum, ProjectTypeEnum } from "~types/project.type";
 import { z } from "zod";
 import { defineCollection } from "astro:content";
@@ -37,8 +37,50 @@ const posts = defineCollection({
     }),
 });
 
+const activities = defineCollection({
+  // type: "data",
+  loader: file("src/content/activities/activities.json"),
+  schema: z.object({
+    id: z.number(),
+    role: z.string(),
+    organizationName: z.string(),
+    startedAt: z.string(),
+    endedAt: z.string().nullable(),
+    body: z.array(
+      z.object({
+        heading: z.string(),
+        description: z.string().nullable(),
+        lists: z.array(z.string()),
+      }),
+    ),
+    relatedProjectNames: z.array(z.string()),
+  }),
+});
+
+const careers = defineCollection({
+  // type: "data",
+  loader: file("src/content/careers/careers.json"),
+  schema: z.object({
+    id: z.number(),
+    role: z.string(),
+    organizationName: z.string(),
+    startedAt: z.string(),
+    endedAt: z.string().nullable(),
+    body: z.array(
+      z.object({
+        heading: z.string(),
+        description: z.string().nullable(),
+        lists: z.array(z.string()),
+      }),
+    ),
+    relatedProjectNames: z.array(z.string()),
+  }),
+});
+
 // 사용할 컬렉션만 명시적으로 export
 export const collections = {
   projects,
   posts,
+  activities,
+  careers,
 };
