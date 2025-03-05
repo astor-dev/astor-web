@@ -272,7 +272,7 @@ const PostForm: React.FC<PostFormProps> = ({ initialData, tags, series }) => {
       </div>
 
       <div className="flex justify-end gap-3">
-        <IconButton text="취소" href="/admin/posts" variant="secondary" />
+        <IconButton text="취소" href="/admin/blog" variant="secondary" />
         <IconButton text="저장하기" variant="primary" type="submit" />
       </div>
     </form>
