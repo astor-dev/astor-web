@@ -5,6 +5,7 @@ import type { Tag } from "~types/post.type";
 
 interface Props {
   tags: Tag[];
+  totalPosts: number;
 }
 
 /**
@@ -23,7 +24,11 @@ export default function TagList({ tags }: Props) {
 
   return (
     <div>
-      {isMobile ? <MobileTagScroll tags={tags} /> : <TagSidebar tags={tags} />}
+      {isMobile ? (
+        <MobileTagScroll tags={tags} />
+      ) : (
+        <TagSidebar tags={tags} totalPosts={totalPosts} />
+      )}
     </div>
   );
 }

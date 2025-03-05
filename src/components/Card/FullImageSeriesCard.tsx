@@ -69,7 +69,7 @@ const SeriesCard: React.FC<SeriesCardProps> = ({ series, count, ogImage }) => {
           alt={series}
         />
         {/* 카드 내용 */}
-        <div className="p-4">
+        <div className="py-4">
           <h2 className="text-xl font-bold text-black-accent">
             {isLoading ? <Skeleton className="w-full" /> : series}
           </h2>

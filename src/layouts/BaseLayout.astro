@@ -27,12 +27,14 @@ const postRepository = repositoryContainer.get<PostRepository>(POST_REPOSITORY);
 const tags: Tag[] = await postRepository.getAllTags();
 const seriesList: Series[] = await postRepository.getAllSeries();
 const posts: PostTitleAndId[] = await postRepository.getAllPostTitleAndId();
-const latestPosts: PostEntry[] = (await postRepository.getPosts({
-  paging: {
-    page: 1,
-    limit: 4,
-  },
-})).items;
+const latestPosts: PostEntry[] = (
+  await postRepository.getPosts({
+    paging: {
+      page: 1,
+      limit: 4,
+    },
+  })
+).items;
 const { title, image } = Astro.props;
 const currentPath = Astro.url.pathname;
 ---

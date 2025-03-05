@@ -9,9 +9,7 @@ const { series, count, ogImage } = Astro.props;
 const imageUrl = ogImage || "/default-series.jpg";
 ---
 
-<div
-  class="group relative overflow-hidden bg-transparent"
->
+<div class="group relative overflow-hidden bg-transparent">
   <a href={`/blog/series/${encodeURIComponent(series)}`}>
     <!-- 이미지 영역 -->
     <div
@@ -20,8 +18,8 @@ const imageUrl = ogImage || "/default-series.jpg";
     >
     </div>
     <!-- 카드 내용 -->
-    <div class="p-4">
-      <h2 class="text-xl font-bold text-black-accent">{series}</h2>
+    <div class="py-4">
+      <h2 class="text-start text-xl font-bold text-black-accent">{series}</h2>
       <p class="mt-1 text-sm text-gray-600">{count}개의 포스트</p>
     </div>
   </a>
