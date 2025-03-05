@@ -9,7 +9,7 @@ import HeadingsTable from "~components/Table/HeadingsTable.astro";
 import PostHero from "~components/Hero/PostHero.astro";
 import StickyTableOfContents from "~components/Nav/StickyTableOfContents.astro";
 import StickyButtons from "~components/Nav/StickyButtons.astro";
-
+import Comments from "~components/List/Comments.tsx";
 interface Props {
   post: PostEntry;
   isAdmin: boolean;
@@ -31,7 +31,7 @@ const formattedDate = dayjs(post.data.createdAt).format("YYYY년 MM월 DD일");
 <Layout title={post.data.title} image={post.data.ogImage}>
   <PostHero post={post} slot="hero" />
 
-  <article class="relative mx-auto">
+  <article class="relative mx-auto mb-10">
     <div class="relative flex">
       {/* 본문 */}
       <div class="prose prose-sm mx-auto max-w-none md:prose">
@@ -39,15 +39,11 @@ const formattedDate = dayjs(post.data.createdAt).format("YYYY년 MM월 DD일");
         {/* 마크다운 콘텐츠 */}
         <div>
           <Content />
+          <Comments client:only="react" />
         </div>
       </div>
       <StickyTableOfContents class="hidden xl:block" headings={headings} />
-      <StickyButtons class="hidden xl:block" headings={headings} />
-    </div>
-
-    {/* 하단 공유 버튼 */}
-    <div class="mb-16 mt-16 flex justify-center gap-4">
-      <IconButton icon="FaShare" text="공유하기" />
+      <StickyButtons class="hidden xl:block" />
     </div>
   </article>
 </Layout>
