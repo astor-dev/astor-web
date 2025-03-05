@@ -6,7 +6,7 @@ const GISCUS: GiscusProps = {
   repoId: "R_kgDONv2VAA",
   category: "댓글",
   categoryId: "DIC_kwDONv2VAM4Cnkad",
-  mapping: "title",
+  mapping: "url",
   reactionsEnabled: "1",
   emitMetadata: "0",
   inputPosition: "bottom",

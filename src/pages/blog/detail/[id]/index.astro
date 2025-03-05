@@ -1,18 +1,25 @@
 ---
 import PostDetail from "~layouts/blog/PostDetail.astro";
+import Layout from "~layouts/BaseLayout.astro";
 import { repositoryContainer } from "~modules/repository.module";
 import { POST_REPOSITORY, type PostRepository } from "~modules/repositories/posts/PostRepository";
-
+import Footer from "~components/Footer/Footer.astro";
+import type { PostEntry } from "~types/post.type";
 export async function getStaticPaths() {
   const postRepository = repositoryContainer.get<PostRepository>(POST_REPOSITORY);
   const posts = await postRepository.getPosts({ filter: { draft: false } });
+  const latestPosts: PostEntry[] = (await postRepository.getPosts({
+  paging: {
+    page: 1,
+    limit: 8,
+  },
+})).items;
   return posts.items.map(post => ({
     params: { id: post.id },
-    props: { post },
+    props: { post, latestPosts },
   }));
 }
 
-const { post } = Astro.props;
+const { post, latestPosts } = Astro.props;
 ---
-
-<PostDetail post={post} isAdmin={false} />
+<PostDetail post={post} isAdmin={false} latestPosts={latestPosts} />

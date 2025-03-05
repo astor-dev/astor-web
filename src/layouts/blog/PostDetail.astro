@@ -1,8 +1,6 @@
 ---
 import type { PostEntry } from "~types/post.type";
 import Layout from "~layouts/BaseLayout.astro";
-import { FaClock, FaHashtag, FaUser } from "react-icons/fa";
-import IconButton from "~components/Button/IconButton";
 import dayjs from "dayjs";
 import { render } from "astro:content";
 import HeadingsTable from "~components/Table/HeadingsTable.astro";
@@ -10,12 +8,14 @@ import PostHero from "~components/Hero/PostHero.astro";
 import StickyTableOfContents from "~components/Nav/StickyTableOfContents.astro";
 import StickyButtons from "~components/Nav/StickyButtons.astro";
 import Comments from "~components/List/Comments.tsx";
+import Footer from "~components/Footer/Footer.astro";
 interface Props {
   post: PostEntry;
   isAdmin: boolean;
+  latestPosts: PostEntry[];
 }
 
-const { post } = Astro.props;
+const { post, latestPosts } = Astro.props;
 
 if (!post) {
   return Astro.redirect("/404");
@@ -46,4 +46,5 @@ const formattedDate = dayjs(post.data.createdAt).format("YYYY년 MM월 DD일");
       <StickyButtons class="hidden xl:block" />
     </div>
   </article>
+  <Footer slot="footer" latestPosts={latestPosts} />  
 </Layout>

@@ -7,17 +7,17 @@ import "swiper/css/scrollbar";
 import "swiper/css/effect-fade";
 import "swiper/css/autoplay";
 import "~styles/global.css";
-import Footer from "~components/Footer/Footer";
 import NavBar from "~components/Nav/NavBar";
 import BreadcrumbNavigator from "~components/Breadcrumb/BreadcrumbNavigator";
 import { SkeletonProvider } from "~components/Skeleton/SkeletonProvider";
 import Seo from "~components/Seo/Seo.astro";
-import type { PostTitleAndId, Series, Tag } from "~types/post.type";
+import type { PostEntry, PostTitleAndId, Series, Tag } from "~types/post.type";
 import { repositoryContainer } from "~modules/repository.module";
 import {
   POST_REPOSITORY,
   type PostRepository,
 } from "~modules/repositories/posts/PostRepository";
+import Footer from "~components/Footer/Footer.astro";
 interface Props {
   title?: string;
   image?: string;
@@ -27,10 +27,14 @@ const postRepository = repositoryContainer.get<PostRepository>(POST_REPOSITORY);
 const tags: Tag[] = await postRepository.getAllTags();
 const seriesList: Series[] = await postRepository.getAllSeries();
 const posts: PostTitleAndId[] = await postRepository.getAllPostTitleAndId();
-
+const latestPosts: PostEntry[] = (await postRepository.getPosts({
+  paging: {
+    page: 1,
+    limit: 4,
+  },
+})).items;
 const { title, image } = Astro.props;
 const currentPath = Astro.url.pathname;
-const shouldShowBreadcrumb = currentPath !== "/";
 ---
 
 <!doctype html>
@@ -65,9 +69,7 @@ const shouldShowBreadcrumb = currentPath !== "/";
         <!-- 페이지별 콘텐츠는 slot을 통해 들어옴 -->
         <slot />
       </main>
-
-      <!-- 푸터 (Footer) -->
-      <Footer client:load />
+      <slot name="footer" />
     </SkeletonProvider>
   </body><script is:inline data-astro-rerun>
     /** Create a progress indicator at the top */
