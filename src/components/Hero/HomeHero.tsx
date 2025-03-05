@@ -25,7 +25,7 @@ export default function HomeHero() {
   });
   const [iconsVisible, setIconsVisible] = useState(false);
   const [cursorVisible, setCursorVisible] = useState(true);
-  const [classText, setClassText] = useState("astorverse");
+  const [classText, setClassText] = useState("astor");
   // typedIndex를 상태로 관리하여 클래스 타이핑 진행 상황을 기록합니다.
   const [typedIndex, setTypedIndex] = useState(0);
   // autoComplete의 종류: class 또는 method
@@ -92,7 +92,6 @@ export default function HomeHero() {
       "astorEvent",
       "astorHandler",
       "astorQuery",
-      "astorverse",
     ];
     const sliceSuggestions = classSuggestions.filter(item =>
       item.startsWith(sliceText),

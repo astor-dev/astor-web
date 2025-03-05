@@ -49,7 +49,7 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({
             <ImageWithSkeleton
               src={imageSrc}
               alt={name}
-              className="h-full w-full transform object-cover transition-transform duration-700 hover:scale-110"
+              className="h-full w-full object-cover"
               onLoadComplete={() => {}}
             />
           </div>

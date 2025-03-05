@@ -13,7 +13,7 @@ import remarkMath from "remark-math";
 import rehypeUnwrapList from "./src/utils/rehype.utils";
 
 export default defineConfig({
-  site: "https://astorverse.com",
+  site: "https://astor-dev.com",
   output: "static",
   devToolbar: {
     enabled: true,

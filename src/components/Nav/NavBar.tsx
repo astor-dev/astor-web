@@ -69,7 +69,7 @@ function NavBar({ pathname, tags, series, posts }: NavBarProps) {
         className={`left-1/2 z-30 w-full max-w-screen-lg -translate-x-1/2 transform duration-200 2xl:max-w-screen-xl ${
           isInHero
             ? isRoot
-              ? "absolute opacity-0"
+              ? "pointer-events-none absolute opacity-0"
               : "absolute bg-opacity-0 text-white-base"
             : "fixed bg-skin-fill bg-opacity-90 text-black-muted shadow-md"
         } sm:top-4 sm:rounded-3xl`}
@@ -142,7 +142,7 @@ function NavBar({ pathname, tags, series, posts }: NavBarProps) {
                 isInHero ? "text-white-base" : "text-black-base"
               }`}
             >
-              astorverse
+              astor-dev
             </a>
           </div>
 

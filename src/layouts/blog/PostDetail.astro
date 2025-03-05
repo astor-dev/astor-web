@@ -26,7 +26,7 @@ const headings = renderResult.headings;
 const formattedDate = dayjs(post.data.createdAt).format("YYYY년 MM월 DD일");
 ---
 
-<Layout title={post.data.title}>
+<Layout title={post.data.title} image={post.data.ogImage}>
   <PostHero post={post} slot="hero" />
 
   <article class="relative mx-auto">

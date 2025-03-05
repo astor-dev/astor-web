@@ -2,8 +2,9 @@
 import logo from "~assets/svgs/favicon.png";
 const {
   title,
+  image,
   description = "astor의 개발 및 기술 관련 블로그입니다.",
-  url = "https://astorverse.com",
+  url = "https://astor-dev.com",
   favicon = logo.src,
   keywords = "Astro, 블로그, 개발, 웹",
   type = "website",
@@ -28,7 +29,9 @@ const {
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-  <title>{title ? title + " | AstorVerse: Tech & Dev" : "AstorVerse: Tech & Dev"}</title>
+  <title>
+    {title ? title + " | astor-dev" : "astor-dev"}
+  </title>
   <meta name="description" content={description} />
   <meta name="keywords" content={keywords} />
   <link rel="canonical" href={url} />
@@ -42,13 +45,13 @@ const {
   <meta property="og:url" content={url} />
   <meta property="og:title" content={title} />
   <meta property="og:description" content={description} />
-  <meta property="og:image" content={favicon} />
+  <meta property="og:image" content={image} />
 
   <!-- Twitter Card -->
   <meta name="twitter:card" content="summary_large_image" />
   <meta name="twitter:title" content={title} />
   <meta name="twitter:description" content={description} />
-  <meta name="twitter:image" content={favicon} />
+  <meta name="twitter:image" content={image} />
 
   <!-- 추가적인 SEO 설정 -->
   <meta name="robots" content="index, follow" />

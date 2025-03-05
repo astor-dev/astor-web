@@ -18,6 +18,15 @@ const SectionWithHeader: React.FC<SectionWithHeaderProps> = ({
   const sectionRef = useRef<HTMLElement>(null);
   const isVisible = useIntersectionObserver(sectionRef);
 
+  const parsedDescription = description
+    ? description
+        .replace(
+          /\*\*(.*?)\*\*/g,
+          "<strong class='text-black-accent'>$1</strong>",
+        )
+        .replace(/\n/g, "<br>")
+    : "";
+
   return (
     <section
       ref={sectionRef}
@@ -37,9 +46,10 @@ const SectionWithHeader: React.FC<SectionWithHeaderProps> = ({
           <h2 className="mb-6 text-4xl font-bold tracking-tight text-black-accent sm:text-5xl">
             {title}
           </h2>
-          <p className="text-lg leading-relaxed text-black-base/80">
-            {description}
-          </p>
+          <p
+            className="text-lg leading-relaxed text-black-base/80"
+            dangerouslySetInnerHTML={{ __html: parsedDescription }}
+          />
         </div>
       </div>
 
