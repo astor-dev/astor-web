@@ -1,0 +1,177 @@
+---
+import {
+  IoShareSocialOutline,
+  IoArrowUpOutline,
+  IoArrowDownOutline,
+} from "react-icons/io5";
+
+interface Props {
+  class?: string;
+}
+
+const { class: className }: Props = Astro.props;
+---
+
+<div class={`sticky-buttons not-prose ${className}`}>
+  <div
+    class="bg-white-base mr-4 w-14 rounded-lg border border-skin-line shadow-md"
+  >
+    <ul class="flex flex-col items-center gap-1 py-2">
+      <li class="w-full rounded-md transition-colors hover:bg-skin-accent/10">
+        <button
+          class="scroll-top-button flex h-12 w-full items-center justify-center text-lg text-skin-accent"
+          aria-label="맨 위로 이동"
+          title="맨 위로 이동"
+        >
+          <IoArrowUpOutline />
+        </button>
+      </li>
+      <li class="w-full px-3">
+        <div class="my-1 border-t border-skin-line"></div>
+      </li>
+      <li class="w-full rounded-md transition-colors hover:bg-skin-accent/10">
+        <button
+          class="share-button flex h-12 w-full items-center justify-center text-lg text-skin-accent"
+          aria-label="공유하기"
+          title="공유하기"
+        >
+          <IoShareSocialOutline />
+        </button>
+      </li>
+      <li class="w-full px-3">
+        <div class="my-1 border-t border-skin-line"></div>
+      </li>
+      <li class="w-full rounded-md transition-colors hover:bg-skin-accent/10">
+        <button
+          class="scroll-bottom-button flex h-12 w-full items-center justify-center text-lg text-skin-accent"
+          aria-label="맨 아래로 이동"
+          title="맨 아래로 이동"
+        >
+          <IoArrowDownOutline />
+        </button>
+      </li>
+    </ul>
+  </div>
+</div>
+
+<script>
+  // 스크롤에 따라 버튼 컨테이너 위치 조정
+  document.addEventListener("DOMContentLoaded", () => {
+    const buttonsContainer = document.querySelector(".sticky-buttons");
+    const buttonsDiv = buttonsContainer?.querySelector("div");
+    let initialTopOffset = 0;
+
+    function updateButtonsPosition() {
+      if (!buttonsContainer || !buttonsDiv) return;
+
+      const scrollY = window.scrollY;
+      const headerOffset = 200;
+
+      // 초기 위치보다 아래로 스크롤 되었을 때
+      if (scrollY >= initialTopOffset - headerOffset) {
+        buttonsDiv.style.position = "fixed";
+        buttonsDiv.style.top = headerOffset + "px";
+      } else {
+        buttonsDiv.style.position = "static";
+        buttonsDiv.style.top = "auto";
+      }
+    }
+
+    // 초기 위치 기억 (페이지 로드 후)
+    window.addEventListener("load", () => {
+      // 괄호를 명확하게 추가하여 계산 순서 수정
+      initialTopOffset =
+        (buttonsContainer?.getBoundingClientRect().top || 0) + window.scrollY;
+      updateButtonsPosition();
+    });
+
+    // 디바운싱 적용하여 스크롤 이벤트 최적화
+    window.addEventListener("scroll", updateButtonsPosition);
+
+    // 페이지 사이즈 변경 시에도 위치 업데이트
+    window.addEventListener("resize", () => {
+      // 위치 재계산
+      initialTopOffset =
+        (buttonsContainer?.getBoundingClientRect().top || 0) + window.scrollY;
+      updateButtonsPosition();
+    });
+
+    // 정기적으로 위치 확인하여 오류 예방
+    setInterval(() => {
+      if (window.scrollY === 0 && buttonsDiv?.style.position === "fixed") {
+        buttonsDiv.style.position = "static";
+        buttonsDiv.style.top = "auto";
+      }
+    }, 1000);
+
+    // 공유하기 버튼 기능 구현
+    document.querySelector(".share-button")?.addEventListener("click", () => {
+      if (navigator.share) {
+        navigator
+          .share({
+            title: document.title,
+            url: window.location.href,
+          })
+          .catch(error => console.log("공유하기 실패:", error));
+      } else {
+        // Web Share API를 지원하지 않는 브라우저용 대체 기능
+        navigator.clipboard
+          .writeText(window.location.href)
+          .then(() => alert("URL이 클립보드에 복사되었습니다."))
+          .catch(error => console.log("URL 복사 실패:", error));
+      }
+    });
+
+    // 맨 위로 스크롤 버튼
+    document
+      .querySelector(".scroll-top-button")
+      ?.addEventListener("click", () => {
+        window.scrollTo({
+          top: 0,
+          behavior: "smooth",
+        });
+      });
+
+    // 맨 아래로 스크롤 버튼
+    document
+      .querySelector(".scroll-bottom-button")
+      ?.addEventListener("click", () => {
+        window.scrollTo({
+          top: document.body.scrollHeight,
+          behavior: "smooth",
+        });
+      });
+  });
+</script>
+
+<style>
+  .sticky-buttons {
+    position: absolute;
+    left: 0px;
+    width: 70px;
+  }
+
+  /* @media (min-width: 1280px) {
+    .sticky-buttons {
+      left: -80px;
+    }
+  }
+
+  @media (min-width: 1536px) {
+    .sticky-buttons {
+      left: -100px;
+    }
+  } */
+
+  /* 버튼 호버 효과 */
+  .sticky-buttons button {
+    transition:
+      transform 0.2s ease,
+      color 0.2s ease;
+  }
+
+  .sticky-buttons button:hover {
+    transform: scale(1.1);
+    color: var(--color-accent);
+  }
+</style>

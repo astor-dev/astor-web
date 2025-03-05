@@ -7,6 +7,8 @@ import dayjs from "dayjs";
 import { render } from "astro:content";
 import HeadingsTable from "~components/Table/HeadingsTable.astro";
 import PostHero from "~components/Hero/PostHero.astro";
+import StickyTableOfContents from "~components/Nav/StickyTableOfContents.astro";
+import StickyButtons from "~components/Nav/StickyButtons.astro";
 
 interface Props {
   post: PostEntry;
@@ -30,14 +32,17 @@ const formattedDate = dayjs(post.data.createdAt).format("YYYY년 MM월 DD일");
   <PostHero post={post} slot="hero" />
 
   <article class="relative mx-auto">
-    {/* 본문 */}
-    <div class="prose prose-sm mx-auto max-w-none md:prose">
-      <HeadingsTable headings={headings} />
-
-      {/* 마크다운 콘텐츠 */}
-      <div>
-        <Content />
+    <div class="relative flex">
+      {/* 본문 */}
+      <div class="prose prose-sm mx-auto max-w-none md:prose">
+        <HeadingsTable class="block xl:hidden" headings={headings} />
+        {/* 마크다운 콘텐츠 */}
+        <div>
+          <Content />
+        </div>
       </div>
+      <StickyTableOfContents class="hidden xl:block" headings={headings} />
+      <StickyButtons class="hidden xl:block" headings={headings} />
     </div>
 
     {/* 하단 공유 버튼 */}

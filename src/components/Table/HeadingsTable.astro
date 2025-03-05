@@ -4,9 +4,10 @@ import { FaList } from "react-icons/fa";
 
 interface Props {
   headings: MarkdownHeading[];
+  class?: string;
 }
 
-const { headings }: Props = Astro.props;
+const { headings, class: className }: Props = Astro.props;
 
 // headings 배열의 최소 depth를 기준으로 계층적 넘버링 계산 함수
 function computeNumbering(headings: MarkdownHeading[]) {
@@ -32,7 +33,7 @@ const computedHeadings = computeNumbering(headings);
 const minDepth = headings.length ? Math.min(...headings.map(h => h.depth)) : 1;
 ---
 
-<nav class="table-of-contents not-prose">
+<nav class={`table-of-contents not-prose ${className}`}>
   <table class="w-full overflow-hidden rounded-lg border border-skin-line">
     <thead class="bg-skin-accent">
       <tr>

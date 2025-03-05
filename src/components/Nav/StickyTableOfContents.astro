@@ -1,0 +1,182 @@
+---
+import type { MarkdownHeading } from "astro";
+import { IoListOutline } from "react-icons/io5";
+
+interface Props {
+  headings: MarkdownHeading[];
+  class?: string;
+}
+
+const { headings, class: className }: Props = Astro.props;
+
+// headings 배열의 최소 depth를 기준으로 계층적 넘버링 계산 함수
+function computeNumbering(headings: MarkdownHeading[]) {
+  if (!headings.length) return [];
+  const minDepth = Math.min(...headings.map(h => h.depth));
+  const counters: number[] = [];
+  return headings.map(heading => {
+    // 현재 heading의 normalized level (최상위는 0)
+    const level = heading.depth - minDepth;
+    if (counters.length === level) {
+      // 해당 레벨의 첫 번째 항목이면 카운터 추가
+      counters.push(1);
+    } else {
+      // 같은 레벨이면 카운터 증가하고, 더 깊은 레벨은 리셋
+      counters[level] = (counters[level] || 0) + 1;
+      counters.length = level + 1;
+    }
+    return { ...heading, numbering: counters.join(".") };
+  });
+}
+
+const computedHeadings = computeNumbering(headings);
+const minDepth = headings.length ? Math.min(...headings.map(h => h.depth)) : 1;
+---
+
+<nav class={`toc-container not-prose ${className}`}>
+  <div class="bg-white-base ml-4 w-64 rounded-lg">
+    <ul class="max-h-[calc(100vh-200px)] overflow-y-auto py-2">
+      {
+        computedHeadings.map(item => (
+          <li
+            class="toc-item transition-colors hover:bg-skin-accent/10"
+            style={`padding-left: ${(item.depth - minDepth) * 1.2 + 1}rem;`}
+          >
+            <a
+              href={`#${item.slug}`}
+              class="block py-2 pr-4 text-sm no-underline"
+              data-heading-id={item.slug}
+            >
+              <span class="mr-2 text-skin-accent">{item.numbering}</span>
+              <span class="text-black-accent">{item.text}</span>
+            </a>
+          </li>
+        ))
+      }
+    </ul>
+  </div>
+</nav>
+
+<script>
+  // 스크롤에 따라 현재 보이는 섹션의 목차를 활성화하는 스크립트
+  document.addEventListener("DOMContentLoaded", () => {
+    const tocContainer = document.querySelector(".toc-container");
+    const tocDiv = tocContainer?.querySelector("div");
+    let initialTopOffset = 0;
+
+    function updateTocPosition() {
+      if (!tocContainer || !tocDiv) return;
+
+      const scrollY = window.scrollY;
+      const headerOffset = 200;
+
+      // 초기 위치보다 아래로 스크롤 되었을 때
+      if (scrollY >= initialTopOffset - headerOffset) {
+        tocDiv.style.position = "fixed";
+        tocDiv.style.top = headerOffset + "px";
+      } else {
+        tocDiv.style.position = "static";
+        tocDiv.style.top = "auto";
+      }
+    }
+
+    // 초기 위치 기억 (페이지 로드 후)
+    window.addEventListener("load", () => {
+      // 괄호를 명확하게 추가하여 계산 순서 수정
+      initialTopOffset =
+        (tocContainer?.getBoundingClientRect().top || 0) + window.scrollY;
+      updateTocPosition();
+    });
+
+    // 스크롤 이벤트에 따라 목차 위치 업데이트
+    window.addEventListener("scroll", updateTocPosition);
+
+    // 페이지 사이즈 변경 시에도 위치 업데이트
+    window.addEventListener("resize", () => {
+      // 위치 재계산
+      initialTopOffset =
+        (tocContainer?.getBoundingClientRect().top || 0) + window.scrollY;
+      updateTocPosition();
+    });
+
+    // 정기적으로 위치 확인하여 오류 예방
+    setInterval(() => {
+      if (window.scrollY === 0 && tocDiv?.style.position === "fixed") {
+        tocDiv.style.position = "static";
+        tocDiv.style.top = "auto";
+      }
+    }, 1000);
+
+    // 기존 IntersectionObserver 코드
+    const observer = new IntersectionObserver(
+      entries => {
+        entries.forEach(entry => {
+          const id = entry.target.getAttribute("id");
+          if (entry.isIntersecting) {
+            // 모든 toc-item에서 active 클래스 제거
+            document.querySelectorAll(".toc-item").forEach(item => {
+              item.classList.remove("active");
+            });
+
+            // 해당 링크를 찾고 부모 li 요소에 active 클래스 추가
+            const activeLink = document.querySelector(
+              `.toc-item a[data-heading-id="${id}"]`,
+            );
+            if (activeLink) {
+              activeLink.parentElement?.classList.add("active");
+            }
+          }
+        });
+      },
+      { rootMargin: "0px 0px -80% 0px", threshold: 0 },
+    );
+
+    // 모든 헤딩을 관찰합니다
+    document
+      .querySelectorAll("h1[id], h2[id], h3[id], h4[id], h5[id], h6[id]")
+      .forEach(heading => {
+        observer.observe(heading);
+      });
+  });
+</script>
+
+<style>
+  .toc-container {
+    position: absolute;
+    right: 0px; /* 본문 우측에 배치 */
+    width: 280px;
+  }
+
+  /* @media (min-width: 1280px) {
+    .toc-container {
+      right: -50px;
+    }
+  }
+
+  @media (min-width: 1536px) {
+    .toc-container {
+      right: -50px;
+    }
+  } */
+
+  .toc-item.active {
+    font-weight: bold;
+    background-color: rgba(var(--color-accent), 0.1);
+  }
+
+  /* 스크롤바 스타일링 */
+  .toc-container ul::-webkit-scrollbar {
+    width: 4px;
+    display: block;
+  }
+
+  .toc-container ul::-webkit-scrollbar-track {
+    background: rgba(var(--color-fill), 0.5);
+    border-radius: 2px;
+  }
+
+  .toc-container ul::-webkit-scrollbar-thumb {
+    background: rgba(var(--color-accent), 0.7);
+    border-radius: 2px;
+  }
+</style>
