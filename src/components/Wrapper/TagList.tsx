@@ -15,7 +15,7 @@ interface Props {
  * @param other - 다른 뷰포트 뷰
  * @returns 모바일과 다른 뷰포트에서 아예 다른 뷰를 렌더링 할 때 쓰는 컴포넌트
  */
-export default function TagList({ tags }: Props) {
+export default function TagList({ tags, totalPosts }: Props) {
   const [isMobile, setIsMobile] = useState(false);
 
   useEffect(() => {
