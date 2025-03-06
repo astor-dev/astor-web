@@ -7,6 +7,7 @@ export const POSTS_SERVICE = Symbol("POSTS_SERVICE");
 const PostCreateSchema = {
   data: z.object({
     frontmatter: z.object({
+      id: z.string(),
       author: z.string(),
       title: z.string(),
       pinned: z.boolean(),
@@ -24,6 +25,7 @@ const PostCreateSchema = {
 
 interface CreatePostRequest {
   frontmatter: {
+    id: string;
     author: string;
     title: string;
     pinned: boolean;

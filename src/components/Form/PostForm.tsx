@@ -14,12 +14,14 @@ import CheckboxGroupInput from "~components/Input/CheckboxGroupInput";
 import type { Series, Tag } from "~types/post.type";
 import AutoCompleteMultiInput from "~components/Input/AutoCompleteMultiInput";
 import AutoCompleteInput from "~components/Input/AutoCompleteInput";
+import { generateId } from "~utils/id.utils";
 
 interface PostFormProps {
   series: Series[];
   tags: Tag[];
   initialData?: Partial<{
     data: {
+      id: string;
       author: string;
       title: string;
       pinned: boolean;
@@ -42,6 +44,7 @@ const PostForm: React.FC<PostFormProps> = ({ initialData, tags, series }) => {
   const defaultDate = dayjs().format("YYYY-MM-DD HH:mm:ss");
   const [formData, setFormData] = useState(() => {
     return {
+      id: initialData?.data?.id ?? generateId(),
       author: initialData?.data?.author ?? "Astor",
       title: initialData?.data?.title ?? "",
       options: {
@@ -115,6 +118,7 @@ const PostForm: React.FC<PostFormProps> = ({ initialData, tags, series }) => {
       // setFormData(prev => ({ ...prev, updatedAt: now }));
 
       const submissionData = {
+        id: initialData?.data?.id ?? generateId(),
         author: formData.author,
         title: formData.title,
         series: formData.series,
@@ -153,7 +157,7 @@ const PostForm: React.FC<PostFormProps> = ({ initialData, tags, series }) => {
     >
       <div className="rounded-lg border border-skin-line bg-white p-6">
         <h2 className="mb-6 text-xl font-semibold text-black-accent">
-          기본 정보
+          기본 정보 (ID: {formData.id})
         </h2>
         <div className="grid gap-6 lg:grid-cols-2">
           <div className="lg:col-span-2">
