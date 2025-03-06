@@ -23,6 +23,7 @@
     "@astrojs/tailwind": "^5.1.5",
     "@giscus/react": "^3.1.0",
     "@mdxeditor/editor": "^3.21.1",
+    "@sapphire/snowflake": "^3.5.5",
     "@types/react-slick": "^0.23.13",
     "astro": "^5.1.9",
     "astro-imagetools": "^0.9.0",
