@@ -41,8 +41,8 @@ const BlogPostCard: React.FC<BlogPostCardProps> = props => {
             alt={props.data.title}
             className="absolute inset-0 h-full w-full object-cover"
           />
-          {/* 이미지 위에 시리즈 태그 오버레이 */}
-          {props.data.series && (
+
+          {/* {props.data.series && (
             <div className="absolute left-2 top-2">
               {isLoading ? (
                 <Skeleton className="h-3 w-3" />
@@ -53,15 +53,15 @@ const BlogPostCard: React.FC<BlogPostCardProps> = props => {
                 </span>
               )}
             </div>
-          )}
+          )} */}
         </div>
 
-        <div className="flex flex-1 flex-col justify-between p-3">
+        <div className="flex flex-1 flex-col justify-between py-3">
           <div>
             <h3 className="mb-1 line-clamp-1 text-lg font-bold text-black-accent md:text-xl">
               {isLoading ? <Skeleton className="w-full" /> : props.data.title}
             </h3>
-            <p className="line-clamp-3 min-h-[3.75rem] text-sm">
+            <p className="line-clamp-2 h-[2.5rem] text-sm">
               {isLoading ? (
                 <Skeleton className="h-full" />
               ) : (
@@ -69,7 +69,7 @@ const BlogPostCard: React.FC<BlogPostCardProps> = props => {
               )}
             </p>
           </div>
-          <div className="line-clamp-6 min-h-[7.5rem] text-sm text-black-muted">
+          <div className="my-3 line-clamp-6 min-h-[7.5rem] text-sm text-black-muted">
             {isLoading ? <Skeleton className="h-full" /> : body}
           </div>
           <div className="flex items-center gap-1 text-xs text-gray-500">
