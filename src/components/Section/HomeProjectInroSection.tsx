@@ -4,7 +4,7 @@ import bannerImage from "~assets/images/project-banner.png";
 
 const HomeProjectIntroSection = () => {
   return (
-    <section className="relative flex h-[400px] w-full items-center justify-center overflow-hidden bg-gray-100 px-[5dvw] py-[5dvh] md:h-[600px]">
+    <section className="relative flex h-[400px] w-full items-center justify-center overflow-hidden bg-gray-100 px-[5dvw] py-12 md:h-[600px]">
       <div className="flex h-full w-full flex-col">
         {/* 텍스트: 왼쪽 정렬 */}
         <div className="mb-10 flex flex-col">

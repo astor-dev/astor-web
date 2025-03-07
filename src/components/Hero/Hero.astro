@@ -34,7 +34,9 @@ const parsedDescription = description
   : "";
 ---
 
-<section class={`relative w-full h-[40dvh] overflow-hidden ${className ?? ""}`}>
+<section
+  class={`relative w-full h-[250px] md:h-[400px] overflow-hidden ${className ?? ""}`}
+>
   <!-- 배경 이미지 (맨 뒤) -->
   <div class="absolute inset-0 z-0">
     <ImageWithSkeleton

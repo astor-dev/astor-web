@@ -43,10 +43,13 @@ function NavBar({ pathname, tags, series, posts }: NavBarProps) {
   useEffect(() => {
     const handleScroll = () => {
       // 홈 페이지가 아니라면 네브바를 항상 보여줍니다.
-      // Hero 컴포넌트의 높이(66dvh)를 픽셀로 변환
-      let heroHeight = window.innerHeight * 0.66;
-      if (window.innerWidth < 768) {
-        heroHeight = window.innerHeight * 0.5; // 모바일 대응
+      // Hero 컴포넌트의 높이(300px~md:400~lg:500px)를 픽셀로 변환
+      let heroHeight = 300;
+      if (window.innerWidth >= 768) {
+        heroHeight = 400;
+      }
+      if (window.innerWidth >= 1024) {
+        heroHeight = 500;
       }
       if (window.scrollY < heroHeight || pathname.includes("/admin")) {
         setIsInHero(true);

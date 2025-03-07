@@ -54,7 +54,10 @@ for (const stackId of project.data.stackIds) {
 
 <Layout title={project.data.projectName} image={project.data.imageUrl}>
   <!-- Hero 섹션: 전체 화면을 채우면서 프로젝트 요약 정보를 보여줌 -->
-  <section slot="hero" class="relative h-[66dvh] w-full overflow-hidden">
+  <section
+    slot="hero"
+    class="relative h-[250px] w-full overflow-hidden md:h-[400px]"
+  >
     <!-- 배경 이미지 (절대 위치로 부모 안에 배치) -->
     <div class="absolute inset-0 z-0">
       <ImageWithSkeleton
