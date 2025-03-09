@@ -9,12 +9,14 @@ import { POST_REPOSITORY } from "~modules/repositories/posts/PostRepository";
 import PostForm from "~components/Form/PostForm";
 import Hero from "~components/Hero/Hero.astro";
 import blogHeader from "~assets/images/blog-header.jpg";
+import { SERIES_REPOSITORY, type SeriesRepository } from "~modules/repositories/series/SeriesRepository";
 
 export async function getStaticPaths() {
   const postRepository = repositoryContainer.get<PostRepository>(POST_REPOSITORY);
   const posts = await postRepository.getPosts();
   const tags = await postRepository.getAllTags();
-  const series = await postRepository.getAllSeries();
+  const seriesRepository = repositoryContainer.get<SeriesRepository>(SERIES_REPOSITORY);
+  const series = await seriesRepository.getSeries();
 
   const postResult = posts.items.map(post => ({
     params: { id: post.id },
@@ -36,7 +38,12 @@ const { post, tags, series } = Astro.props;
   />
   <AdminOnly client:load>
     <div class="mx-auto w-full max-w-5xl px-4 py-8 sm:px-6 lg:px-8">
-      <PostForm client:only="react" initialData={post} tags={tags} series={series} />
+      <PostForm
+        client:only="react"
+        initialData={post}
+        tags={tags}
+        series={series.items}
+      />
     </div>
   </AdminOnly>
 </Layout>

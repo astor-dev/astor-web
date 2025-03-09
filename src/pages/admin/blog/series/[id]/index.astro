@@ -1,0 +1,27 @@
+---
+import AdminOnly from "~components/Wrapper/AdminOnly";
+import { SERIES_REPOSITORY, type SeriesRepository } from "~modules/repositories/series/SeriesRepository";
+import { repositoryContainer } from "~modules/repository.module";
+import SeriesList from "~layouts/blog/SeriesList.astro";
+import { POST_REPOSITORY, type PostRepository } from "~modules/repositories/posts/PostRepository";
+import SeriesDetail from "~layouts/blog/SeriesDetail.astro";
+
+export async function getStaticPaths() {
+  const postRepository = repositoryContainer.get<PostRepository>(POST_REPOSITORY);
+  const seriesAndPosts = await postRepository.getAllSeriesAndPosts();
+  const seriesResult = seriesAndPosts.map(seriesAndPost => ({
+    params: { id: seriesAndPost.series.data.id },
+    props: { seriesAndPost },
+  }));
+
+  return seriesResult;
+}
+
+const { seriesAndPost } = Astro.props;
+---
+
+<SeriesDetail series={seriesAndPost.series} posts={seriesAndPost.posts} />
+  <AdminOnly client:load>
+    <></>
+  </AdminOnly>
+</SeriesDetail>

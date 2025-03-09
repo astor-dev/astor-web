@@ -31,31 +31,43 @@ const HomeProjectSlider = (props: { projects: ProjectEntry[] }) => {
   };
 
   return (
-    <div className="h-full w-full">
-      <Swiper
-        ref={swiperRef}
-        modules={[Navigation, Pagination, Autoplay, EffectFade]}
-        autoplay={{ delay: 3000, disableOnInteraction: false }}
-        loop={true}
-        effect={"fade"}
-        spaceBetween={30}
-        slidesPerView={1}
-        slidesPerGroup={1}
-        pagination={{
-          clickable: true,
-          renderBullet: (index, className) => {
-            return `<span class="${className} swiper-pagination-bullet-custom"></span>`;
-          },
-        }}
-      >
-        {projects?.map((project, index) => {
-          return (
-            <SwiperSlide key={project.id} virtualIndex={index}>
-              <FullImageProjectCard key={project.id} {...project} />
-            </SwiperSlide>
-          );
-        })}
-      </Swiper>
+    <div className="flex h-full w-full">
+      <div className="relative h-full w-full">
+        {/* 4:3 비율을 유지하는 컨테이너 */}
+        <div className="h-full w-full">
+          <Swiper
+            ref={swiperRef}
+            modules={[Navigation, Pagination, Autoplay, EffectFade]}
+            autoplay={{ delay: 3000, disableOnInteraction: false }}
+            loop={true}
+            effect={"fade"}
+            spaceBetween={0}
+            slidesPerView={1}
+            slidesPerGroup={1}
+            className="h-full"
+            pagination={{
+              clickable: true,
+              renderBullet: (index, className) => {
+                return `<span class="${className} swiper-pagination-bullet-custom"></span>`;
+              },
+            }}
+          >
+            {projects?.map((project, index) => {
+              return (
+                <SwiperSlide
+                  key={project.id}
+                  virtualIndex={index}
+                  className="h-full"
+                >
+                  <div className="aspect-[4/3] h-full w-full">
+                    <FullImageProjectCard key={project.id} {...project} />
+                  </div>
+                </SwiperSlide>
+              );
+            })}
+          </Swiper>
+        </div>
+      </div>
     </div>
   );
 };

@@ -1,16 +1,15 @@
 ---
+import type { SeriesAndCount } from "~types/post.type";
 export interface Props {
-  series: string;
-  count: number;
-  ogImage?: string;
+  series: SeriesAndCount;
 }
 
-const { series, count, ogImage } = Astro.props;
-const imageUrl = ogImage || "/default-series.jpg";
+const { series } = Astro.props;
+const imageUrl = series.series.data.ogImage || "/default-series.jpg";
 ---
 
 <div class="group relative overflow-hidden bg-transparent">
-  <a href={`/blog/series/${encodeURIComponent(series)}`}>
+  <a href={`/blog/series/${encodeURIComponent(series.series.data.id)}`}>
     <!-- 이미지 영역 -->
     <div
       class="h-48 w-full bg-cover bg-center"
@@ -19,8 +18,10 @@ const imageUrl = ogImage || "/default-series.jpg";
     </div>
     <!-- 카드 내용 -->
     <div class="py-4">
-      <h2 class="text-start text-xl font-bold text-black-accent">{series}</h2>
-      <p class="mt-1 text-sm text-gray-600">{count}개의 포스트</p>
+      <h2 class="text-start text-xl font-bold text-black-accent">
+        {series.series.data.name}
+      </h2>
+      <p class="mt-1 text-sm text-gray-600">{series.count}개의 포스트</p>
     </div>
   </a>
 </div>

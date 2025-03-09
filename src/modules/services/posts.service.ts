@@ -3,26 +3,6 @@ import type { HttpInstance } from "~modules/services/core/http.instance";
 
 export const POSTS_SERVICE = Symbol("POSTS_SERVICE");
 
-// ✅ Zod 스키마 정의
-const PostCreateSchema = {
-  data: z.object({
-    frontmatter: z.object({
-      id: z.string(),
-      author: z.string(),
-      title: z.string(),
-      pinned: z.boolean(),
-      draft: z.boolean(),
-      tags: z.array(z.string()),
-      ogImage: z.string(),
-      series: z.string(),
-      description: z.string(),
-      createdAt: z.string(),
-      updatedAt: z.string(),
-    }),
-    body: z.string(),
-  }),
-};
-
 interface CreatePostRequest {
   frontmatter: {
     id: string;
@@ -32,7 +12,7 @@ interface CreatePostRequest {
     draft: boolean;
     tags: string[];
     ogImage: string;
-    series: string;
+    seriesId: string;
     description: string;
     createdAt: string;
     updatedAt: string;

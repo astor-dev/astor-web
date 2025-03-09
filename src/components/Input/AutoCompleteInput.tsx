@@ -1,14 +1,21 @@
 import React, { useState, useCallback, useRef } from "react";
 import type { ChangeEvent, KeyboardEvent, FocusEvent } from "react";
 
+// 옵션 타입 정의 추가
+interface Option {
+  label: string;
+  value: string;
+}
+
 interface AutoCompleteInputProps {
   id?: string;
   name?: string;
   label?: string;
   required?: boolean;
   placeholder?: string;
-  allOptions: string[]; // 자동완성으로 보여줄 전체 옵션 목록
-  defaultValue?: string;
+  options: Option[]; // 자동완성 옵션 목록 (label, value 쌍)
+  defaultValue?: string; // 기본 선택값 (value)
+  defaultLabel?: string; // 기본 표시 텍스트 (label)
   disabled?: boolean;
   onValueChange: (value: string) => void;
 }
@@ -19,13 +26,22 @@ const AutoCompleteInput: React.FC<AutoCompleteInputProps> = ({
   label,
   required = false,
   placeholder,
-  allOptions,
+  options,
   defaultValue = "",
+  defaultLabel = "",
   disabled = false,
   onValueChange,
 }) => {
-  const [inputValue, setInputValue] = useState(defaultValue);
-  const [filteredOptions, setFilteredOptions] = useState<string[]>([]);
+  // 초기 표시될 라벨: defaultLabel이 있으면 사용, 없으면 defaultValue에 해당하는 label 찾기
+  const initialLabel =
+    defaultLabel ||
+    (defaultValue
+      ? options.find(opt => opt.value === defaultValue)?.label || ""
+      : "");
+
+  const [inputValue, setInputValue] = useState(initialLabel);
+  const [selectedValue, setSelectedValue] = useState(defaultValue);
+  const [filteredOptions, setFilteredOptions] = useState<Option[]>([]);
   const [showSuggestions, setShowSuggestions] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
 
@@ -34,28 +50,32 @@ const AutoCompleteInput: React.FC<AutoCompleteInputProps> = ({
     (e: ChangeEvent<HTMLInputElement>) => {
       const value = e.target.value;
       setInputValue(value);
-      onValueChange(value);
 
+      // 입력값이 비어있으면 선택 값도 비움
       if (value.trim() === "") {
+        setSelectedValue("");
+        onValueChange("");
         setFilteredOptions([]);
         setShowSuggestions(false);
         return;
       }
 
-      const filtered = allOptions.filter(opt =>
-        opt.toLowerCase().includes(value.toLowerCase()),
+      // 입력 텍스트로 옵션 필터링
+      const filtered = options.filter(opt =>
+        opt.label.toLowerCase().includes(value.toLowerCase()),
       );
       setFilteredOptions(filtered);
       setShowSuggestions(true);
     },
-    [allOptions, onValueChange],
+    [options, onValueChange],
   );
 
   // 옵션 선택 시 처리
   const selectOption = useCallback(
-    (option: string) => {
-      setInputValue(option);
-      onValueChange(option);
+    (option: Option) => {
+      setInputValue(option.label);
+      setSelectedValue(option.value);
+      onValueChange(option.value);
       setFilteredOptions([]);
       setShowSuggestions(false);
     },
@@ -65,27 +85,46 @@ const AutoCompleteInput: React.FC<AutoCompleteInputProps> = ({
   // 엔터 혹은 탭 키 입력 시 첫번째 옵션 선택
   const handleKeyDown = useCallback(
     (e: KeyboardEvent<HTMLInputElement>) => {
-      if (e.key === "Enter" || e.key === "Tab") {
-        if (filteredOptions.length > 0) {
-          e.preventDefault();
-          selectOption(filteredOptions[0]);
-        }
+      if (
+        (e.key === "Enter" || e.key === "Tab") &&
+        filteredOptions.length > 0
+      ) {
+        e.preventDefault();
+        selectOption(filteredOptions[0]);
       }
     },
     [filteredOptions, selectOption],
   );
 
   // 포커스를 잃었을 때 자동완성 목록 숨김 처리
-  const handleBlur = useCallback((e: FocusEvent<HTMLDivElement>) => {
-    setTimeout(() => {
-      if (
-        containerRef.current &&
-        !containerRef.current.contains(document.activeElement)
-      ) {
-        setShowSuggestions(false);
-      }
-    }, 200);
-  }, []);
+  const handleBlur = useCallback(
+    (e: FocusEvent<HTMLDivElement>) => {
+      setTimeout(() => {
+        if (
+          containerRef.current &&
+          !containerRef.current.contains(document.activeElement)
+        ) {
+          setShowSuggestions(false);
+
+          // 선택된 값이 없고 입력값이 있는 경우, 정확히 일치하는 옵션을 찾아 선택
+          if (!selectedValue && inputValue) {
+            const exactMatch = options.find(
+              opt => opt.label.toLowerCase() === inputValue.toLowerCase(),
+            );
+            if (exactMatch) {
+              setSelectedValue(exactMatch.value);
+              onValueChange(exactMatch.value);
+              setInputValue(exactMatch.label);
+            } else {
+              // 일치하는 값이 없으면 입력값 초기화
+              setInputValue("");
+            }
+          }
+        }
+      }, 200);
+    },
+    [inputValue, selectedValue, options, onValueChange],
+  );
 
   return (
     <div ref={containerRef} onBlur={handleBlur} className="w-full">
@@ -111,15 +150,23 @@ const AutoCompleteInput: React.FC<AutoCompleteInputProps> = ({
           onKeyDown={handleKeyDown}
           className="placeholder:text-skin-muted w-full border-none bg-transparent outline-none"
         />
+
+        {/* 실제 값을 담는 hidden input */}
+        <input
+          type="hidden"
+          name={name ? `${name}_value` : `${id}_value`}
+          value={selectedValue}
+        />
+
         {showSuggestions && filteredOptions.length > 0 && (
           <ul className="absolute left-0 top-full z-10 mt-1 max-h-48 w-full overflow-y-auto rounded-md border border-skin-line bg-white shadow-lg">
             {filteredOptions.map(option => (
               <li
-                key={option}
+                key={option.value}
                 onMouseDown={() => selectOption(option)}
                 className="cursor-pointer p-2 text-sm hover:bg-gray-100"
               >
-                {option}
+                {option.label}
               </li>
             ))}
           </ul>

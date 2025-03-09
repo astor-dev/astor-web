@@ -1,14 +1,22 @@
 import React, { useState, useCallback, useRef } from "react";
 import type { ChangeEvent, KeyboardEvent, MouseEvent, FocusEvent } from "react";
 
+// 태그 옵션 타입 정의
+interface TagOption {
+  label: string; // 화면에 표시될 텍스트
+  value: string; // 실제 저장될 값
+}
+
 interface AutoCompleteMultiInputProps {
   id?: string;
   name?: string;
   label?: string;
   required?: boolean;
   placeholder?: string;
-  allTags: string[]; // 자동완성으로 추천할 전체 태그 목록
-  defaultValue?: string[]; // 초기 선택된 태그
+  options: TagOption[]; // 자동완성으로 추천할 전체 태그 옵션 목록
+  allTags?: string[]; // 기존 호환성 위한 옵션 (deprecated)
+  defaultValue?: string[]; // 초기 선택된 태그 값 배열
+  defaultLabels?: string[]; // 초기 선택된 태그 라벨 배열 (선택적)
   disabled?: boolean;
   onTagsChange: (tags: string[]) => void;
 }
@@ -25,15 +33,36 @@ const AutoCompleteMultiInput: React.FC<AutoCompleteMultiInputProps> = ({
   label,
   required = false,
   placeholder,
-  allTags,
+  options = [],
+  allTags = [], // 이전 버전 호환성 유지
   defaultValue = [],
+  defaultLabels = [],
   disabled = false,
   onTagsChange,
 }) => {
-  const [selectedTags, setSelectedTags] = useState<string[]>(defaultValue);
+  // allTags가 제공되면 이를 options 형태로 변환 (이전 버전 호환)
+  const tagOptions: TagOption[] =
+    options.length > 0
+      ? options
+      : allTags.map(tag => ({ label: tag, value: tag }));
+
+  // 초기 선택된 태그 값과 표시 라벨 매핑
+  const initialTagData = defaultValue.map((value, index) => {
+    const label =
+      defaultLabels[index] ||
+      tagOptions.find(opt => opt.value === value)?.label ||
+      value;
+    return { value, label };
+  });
+
+  // 선택된 태그들을 { value, label } 쌍으로 관리
+  const [selectedTags, setSelectedTags] = useState<TagOption[]>(initialTagData);
   const [inputValue, setInputValue] = useState("");
-  const [filteredOptions, setFilteredOptions] = useState<string[]>([]);
+  const [filteredOptions, setFilteredOptions] = useState<TagOption[]>([]);
   const [showSuggestions, setShowSuggestions] = useState(false);
+  // 마지막 태그 추가 시간 저장 (쓰로틀링용)
+  const lastAddedRef = useRef<number>(0);
+  const throttleTimeMs = 300; // 쓰로틀링 시간 (ms)
 
   const containerRef = useRef<HTMLDivElement>(null);
 
@@ -51,15 +80,58 @@ const AutoCompleteMultiInput: React.FC<AutoCompleteMultiInputProps> = ({
       }
 
       // 입력값을 포함하고 아직 선택되지 않은 태그들 필터링
-      const filtered = allTags.filter(
+      const selectedValues = selectedTags.map(tag => tag.value);
+      const filtered = tagOptions.filter(
         tag =>
-          tag.toLowerCase().includes(value.toLowerCase()) &&
-          !selectedTags.includes(tag),
+          tag.label.toLowerCase().includes(value.toLowerCase()) &&
+          !selectedValues.includes(tag.value),
       );
       setFilteredOptions(filtered);
       setShowSuggestions(true);
     },
-    [allTags, selectedTags],
+    [tagOptions, selectedTags],
+  );
+
+  // 쓰로틀링 적용된 태그 추가 함수
+  const addTag = useCallback(
+    (input: string) => {
+      const now = Date.now();
+      // 마지막 추가 후 throttleTimeMs 시간이 지나지 않았으면 무시
+      if (now - lastAddedRef.current < throttleTimeMs) {
+        return;
+      }
+
+      lastAddedRef.current = now;
+      const trimmed = input.trim().replace(",", "");
+
+      if (trimmed === "") return; // 공백만 있는 경우 무시
+
+      // 이미 선택된 태그 값인지 확인
+      const selectedValues = selectedTags.map(tag => tag.value);
+      if (selectedValues.includes(trimmed)) return;
+
+      // 기존 태그 목록에서 일치하는 옵션 찾기
+      const existingOption = tagOptions.find(
+        opt => opt.label.toLowerCase() === trimmed.toLowerCase(),
+      );
+
+      // 새 태그 옵션 생성 (기존에 없으면 입력값을 label과 value로 사용)
+      const newTag = existingOption || {
+        label: trimmed,
+        value: trimmed,
+      };
+
+      const newTags = [...selectedTags, newTag];
+      setSelectedTags(newTags);
+
+      // 상위 컴포넌트에는 value만 전달
+      onTagsChange(newTags.map(tag => tag.value));
+
+      setInputValue("");
+      setShowSuggestions(false);
+      setFilteredOptions([]);
+    },
+    [selectedTags, tagOptions, onTagsChange],
   );
 
   // 키보드 조작 (Enter나 ',' 로 입력 시 태그 등록)
@@ -67,21 +139,37 @@ const AutoCompleteMultiInput: React.FC<AutoCompleteMultiInputProps> = ({
     (e: KeyboardEvent<HTMLInputElement>) => {
       if (e.key === "Enter" || e.key === ",") {
         e.preventDefault();
-        addTag(inputValue);
+
+        // 추천 목록에서 선택할 경우
+        if (showSuggestions && filteredOptions.length > 0) {
+          handleOptionClick(filteredOptions[0]);
+        } else {
+          // 직접 입력 값으로 태그 추가
+          addTag(inputValue);
+        }
       }
     },
-    [inputValue],
+    [inputValue, showSuggestions, filteredOptions, addTag],
   );
 
-  // 태그 추가 로직
-  const addTag = useCallback(
-    (tag: string) => {
-      const trimmed = tag.trim().replace(",", "");
-      if (trimmed !== "" && !selectedTags.includes(trimmed)) {
-        const newTags = [...selectedTags, trimmed];
-        setSelectedTags(newTags);
-        onTagsChange(newTags); // 상위 폼 등에 전달
+  // 자동완성 항목 클릭
+  const handleOptionClick = useCallback(
+    (option: TagOption) => {
+      const now = Date.now();
+      if (now - lastAddedRef.current < throttleTimeMs) {
+        return;
       }
+
+      lastAddedRef.current = now;
+
+      // 이미 선택된 태그인지 확인
+      const selectedValues = selectedTags.map(tag => tag.value);
+      if (selectedValues.includes(option.value)) return;
+
+      const newTags = [...selectedTags, option];
+      setSelectedTags(newTags);
+      onTagsChange(newTags.map(tag => tag.value));
+
       setInputValue("");
       setShowSuggestions(false);
       setFilteredOptions([]);
@@ -89,36 +177,38 @@ const AutoCompleteMultiInput: React.FC<AutoCompleteMultiInputProps> = ({
     [selectedTags, onTagsChange],
   );
 
-  // 자동완성 항목 클릭
-  const handleOptionClick = useCallback(
-    (option: string) => {
-      addTag(option);
-    },
-    [addTag],
-  );
-
   // 태그 삭제
   const removeTag = useCallback(
-    (tagToRemove: string) => {
-      const newTags = selectedTags.filter(tag => tag !== tagToRemove);
+    (tagValueToRemove: string) => {
+      const newTags = selectedTags.filter(
+        tag => tag.value !== tagValueToRemove,
+      );
       setSelectedTags(newTags);
-      onTagsChange(newTags);
+      onTagsChange(newTags.map(tag => tag.value));
     },
     [selectedTags, onTagsChange],
   );
 
   // 포커스를 잃었을 때 (blur) 처리
-  const handleBlur = useCallback((e: FocusEvent<HTMLDivElement>) => {
-    // 클릭 이벤트가 우선 처리되도록 약간의 지연
-    setTimeout(() => {
-      if (
-        containerRef.current &&
-        !containerRef.current.contains(document.activeElement)
-      ) {
-        setShowSuggestions(false);
-      }
-    }, 200);
-  }, []);
+  const handleBlur = useCallback(
+    (e: FocusEvent<HTMLDivElement>) => {
+      // 클릭 이벤트가 우선 처리되도록 약간의 지연
+      setTimeout(() => {
+        if (
+          containerRef.current &&
+          !containerRef.current.contains(document.activeElement)
+        ) {
+          setShowSuggestions(false);
+
+          // 입력중인 값이 있으면 태그로 추가
+          if (inputValue.trim()) {
+            addTag(inputValue);
+          }
+        }
+      }, 200);
+    },
+    [inputValue, addTag],
+  );
 
   return (
     <div ref={containerRef} onBlur={handleBlur} className="w-full">
@@ -132,24 +222,24 @@ const AutoCompleteMultiInput: React.FC<AutoCompleteMultiInputProps> = ({
         </label>
       )}
 
-      {/* 입력 컨테이너 - Input.tsx와 동일한 스타일 */}
+      {/* 입력 컨테이너 */}
       <div
         className={`focus-within:ring-skin-accent relative w-full rounded-lg border border-skin-line bg-white px-4 py-2 text-black-base transition-colors duration-150 focus-within:border-skin-accent focus-within:outline-none focus-within:ring-1 disabled:cursor-not-allowed disabled:opacity-60 ${disabled ? "cursor-not-allowed" : ""}`}
       >
         {/* 태그와 입력 필드를 한 줄에 표시 (줄바꿈 없이) */}
-        <div className="flex items-center gap-2 overflow-hidden whitespace-nowrap">
+        <div className="flex flex-wrap items-center gap-2">
           {selectedTags.map(tag => (
             <div
-              key={tag}
+              key={tag.value}
               className="flex items-center space-x-1 whitespace-nowrap rounded-lg border border-skin-line bg-skin-fill px-2 text-skin-accent"
             >
-              <span className="overflow-hidden text-ellipsis">{tag}</span>
+              <span className="overflow-hidden text-ellipsis">{tag.label}</span>
               {!disabled && (
                 <button
                   type="button"
                   onClick={(e: MouseEvent<HTMLButtonElement>) => {
                     e.preventDefault();
-                    removeTag(tag);
+                    removeTag(tag.value);
                   }}
                   className="text-black-base hover:text-black-accent"
                 >
@@ -158,7 +248,7 @@ const AutoCompleteMultiInput: React.FC<AutoCompleteMultiInputProps> = ({
               )}
             </div>
           ))}
-          {/* 실제 입력 필드 - Input.tsx 스타일과 동일하게 */}
+          {/* 실제 입력 필드 */}
           <input
             id={id}
             name={name}
@@ -168,7 +258,7 @@ const AutoCompleteMultiInput: React.FC<AutoCompleteMultiInputProps> = ({
             disabled={disabled}
             onChange={handleInputChange}
             onKeyDown={handleKeyDown}
-            className="placeholder:text-skin-muted flex-1 border-none bg-transparent outline-none"
+            className="placeholder:text-skin-muted min-w-[100px] flex-1 border-none bg-transparent outline-none"
           />
         </div>
 
@@ -177,15 +267,26 @@ const AutoCompleteMultiInput: React.FC<AutoCompleteMultiInputProps> = ({
           <ul className="absolute left-0 top-full z-10 mt-1 max-h-48 w-full overflow-y-auto rounded-md border border-skin-line bg-white shadow-lg">
             {filteredOptions.map(option => (
               <li
-                key={option}
+                key={option.value}
                 onMouseDown={() => handleOptionClick(option)}
                 className="cursor-pointer p-2 text-sm hover:bg-gray-100"
               >
-                {option}
+                {option.label}
               </li>
             ))}
           </ul>
         )}
+
+        {/* 실제 선택된 값들을 hidden input으로 전달 */}
+        {name &&
+          selectedTags.map((tag, index) => (
+            <input
+              key={`${tag.value}-${index}`}
+              type="hidden"
+              name={`${name}[]`}
+              value={tag.value}
+            />
+          ))}
       </div>
     </div>
   );

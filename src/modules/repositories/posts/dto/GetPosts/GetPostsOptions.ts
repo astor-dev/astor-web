@@ -9,7 +9,7 @@ export interface GetPostsOptions {
     tags?: string[];
     pinned?: boolean;
     draft?: boolean;
-    series?: string;
+    seriesId?: string;
     createdAt?: {
       $gte?: Dayjs;
       $lte?: Dayjs;

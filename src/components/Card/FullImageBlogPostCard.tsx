@@ -26,7 +26,7 @@ const FullImageBlogPostCard: React.FC<FullImageBlogPostCardProps> = props => {
       } ${props.className}`}
     >
       <a
-        href={`/blog/detail/${props.id}`}
+        href={`/blog/posts/${props.id}`}
         className="group relative flex h-full flex-col overflow-hidden rounded-2xl p-0.5 shadow-lg transition-all duration-300 hover:-translate-y-1 hover:shadow-xl"
       >
         {/* 배경 이미지 */}
@@ -42,10 +42,10 @@ const FullImageBlogPostCard: React.FC<FullImageBlogPostCardProps> = props => {
 
         {/* 카드 내용 */}
         <article className="relative flex h-full flex-col justify-end p-5">
-          {props.data.series && (
+          {props.data.seriesId && (
             <div className="absolute left-5 top-5 rounded-full bg-white/90 px-2.5 py-1 text-xs font-medium text-skin-accent backdrop-blur-sm">
               <FaBookmark className="mr-1.5 inline-block h-3 w-3" />
-              {props.data.series}
+              {props.data.seriesId}
             </div>
           )}
           <div className="relative aspect-[16/9] w-full overflow-hidden">

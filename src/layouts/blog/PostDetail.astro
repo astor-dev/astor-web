@@ -35,7 +35,7 @@ const formattedDate = dayjs(post.data.createdAt).format("YYYY년 MM월 DD일");
     <div class="relative flex">
       {/* 본문 */}
       <div class="prose prose-sm mx-auto max-w-none md:prose">
-        <HeadingsTable class="block xl:hidden" headings={headings} />
+        <HeadingsTable class="hidden xl:block" headings={headings} />
         {/* 마크다운 콘텐츠 */}
         <div>
           <Content />

@@ -15,10 +15,17 @@ import {
   PROJECT_REPOSITORY,
   ProjectRepository,
 } from "~modules/repositories/projects/ProjectRepository";
+import {
+  SERIES_REPOSITORY,
+  SeriesRepository,
+} from "~modules/repositories/series/SeriesRepository";
 
 export const repositoryContainer = new DependencyInjectionContainer();
 
-repositoryContainer.register(POST_REPOSITORY, PostRepository);
 repositoryContainer.register(PROJECT_REPOSITORY, ProjectRepository);
 repositoryContainer.register(ACTIVITY_REPOSITORY, ActivityRepository);
 repositoryContainer.register(CAREER_REPOSITORY, CareerRepository);
+repositoryContainer.register(SERIES_REPOSITORY, SeriesRepository);
+repositoryContainer.registerWithDependencies(POST_REPOSITORY, PostRepository, [
+  SERIES_REPOSITORY,
+]);

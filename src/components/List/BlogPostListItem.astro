@@ -17,29 +17,15 @@ const formatDate = (date: string) => {
 ---
 
 <a
-  href={`/blog/detail/${id}`}
+  href={`/blog/posts/${id}`}
   class:list={[
-    "group block w-full border-b border-gray-100 px-3 hover:bg-gray-100",
+    "group block w-full border-b border-gray-100 px-3 hover:bg-gray-100 md:py-2",
     className,
   ]}
 >
-  {
-    /*
-    article에 고정 높이(h-48)를 지정하여 카드 전체의 높이를 일정하게 만듭니다.
-    이 경우 이미지 컨테이너는 부모 높이(12rem)를 상속받아 작동합니다.
-  */
-  }
-  <article class="flex items-stretch gap-6 sm:h-48  sm:m-3">
-    {
-      /*
-      이미지 컨테이너:
-      - h-full으로 부모의 전체 높이를 상속받습니다.
-      - inline 스타일의 aspect-ratio: 4/3;로 가로:세로 비율을 강제합니다.
-      - 내부의 이미지는 absolute로 컨테이너 전체를 덮도록 합니다.
-    */
-    }
+  <article class="flex items-stretch gap-6 md:h-48">
     <div
-      class="relative hidden h-full shrink-0 overflow-hidden sm:block"
+      class="relative hidden h-full shrink-0 overflow-hidden md:block"
       style="aspect-ratio: 4 / 3;"
     >
       <ImageWithSkeleton
@@ -48,15 +34,15 @@ const formatDate = (date: string) => {
         className="absolute inset-0 aspect-[4/3] object-cover"
         client:load
       />
-
+<!-- 
       {
-        data.series && (
+        data.seriesId && (
           <div class="absolute left-1.5 top-1.5 rounded-full bg-skin-fill/95 px-1.5 py-0.5 text-[10px] font-medium text-skin-accent backdrop-blur-sm md:left-2 md:top-2 md:px-2 md:py-1 md:text-xs">
             <FaBookmark className="mr-0.5 inline-block h-2.5 w-2.5 md:mr-1 md:h-3 md:w-3" />
-            {data.series}
+            {data.seriesId}
           </div>
         )
-      }
+      } -->
     </div>
 
     {/* 텍스트 컨테이너 */}

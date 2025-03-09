@@ -11,13 +11,14 @@ import {
   type PostsService,
 } from "~modules/services/posts.service";
 import CheckboxGroupInput from "~components/Input/CheckboxGroupInput";
-import type { Series, Tag } from "~types/post.type";
+import type { Tag } from "~types/post.type";
 import AutoCompleteMultiInput from "~components/Input/AutoCompleteMultiInput";
 import AutoCompleteInput from "~components/Input/AutoCompleteInput";
 import { generateId } from "~utils/id.utils";
+import type { SeriesEntry } from "~types/series.type";
 
 interface PostFormProps {
-  series: Series[];
+  series: SeriesEntry[];
   tags: Tag[];
   initialData?: Partial<{
     data: {
@@ -28,7 +29,7 @@ interface PostFormProps {
       draft: boolean;
       tags: string[];
       ogImage: string;
-      series?: string;
+      seriesId?: string;
       description: string;
       createdAt: string; // ← 날짜
       updatedAt: string; // ← 날짜
@@ -53,7 +54,7 @@ const PostForm: React.FC<PostFormProps> = ({ initialData, tags, series }) => {
       },
       tags: initialData?.data?.tags ?? [],
       ogImage: initialData?.data?.ogImage ?? "",
-      series: initialData?.data?.series ?? "",
+      seriesId: initialData?.data?.seriesId ?? "",
       description: initialData?.data?.description ?? "",
       // createdAt, updatedAt 기본값 세팅
       createdAt:
@@ -101,13 +102,29 @@ const PostForm: React.FC<PostFormProps> = ({ initialData, tags, series }) => {
         },
         author: fd.get("author") as string,
         title: fd.get("title") as string,
-        series: fd.get("series") as string,
+        seriesId: fd.get("series") as string,
         description: fd.get("description") as string,
         // createdAt, updatedAt 은 여기서 갱신하지 않음
       }));
     },
     [],
   );
+
+  // 시리즈 초기값을 위한 상태와 로직
+  const [selectedSeriesId, setSelectedSeriesId] = useState(
+    initialData?.data?.seriesId || "",
+  );
+
+  // 시리즈 옵션 준비 - 이름과 ID 매핑
+  const seriesOptions = series.map(s => ({
+    label: s.data.name, // 화면에 표시될 시리즈 이름
+    value: s.id, // 선택 시 실제 저장될 시리즈 ID
+  }));
+
+  // 초기 선택된 시리즈 이름 찾기
+  const initialSeriesName = selectedSeriesId
+    ? series.find(s => s.id === selectedSeriesId)?.data.name || ""
+    : "";
 
   // 폼 제출 핸들러
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -121,7 +138,7 @@ const PostForm: React.FC<PostFormProps> = ({ initialData, tags, series }) => {
         id: initialData?.data?.id ?? generateId(),
         author: formData.author,
         title: formData.title,
-        series: formData.series,
+        seriesId: formData.seriesId,
         tags: formData.tags,
         ogImage: formData.ogImage,
         description: formData.description,
@@ -214,15 +231,17 @@ const PostForm: React.FC<PostFormProps> = ({ initialData, tags, series }) => {
             defaultValue={formData.author}
           />
 
-          {/* 시리즈 자동완성 */}
+          {/* 시리즈 자동완성 - 수정된 부분 */}
           <AutoCompleteInput
             id="series"
             name="series"
             label="시리즈 (선택)"
-            defaultValue={formData.series}
-            allOptions={series?.map(s => s.series) ?? []}
+            defaultValue={selectedSeriesId}
+            defaultLabel={initialSeriesName}
+            options={seriesOptions}
             onValueChange={value => {
-              setFormData(prev => ({ ...prev, series: value }));
+              setSelectedSeriesId(value);
+              setFormData(prev => ({ ...prev, seriesId: value }));
             }}
           />
 
@@ -233,7 +252,7 @@ const PostForm: React.FC<PostFormProps> = ({ initialData, tags, series }) => {
             label="태그"
             required
             placeholder="태그를 입력하고 Enter나 ','로 확정"
-            allTags={tags?.map(t => t.tag) ?? []}
+            options={tags?.map(t => ({ label: t.tag, value: t.tag })) ?? []}
             defaultValue={formData.tags}
             onTagsChange={newTags => {
               setFormData(prev => ({ ...prev, tags: newTags }));
@@ -268,11 +287,7 @@ const PostForm: React.FC<PostFormProps> = ({ initialData, tags, series }) => {
 
       {/* 상세 내용 (마크다운) 입력 영역 */}
       <div className="items-center justify-center rounded-lg border border-skin-line bg-white">
-        <Editor
-          markdown={markdownContent}
-          onChange={handleMarkdownChange}
-          placeholder="포스트 내용을 작성해주세요..."
-        />
+        <Editor markdown={markdownContent} onChange={handleMarkdownChange} />
       </div>
 
       <div className="flex justify-end gap-3">

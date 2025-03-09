@@ -1,4 +1,5 @@
 import type { CollectionEntry } from "astro:content";
+import type { SeriesEntry } from "~types/series.type";
 
 export type PostEntry = CollectionEntry<"posts">;
 
@@ -7,13 +8,17 @@ export interface PostTitleAndId {
   title: string;
 }
 
-export interface Tag {
-  tag: string;
+export interface SeriesAndCount {
+  series: SeriesEntry;
   count: number;
 }
 
-export interface Series {
-  series: string;
-  ogImage: string;
+export interface SeriesAndPosts {
+  series: SeriesEntry;
+  posts: PostEntry[];
+}
+
+export interface Tag {
+  tag: string;
   count: number;
 }

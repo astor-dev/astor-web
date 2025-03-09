@@ -33,7 +33,7 @@ const posts = defineCollection({
       draft: z.boolean().default(true),
       tags: z.array(z.string()).default(["others"]),
       ogImage: z.string(),
-      series: z.string().optional(),
+      seriesId: z.string().optional(),
       description: z.string(),
     }),
 });
@@ -78,10 +78,20 @@ const careers = defineCollection({
   }),
 });
 
+const series = defineCollection({
+  loader: file("src/content/series/series.json"),
+  schema: z.object({
+    id: z.string(),
+    name: z.string(),
+    ogImage: z.string(),
+  }),
+});
+
 // 사용할 컬렉션만 명시적으로 export
 export const collections = {
   projects,
   posts,
   activities,
   careers,
+  series,
 };

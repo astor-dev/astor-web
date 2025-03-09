@@ -1,13 +1,13 @@
 import React, { useState, useEffect, useRef } from "react";
 import { FiSearch, FiTag, FiLayers, FiMoreHorizontal } from "react-icons/fi";
 import SearchModal from "~components/Modal/SearchModal";
-import type { PostTitleAndId, Series, Tag } from "~types/post.type";
+import type { PostTitleAndId, Tag, SeriesAndCount } from "~types/post.type";
 import IconDropdown from "~components/Dropdown/IconDropdown";
 
 interface NavBarProps {
   pathname: string;
   tags: Tag[];
-  series: Series[];
+  series: SeriesAndCount[];
   posts: PostTitleAndId[];
 }
 
@@ -121,12 +121,12 @@ function NavBar({ pathname, tags, series, posts }: NavBarProps) {
                   </h5>
                   <ul className="space-y-1">
                     {series.map(item => (
-                      <li key={item.series}>
+                      <li key={item.series.data.id}>
                         <a
-                          href={`/blog/series/${encodeURIComponent(item.series)}`}
+                          href={`/blog/series/${encodeURIComponent(item.series.data.id)}`}
                           className="cursor-pointer text-sm text-black-base hover:underline sm:text-base"
                         >
-                          {item.series} ({item.count})
+                          {item.series.data.name} ({item.count})
                         </a>
                       </li>
                     ))}

@@ -1,13 +1,13 @@
 import React, { useState, useEffect, useRef } from "react";
 import { motion } from "framer-motion";
 import { createPortal } from "react-dom";
-import type { PostTitleAndId, Series, Tag } from "~types/post.type";
+import type { PostTitleAndId, SeriesAndCount, Tag } from "~types/post.type";
 
 interface SearchModalProps {
   isOpen: boolean;
   onClose: () => void;
   tags: Tag[];
-  series: Series[];
+  series: SeriesAndCount[];
   posts: PostTitleAndId[];
 }
 
@@ -101,7 +101,7 @@ const SearchModal = ({
             type="text"
             value={searchQuery}
             onChange={e => setSearchQuery(e.target.value)}
-            placeholder="검색어 입력 (글, 태그, 시리즈)"
+            placeholder="검색어 입력 (제목)"
             className="border-skin-base w-full rounded-lg border p-3 text-black-base focus:border-skin-accent focus:outline-none"
           />
         </div>
@@ -180,7 +180,7 @@ const SearchModal = ({
                   <a
                     key={tag}
                     href={`/blog/tags/${tag}`}
-                    className="flex items-center gap-2 rounded-full bg-white px-3 py-1 text-sm hover:bg-skin-accent hover:text-white-base"
+                    className="flex items-center gap-2 rounded-full bg-white px-3 py-1 text-sm text-black-base hover:bg-skin-accent hover:text-white-base"
                   >
                     <span>{tag}</span>
                     <span className="rounded-full bg-gray-100 px-2 py-0.5 text-xs text-gray-600">
@@ -195,11 +195,11 @@ const SearchModal = ({
               <div className="flex flex-col gap-2">
                 {series.map(({ series, count }) => (
                   <a
-                    key={series}
-                    href={`/blog/series/${series}`}
+                    key={series.data.id}
+                    href={`/blog/series/${series.data.id}`}
                     className="flex flex-col gap-1 rounded-lg bg-white p-3 text-left text-black-base hover:bg-skin-accent hover:text-white-base"
                   >
-                    <span className="font-medium">{series}</span>
+                    <span className="font-medium">{series.data.name}</span>
                     <span className="text-xs text-skin-base">
                       {count}개의 포스트
                     </span>

@@ -1,11 +1,8 @@
 ---
-import type { Series } from "~/types/post.type";
 import SeriesCard from "~components/Card/SeriesCard.astro";
-
-// Props: series는 Series 타입 객체 배열입니다.
-// 예: { series: string; count: number; ogImage?: string }
+import type { SeriesAndCount } from "~types/post.type";
 interface Props {
-  series: Series[];
+  series: SeriesAndCount[];
 }
 
 const { series } = Astro.props;
@@ -14,7 +11,7 @@ const { series } = Astro.props;
 <div class="mx-auto mt-16 w-full max-w-4xl px-4 mb-12">
   <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
     {series.map(item => (
-      <SeriesCard {...item} />
+      <SeriesCard series={item} />
     ))}
   </div>
 </div>

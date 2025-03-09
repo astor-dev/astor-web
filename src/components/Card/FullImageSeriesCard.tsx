@@ -2,22 +2,21 @@ import React, { useEffect, useRef, useState } from "react";
 import { motion } from "framer-motion";
 import Skeleton from "react-loading-skeleton";
 import ImageWithSkeleton from "~components/Skeleton/ImageWithSkeleton";
+import type { SeriesAndCount } from "~types/post.type";
 export interface SeriesCardProps {
-  series: string;
-  count: number;
-  ogImage?: string;
+  series: SeriesAndCount;
 }
 
-const SeriesCard: React.FC<SeriesCardProps> = ({ series, count, ogImage }) => {
+const SeriesCard: React.FC<SeriesCardProps> = ({ series }) => {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    if (series.length > 0) {
+    if (series.series.data.name.length > 0) {
       setIsLoading(false);
     }
   }, [series]);
 
-  const imageUrl = ogImage || "/default-series.jpg";
+  const imageUrl = series.series.data.ogImage || "/default-series.jpg";
   // pointer 시작 위치 저장
   const startPos = useRef<{ x: number; y: number }>({ x: 0, y: 0 });
   // 클릭 여부를 판단할 플래그
@@ -50,14 +49,14 @@ const SeriesCard: React.FC<SeriesCardProps> = ({ series, count, ogImage }) => {
     e.preventDefault();
     if (isClick.current) {
       // 클릭으로 판단되면 수동으로 링크 이동 처리
-      window.location.href = `/blog/series/${encodeURIComponent(series)}`;
+      window.location.href = `/blog/series/${encodeURIComponent(series.series.data.id)}`;
     }
   };
 
   return (
     <div className="group relative h-[250px] overflow-hidden bg-transparent md:h-[300px]">
       <motion.a
-        href={`/blog/series/${encodeURIComponent(series)}`}
+        href={`/blog/series/${encodeURIComponent(series.series.data.id)}`}
         onPointerDown={handlePointerDown}
         onPointerMove={handlePointerMove}
         onClick={handleClick}
@@ -66,18 +65,22 @@ const SeriesCard: React.FC<SeriesCardProps> = ({ series, count, ogImage }) => {
         <ImageWithSkeleton
           className="h-[150px] w-full bg-cover bg-center md:h-[200px]"
           src={imageUrl}
-          alt={series}
+          alt={series.series.data.name}
         />
         {/* 카드 내용 */}
         <div className="py-4">
           <h2 className="text-xl font-bold text-black-accent">
-            {isLoading ? <Skeleton className="w-full" /> : series}
+            {isLoading ? (
+              <Skeleton className="w-full" />
+            ) : (
+              series.series.data.name
+            )}
           </h2>
           <p className="mt-1 text-sm text-gray-600">
             {isLoading ? (
               <Skeleton className="w-full" />
             ) : (
-              `${count}개의 포스트`
+              `${series.count}개의 포스트`
             )}
           </p>
         </div>

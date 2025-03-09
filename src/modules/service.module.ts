@@ -11,6 +11,10 @@ import {
   PROJECTS_SERVICE,
   ProjectsService,
 } from "~modules/services/projects.service";
+import {
+  SERIES_SERVICE,
+  SeriesService,
+} from "~modules/services/series.service";
 
 // DI 컨테이너 생성
 export const serviceContainer = new DependencyInjectionContainer();
@@ -26,5 +30,8 @@ serviceContainer.registerWithDependencies(IMAGE_SERVICE, ImageService, [
   HTTP_INSTANCE,
 ]);
 serviceContainer.registerWithDependencies(POSTS_SERVICE, PostsService, [
+  HTTP_INSTANCE,
+]);
+serviceContainer.registerWithDependencies(SERIES_SERVICE, SeriesService, [
   HTTP_INSTANCE,
 ]);

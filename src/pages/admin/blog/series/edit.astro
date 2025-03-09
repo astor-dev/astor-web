@@ -1,0 +1,40 @@
+---
+// src/pages/new-project.astro
+import Layout from "~layouts/BaseLayout.astro";
+import PostForm from "~components/Form/PostForm";
+import AdminOnly from "~components/Wrapper/AdminOnly";
+import Hero from "~components/Hero/Hero.astro";
+import blogHeader from "~assets/images/blog-header.jpg";
+import { repositoryContainer } from "~modules/repository.module";
+import { POST_REPOSITORY, PostRepository } from "~modules/repositories/posts/PostRepository";
+import { SERIES_REPOSITORY, type SeriesRepository } from "~modules/repositories/series/SeriesRepository";
+import SeriesForm from "~components/Form/SeriesForm";
+
+// URL 쿼리 파라미터에서 시리즈 ID 가져오기
+const params = Astro.url.searchParams;
+const id = params.get("id");
+
+const seriesRepository = repositoryContainer.get<SeriesRepository>(SERIES_REPOSITORY);
+const series = await seriesRepository.getSeries();
+
+// 초기 선택 시리즈 ID 설정
+const initialSelectedId = id || "";
+---
+
+<Layout title="시리즈 관리">
+  <!-- 헤더 -->
+  <Hero
+    title="시리즈 관리"
+    description="시리즈를 생성하거나 관리합니다"
+    slot="hero"
+    imageSrc={blogHeader.src}
+  />
+  <AdminOnly client:load>
+    <div class="mx-auto w-full max-w-5xl px-4 py-8 sm:px-6 lg:px-8">
+      <SeriesForm 
+        client:only="react" 
+        initialSeries={series.items} 
+      />
+    </div>
+  </AdminOnly>
+</Layout>

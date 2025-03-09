@@ -1,13 +1,21 @@
 import { getCollection } from "astro:content";
 import dayjs from "dayjs";
 import type { GetPostsOptions } from "~modules/repositories/posts/dto/GetPosts/GetPostsOptions";
+import type { SeriesRepository } from "~modules/repositories/series/SeriesRepository";
 import type { Paginated } from "~types/page.type";
-import type { PostEntry, PostTitleAndId, Series, Tag } from "~types/post.type";
+import type {
+  PostEntry,
+  PostTitleAndId,
+  SeriesAndCount,
+  SeriesAndPosts,
+  Tag,
+} from "~types/post.type";
 import { isDefined } from "~utils/types.utils";
 
 export const POST_REPOSITORY = Symbol("POST_REPOSITORY");
 
 export class PostRepository {
+  constructor(private seriesRepository: SeriesRepository) {}
   /**
    * 포스트 목록을 가져옵니다.
    * @param options 필터, 정렬, 페이징 옵션
@@ -25,8 +33,8 @@ export class PostRepository {
           filter.tags!.every(tag => post.data.tags.includes(tag)),
         );
       }
-      if (isDefined(filter.series)) {
-        posts = posts.filter(post => post.data.series === filter.series);
+      if (isDefined(filter.seriesId)) {
+        posts = posts.filter(post => post.data.seriesId === filter.seriesId);
       }
       if (isDefined(filter.pinned)) {
         posts = posts.filter(post => post.data.pinned === filter.pinned);
@@ -113,43 +121,34 @@ export class PostRepository {
       .sort((a, b) => a.tag.localeCompare(b.tag));
   }
 
-  /**
-   * 모든 시리즈와 각 시리즈의 포스트 수를 가져옵니다.
-   */
-  public async getAllSeries(): Promise<Series[]> {
-    const posts = await this.getPosts({
-      sort: { by: "createdAt", order: "asc" },
-    });
-    const seriesInfo = posts.items.reduce(
-      (acc, post) => {
-        if (post.data.series) {
-          if (!acc[post.data.series]) {
-            acc[post.data.series] = {
-              count: 0,
-              ogImage: post.data.ogImage,
-            };
-          }
-          acc[post.data.series].count += 1;
-        }
-        return acc;
-      },
-      {} as Record<string, { count: number; ogImage: string }>,
-    );
-
-    return Object.entries(seriesInfo)
-      .map(([series, info]) => ({
-        series,
-        count: info.count,
-        ogImage: info.ogImage,
-      }))
-      .sort((a, b) => b.count - a.count);
-  }
-
   public async getAllPostTitleAndId(): Promise<PostTitleAndId[]> {
     const posts = await getCollection("posts");
     return posts.map(post => ({ id: post.id, title: post.data.title }));
   }
 
+  public async getAllSeriesAndCount(): Promise<SeriesAndCount[]> {
+    const series = (await this.seriesRepository.getSeries()).items;
+    const seriesAndCount = await Promise.all(
+      series.map(async series => ({
+        series: series,
+        count: (await this.getPosts({ filter: { seriesId: series.data.id } }))
+          .total,
+      })),
+    );
+    return seriesAndCount;
+  }
+
+  public async getAllSeriesAndPosts(): Promise<SeriesAndPosts[]> {
+    const series = (await this.seriesRepository.getSeries()).items;
+    const seriesAndPosts = await Promise.all(
+      series.map(async series => ({
+        series: series,
+        posts: (await this.getPosts({ filter: { seriesId: series.data.id } }))
+          .items,
+      })),
+    );
+    return seriesAndPosts;
+  }
   /**
    * 단일 포스트를 ID로 가져옵니다.
    * @param id 포스트 ID

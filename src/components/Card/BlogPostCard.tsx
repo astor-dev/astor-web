@@ -31,7 +31,7 @@ const BlogPostCard: React.FC<BlogPostCardProps> = props => {
   return (
     <div ref={cardRef} className={` ${props.className ?? ""} h-[500px] w-full`}>
       <a
-        href={`/blog/detail/${props.id}`}
+        href={`/blog/posts/${props.id}`}
         className="group relative flex h-full flex-col overflow-hidden bg-gradient-to-br from-transparent via-transparent to-skin-fill/5"
       >
         {/* 상단: 이미지 영역 (전체 높이의 2/3) */}

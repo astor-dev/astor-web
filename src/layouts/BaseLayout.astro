@@ -11,13 +11,14 @@ import NavBar from "~components/Nav/NavBar";
 import BreadcrumbNavigator from "~components/Breadcrumb/BreadcrumbNavigator";
 import { SkeletonProvider } from "~components/Skeleton/SkeletonProvider";
 import Seo from "~components/Seo/Seo.astro";
-import type { PostEntry, PostTitleAndId, Series, Tag } from "~types/post.type";
+import type { PostEntry, PostTitleAndId, Tag } from "~types/post.type";
 import { repositoryContainer } from "~modules/repository.module";
 import {
   POST_REPOSITORY,
   type PostRepository,
 } from "~modules/repositories/posts/PostRepository";
 import Footer from "~components/Footer/Footer.astro";
+import type { SeriesAndCount } from "~types/post.type";
 interface Props {
   title?: string;
   image?: string;
@@ -25,16 +26,9 @@ interface Props {
 
 const postRepository = repositoryContainer.get<PostRepository>(POST_REPOSITORY);
 const tags: Tag[] = await postRepository.getAllTags();
-const seriesList: Series[] = await postRepository.getAllSeries();
 const posts: PostTitleAndId[] = await postRepository.getAllPostTitleAndId();
-const latestPosts: PostEntry[] = (
-  await postRepository.getPosts({
-    paging: {
-      page: 1,
-      limit: 4,
-    },
-  })
-).items;
+const series: SeriesAndCount[] = await postRepository.getAllSeriesAndCount();
+
 const { title, image } = Astro.props;
 const currentPath = Astro.url.pathname;
 ---
@@ -57,7 +51,7 @@ const currentPath = Astro.url.pathname;
         client:load
         tags={tags}
         posts={posts}
-        series={seriesList}
+        series={series}
         pathname={currentPath}
         client:load
       />

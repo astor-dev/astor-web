@@ -337,11 +337,7 @@ const ProjectForm: React.FC<ProjectFormProps> = ({ initialData }) => {
 
       {/* 상세 설명(마크다운) 입력 영역 */}
       <div className="items-center rounded-lg border border-skin-line bg-white">
-        <Editor
-          markdown={markdownContent}
-          onChange={handleMarkdownChange}
-          placeholder="프로젝트에 대해 자세히 설명해주세요..."
-        />
+        <Editor markdown={markdownContent} onChange={handleMarkdownChange} />
       </div>
 
       {/* 폼 제출/취소 버튼 영역 */}

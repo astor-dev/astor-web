@@ -4,24 +4,6 @@ import type { ProjectRole, ProjectType } from "~types/project.type";
 
 export const PROJECTS_SERVICE = Symbol("PROJECTS_SERVICE");
 
-const ProjectCreateSchema = {
-  data: z.object({
-    frontmatter: z.object({
-      projectType: z.string() as z.ZodType<ProjectType>,
-      imageUrl: z.string(),
-      siteUrl: z.string(),
-      roles: z.array(z.string() as z.ZodType<ProjectRole>),
-      companyName: z.string(),
-      projectName: z.string(),
-      shortDescription: z.string(),
-      startedAt: z.string(),
-      endedAt: z.string(),
-      stackIds: z.array(z.number()),
-    }),
-    body: z.string(),
-  }),
-};
-
 // 프로젝트 생성 요청 타입
 interface CreateProjectRequest {
   frontmatter: {
@@ -45,7 +27,6 @@ export class ProjectsService {
 
   // 프로젝트 생성
   async createProject(project: CreateProjectRequest) {
-    console.log(project);
     return await this.http.put("/projects", project);
   }
 }

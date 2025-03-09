@@ -29,15 +29,15 @@ const tags = await postRepository.getAllTags();
 ---
 
 <div class="mx-auto w-full">
-  <div class="grid grid-cols-1 sm:grid-cols-4 md:gap-8">
+  <div class="grid grid-cols-1 md:grid-cols-4 md:gap-8">
     <!-- 좌측 사이드바: React 기반 태그 목록 컴포넌트 -->
-    <aside class="col-span-2 sm:col-span-1">
-      <MobileTagScroll tags={tags} client:load className="sm:hidden" />
+    <aside class="col-span-2 md:col-span-1">
+      <MobileTagScroll tags={tags} client:load className="md:hidden" />
       <TagSidebar
         tags={tags}
         totalPosts={posts.total}
         client:load
-        className="hidden sm:block"
+        className="hidden md:block"
       />
     </aside>
 

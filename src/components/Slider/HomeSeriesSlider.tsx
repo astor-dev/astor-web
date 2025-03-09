@@ -1,11 +1,9 @@
 import { useEffect, useRef, useState } from "react";
 import { Autoplay, Navigation, Pagination, Scrollbar } from "swiper/modules";
 import { Swiper, SwiperSlide, type SwiperRef } from "swiper/react";
-import type { Series } from "~types/post.type";
 import FullImageSeriesCard from "~components/Card/FullImageSeriesCard";
-import Skeleton from "react-loading-skeleton";
-
-const MagazineCarousel = (props: { seriesList: Series[] }) => {
+import type { SeriesAndCount } from "~types/post.type";
+const MagazineCarousel = (props: { seriesList: SeriesAndCount[] }) => {
   const { seriesList } = props;
   const swiperRef = useRef<SwiperRef>(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -65,8 +63,11 @@ const MagazineCarousel = (props: { seriesList: Series[] }) => {
       >
         {seriesList?.map((series, index) => {
           return (
-            <SwiperSlide key={series.series} virtualIndex={index}>
-              <FullImageSeriesCard key={series.series} {...series} />
+            <SwiperSlide key={series.series.data.id} virtualIndex={index}>
+              <FullImageSeriesCard
+                key={series.series.data.id}
+                series={series}
+              />
             </SwiperSlide>
           );
         })}

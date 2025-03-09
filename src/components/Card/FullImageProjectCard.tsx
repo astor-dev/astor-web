@@ -13,35 +13,31 @@ const FullImageProjectCard = (props: ProjectCardProps) => {
   const { imageUrl, projectName, companyName, shortDescription } = data;
 
   return (
-    <div
-      className={`relative h-[400px] w-full flex-col md:aspect-square md:h-[600px]`}
-    >
-      <a href={`/projects/${projectName}`}>
-        {/* 이미지 */}
-        <ImageWithSkeleton
-          src={imageUrl}
-          alt={projectName}
-          className="rounded-12 h-full w-full cursor-pointer object-cover"
-        />
-        {/* 그라데이션 Overlay (상단-좌측-하단 투명) */}
-        {/* <div className="absolute inset-0 h-full w-full bg-gradient-to-t from-black via-transparent to-transparent opacity-80" /> */}
+    <div className="relative h-full w-full">
+      <a href={`/projects/${projectName}`} className="block h-full w-full">
+        {/* 이미지 컨테이너 (4:3 비율 유지) */}
+        <div className="relative h-full w-full overflow-hidden">
+          <ImageWithSkeleton
+            src={imageUrl}
+            alt={projectName}
+            className="h-full w-full object-cover"
+          />
 
-        <div className="absolute bottom-0 left-0 w-full pb-14 pl-4 pt-4 md:pb-16 md:pl-8">
-          <div className="absolute inset-0 z-0 h-full w-full bg-black opacity-60" />
-          {/* <h4 className="text-18 font-500 text-white mb-4 opacity-70">
-          에디터 큐레이션
-        </h4> */}
-          {/* 둘째 줄(프로젝트명) */}
-          <div className="line-clamp-1 flex flex-col text-lg font-bold text-white-base opacity-90 md:text-xl">
-            <span>{projectName}</span>
-          </div>
-          {/* 셋째 줄(회사명 | 짧은 설명 등) */}
-          <div className="line-clamp-2 flex min-h-[3rem] flex-col gap-1 text-base text-white-base opacity-80">
-            {/* 예: "회사명 | 짧은 설명" 형태 */}
-            <span>
-              {companyName} | {shortDescription}
-            </span>
-          </div>
+          {/* 그라데이션 오버레이 */}
+          <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent" />
+        </div>
+
+        {/* 프로젝트 정보 */}
+        <div className="absolute bottom-0 left-0 w-full p-4 md:p-6 lg:p-8">
+          {/* 프로젝트명 */}
+          <h3 className="line-clamp-1 text-xl font-bold text-white-base md:text-2xl">
+            {projectName}
+          </h3>
+
+          {/* 회사명 및 설명 */}
+          <p className="mt-2 line-clamp-2 min-h-[3rem] text-sm text-white-base/90 md:text-base">
+            {companyName} | {shortDescription}
+          </p>
         </div>
       </a>
     </div>
