@@ -13,6 +13,6 @@ export class SeriesService {
   constructor(private http: HttpInstance) {}
 
   async saveAllSeries(seriesData: SaveSeriesRequest[]): Promise<void> {
-    await this.http.put("/series", seriesData);
+    await this.http.put("/series", { series: seriesData });
   }
 }
