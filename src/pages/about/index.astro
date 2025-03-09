@@ -1,17 +1,16 @@
 ---
+import "~styles/global.css";
 import Layout from "~layouts/BaseLayout.astro";
 import { FEATURED_STACK_IDS } from "~constants/about";
-import ExperienceItem from "~components/Item/ExperienceItem";
 import profileImage from "~assets/images/profile.jpg";
-import ProfileHeader from "~components/Header/ProfileHeader";
-import SectionWithHeader from "~components/Section/SectionWithHeader";
+import ProfileHeader from "~components/Header/ProfileHeader.astro";
+import SectionWithHeader from "~components/Section/SectionWithHeader.astro";  
 import type { ProjectEntry } from "~types/project.type";
 import { repositoryContainer } from "~modules/repository.module";
 import {
   PROJECT_REPOSITORY,
   type ProjectRepository,
 } from "~modules/repositories/projects/ProjectRepository";
-import StackSlider from "~components/Slider/StackSlider";
 import {
   ACTIVITY_REPOSITORY,
   ActivityRepository,
@@ -22,6 +21,7 @@ import {
   CareerRepository,
   CAREER_REPOSITORY,
 } from "~modules/repositories/careers/CareerRepository";
+import { FaFilePdf } from "react-icons/fa";
 
 const projectRepository =
   repositoryContainer.get<ProjectRepository>(PROJECT_REPOSITORY);
@@ -59,110 +59,122 @@ for (const stackId of FEATURED_STACK_IDS) {
 
 <Layout title="About Me">
   <article class="mx-auto w-full">
-    <div class="w-full">
-      <ProfileHeader
-        name="Astor"
-        realName="김도훈"
-        role="Backend Engineer"
-        imageSrc={profileImage.src}
-        info={{
-          birth: "2001",
-          education: {
-            school: "고려대학교 서울캠퍼스",
-            majors: ["영어영문", "소프트웨어기술벤처"],
-            year: "2020-재학중",
-          },
-          location: "Seoul, Korea",
-          github: "https://github.com/astor-dev",
-        }}
-        client:load
-      />
-
-      <div class="md:mx-[10dvw]">
-        <SectionWithHeader
-          title="About Me"
-          description=`
-안녕하세요! 저는 백엔드 개발자 Astor입니다. **소프트웨어 아키텍처**에 관심이 많으며, 풀고자 하는 문제에 걸맞는 구조화된 소프트웨어를 만들기 위해 노력합니다.
-스타트업 초기 창업 멤버로서, 아무것도 없는 상태에서 **견고한 아키텍처와 안정적인 시스템**을 구축해 **하루에 수천 개 씩 쏟아지는 결제 요청**을 처리했던 경험은 저의 엔지니어로서 큰 자산입니다. 변화하는 환경 속에서도 확장성을 고려한 설계를 통해 불필요한 수정 없이 효율적인 운영을 달성하며, 단순히 기획을 받아들이는 것을 넘어서 **비즈니스 요구를 직접 분석하고 솔루션을 기획, 설계**하여 데이터 기반 인사이트를 도출하는 비즈니스 감각도 갖추고 있습니다.
-          `
-          client:load
+      <!-- 헤더 영역 -->
+      <div class="flex-row justify-between items-center mb-6 hidden sm:flex print:hidden">
+        <h1 class="text-2xl font-bold text-black-accent">About Me</h1>
+        <button 
+          id="exportPdfBtn"
+          class="flex items-center gap-2 px-4 py-2 text-sm font-medium text-white-base bg-skin-accent rounded-lg hover:bg-skin-accent-hover transition-colors"
+        >
+          <FaFilePdf />
+          <span>PDF로 저장</span>
+        </button>
+      </div>
+      <div class="w-full max-w-6xl mx-auto px-4 pb-4">
+        <ProfileHeader
+          name="Astor"
+          realName="김도훈"
+          role="Backend Engineer"
+          imageSrc={profileImage.src}
+          info={{
+            birth: "2001.12.10",
+            phone: "010-3335-7862",
+            email: "orangnlp@gmail.com",
+            education: {
+              school: "고려대학교 서울캠퍼스",
+              majors: ["영어영문", "소프트웨어기술벤처"],
+              year: "2020-2026.02 졸업 예정",
+            },
+            // location: "Seoul, Korea",
+            github: "https://github.com/astor-dev",
+          }}
         />
 
-        <SectionWithHeader
-          title="Tech Stack"
-          description="제가 사용하는 기술 스택들입니다. 각 도구의 특성을 이해하고 최적의 솔루션을 제공하기 위해 노력합니다."
-          className="from-white-base to-skin-card/20 relative bg-gradient-to-b"
-          client:load
-        >
-          <!-- <StackGrid
-          client:load
-          stackIds={FEATURED_STACK_IDS}
-          enableFeatured={true}
-          relatedProjects={relatedProjects}
-        /> -->
-          <StackSlider
-            client:load
-            stackIds={FEATURED_STACK_IDS}
-            enableFeatured={true}
-            relatedProjects={relatedProjects}
-          />
-        </SectionWithHeader>
-
-        <SectionWithHeader
-          title="Careers"
-          description="저의 경력들을 소개합니다."
-          client:load
-        >
-          <div class="not-prose space-y-6">
-            {careers.items.map(career => <CareersListItems career={career} />)}
-          </div>
-        </SectionWithHeader>
-
-        <SectionWithHeader
-          title="Activities"
-          description=" 성장하면서 경험한 활동들을 소개합니다."
-          client:load
-        >
-          <div class="not-prose space-y-6">
-            {
-              activities.items.map(activity => (
-                <ActivitiesListItems activity={activity} />
-              ))
-            }
-          </div>
-        </SectionWithHeader>
-
-        <SectionWithHeader
-          title="Contact"
-          description="아래 링크를 통해 저와 소통하거나 제 작업을 확인해보세요."
-          client:load
-        >
-          <div
-            class="prose prose-sm max-w-none md:prose lg:prose-lg prose-headings:text-black-accent"
+        <div>
+          <SectionWithHeader
+            title="About Me"
           >
-            <ul>
-              <li>
-                Email: <a href="mailto:astoir@example.com">astoir@example.com</a
-                >
-              </li>
-              <li>
-                GitHub: <a
-                  href="https://github.com/astorverse"
-                  target="_blank"
-                  rel="noopener noreferrer">github.com/astorverse</a
-                >
-              </li>
-              <li>
-                LinkedIn: <a
-                  href="https://linkedin.com/in/astoir"
-                  target="_blank"
-                  rel="noopener noreferrer">linkedin.com/in/astoir</a
-                >
-              </li>
-            </ul>
-          </div>
-        </SectionWithHeader>
+          <p class="leading-relaxed text-base text-black-base">
+            안녕하세요! 저는 백엔드 개발자 Astor입니다. 소프트웨어 아키텍처에 깊은 관심을 가지고 있으며, 문제 해결을 위한 최적의 구조화된 소프트웨어를 설계하는 것을 즐깁니다.
+          </p>
+          <p class="mt-4 leading-relaxed text-base text-black-base">
+            스타트업의 초기 창업 멤버로서, 제로 베이스에서 견고한 아키텍처와 안정적인 시스템을 구축하여 일일 수천 건의 결제 요청을 성공적으로 처리한 경험이 있습니다. 이는 엔지니어로서 제가 가진 가장 값진 자산 중 하나입니다.
+          </p>
+          <p class="mt-4 leading-relaxed text-base text-black-base">
+            급변하는 비즈니스 환경 속에서도 확장성 있는 설계를 통해 효율적인 시스템 운영을 실현해왔습니다. 단순한 기술 구현을 넘어 비즈니스 요구사항을 깊이 있게 분석하고, 데이터에 기반한 인사이트를 도출하여 최적의 솔루션을 제시할 수 있는 비즈니스 감각을 보유하고 있습니다.
+          </p>
+          </SectionWithHeader>
+        </div>
+
+          <!-- <SectionWithHeader
+            title="Tech Stack"
+            description="제가 사용하는 기술 스택들입니다. 각 도구의 특성을 이해하고 최적의 솔루션을 제공하기 위해 노력합니다."
+            className="from-white-base to-skin-card/20 relative bg-gradient-to-b"
+          >
+            <StackSlider
+              client:load
+              stackIds={FEATURED_STACK_IDS}
+              enableFeatured={true}
+              relatedProjects={relatedProjects}
+            />
+          </SectionWithHeader> -->
+
+          <SectionWithHeader
+            title="Careers"
+          >
+            <div class="not-prose space-y-6">
+              {careers.items.map(career => <CareersListItems career={career} />)}
+            </div>
+          </SectionWithHeader>
+
+          <SectionWithHeader
+            title="Activities"
+          >
+            <div class="not-prose space-y-6">
+              {
+                activities.items.map(activity => (
+                  <ActivitiesListItems activity={activity} />
+                ))
+              }
+            </div>
+          </SectionWithHeader>
+
+          <SectionWithHeader
+            title="Contact"
+          >
+            <div
+              class="prose prose-sm max-w-none md:prose lg:prose-lg prose-headings:text-black-accent"
+            >
+              <ul>
+                <li>
+                  Email: <a href="mailto:astoir@example.com">astoir@example.com</a>
+                </li>
+                <li>
+                  GitHub: <a
+                    href="https://github.com/astorverse"
+                    target="_blank"
+                    rel="noopener noreferrer">github.com/astorverse</a>
+                </li>
+                <li>
+                  LinkedIn: <a
+                    href="https://linkedin.com/in/astoir"
+                    target="_blank"
+                    rel="noopener noreferrer">linkedin.com/in/astoir</a>
+                </li>
+              </ul>
+            </div>
+          </SectionWithHeader>
+        </div>
       </div>
     </div>
   </article>
 </Layout>
+
+<script>
+const exportBtn = document.getElementById('exportPdfBtn');
+if (exportBtn) {
+  exportBtn.addEventListener('click', () => {
+    window.print();
+  });
+}
+</script>

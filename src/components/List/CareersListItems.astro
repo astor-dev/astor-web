@@ -10,17 +10,17 @@ const periodText = `${career.data.startedAt} - ${career.data.endedAt ?? "Present
 ---
 
 <div class="bg-white-base rounded-lg py-6 shadow-sm">
-  <div class="grid grid-cols-1 gap-6 md:grid-cols-3">
+  <div class="grid grid-cols-1 gap-6 sm:grid-cols-3">
     <!-- 좌측: 기본 정보 (회사, 역할, 기간, 기술스택) -->
-    <div class="space-y-4 md:col-span-1">
+    <div class="space-y-4 sm:col-span-1">
       <div>
-        <h4 class="text-sm text-black-base/60">
+        <h4 class="text-xs text-black-base/60">
           <span class="text-skin-accent">{career.data.organizationName}</span>
         </h4>
-        <h3 class="text-lg font-bold text-black-accent">
+        <h3 class="text-sm font-bold text-black-accent">
           {career.data.role}
         </h3>
-        <p class="text-sm text-black-base/60">{periodText}</p>
+        <p class="text-xs text-black-base/60">{periodText}</p>
       </div>
 
       <!-- <div class="space-y-2">
@@ -41,15 +41,15 @@ const periodText = `${career.data.startedAt} - ${career.data.endedAt ?? "Present
     </div>
 
     <!-- 우측: body 내용 (설명 리스트) -->
-    <div class="space-y-4 md:col-span-2">
+    <div class="space-y-4 sm:col-span-2">
       {
         career.data.body.map(section => (
           <div class="space-y-1">
-            <h2 class="text-lg font-bold text-black-accent">
+            <h2 class="text-base font-bold text-black-accent">
               {section.heading}
             </h2>
-            <p class="text-sm text-black-base/60">{section.description}</p>
-            <ul class="my-3 ml-5 list-disc space-y-1 text-sm text-black-base">
+            <p class="text-xs text-black-base/60">{section.description}</p>
+            <ul class="my-3 ml-5 list-disc space-y-1 text-xs text-black-base">
               {section.lists.map(item => (
                 <li>{item}</li>
               ))}

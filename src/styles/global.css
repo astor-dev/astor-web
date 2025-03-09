@@ -224,3 +224,20 @@
 .swiper-wrapper {
   @apply content-baseline !important;
 }
+
+/* PDF 변환용 미디어 쿼리 추가 */
+@media print {
+  /* 불필요한 요소 숨기기 */
+  .swiper-pagination,
+  .non-printable {
+    display: none !important;
+  }
+
+  /* 불필요한 배경 제거로 인쇄 최적화 */
+  * {
+    -webkit-print-color-adjust: exact !important;
+    background-color: white !important;
+    color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+}

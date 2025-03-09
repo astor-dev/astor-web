@@ -1,0 +1,27 @@
+---
+interface Props {
+  title: string;
+  className?: string;
+}
+
+const { title, className = "" } = Astro.props;
+
+
+---
+
+<section class={`relative w-full ${className} mb-8`}>
+  <!-- 헤더 영역 -->
+  <div class="relative w-full overflow-x-hidden border-b-2 border-black mb-4" >
+    <!-- 제목과 설명 -->
+    <div class="relative w-full">
+      <h2 class="text-2xl font-bold tracking-tight text-black-accent mb-2">
+        {title}
+      </h2>
+    </div>
+  </div>
+
+  <!-- 컨텐츠 영역 -->
+  <div class="relative w-full overflow-x-hidden">
+    <slot />
+  </div>
+</section> 

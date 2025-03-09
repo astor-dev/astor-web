@@ -69,7 +69,7 @@ function NavBar({ pathname, tags, series, posts }: NavBarProps) {
     <>
       <header
         ref={navBarRef}
-        className={`left-1/2 z-30 w-full max-w-screen-lg -translate-x-1/2 transform duration-200 2xl:max-w-screen-xl ${
+        className={`left-1/2 z-30 w-full max-w-screen-lg -translate-x-1/2 transform duration-200 2xl:max-w-screen-xl print:hidden ${
           isInHero
             ? isRoot
               ? "pointer-events-none absolute opacity-0"

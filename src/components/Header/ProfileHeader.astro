@@ -1,0 +1,118 @@
+---
+import { FaCalendar, FaEnvelope, FaGithub, FaMapMarkerAlt, FaPhone, FaUniversity } from "react-icons/fa";
+
+interface EducationInfo {
+  school: string;
+  majors: string[];
+  year?: string;
+}
+
+interface InfoProps {
+  birth?: string;
+  phone?: string;
+  email?: string;
+  education?: EducationInfo;
+  location?: string;
+  github?: string;
+}
+
+interface Props {
+  name: string;
+  realName: string;
+  role: string;
+  imageSrc: string;
+  info?: InfoProps;
+}
+
+const { name, realName, role, imageSrc, info } = Astro.props;
+---
+
+<header class="relative mb-12 w-full">
+  <div class="flex flex-col sm:flex-row items-center sm:items-start justify-between sm:gap-8">
+    <!-- 이미지 영역 3:4 비율-->
+    <div class="mb-6 flex-shrink-0 w-[135px] h-[180px]"> 
+      <div class="relative mx-auto h-full w-full overflow-hidden rounded-lg ">
+        <img
+          src={imageSrc}
+          alt={name}
+          class="h-full w-full"
+        />
+      </div>
+    </div>
+
+    <!-- 정보 영역 -->
+    <div class="flex-grow flex flex-col ">
+      <div class="sm:flex-row">
+        <div>
+          <!-- 이름 섹션 -->
+          <h1 class="text-2xl font-bold text-black-accent">{name}</h1>
+          <p class="text-base font-medium text-black-muted">{realName}</p>
+        </div>
+      </div>
+
+      <!-- 역할 -->
+      <div class="inline-block rounded-full bg-skin-fill/10 py-1">
+        <span class="text-base font-medium text-skin-accent">
+          {role}
+        </span>
+      </div>
+
+      <!-- 추가 정보 영역 -->
+      <div class="grid grid-cols-1 gap-2 border-t border-gray-100 pt-3 sm:grid-cols-2">
+        {info?.birth && (
+          <div class="flex items-center gap-2 text-xs text-black-base">
+            <FaCalendar className="text-skin-accent" />
+            <span>{info.birth}</span>
+          </div>
+        )}
+
+        {info?.location && (
+          <div class="flex items-center gap-2 text-xs text-black-base">
+            <FaMapMarkerAlt className="text-skin-accent" />
+            <span>{info.location}</span>
+          </div>
+        )}
+
+        {info?.github && (
+          <div class="flex items-center gap-2 text-xs text-black-base">
+            <FaGithub className="text-skin-accent" />
+            <a
+              href={info.github}
+              target="_blank"
+              rel="noopener noreferrer"
+              class="hover:text-skin-accent"
+            >
+              GitHub
+            </a>
+          </div>
+        )}
+
+        {info?.phone && (
+          <div class="flex items-center gap-2 text-xs text-black-base">
+            <FaPhone className="text-skin-accent" />
+            <span>{info.phone}</span>
+          </div>
+        )}
+
+        {info?.email && (
+          <div class="flex items-center gap-2 text-xs text-black-base">
+            <FaEnvelope className="text-skin-accent" />
+            <span>{info.email}</span>
+          </div>
+        )}
+        {info?.education && (
+          <div class="col-span-1 flex items-center gap-2 text-xs text-black-base sm:col-span-2">
+            <FaUniversity className="flex-shrink-0 text-skin-accent" />
+            <div class="flex flex-col">
+              <span>{info.education.school}</span>
+              <span class="text-xs text-black-muted">
+                {info.education.majors.join(" · ")}
+                {info.education.year && ` (${info.education.year})`}
+              </span>
+            </div>
+          </div>
+        )}
+      </div>
+    </div>
+  </div>
+</header> 
