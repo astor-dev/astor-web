@@ -9,7 +9,7 @@ const { activity } = Astro.props;
 const periodText = `${activity.data.startedAt} - ${activity.data.endedAt ?? "Present"}`;
 ---
 
-<div class="bg-white-base rounded-lg py-6 shadow-sm">
+<div class="bg-white-base">
   <div class="grid grid-cols-1 gap-6 sm:grid-cols-3">
     <!-- 좌측: 기본 정보 (회사, 역할, 기간, 기술스택) -->
     <div class="space-y-4 sm:col-span-1">

@@ -59,8 +59,8 @@ for (const stackId of FEATURED_STACK_IDS) {
 
 <Layout title="About Me">
   <article class="mx-auto w-full">
-      <!-- 헤더 영역 -->
-      <div class="flex-row justify-between items-center mb-6 hidden sm:flex print:hidden">
+      <!-- 헤더 영역
+      <div class="flex-row justify-between items-center w-full max-w-6xl mx-auto px-4 pb-12 hidden sm:flex print:hidden">
         <h1 class="text-2xl font-bold text-black-accent">About Me</h1>
         <button 
           id="exportPdfBtn"
@@ -69,7 +69,7 @@ for (const stackId of FEATURED_STACK_IDS) {
           <FaFilePdf />
           <span>PDF로 저장</span>
         </button>
-      </div>
+      </div> -->
       <div class="w-full max-w-6xl mx-auto px-4 pb-4">
         <ProfileHeader
           name="Astor"
@@ -94,13 +94,9 @@ for (const stackId of FEATURED_STACK_IDS) {
           <SectionWithHeader
             title="About Me"
           >
-          <p class="leading-relaxed text-base text-black-base">
-            안녕하세요! 저는 백엔드 개발자 Astor입니다. 소프트웨어 아키텍처에 깊은 관심을 가지고 있으며, 문제 해결을 위한 최적의 구조화된 소프트웨어를 설계하는 것을 즐깁니다.
-          </p>
-          <p class="mt-4 leading-relaxed text-base text-black-base">
-            스타트업의 초기 창업 멤버로서, 제로 베이스에서 견고한 아키텍처와 안정적인 시스템을 구축하여 일일 수천 건의 결제 요청을 성공적으로 처리한 경험이 있습니다. 이는 엔지니어로서 제가 가진 가장 값진 자산 중 하나입니다.
-          </p>
-          <p class="mt-4 leading-relaxed text-base text-black-base">
+          <p class="leading-relaxed text-xs text-black-base">
+            안녕하세요! 저는 백엔드 개발자 Astor입니다. 소프트웨어 아키텍처에 깊은 관심을 가지고 있으며, 문제 해결을 위한 최적의 구조화된 소프트웨어를 설계하는 것을 즐깁니다.<br>
+            스타트업의 초기 창업 멤버로서, 제로 베이스에서 견고한 아키텍처와 안정적인 시스템을 구축하여 일일 수천 건의 결제 요청을 성공적으로 처리한 경험이 있습니다. 이는 엔지니어로서 제가 가진 가장 값진 자산 중 하나입니다.<br>
             급변하는 비즈니스 환경 속에서도 확장성 있는 설계를 통해 효율적인 시스템 운영을 실현해왔습니다. 단순한 기술 구현을 넘어 비즈니스 요구사항을 깊이 있게 분석하고, 데이터에 기반한 인사이트를 도출하여 최적의 솔루션을 제시할 수 있는 비즈니스 감각을 보유하고 있습니다.
           </p>
           </SectionWithHeader>
@@ -122,18 +118,26 @@ for (const stackId of FEATURED_STACK_IDS) {
           <SectionWithHeader
             title="Careers"
           >
-            <div class="not-prose space-y-6">
-              {careers.items.map(career => <CareersListItems career={career} />)}
+            <div>
+              {careers.items.map((career, index) => (
+                <>
+                  <CareersListItems career={career} />
+                  {index !== careers.items.length - 1 && <hr class="my-4" />}
+                </>
+              ))}
             </div>
           </SectionWithHeader>
 
           <SectionWithHeader
             title="Activities"
           >
-            <div class="not-prose space-y-6">
+            <div>
               {
-                activities.items.map(activity => (
-                  <ActivitiesListItems activity={activity} />
+                activities.items.map((activity, index) => (
+                  <>
+                    <ActivitiesListItems activity={activity} />
+                    {index !== activities.items.length - 1 && <hr class="my-4" />}
+                  </>
                 ))
               }
             </div>
