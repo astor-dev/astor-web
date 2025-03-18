@@ -1,4 +1,4 @@
-import { DependencyInjectionContainer } from "~modules/DependencyInjectionContainer";
+import { DependencyInjectionContainer } from "~modules/dependency-injection-container";
 import {
   ACTIVITY_REPOSITORY,
   ActivityRepository,

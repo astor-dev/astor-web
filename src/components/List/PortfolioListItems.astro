@@ -1,12 +1,13 @@
 ---
+import type { ActivityEntry } from "~types/activity.type";
 import type { CareerEntry } from "~types/career.type";
 
 interface Props {
-  career: CareerEntry;
+  props: CareerEntry | ActivityEntry;
 }
 
-const { career } = Astro.props;
-const periodText = `${career.data.startedAt} - ${career.data.endedAt ?? "Present"}`;
+const { props } = Astro.props;
+const periodText = `${props.data.startedAt} - ${props.data.endedAt ?? "Present"}`;
 ---
 
 <div class="bg-white-base">
@@ -15,10 +16,10 @@ const periodText = `${career.data.startedAt} - ${career.data.endedAt ?? "Present
     <div class="space-y-4 sm:col-span-1">
       <div>
         <h4 class="text-xs text-black-base/60">
-          <span class="text-skin-accent">{career.data.organizationName}</span>
+          <span class="text-skin-accent">{props.data.organizationName}</span>
         </h4>
         <h3 class="text-sm font-bold text-black-accent">
-          {career.data.role}
+          {props.data.role}
         </h3>
         <p class="text-xs text-black-base/60">{periodText}</p>
       </div>
@@ -43,7 +44,7 @@ const periodText = `${career.data.startedAt} - ${career.data.endedAt ?? "Present
     <!-- 우측: body 내용 (설명 리스트) -->
     <div class="space-y-4 sm:col-span-2">
       {
-        career.data.body.map(section => (
+        props.data.body.map(section => (
           <div class="space-y-1">
             <h2 class="text-base font-bold text-black-accent">
               {section.heading}

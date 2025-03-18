@@ -32,42 +32,31 @@ export class ActivityRepository {
     if (options?.sort) {
       const sort = options.sort;
       activities = activities.sort((a, b) => {
-        if (sort.field === "organizationName") {
-          // organizationName 필드가 빈 값인 경우 내림차순 시 제일 앞으로
-          if (sort.order === "asc") {
-            if (a.data.organizationName === "") return 1;
-            if (b.data.organizationName === "") return -1;
-          } else {
-            if (a.data.organizationName === "") return -1;
-            if (b.data.organizationName === "") return 1;
-          }
-        }
+        const sortWeight = sort.order === "asc" ? 1 : -1;
+
         if (sort.field === "startedAt") {
-          return a.data.startedAt.localeCompare(b.data.startedAt);
+          return a.data.startedAt.localeCompare(b.data.startedAt) * sortWeight;
         }
         if (sort.field === "endedAt") {
           // null인 값은 최신으로 가장 앞
-          if (a.data.endedAt === null) return -1;
-          if (b.data.endedAt === null) return 1;
-          return a.data.endedAt.localeCompare(b.data.endedAt);
-        }
-
-        // 값이 같을 경우 projectName 기준 가나다순 정렬
-        const compareResult =
-          sort.order === "asc"
-            ? String(a.data[sort.field]).localeCompare(
-                String(b.data[sort.field]),
-              )
-            : String(b.data[sort.field]).localeCompare(
-                String(a.data[sort.field]),
+          if (a.data.endedAt === null && b.data.endedAt === null) {
+            if (a.data.endedAt === b.data.endedAt) {
+              return (
+                a.data.startedAt.localeCompare(b.data.startedAt) * sortWeight
               );
+            }
 
-        if (compareResult === 0) {
-          return String(a.data.organizationName).localeCompare(
-            String(b.data.organizationName),
-          );
+            return (
+              a.data.startedAt.localeCompare(b.data.startedAt) * sortWeight
+            );
+          }
+          if (a.data.endedAt === null) return sortWeight;
+          if (b.data.endedAt === null) return -sortWeight;
         }
-        return compareResult;
+        return (
+          a.data.organizationName.localeCompare(b.data.organizationName) *
+          sortWeight
+        );
       });
     }
 

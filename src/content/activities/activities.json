@@ -92,5 +92,22 @@
       }
     ],
     "relatedProjectNames": ["히얼러스"]
+  },
+  {
+    "id": 4,
+    "role": "Planning & Development",
+    "organizationName": "산학 캡스톤 디자인",
+    "startedAt": "2025-03",
+    "endedAt": null,
+    "body": [
+      {
+        "heading": "프로젝트 기획 및 설계",
+        "description": null,
+        "lists": [
+          "SNS·커뮤니티·공공데이터를 활용한 최적 광고 지역 분석 파이프라인 설계"
+        ]
+      }
+    ],
+    "relatedProjectNames": ["ploca"]
   }
 ]

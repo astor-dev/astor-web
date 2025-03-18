@@ -1,0 +1,99 @@
+---
+import {
+  FaGraduationCap,
+  FaUniversity,
+  FaCalendarAlt,
+  FaMedal,
+  FaBook,
+  FaCalendar,
+} from "react-icons/fa";
+
+interface EducationDetail {
+  school: string;
+  majors: string[];
+  degree?: string;
+  startedAt: string;
+  endedAt?: string;
+  description?: string;
+  achievements?: string[];
+  gpa?: {
+    score: number;
+    maxScore: number;
+  };
+}
+
+interface Props {
+  education: EducationDetail;
+}
+
+const { education } = Astro.props;
+const periodText = `${education.startedAt} - ${education.endedAt ?? "Present"}`;
+---
+
+<div>
+  <div class="grid grid-cols-1 gap-6 sm:grid-cols-3">
+    <!-- 중앙: 학교 및 학위 정보 -->
+    <div class="space-y-4 sm:col-span-1">
+      <div class="space-y-1.5">
+        <div class="flex items-center gap-1.5">
+          <h3 class="text-sm font-bold text-black-accent">
+            {education.school}
+          </h3>
+        </div>
+
+        <div class="flex items-center gap-1 text-xs text-black-base">
+          <span class="font-medium">
+            {education.degree || ""}
+          </span>
+          {education.degree && education.majors.length > 0 && <span>|</span>}
+          <span>
+            {education.majors.join(" · ")}
+          </span>
+        </div>
+
+        {
+          education.gpa && (
+            <div class="flex items-center text-xs text-black-base/80">
+              <span>
+                {education.gpa.score}/{education.gpa.maxScore}
+              </span>
+            </div>
+          )
+        }
+        <p class="text-xs text-black-base/60">{periodText}</p>
+      </div>
+    </div>
+
+    <!-- 우측: 설명 및 성과 -->
+    <div class="space-y-4 sm:col-span-2">
+      {
+        education.description && (
+          <p
+            class="mb-2 text-sm leading-relaxed text-black-base"
+            set:html={education.description}
+          />
+        )
+      }
+
+      {
+        education.achievements && education.achievements.length > 0 && (
+          <div>
+            <h4 class="mb-1.5 text-xs font-bold text-black-accent">
+              주요 성과
+            </h4>
+            <ul class="space-y-1">
+              {education.achievements.map(item => (
+                <li class="flex items-start">
+                  <span class="mr-1.5 text-xs">•</span>
+                  <span class="text-xs leading-tight text-black-base">
+                    {item}
+                  </span>
+                </li>
+              ))}
+            </ul>
+          </div>
+        )
+      }
+    </div>
+  </div>
+</div>

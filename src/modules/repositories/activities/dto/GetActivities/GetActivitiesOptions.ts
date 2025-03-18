@@ -7,7 +7,7 @@ export interface GetActivitiesOptions {
     role?: string;
   };
   sort?: {
-    field: "organizationName" | "startedAt" | "endedAt";
+    field: "startedAt" | "endedAt";
     order: "asc" | "desc";
   };
 }
