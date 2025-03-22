@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useRef } from "react";
-import heroMilkyway from "~assets/images/hero-milkyway.jpg";
+import heroMilkyway from "~assets/images/hero-milkyway.webp";
 import FloatingIcons from "~components/Hero/FloatingIcons";
 import LoadingSpinner from "~components/LoadingSpinner/LoadingSpinner";
 import ImageWithSkeleton from "~components/Skeleton/ImageWithSkeleton";

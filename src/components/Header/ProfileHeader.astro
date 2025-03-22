@@ -6,6 +6,7 @@ import {
   FaMapMarkerAlt,
   FaPhone,
   FaUniversity,
+  FaGlobe,
 } from "react-icons/fa";
 
 interface EducationInfo {
@@ -21,6 +22,7 @@ interface InfoProps {
   education?: EducationInfo;
   location?: string;
   github?: string;
+  website?: string;
 }
 
 interface Props {
@@ -101,6 +103,22 @@ const { name, realName, role, imageSrc, info } = Astro.props;
         }
 
         {
+          info?.website && (
+            <div class="flex items-center gap-2 text-xs text-black-base">
+              <FaGlobe />
+              <a
+                href={info.website}
+                target="_blank"
+                rel="noopener noreferrer"
+                class="hover:text-skin-accent"
+              >
+                {new URL(info.website).hostname}
+              </a>
+            </div>
+          )
+        }
+
+        {
           info?.phone && (
             <div class="flex items-center gap-2 text-xs text-black-base">
               <FaPhone />
@@ -119,7 +137,7 @@ const { name, realName, role, imageSrc, info } = Astro.props;
         }
         {
           info?.education && (
-            <div class="col-span-1 flex items-center gap-2 text-xs text-black-base sm:col-span-2">
+            <div class="col-span-1 flex items-center gap-2 text-xs text-black-base">
               <FaUniversity />
               <div class="flex flex-col">
                 <span>{info.education.school}</span>

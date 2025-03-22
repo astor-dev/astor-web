@@ -37,7 +37,7 @@ const BlogPostCard: React.FC<BlogPostCardProps> = props => {
         {/* 상단: 이미지 영역 (전체 높이의 2/3) */}
         <div className="relative aspect-[16/9] h-2/3 w-full overflow-hidden">
           <ImageWithSkeleton
-            src={props.data.ogImage?.toString() || "/default-blog-image.jpg"}
+            src={props.data.ogImage?.toString() ?? ""}
             alt={props.data.title}
             className="absolute inset-0 h-full w-full object-cover"
           />

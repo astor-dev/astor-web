@@ -7,28 +7,35 @@ import ActivityItem, {
 } from "~components/Item/ActivityItem";
 import AdminOnly from "~components/Wrapper/AdminOnly";
 import { repositoryContainer } from "~modules/repository.module";
-import { PROJECT_REPOSITORY, type ProjectRepository } from "~modules/repositories/projects/ProjectRepository";
-import { POST_REPOSITORY, type PostRepository } from "~modules/repositories/posts/PostRepository";
+import {
+  PROJECT_REPOSITORY,
+  type ProjectRepository,
+} from "~modules/repositories/projects/ProjectRepository";
+import {
+  POST_REPOSITORY,
+  type PostRepository,
+} from "~modules/repositories/posts/PostRepository";
 import type { Paginated } from "~types/page.type";
 import type { ProjectEntry } from "~types/project.type";
 import type { PostEntry } from "~types/post.type";
 import dayjs from "dayjs";
 import Hero from "~components/Hero/Hero.astro";
-import blogHeader from "~assets/images/blog-header.jpg";
-const projectRepository = repositoryContainer.get<ProjectRepository>(
-  PROJECT_REPOSITORY
-);
+import blogHeader from "~assets/images/blog-header.webp";
+const projectRepository =
+  repositoryContainer.get<ProjectRepository>(PROJECT_REPOSITORY);
 const projects: Paginated<ProjectEntry> = await projectRepository.getProjects({
   paging: { limit: 1, page: 1 },
 });
 
 const postRepository = repositoryContainer.get<PostRepository>(POST_REPOSITORY);
-const posts:Paginated<PostEntry> = await postRepository.getPosts({paging:{limit:1, page:1}});
+const posts: Paginated<PostEntry> = await postRepository.getPosts({
+  paging: { limit: 1, page: 1 },
+});
 const thisMonthPosts = await postRepository.getPosts({
-  filter:{
-    createdAt:{
-      $gte:dayjs().subtract(1, "month"),
-      $lte:dayjs(),
+  filter: {
+    createdAt: {
+      $gte: dayjs().subtract(1, "month"),
+      $lte: dayjs(),
     },
   },
 });
@@ -83,7 +90,6 @@ const ACTIVITIES: ActivityItemProps[] = [
   />
   <AdminOnly client:load>
     <div class="mx-auto w-full max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
-
       <!-- 빠른 작성 버튼 -->
       <div class="mb-12 grid grid-cols-1 gap-4 sm:grid-cols-2">
         {QUICK_ACTIONS.map(action => <ActionCard {...action} client:load />)}

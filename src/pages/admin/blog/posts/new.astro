@@ -4,13 +4,20 @@ import Layout from "~layouts/BaseLayout.astro";
 import PostForm from "~components/Form/PostForm";
 import AdminOnly from "~components/Wrapper/AdminOnly";
 import Hero from "~components/Hero/Hero.astro";
-import blogHeader from "~assets/images/blog-header.jpg";
+import blogHeader from "~assets/images/blog-header.webp";
 import { repositoryContainer } from "~modules/repository.module";
-import { POST_REPOSITORY, PostRepository } from "~modules/repositories/posts/PostRepository";
-import { SERIES_REPOSITORY, type SeriesRepository } from "~modules/repositories/series/SeriesRepository";
+import {
+  POST_REPOSITORY,
+  PostRepository,
+} from "~modules/repositories/posts/PostRepository";
+import {
+  SERIES_REPOSITORY,
+  type SeriesRepository,
+} from "~modules/repositories/series/SeriesRepository";
 
 const postRepository = repositoryContainer.get<PostRepository>(POST_REPOSITORY);
-const seriesRepository = repositoryContainer.get<SeriesRepository>(SERIES_REPOSITORY);
+const seriesRepository =
+  repositoryContainer.get<SeriesRepository>(SERIES_REPOSITORY);
 const tags = await postRepository.getAllTags();
 const series = await seriesRepository.getSeries();
 ---

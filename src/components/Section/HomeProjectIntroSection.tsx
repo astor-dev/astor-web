@@ -1,6 +1,6 @@
 import React from "react";
 import ImageWithSkeleton from "~components/Skeleton/ImageWithSkeleton";
-import bannerImage from "~assets/images/project-banner.png";
+import bannerImage from "~assets/images/project-banner.svg";
 import { IoArrowForward } from "react-icons/io5";
 
 const HomeProjectIntroSection = () => {

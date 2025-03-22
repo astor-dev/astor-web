@@ -2,20 +2,24 @@
 import Layout from "~layouts/BaseLayout.astro";
 import ProjectForm from "~components/Form/ProjectForm";
 import { repositoryContainer } from "~modules/repository.module";
-import { PROJECT_REPOSITORY, type ProjectRepository } from "~modules/repositories/projects/ProjectRepository";
 import AdminOnly from "~components/Wrapper/AdminOnly";
 import type { PostRepository } from "~modules/repositories/posts/PostRepository";
 import { POST_REPOSITORY } from "~modules/repositories/posts/PostRepository";
 import PostForm from "~components/Form/PostForm";
 import Hero from "~components/Hero/Hero.astro";
-import blogHeader from "~assets/images/blog-header.jpg";
-import { SERIES_REPOSITORY, type SeriesRepository } from "~modules/repositories/series/SeriesRepository";
+import blogHeader from "~assets/images/blog-header.webp";
+import {
+  SERIES_REPOSITORY,
+  type SeriesRepository,
+} from "~modules/repositories/series/SeriesRepository";
 
 export async function getStaticPaths() {
-  const postRepository = repositoryContainer.get<PostRepository>(POST_REPOSITORY);
+  const postRepository =
+    repositoryContainer.get<PostRepository>(POST_REPOSITORY);
   const posts = await postRepository.getPosts();
   const tags = await postRepository.getAllTags();
-  const seriesRepository = repositoryContainer.get<SeriesRepository>(SERIES_REPOSITORY);
+  const seriesRepository =
+    repositoryContainer.get<SeriesRepository>(SERIES_REPOSITORY);
   const series = await seriesRepository.getSeries();
 
   const postResult = posts.items.map(post => ({

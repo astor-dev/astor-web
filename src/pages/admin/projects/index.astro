@@ -4,13 +4,17 @@ import ProjectTable from "~components/Table/ProjectTable";
 import IconButton from "~components/Button/IconButton";
 import AdminOnly from "~components/Wrapper/AdminOnly";
 import { repositoryContainer } from "~modules/repository.module";
-import { PROJECT_REPOSITORY, type ProjectRepository } from "~modules/repositories/projects/ProjectRepository";
+import {
+  PROJECT_REPOSITORY,
+  type ProjectRepository,
+} from "~modules/repositories/projects/ProjectRepository";
 import type { Paginated } from "~types/page.type";
 import type { ProjectEntry } from "~types/project.type";
-import projectHeader from "~assets/images/project-header.jpg";
+import projectHeader from "~assets/images/project-header.webp";
 import Hero from "~components/Hero/Hero.astro";
 
-const projectRepository = repositoryContainer.get<ProjectRepository>(PROJECT_REPOSITORY);
+const projectRepository =
+  repositoryContainer.get<ProjectRepository>(PROJECT_REPOSITORY);
 const projects: Paginated<ProjectEntry> = await projectRepository.getProjects();
 ---
 

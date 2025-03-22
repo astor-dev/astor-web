@@ -2,7 +2,7 @@
 import "~styles/global.css";
 import Layout from "~layouts/BaseLayout.astro";
 import { FEATURED_STACK_IDS } from "~constants/about";
-import profileImage from "~assets/images/profile.jpg";
+import profileImage from "~assets/images/profile.webp";
 import ProfileHeader from "~components/Header/ProfileHeader.astro";
 import SectionWithHeader from "~components/Section/SectionWithHeader.astro";
 import type { ProjectEntry } from "~types/project.type";
@@ -103,7 +103,7 @@ const educations = [
         role="Backend Engineer"
         imageSrc={profileImage.src}
         info={{
-          birth: "2001.12.10",
+          // birth: "2001.12.10",
           phone: "010-3335-7862",
           email: "orangnlp@gmail.com",
           education: {
@@ -113,6 +113,7 @@ const educations = [
           },
           // location: "Seoul, Korea",
           github: "astor-dev",
+          website: "https://astorverse.com",
         }}
       />
 
