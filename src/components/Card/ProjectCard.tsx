@@ -192,7 +192,7 @@ const ProjectCard = (props: ProjectCardProps) => {
             </div>
           </div>
         </div>
-        <div className="flex h-[8rem] flex-col justify-between p-4 lg:p-5">
+        <div className="flex h-[8rem] flex-col justify-between py-4">
           <p className="line-clamp-2 min-h-[2.5rem] text-sm font-medium uppercase tracking-wider text-black-base">
             {isLoading ? <Skeleton count={2} /> : props.data.shortDescription}
           </p>
