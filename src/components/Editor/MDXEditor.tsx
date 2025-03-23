@@ -161,7 +161,7 @@ const Editor: React.FC<EditorProps> = ({ markdown, onChange, placeholder }) => {
       onChange={debouncedOnChange}
       ref={mdxEditorRef}
       placeholder={placeholder}
-      contentEditableClassName="prose prose-sm max-w-none min-h-[500px] md:prose lg:prose-lg mx-auto"
+      contentEditableClassName="prose prose-sm max-w-none min-h-[500px] md:prose mx-auto"
       trim={false}
       plugins={plugins}
       toMarkdownOptions={{
