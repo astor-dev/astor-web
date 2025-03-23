@@ -124,7 +124,7 @@ const StackSlider: React.FC<StackSliderProps> = ({
               fill: "row",
             }}
             // autoplay={{ delay: 5000, disableOnInteraction: false }}
-            spaceBetween={16}
+            spaceBetween={0}
             slidesPerGroup={1}
             grabCursor={true}
             pagination={{
@@ -136,19 +136,19 @@ const StackSlider: React.FC<StackSliderProps> = ({
             breakpoints={{
               0: {
                 slidesPerView: 2,
-                spaceBetween: 10,
+                spaceBetween: 0,
                 grid: { rows: 4 },
               },
               640: {
                 // sm
                 slidesPerView: 3,
-                spaceBetween: 12,
+                spaceBetween: 0,
                 grid: { rows: 4 },
               },
               768: {
                 // md
                 slidesPerView: 4,
-                spaceBetween: 16,
+                spaceBetween: 0,
                 navigation: {
                   enabled: true,
                   nextEl: ".swiper-button-next",
@@ -159,7 +159,7 @@ const StackSlider: React.FC<StackSliderProps> = ({
               1024: {
                 // lg
                 slidesPerView: 5,
-                spaceBetween: 16,
+                spaceBetween: 0,
                 grid: { rows: 4, fill: "row" },
               },
             }}

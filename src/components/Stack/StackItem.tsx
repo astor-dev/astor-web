@@ -35,7 +35,7 @@ const StackItem: React.FC<StackItemProps> = ({
         onClick={() => setShowRelated(true)}
         className="group relative flex cursor-pointer items-center gap-3 rounded-lg bg-transparent px-3 py-2.5 transition-all duration-200 hover:-translate-y-0.5 hover:bg-white/80 active:translate-y-0 active:bg-white/70 active:shadow"
       >
-        <div className="text-xl text-skin-accent">
+        <div className="text-lg text-skin-accent">
           <stack.icon
             className="transition-transform duration-200 ease-out group-hover:scale-110 group-active:scale-95"
             style={{ color: stack.color }}
@@ -55,9 +55,9 @@ const StackItem: React.FC<StackItemProps> = ({
               </span>
             )}
           </h3>
-          <p className="truncate text-xs text-black-muted group-hover:text-black-base/80">
+          {/* <p className="truncate text-xs text-black-muted group-hover:text-black-base/80">
             {stack.description}
-          </p>
+          </p> */}
         </div>
       </motion.div>
 

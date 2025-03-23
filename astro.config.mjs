@@ -70,12 +70,11 @@ function remarkIframeDirective() {
         data.hName = "iframe";
         data.hProperties = {
           src: embedUrl, // 변환된 URL 사용
-          width: attrs.width || "560",
-          height: attrs.height || "315",
           frameBorder: "0",
           allow:
             "accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture",
           allowFullScreen: true,
+          style: "aspect-ratio: 16/9; width: 100%;",
         };
       }
     });

@@ -92,56 +92,61 @@ for (const stackId of project.data.stackIds) {
   </section>
 
   <!-- 프로젝트 상세 내용 -->
-  <div class="mx-auto max-w-4xl space-y-12 px-4 py-8 sm:px-6 lg:px-8">
-    <section
-      class="flex flex-col justify-between gap-4 sm:flex-row sm:items-center"
-    >
-      <p
-        class="border-l-4 border-skin-accent pl-4 text-lg leading-relaxed text-black-base"
-      >
-        {project.data.shortDescription}
-      </p>
-      <div class="flex shrink-0 flex-col items-end gap-3">
-        {
-          isAdmin && (
+  <article class="relative mx-auto mb-10">
+    <div class="prose prose-sm mx-auto max-w-none md:prose">
+      <!-- 프로젝트 기본 정보 -->
+      <div class="not-prose">
+        <section
+          class="flex flex-col justify-between gap-4 py-4 sm:flex-row sm:items-center"
+        >
+          <p
+            class="border-l-4 border-skin-accent pl-4 text-base leading-relaxed text-black-base"
+          >
+            {project.data.shortDescription}
+          </p>
+          <div class="flex shrink-0 flex-col items-end gap-3">
+            {
+              isAdmin && (
+                <IconButton
+                  icon="FiEdit"
+                  text="프로젝트 수정"
+                  href={`/admin/projects/${project.id}/edit`}
+                  variant="primary"
+                  size="sm"
+                  client:load
+                />
+              )
+            }
             <IconButton
-              icon="FiEdit"
-              text="프로젝트 수정"
-              href={`/admin/projects/${project.id}/edit`}
-              variant="primary"
+              icon="FiExternalLink"
+              text="사이트 방문"
+              href={project.data.siteUrl}
+              target="_blank"
+              variant={project.data.siteUrl ? "primary" : "muted"}
+              disabled={!project.data.siteUrl}
+              rel="noopener noreferrer"
+              size="sm"
               client:load
             />
-          )
-        }
-        <IconButton
-          icon="FiExternalLink"
-          text="사이트 방문"
-          href={project.data.siteUrl}
-          target="_blank"
-          variant={project.data.siteUrl ? "primary" : "muted"}
-          disabled={!project.data.siteUrl}
-          rel="noopener noreferrer"
-          client:load
-        />
+          </div>
+        </section>
+        <!-- 기술 스택 섹션 -->
+        <section class="transition-all duration-700">
+          <h2 class="my-4 text-lg font-bold text-black-accent">사용 기술</h2>
+          <StackSlider
+            stackIds={project.data.stackIds}
+            relatedProjects={relatedProjects}
+            client:load
+          />
+        </section>
       </div>
-    </section>
-    <!-- 기술 스택 섹션 -->
-    <section class="transition-all duration-700">
-      <h2 class="mb-6 text-2xl font-bold text-black-accent">사용 기술</h2>
-      <StackSlider
-        stackIds={project.data.stackIds}
-        relatedProjects={relatedProjects}
-        client:load
-      />
-    </section>
 
-    <!-- 프로젝트 설명 섹션 -->
-    <section
-      class="prose prose-sm max-w-none transition-all duration-700 md:prose lg:prose-lg"
-    >
-      <Content />
-    </section>
-  </div>
+      {/* 마크다운 콘텐츠 */}
+      <div>
+        <Content />
+      </div>
+    </div>
+  </article>
 </Layout>
 
 <style>
