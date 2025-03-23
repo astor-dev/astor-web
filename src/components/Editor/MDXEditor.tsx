@@ -10,10 +10,8 @@ import {
   UndoRedo,
   BoldItalicUnderlineToggles,
   BlockTypeSelect,
-  CreateLink,
   InsertImage,
   imagePlugin,
-  linkPlugin,
   tablePlugin,
   InsertTable,
   diffSourcePlugin,
@@ -25,10 +23,16 @@ import {
   codeMirrorPlugin,
   type MDXEditorMethods,
   InsertThematicBreak,
+  directivesPlugin,
 } from "@mdxeditor/editor";
 import "~styles/editor.css";
 import { IMAGE_SERVICE, ImageService } from "~modules/services/image.service";
 import { serviceContainer } from "~modules/service.module";
+import {
+  iframePlugin,
+  IframeDirectiveDescriptor,
+  IframeButton,
+} from "~components/Editor/plugins/iframe";
 
 interface EditorProps {
   markdown: string;
@@ -90,10 +94,10 @@ const Editor: React.FC<EditorProps> = ({ markdown, onChange, placeholder }) => {
         <UndoRedo />
         <BoldItalicUnderlineToggles />
         <BlockTypeSelect />
-        <CreateLink />
         <InsertThematicBreak />
         <InsertImage />
         <InsertTable />
+        <IframeButton />
         <ConditionalContents
           options={[
             {
@@ -117,12 +121,15 @@ const Editor: React.FC<EditorProps> = ({ markdown, onChange, placeholder }) => {
       listsPlugin(),
       quotePlugin(),
       thematicBreakPlugin(),
+      directivesPlugin({
+        directiveDescriptors: [IframeDirectiveDescriptor],
+      }),
       imagePlugin({
         imageUploadHandler,
         imageAutocompleteSuggestions: [],
       }),
-      linkPlugin(),
       tablePlugin(),
+      iframePlugin(),
       diffSourcePlugin({
         diffMarkdown: oldMarkdownRef.current,
         viewMode: "rich-text",
