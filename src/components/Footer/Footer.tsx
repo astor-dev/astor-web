@@ -2,14 +2,13 @@
 import React, { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import {
+  FaClock,
   FaGithub,
   FaLinkedin,
   FaEnvelope,
   FaArrowUp,
-  FaClock,
 } from "react-icons/fa";
 import ImageWithSkeleton from "~components/Skeleton/ImageWithSkeleton";
-import type { PostEntry } from "~/types/post.type";
 
 // 최신 포스트 타입 정의 (간단한 버전)
 interface LatestPost {

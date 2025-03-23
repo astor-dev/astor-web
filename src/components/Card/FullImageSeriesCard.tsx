@@ -10,12 +10,6 @@ export interface SeriesCardProps {
 const SeriesCard: React.FC<SeriesCardProps> = ({ series }) => {
   const [isLoading, setIsLoading] = useState(true);
 
-  useEffect(() => {
-    if (series.series.data.name.length > 0) {
-      setIsLoading(false);
-    }
-  }, [series]);
-
   const imageUrl = series.series.data.ogImage || "/default-series.jpg";
   // pointer 시작 위치 저장
   const startPos = useRef<{ x: number; y: number }>({ x: 0, y: 0 });
@@ -30,7 +24,6 @@ const SeriesCard: React.FC<SeriesCardProps> = ({ series }) => {
   };
 
   const handleImageLoad = () => {
-    console.log("onLoadComplete!!");
     setIsLoading(false);
   };
 
@@ -66,19 +59,16 @@ const SeriesCard: React.FC<SeriesCardProps> = ({ series }) => {
           className="h-[150px] w-full bg-cover bg-center md:h-[200px]"
           src={imageUrl}
           alt={series.series.data.name}
+          onLoadComplete={handleImageLoad}
         />
         {/* 카드 내용 */}
         <div className="py-4">
           <h2 className="text-xl font-bold text-black-accent">
-            {isLoading ? (
-              <Skeleton className="w-full" />
-            ) : (
-              series.series.data.name
-            )}
+            {isLoading ? <Skeleton width="50%" /> : series.series.data.name}
           </h2>
           <p className="mt-1 text-sm text-gray-600">
             {isLoading ? (
-              <Skeleton className="w-full" />
+              <Skeleton width="40%" />
             ) : (
               `${series.count}개의 포스트`
             )}

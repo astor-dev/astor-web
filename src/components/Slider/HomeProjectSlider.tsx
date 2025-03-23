@@ -4,8 +4,6 @@ import { Swiper, SwiperSlide, type SwiperRef } from "swiper/react";
 import type { ProjectEntry } from "~types/project.type";
 import FullImageProjectCard from "~components/Card/FullImageProjectCard";
 import "swiper/css/effect-fade";
-import { FaArrowLeft, FaArrowRight } from "react-icons/fa";
-import Skeleton from "react-loading-skeleton";
 
 const HomeProjectSlider = (props: { projects: ProjectEntry[] }) => {
   const { projects } = props;

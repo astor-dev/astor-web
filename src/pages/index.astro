@@ -39,10 +39,9 @@ const pinnedPosts: PostEntry[] = (
   })
 ).items;
 const tags: Tag[] = await postRepository.getAllTags();
-const seriesList: SeriesAndCount[] =
-  (await postRepository.getAllSeriesAndCount()).sort(
-    (a, b) => b.count - a.count,
-  );
+const seriesList: SeriesAndCount[] = (
+  await postRepository.getAllSeriesAndCount()
+).sort((a, b) => b.count - a.count);
 ---
 
 <Layout>
@@ -57,12 +56,12 @@ const seriesList: SeriesAndCount[] =
           moreLink="/blog/series"
           client:load
         />
-        <HomeSeriesCarousel seriesList={seriesList} client:visible />
+        <HomeSeriesCarousel seriesList={seriesList} client:idle />
       </div>
     </section>
     <section class="mb-16">
       <ShootingStarHeader title="주목할만한 글" moreLink="/blog" client:load />
-      <HomePinnedPostsSlider pinnedPosts={pinnedPosts} client:visible />
+      <HomePinnedPostsSlider pinnedPosts={pinnedPosts} client:idle />
     </section>
 
     {/* 프로젝트 섹션 */}

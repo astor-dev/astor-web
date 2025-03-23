@@ -1,11 +1,12 @@
 import React, { useEffect, useRef, useState } from "react";
 import {
   RiImageAddFill,
-  RiCheckFill,
   RiLoader2Fill,
   RiClipboardLine,
+  RiCheckFill,
 } from "react-icons/ri";
 import { serviceContainer } from "~modules/service.module";
+
 import {
   IMAGE_SERVICE,
   type ImageService,

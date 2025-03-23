@@ -4,7 +4,6 @@ import { type Stack } from "~types/stack.type";
 import { useIntersectionObserver } from "~hooks/UseIntersectionObserver/UseIntersectionObserver";
 import type { ProjectEntry } from "~types/project.type";
 import RelatedProjectsModal from "~components/Modal/RelatedProjectsModal";
-import { FiInfo, FiExternalLink } from "react-icons/fi";
 
 interface StackItemProps {
   stack: Stack;

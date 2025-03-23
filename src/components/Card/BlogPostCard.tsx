@@ -1,9 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
-import { FaClock, FaBookmark, FaUser } from "react-icons/fa";
+import { FaClock, FaUser } from "react-icons/fa";
 import type { PostEntry } from "~/types/post.type";
 import dayjs from "dayjs";
-import Tag from "~components/Tag/Tag";
-import { useIntersectionObserver } from "~hooks/UseIntersectionObserver/UseIntersectionObserver";
 import ImageWithSkeleton from "~components/Skeleton/ImageWithSkeleton";
 import { remark } from "remark";
 import strip from "strip-markdown";

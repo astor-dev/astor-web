@@ -35,7 +35,7 @@
     "modules": "link:@types/swiper/modules",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
-    "react-icons": "^5.4.0",
+    "react-icons": "^5.5.0",
     "react-loading-skeleton": "^3.5.0",
     "react-markdown": "^9.0.3",
     "react-tsparticles": "^2.12.2",

@@ -42,8 +42,8 @@ export class ImageService {
       format = "webp",
     } = options;
 
-    // SVG는 최적화 대상에서 제외
-    if (image.type === "image/svg+xml") {
+    // SVG나 GIF는 최적화 대상에서 제외
+    if (image.type === "image/svg+xml" || image.type === "image/gif") {
       return image;
     }
 
@@ -136,9 +136,13 @@ export class ImageService {
     }
 
     try {
-      // 이미지 최적화 적용 (옵션에 따라)
+      // 이미지 최적화 적용 (SVG와 GIF는 제외)
       let fileToUpload = image;
-      if (optimize && image.type !== "image/svg+xml") {
+      if (
+        optimize &&
+        image.type !== "image/svg+xml" &&
+        image.type !== "image/gif"
+      ) {
         fileToUpload = await this.optimizeImage(image, optimizeOptions);
       }
 
@@ -151,7 +155,9 @@ export class ImageService {
               ? "jpg"
               : fileToUpload.type === "image/png"
                 ? "png"
-                : fileToUpload.type.split("/").at(1);
+                : fileToUpload.type === "image/gif"
+                  ? "gif"
+                  : fileToUpload.type.split("/").at(1);
 
       const presigned = await this.getPresignedUrl(
         key,

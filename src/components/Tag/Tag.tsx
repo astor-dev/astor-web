@@ -1,6 +1,5 @@
 import React from "react";
 import { FaHashtag } from "react-icons/fa";
-import type { Tag as TagType } from "~types/post.type";
 
 interface TagProps {
   tag: string;

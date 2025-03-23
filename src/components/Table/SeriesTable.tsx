@@ -1,4 +1,3 @@
-import type { CollectionEntry } from "astro:content";
 import React from "react";
 import { FaPen, FaTrash } from "react-icons/fa";
 import type { SeriesEntry } from "~types/series.type";

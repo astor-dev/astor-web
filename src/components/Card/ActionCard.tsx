@@ -1,10 +1,10 @@
 import React from "react";
-
 import { FaCode, FaPen, FaPlus } from "react-icons/fa";
 
 const IconRecord: Record<string, React.ElementType> = {
   FaCode: FaCode,
   FaPen: FaPen,
+  FaPlus: FaPlus,
 };
 
 export interface ActionCardProps {

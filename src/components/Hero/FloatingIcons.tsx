@@ -3,7 +3,6 @@ import React, { useEffect, useMemo, useState, useRef } from "react";
 import { useViewport } from "../../hooks/UseViewport/UseViewport";
 import FloatingObject from "./FloatingObject";
 import { stacks } from "~constants/stacks";
-// (예시) Font Awesome Heart 아이콘을 임포트했다고 가정합니다.
 import { FaHeart } from "react-icons/fa";
 
 const generateRandomPosition = (
