@@ -41,19 +41,51 @@ stackIds:
 
 ::iframe{src="https://www.youtube.com/embed/5a1YZkN-rQk?si=OQRb0icNY8JJzriW"}
 
+*서비스 소개 영상*
+
+#### 문제, 시장, 솔루션
+
+***
+
 ![](https://d2r0pavv0lsiqc.cloudfront.net/projects/images/399b187d-d2c6-45e2-86b9-72fe9b5717d1.webp)<img height="379" width="678" src="https://d2r0pavv0lsiqc.cloudfront.net/projects/images/276b36ca-78a0-46a4-9571-dcd9f69af904.webp" />
 
 ![](https://d2r0pavv0lsiqc.cloudfront.net/projects/images/02d000dd-46b5-4223-a3dc-7bda6bcc6b60.webp)
 
 ![](https://d2r0pavv0lsiqc.cloudfront.net/projects/images/a372e5d5-bdfb-4f34-99bf-db94eea75bef.webp)
 
+히얼러스는 "힘들어도 기대거나 털어놓지 못하고 혼자 곪는 사람들"을 위해 **심리 상담 이론에 근거한 AI** **상담사**를 통해 `편하게 마음을 털어놓을 곳을 제공해주고자` 시작하였습니다.
+
+#### 주요기능
+
+***
+
 ![](https://d2r0pavv0lsiqc.cloudfront.net/projects/images/cbf59ce4-c885-4b5d-927d-90360815909d.webp)![](https://d2r0pavv0lsiqc.cloudfront.net/projects/images/7c674659-9b53-4ac5-9e4a-5cf02d061e8d.webp)
 
-```html
-“우울한 이야기를 꺼내면 상대방까지 우울해지겠지..?”
-“내가 힘든 걸 말하면 분위기가 무거워질거야.”
-“내가 상대를 감정 쓰레기통으로 쓴다고 생각하면 어쩌지..?”
-“괜히 기댔다가 상대가 버거워하고 이 관계까지 잃으면 어떡해.”
-```
+상담사와 채팅하는 유저는, 각기 다른 특화된 상담사에 따라 아래와 같은 파이프라인을 통해 한 사이클의 채팅을 진행합니다,
 
-히얼러스는 "힘들어도 기대거나 털어놓지 못하고 혼자 곪는 사람들"을 위해,&#x20;
+![](https://d2r0pavv0lsiqc.cloudfront.net/projects/images/5f96a154-e38c-4765-a751-dfdbb727f76e.webp)
+
+각각의 스탭들은 **상담심리 이론**에 의거하여 설계된 `모듈화`된 프롬프트로 구성되어 있습니다.&#x20;
+
+### 기술적 차별점과 개인 기여
+
+히얼러스 프로젝트는 **gRPC** & **Kafka** 기반 `마이크로서비스 아키텍처(MSA)`로 설계 되었습니다. 저는 `백엔드 팀장`으로 MSA를 기획하고, 구조를 설계, 각각의 서비스들을 만들 팀원을 직접 리크루팅 하였습니다. 서비스의 전반적인 구조는 아래와 같습니다.
+
+- **IDL**
+  : protobuf
+- **통신**
+  : http(rest), gRPC, kafka
+- **게이트웨이**
+  : java + spring (spring cloud gateway)
+- **서비스**
+  - **결제**
+    : kotlin + spring
+  - **상담**
+    : nest.js
+  - **유저**
+    : nest.js
+
+### 주요 성과
+
+- 매쉬업벤처스-구글 클라우드 주최 ‘GenAI Sprint’ 우승
+- 고려대학교 스타트업 스테이션 츄츄 16기
