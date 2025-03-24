@@ -28,7 +28,7 @@ stackIds:
   - 24
 ---
 
-### 프로젝트 개요
+## 프로젝트 개요
 
 ![](https://d2r0pavv0lsiqc.cloudfront.net/projects/images/228a0535-c500-4f3b-a64c-3dcd389f9cf9.webp)
 
@@ -36,23 +36,19 @@ stackIds:
 
 핸디버스는 공연/행사 관람객들의 **이동 수요**를 모아 편안하게 공연을 관람할 수 있도록 **버스 노선을 개설, 제공**해주는 `수요 응답형 모빌리티 서비스`입니다.
 
-#### 문제 정의 및 솔루션
+### 문제 정의 및 솔루션
 
 ***
 
 ![](https://d2r0pavv0lsiqc.cloudfront.net/projects/images/5a31651e-bed5-44ff-8507-5b91cd7bda96.webp)![](https://d2r0pavv0lsiqc.cloudfront.net/projects/images/3b0cd938-62df-4704-ae8f-a05a6a8fdd99.webp)![](https://d2r0pavv0lsiqc.cloudfront.net/projects/images/3504e95c-21e7-4f2a-81c1-23e1c5168e14.webp)![](https://d2r0pavv0lsiqc.cloudfront.net/projects/images/f9e319cd-9c90-4e7a-87a3-77b521f8b0b9.webp)
 
-### 기술적 차별점과 개인 기여
+## 기술적 차별점과 개인 기여
 
 핸디버스는 제대로된 소프트웨어도 없던 시절, 팀에 `초기 창업 멤버`로 합류하여 **기획**과 **백엔드** 개발 전과정을 참여하였습니다.
 
-#### 기획 기여
+### 백엔드 개발
 
-**도메인 주도 설계(DDD)**&#xC758; 전략적 설계 방법론들을 차용하여, 이벤트 스토밍을 통해 제품의 비즈니스 도메인을 도출하고, 모호했던 정책들을 구체화 했습니다.
-
-#### **백엔드 개발**
-
-
+#### 수요 기반 노선 설계 자동화 기술 개발
 
 ![](https://d2r0pavv0lsiqc.cloudfront.net/projects/images/6d1ea1a9-1f3a-4f51-b347-d7086af9fd02.webp)
 
@@ -61,5 +57,33 @@ stackIds:
 ![](https://d2r0pavv0lsiqc.cloudfront.net/projects/images/8d89ef72-70bd-4f09-b4d6-b7ba190ad8e1.webp)
 
 ![](https://d2r0pavv0lsiqc.cloudfront.net/projects/images/1afebb0e-0045-40c0-b870-b155b4c38ea5.webp)
+
+모집된 수요조사를 기반으로, 지역 별 최적화된 노선 설계를 자동으로 해주는 알고리즘을 개발했습니다.
+
+![](https://d2r0pavv0lsiqc.cloudfront.net/projects/images/4b1e31f8-6057-4d1c-83d8-f2eb24cf9733.webp)
+
+> *실제 서비스 데이터에서 도출된 노선 추천 화면*
+
+![](https://d2r0pavv0lsiqc.cloudfront.net/projects/images/e874b0cd-440f-4362-ba66-27f095f8aa2a.webp)
+
+다양한 비즈니스 상황에 대응할 수 있도록 추천 설계 기준을 변수화 하였습니다.
+
+![](https://d2r0pavv0lsiqc.cloudfront.net/projects/images/99e531bc-b6c7-4386-bbf5-b48134ed4342.webp)
+
+알고리즘 최적화를 통해 2000개의 수요데이터 기준 200ms 내로 처리되도록 설계했습니다. 또한 캐싱을 활용해 실제 연산 처리에 대한 빈도 또한 최적화 하였습니다. 이를 통해 최상단의 대시보드에서 수많은 행사에 대한 노선 예측 결과를 복수조회 해도 부담없게 제작하였습니다.
+
+#### MSA로의 확장성을 고려한 DDD 기반 모놀리틱 서비스 설계
+
+스타트업의 특성상 구조보다 빠른 기능 구현에 집중하기 마련입니다. 허나 이로 인해 대부분의 스타트업의 초기 코드는 빠르게 레거시가 쌓이며 잘 구조화되지 못하기 마련입니다.
+
+소프트웨어 공학 및 아키텍처에 관심이 많던 저는, 서비스 전반에 DDD의 전술적 설계 전략을 녹여내어 각각의 서비스들이 **독립된 BC(bounded-context)**&#xB97C; 구성하고, 도메인의 순수성을 유지하도록 코드를 설계 하였습니다.
+
+이를 위해 결제 도메인과 예약 도메인 등 서로 밀접하지만 다른 BC에 속한 도메인들의 소통을 **이벤트 기반 비동기 메시징**을 통해 설계하였습니다.
+
+### 기획 기여
+
+![](https://d2r0pavv0lsiqc.cloudfront.net/projects/images/d206f979-2bd7-4b83-96fb-729c17f20f60.webp)
+
+**도메인 주도 설계(DDD)**&#xC758; 전략적 설계 방법론들을 차용하여, 이벤트 스토밍을 통해 제품의 비즈니스 도메인을 도출하고, 모호했던 정책들을 구체화 했습니다.
 
 ### 주요 성과&#xA;![](https://d2r0pavv0lsiqc.cloudfront.net/projects/images/affc9644-c5fe-4b45-a5bb-6f8bc3d52c3f.webp)
