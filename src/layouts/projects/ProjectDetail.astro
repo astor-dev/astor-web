@@ -13,7 +13,8 @@ import ImageWithSkeleton from "~components/Skeleton/ImageWithSkeleton";
 import { FaCalendar, FaBuilding } from "react-icons/fa";
 import IconButton from "~components/Button/IconButton";
 import StackSlider from "~components/Slider/StackSlider";
-
+import StickyTableOfContents from "~components/Nav/StickyTableOfContents.astro";
+import StickyButtons from "~components/Nav/StickyButtons.astro";
 interface Props {
   project: CollectionEntry<"projects">;
   isAdmin: boolean;
@@ -25,7 +26,7 @@ if (!project) {
   return Astro.redirect("/404");
 }
 
-const { Content } = await render(project);
+const { Content , headings } = await render(project);
 
 // const readTime = Math.ceil((project.body?.length as number) / 1000);
 const period = `${dayjs(project.data.startedAt).format("YYYY.MM")} - ${
@@ -140,6 +141,8 @@ for (const stackId of project.data.stackIds) {
           />
         </section>
       </div>
+      <StickyTableOfContents class="hidden xl:block" headings={headings} />
+      <StickyButtons class="hidden xl:block" />
 
       {/* 마크다운 콘텐츠 */}
       <div>

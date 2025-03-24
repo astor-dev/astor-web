@@ -45,6 +45,7 @@ const minDepth = headings.length ? Math.min(...headings.map(h => h.depth)) : 1;
               href={`#${item.slug}`}
               class="block py-2 pr-4 text-sm no-underline"
               data-heading-id={item.slug}
+              data-toc-link
             >
               <span class="mr-2 text-skin-accent">{item.numbering}</span>
               <span class="text-black-accent">{item.text}</span>
@@ -62,6 +63,7 @@ const minDepth = headings.length ? Math.min(...headings.map(h => h.depth)) : 1;
     const tocContainer = document.querySelector(".toc-container");
     const tocDiv = tocContainer?.querySelector("div");
     let initialTopOffset = 0;
+    const SCROLL_OFFSET = 100; // 헤딩이 화면 상단에서 얼마나 떨어져 있을지 설정 (픽셀)
 
     function updateTocPosition() {
       if (!tocContainer || !tocDiv) return;
@@ -87,6 +89,26 @@ const minDepth = headings.length ? Math.min(...headings.map(h => h.depth)) : 1;
       updateTocPosition();
     });
 
+    // 목차 링크 클릭 시 스크롤 위치 조정
+    document.querySelectorAll('[data-toc-link]').forEach(link => {
+      link.addEventListener("click", function(this: HTMLAnchorElement, e: Event) {
+        e.preventDefault();
+        const targetId = this.getAttribute("href")?.substring(1);
+        const targetElement = document.getElementById(targetId || "");
+
+        if (targetElement) {
+          const targetPosition = targetElement.getBoundingClientRect().top + window.scrollY - SCROLL_OFFSET;
+          window.scrollTo({
+            top: targetPosition,
+            behavior: 'smooth'
+          });
+          
+          // URL 해시 업데이트 (브라우저 히스토리 기록용)
+          history.pushState(null, '', `#${targetId}`);
+        }
+      });
+    });
+
     // 스크롤 이벤트에 따라 목차 위치 업데이트
     window.addEventListener("scroll", updateTocPosition);
 
@@ -105,6 +127,24 @@ const minDepth = headings.length ? Math.min(...headings.map(h => h.depth)) : 1;
         tocDiv.style.top = "auto";
       }
     }, 1000);
+
+    // URL에 해시가 있는 경우 페이지 로드 시 위치 조정
+    window.addEventListener('load', () => {
+      if (window.location.hash) {
+        const targetId = window.location.hash.substring(1);
+        const targetElement = document.getElementById(targetId);
+        
+        if (targetElement) {
+          setTimeout(() => {
+            const targetPosition = targetElement.getBoundingClientRect().top + window.scrollY - SCROLL_OFFSET;
+            window.scrollTo({
+              top: targetPosition,
+              behavior: "smooth",
+            });
+          }, 100); // 페이지 로드 후 약간의 지연을 줌
+        }
+      }
+    });
 
     // 기존 IntersectionObserver 코드
     const observer = new IntersectionObserver(
