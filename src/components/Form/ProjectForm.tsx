@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from "react";
+import React, { useState, useCallback, useRef } from "react";
 import {
   ProjectRoleEnum,
   ProjectTypeEnum,
@@ -31,6 +31,7 @@ const ROLES = ProjectRoleEnum.options;
 const ProjectForm: React.FC<ProjectFormProps> = ({ initialData }) => {
   const projectsService =
     serviceContainer.get<ProjectsService>(PROJECTS_SERVICE);
+  const editorRef = useRef<{ getMarkdown: () => string } | null>(null);
 
   // 날짜를 YYYY-MM 형식으로 안전하게 변환하는 헬퍼 함수
   const formatDateToYearMonth = (dateString: string) => {
@@ -67,14 +68,16 @@ const ProjectForm: React.FC<ProjectFormProps> = ({ initialData }) => {
     };
   });
 
-  const [markdownContent, setMarkdownContent] = useState(() => {
-    return initialData?.body ?? "";
-  });
+  // 초기 마크다운 내용 저장 (상태로 관리하지 않음)
+  const initialMarkdown = initialData?.body ?? "";
 
-  // MDXEditor의 변경 이벤트 최적화를 위해 handleMarkdownChange에서 함수형 업데이트 사용 + 의존성 최소화
-  const handleMarkdownChange = useCallback((content: string) => {
-    setMarkdownContent(prev => (prev === content ? prev : content));
-  }, []);
+  // 에디터 ref 설정 콜백
+  const handleEditorRef = useCallback(
+    (editorInstance: { getMarkdown: () => string } | null) => {
+      editorRef.current = editorInstance;
+    },
+    [],
+  );
 
   // 폼 내용 변경 시마다 호출 (이미지, 무기한 체크박스, 스택 체크박스 영역은 제외)
   const handleFormChange = useCallback(
@@ -119,6 +122,9 @@ const ProjectForm: React.FC<ProjectFormProps> = ({ initialData }) => {
     async (e: React.FormEvent<HTMLFormElement>) => {
       e.preventDefault();
       try {
+        // 에디터에서 현재 마크다운 콘텐츠 가져오기
+        const markdownContent = editorRef.current?.getMarkdown() || "";
+
         const submissionData = {
           ...formData,
           siteUrl: formData.siteUrl || "",
@@ -141,7 +147,7 @@ const ProjectForm: React.FC<ProjectFormProps> = ({ initialData }) => {
         }
       }
     },
-    [formData, markdownContent, projectsService],
+    [formData, projectsService],
   );
 
   // 월 선택 시 날짜를 해당 월의 첫날로 설정하는 핸들러
@@ -337,7 +343,11 @@ const ProjectForm: React.FC<ProjectFormProps> = ({ initialData }) => {
 
       {/* 상세 설명(마크다운) 입력 영역 */}
       <div className="items-center rounded-lg border border-skin-line bg-white">
-        <Editor markdown={markdownContent} onChange={handleMarkdownChange} />
+        <Editor
+          markdown={initialMarkdown}
+          onChange={() => {}} // 빈 콜백 - 제출 시에만 값을 읽기 위함
+          ref={handleEditorRef}
+        />
       </div>
 
       {/* 폼 제출/취소 버튼 영역 */}

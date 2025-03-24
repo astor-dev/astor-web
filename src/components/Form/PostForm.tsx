@@ -1,6 +1,6 @@
-import React, { useState, useCallback } from "react";
+import React, { useState, useCallback, useRef } from "react";
 import dayjs from "dayjs";
-import Editor from "~components/Editor/MDXEditor";
+import Editor, { type EditorRefMethods } from "~components/Editor/MDXEditor";
 import IconButton from "~components/Button/IconButton";
 import Input from "~components/Input/Input";
 import TextareaInput from "~components/Input/TextareaInput";
@@ -40,6 +40,8 @@ interface PostFormProps {
 
 const PostForm: React.FC<PostFormProps> = ({ initialData, tags, series }) => {
   const postsService = serviceContainer.get<PostsService>(POSTS_SERVICE);
+  // 에디터 ref 추가
+  const editorRef = useRef<EditorRefMethods | null>(null);
 
   // 기본 날짜 문자열(YYYY-MM-DD HH:mm:ss)
   const defaultDate = dayjs().format("YYYY-MM-DD HH:mm:ss");
@@ -64,14 +66,16 @@ const PostForm: React.FC<PostFormProps> = ({ initialData, tags, series }) => {
     };
   });
 
-  const [markdownContent, setMarkdownContent] = useState(
-    () => initialData?.body ?? "",
-  );
+  // 초기 마크다운 내용 저장 (상태로 관리하지 않음)
+  const initialMarkdown = initialData?.body ?? "";
 
-  // 마크다운 에디터 내용 업데이트: 이미 useCallback으로 최적화됨
-  const handleMarkdownChange = useCallback((content: string) => {
-    setMarkdownContent(prev => (prev === content ? prev : content));
-  }, []);
+  // 에디터 ref 설정 콜백
+  const handleEditorRef = useCallback(
+    (editorInstance: EditorRefMethods | null) => {
+      editorRef.current = editorInstance;
+    },
+    [],
+  );
 
   // 폼의 기본적인 텍스트 입력 필드 변경 핸들러
   const handleFormChange = useCallback(
@@ -130,9 +134,8 @@ const PostForm: React.FC<PostFormProps> = ({ initialData, tags, series }) => {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     try {
-      // 필요하다면, 제출 시 updatedAt을 현재 시각으로 갱신
-      // const now = dayjs().format("YYYY-MM-DD");
-      // setFormData(prev => ({ ...prev, updatedAt: now }));
+      // 에디터에서 현재 마크다운 콘텐츠 가져오기
+      const markdownContent = editorRef.current?.getMarkdown() ?? "";
 
       const submissionData = {
         id: initialData?.data?.id ?? generateId(),
@@ -287,7 +290,11 @@ const PostForm: React.FC<PostFormProps> = ({ initialData, tags, series }) => {
 
       {/* 상세 내용 (마크다운) 입력 영역 */}
       <div className="items-center justify-center rounded-lg border border-skin-line bg-white">
-        <Editor markdown={markdownContent} onChange={handleMarkdownChange} />
+        <Editor
+          markdown={initialMarkdown}
+          onChange={() => {}} // 빈 콜백 - 제출 시에만 값을 읽기 위함
+          ref={handleEditorRef}
+        />
       </div>
 
       <div className="flex justify-end gap-3">
