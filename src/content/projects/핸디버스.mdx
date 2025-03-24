@@ -80,6 +80,155 @@ stackIds:
 
 이를 위해 결제 도메인과 예약 도메인 등 서로 밀접하지만 다른 BC에 속한 도메인들의 소통을 **이벤트 기반 비동기 메시징**을 통해 설계하였습니다.
 
+이외에도, 디자인 패턴을 활용해 SOLID 원칙을 준수하며 설계했습니다. 계층간 DIP를 통해 도메인 레이어의 순수성을 보장하고, PG사나 OAUTH 등 외부 채널에 대한 서비스는 인터페이스와 팩토리 패턴으로 추상화하여 상위 서비스와 느슨히 결합시키고 내부 로직을 캡슐화 하였습니다.
+
+팀에 백엔드 개발자가 저 혼자이던 상황에서 MSA는 엄청난 오버엔지니어링이라 도입할 수 없었습니다. 다만 기업의 근간이 될 코어 서버인 만큼 앞으로 누가오든 쉽게 온보딩하고, 점진적으로 개선하기 쉽게 단일 책임을 지키는 코드를 짜고자 노력하였습니다.
+
+ex) AggregateRoot class와 생성시 추가되는 도메인 이벤트
+
+```ts
+
+export class Payment extends AggregateRoot<PaymentProps> {
+  private constructor(props: PaymentProps, id: UniqueEntityID) {
+    super(props, id);
+  }
+
+// 생략
+  
+  public static createNew(newProps: PaymentNewProps): Result<Payment> {
+    const nowDayjs: Dayjs = getNowDayjs();
+    const paymentOrError: Result<Payment> = this.create(
+      {
+        ...newProps,
+        discountAmount: newProps.principalAmount - newProps.paymentAmount,
+        refundableAmount: newProps.paymentAmount,
+        createdAt: nowDayjs,
+        updatedAt: nowDayjs,
+        isConfirmed: false,
+        refundRequests: [],
+      },
+      new UniqueEntityID(),
+    );
+    if (paymentOrError.isSuccess) {
+      paymentOrError.value.addDomainEvent(
+        PaymentCreatedEvent.create(paymentOrError.value.id.getString(), {
+          paymentId: paymentOrError.value.id.getString(),
+          originType: newProps.originType,
+          originId: newProps.originId.getString(),
+          userId: newProps.userId.getString(),
+        }),
+      );
+    }
+    return paymentOrError;
+  }
+```
+
+ex) 데코레이터로 영속화 시 이벤트 발행에 대한 관심사 처리
+
+```ts
+@Injectable()
+@DomainEventsDispatcher()
+export class MysqlPaymentRepository extends PaymentRepository {}
+```
+
+ex) 이벤트 핸들러
+
+```ts
+@Injectable()
+export class ShuttleOperationPaymentCreatedHandler extends EventHandler<PaymentCreatedEvent> {
+  constructor(
+    @Inject(EVENT_SUBSCRIBER)
+    private readonly eventSubscriber: IEventSubscriber,
+    private readonly reservationService: ReservationService,
+    slackWhenErrorOccuredUseCase: SlackWhenErrorOccuredUseCase,
+  ) {
+    super(slackWhenErrorOccuredUseCase);
+  }
+
+  async onModuleInit() {
+    await this.eventSubscriber.subscribe(PaymentCreatedEvent, this);
+  }
+
+  @Transactional()
+  async processEvent(event: PaymentCreatedEvent): Promise<void> {
+    const { paymentId, originType, originId, userId }: PaymentCreatedPayload = event.payload;
+    if (originType === OriginType.RESERVATION) {
+      const reservation = await this.reservationService.getById(new UniqueEntityID(originId), {
+        userId: new UniqueEntityID(userId),
+      });
+      if (!reservation) {
+        throw new InternalServerErrorException("Reservation not found");
+      }
+      reservation.injectPaymentId(new UniqueEntityID(paymentId));
+      await this.reservationService.update(reservation);
+    }
+  }
+}
+
+```
+
+EventHandler의 상속체는 처리중인 이벤트를 Promise Set으로 보유하며 리트라이, 알림, graceful-shutdown을 보장받습니다.
+
+ex) PG사 내부 서비스 로직 추상화
+
+```ts
+export interface PaymentProvider<T extends ProviderPaymentData = ProviderPaymentData> {
+  confirmPayment(payment: Payment, paymentKey: string): Promise<boolean>;
+  fetchProviderPayment(payment: Payment): Promise<T>;
+  getInprogressPayment(payment: Payment): Promise<T>;
+  refundPayment(
+    payment: Payment,
+    paymentKey: string,
+    refundAmount: number,
+    refundReason: string,
+  ): Promise<ProviderRefundResponse>;
+}
+
+```
+
+```ts
+  @Transactional()
+  async confirmPayment(payment: Payment, paymentKey: string) {
+    const provider: PaymentProvider = this.paymentFactory.getProvider(payment.pgType);
+    await provider.confirmPayment(payment, paymentKey);
+    payment.confirmPayment();
+    await this.paymentPersistor.update(payment);
+  }
+```
+
+ex) 계층간의 DIP
+
+> domains/reservations/reservation.persistor
+
+```ts
+@Injectable()
+export abstract class ReservationPersistor {
+  abstract create(reservation: Reservation): Promise<Reservation>;
+  abstract update(reservation: Reservation): Promise<Reservation>;
+  abstract updateMany(reservations: Reservation[]): Promise<Reservation[]>;
+  abstract delete(reservation: Reservation): Promise<void>;
+  abstract deleteMany(reservationIds: UniqueEntityID[]): Promise<void>;
+}
+
+```
+
+> infrastructues/reservations/repository-reservation.persistor
+
+```ts
+@Injectable()
+export class RepositoryReservationPersistor extends ReservationPersistor {
+  constructor(private readonly reservationRepository: ReservationRepository) {
+    super();
+  }
+
+  override async create(reservation: Reservation): Promise<Reservation> {
+    return this.reservationRepository.save(reservation);
+  }
+//생략
+```
+
+TS는 런타임 시 인터페이스가 휘발되기에 추상 클래스를 활용하였습니다. 마찬가지로 ReservationRepository는 MysqlReservationRepository 등의 구현체를 가지며 DI됩니다.
+
 ### 기획 기여
 
 ![](https://d2r0pavv0lsiqc.cloudfront.net/projects/images/d206f979-2bd7-4b83-96fb-729c17f20f60.webp)
