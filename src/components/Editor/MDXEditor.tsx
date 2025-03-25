@@ -49,26 +49,8 @@ interface EditorProps {
 // 외부에서 접근할 수 있는 메서드 타입 정의
 export interface EditorRefMethods {
   getMarkdown: () => string;
+  setMarkdown: (markdown: string) => void;
 }
-
-// Debounce 처리를 위한 커스텀 훅
-const useDebouncedCallback = (
-  callback: (...args: any[]) => void,
-  delay: number,
-) => {
-  const timer = useRef<number | undefined>(null);
-  return useCallback(
-    (...args: any[]) => {
-      if (timer.current) {
-        clearTimeout(timer.current);
-      }
-      timer.current = window.setTimeout(() => {
-        callback(...args);
-      }, delay);
-    },
-    [callback, delay],
-  );
-};
 
 const formatMarkdown = (markdownText: string) => {
   // return markdownText.replace(/\n/g, "<br/>");
@@ -80,6 +62,14 @@ const Editor = forwardRef<EditorRefMethods, EditorProps>(
     const mdxEditorRef = useRef<MDXEditorMethods>(null);
     const latestMarkdownRef = useRef(markdown); // 최신 마크다운 내용을 ref로 관리
     const imageService = serviceContainer.get<ImageService>(IMAGE_SERVICE);
+
+    // 내부적으로만 변경 사항 추적 (props로 받은 onChange는 성능 최적화를 위해 실제로는 호출하지 않음)
+    const handleChange = useCallback((content: string) => {
+      latestMarkdownRef.current = content;
+
+      // 상위 컴포넌트에서 실시간 업데이트가 필요한 경우에만 아래 라인 활성화
+      // onChange(content);
+    }, []);
 
     // 외부에서 접근 가능한 메서드 제공
     useImperativeHandle(
@@ -93,8 +83,29 @@ const Editor = forwardRef<EditorRefMethods, EditorProps>(
           // 에디터 참조가 없을 경우 마지막으로 알고 있는 마크다운 반환
           return latestMarkdownRef.current;
         },
+        setMarkdown: (markdown: string) => {
+          if (mdxEditorRef.current) {
+            try {
+              console.log(
+                "에디터 마크다운 설정:",
+                markdown.slice(0, 50) + "...",
+              );
+              mdxEditorRef.current.setMarkdown(markdown);
+              // 내부 상태도 함께 업데이트
+              latestMarkdownRef.current = markdown;
+              // onChange 호출하여 상위 컴포넌트 상태 업데이트
+              handleChange(markdown);
+            } catch (error) {
+              console.error("마크다운 설정 중 오류:", error);
+            }
+          } else {
+            console.warn("에디터 ref가 없어 마크다운을 설정할 수 없습니다.");
+            // ref는 없지만 내부 상태는 업데이트
+            latestMarkdownRef.current = markdown;
+          }
+        },
       }),
-      [],
+      [handleChange],
     );
 
     // 이미지 업로드 핸들러 메모이제이션
@@ -109,14 +120,6 @@ const Editor = forwardRef<EditorRefMethods, EditorProps>(
       },
       [imageService],
     );
-
-    // 내부적으로만 변경 사항 추적 (props로 받은 onChange는 성능 최적화를 위해 실제로는 호출하지 않음)
-    const handleChange = useCallback((content: string) => {
-      latestMarkdownRef.current = content;
-
-      // 상위 컴포넌트에서 실시간 업데이트가 필요한 경우에만 아래 라인 활성화
-      // onChange(content);
-    }, []);
 
     // 툴바의 렌더링 함수 메모이제이션
     const renderToolbarContents = useCallback(

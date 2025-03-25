@@ -1,19 +1,29 @@
-import React, { useState, useCallback, useRef } from "react";
+import React, { useState, useCallback, useRef, useEffect } from "react";
 import dayjs from "dayjs";
 import Editor, { type EditorRefMethods } from "~components/Editor/MDXEditor";
 import IconButton from "~components/Button/IconButton";
-import Input from "~components/Input/Input";
-import TextareaInput from "~components/Input/TextareaInput";
-import ImageFileInput from "~components/Input/ImageFileInput";
+import Input, { type InputMethods } from "~components/Input/Input";
+import TextareaInput, {
+  type TextareaInputMethods,
+} from "~components/Input/TextareaInput";
+import ImageFileInput, {
+  type ImageFileInputMethods,
+} from "~components/Input/ImageFileInput";
 import { serviceContainer } from "~modules/service.module";
 import {
   POSTS_SERVICE,
   type PostsService,
 } from "~modules/services/posts.service";
-import CheckboxGroupInput from "~components/Input/CheckboxGroupInput";
+import CheckboxGroupInput, {
+  type CheckboxGroupInputMethods,
+} from "~components/Input/CheckboxGroupInput";
 import type { Tag } from "~types/post.type";
-import AutoCompleteMultiInput from "~components/Input/AutoCompleteMultiInput";
-import AutoCompleteInput from "~components/Input/AutoCompleteInput";
+import AutoCompleteMultiInput, {
+  type AutoCompleteMultiInputMethods,
+} from "~components/Input/AutoCompleteMultiInput";
+import AutoCompleteInput, {
+  type AutoCompleteInputMethods,
+} from "~components/Input/AutoCompleteInput";
 import { generateId } from "~utils/id.utils";
 import type { SeriesEntry } from "~types/series.type";
 
@@ -38,36 +48,298 @@ interface PostFormProps {
   }>;
 }
 
+// 로컬 스토리지 키 접두사
+const DRAFT_KEY_PREFIX = "post_draft_";
+
+// 로컬 스토리지 키 생성 함수
+const getLocalStorageKey = (postId: string) => `${DRAFT_KEY_PREFIX}${postId}`;
+
 const PostForm: React.FC<PostFormProps> = ({ initialData, tags, series }) => {
   const postsService = serviceContainer.get<PostsService>(POSTS_SERVICE);
+
   // 에디터 ref 추가
   const editorRef = useRef<EditorRefMethods | null>(null);
 
+  // 각 입력 필드 ref 생성
+  const titleRef = useRef<InputMethods>(null);
+  const authorRef = useRef<InputMethods>(null);
+  const createdAtRef = useRef<InputMethods>(null);
+  const updatedAtRef = useRef<InputMethods>(null);
+  const descriptionRef = useRef<TextareaInputMethods>(null);
+  const optionsRef = useRef<CheckboxGroupInputMethods>(null);
+  const tagsRef = useRef<AutoCompleteMultiInputMethods>(null);
+  const seriesRef = useRef<AutoCompleteInputMethods>(null);
+  const ogImageRef = useRef<ImageFileInputMethods>(null);
+
+  // 마지막 자동 저장 시간 표시를 위한 상태
+  const [lastSaved, setLastSaved] = useState<string | null>(null);
+
+  // 로컬 스토리지에서 임시 저장 데이터 있는지 확인 여부
+  const [hasLocalDraft, setHasLocalDraft] = useState(false);
+
+  // 임시저장 목록 표시 여부 상태
+  const [showDraftList, setShowDraftList] = useState(false);
+
+  // 저장된 모든 임시저장 데이터 목록
+  const [draftsList, setDraftsList] = useState<
+    { id: string; title: string; timestamp: string }[]
+  >([]);
+
+  // 현재 마크다운 내용 상태
+  const [markdownContent, setMarkdownContent] = useState<string>(
+    initialData?.body ?? "",
+  );
+
   // 기본 날짜 문자열(YYYY-MM-DD HH:mm:ss)
   const defaultDate = dayjs().format("YYYY-MM-DD HH:mm:ss");
-  const [formData, setFormData] = useState(() => {
-    return {
-      id: initialData?.data?.id ?? generateId(),
-      author: initialData?.data?.author ?? "Astor",
-      title: initialData?.data?.title ?? "",
-      options: {
-        pinned: initialData?.data?.pinned ?? false,
-        draft: initialData?.data?.draft ?? false,
-      },
-      tags: initialData?.data?.tags ?? [],
-      ogImage: initialData?.data?.ogImage ?? "",
-      seriesId: initialData?.data?.seriesId ?? "",
-      description: initialData?.data?.description ?? "",
-      // createdAt, updatedAt 기본값 세팅
-      createdAt:
-        dayjs(initialData?.data?.createdAt).format("YYYY-MM-DD HH:mm:ss") ??
-        defaultDate,
-      updatedAt: defaultDate,
-    };
-  });
+  const postId = initialData?.data?.id ?? generateId();
 
-  // 초기 마크다운 내용 저장 (상태로 관리하지 않음)
-  const initialMarkdown = initialData?.body ?? "";
+  // 로컬 스토리지에서 모든 임시저장 데이터 가져오기
+  const getAllDrafts = useCallback(() => {
+    const drafts: { id: string; title: string; timestamp: string }[] = [];
+    // 7일 이상 지난 임시저장 항목 삭제
+    const now = dayjs();
+
+    for (let i = 0; i < localStorage.length; i++) {
+      const key = localStorage.key(i);
+
+      if (key && key.startsWith(DRAFT_KEY_PREFIX)) {
+        try {
+          const draftData = JSON.parse(localStorage.getItem(key) || "");
+          const draftId = key.replace(DRAFT_KEY_PREFIX, "");
+
+          // 7일 이상 지난 데이터는 자동 삭제
+          if (
+            draftData.timestamp &&
+            now.diff(dayjs(draftData.timestamp), "day") > 7
+          ) {
+            localStorage.removeItem(key);
+            continue;
+          }
+
+          if (draftData.formData && draftData.timestamp) {
+            drafts.push({
+              id: draftId,
+              title: draftData.formData.title || "제목 없음",
+              timestamp: draftData.timestamp,
+            });
+          }
+
+          if (key === getLocalStorageKey(postId)) {
+            setHasLocalDraft(true);
+          }
+        } catch (error) {
+          console.error("임시저장 데이터 파싱 오류:", error);
+        }
+      }
+    }
+
+    // 최신순 정렬
+    return drafts.sort(
+      (a, b) =>
+        new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime(),
+    );
+  }, []);
+
+  // 현재 폼 데이터 수집 함수
+  const getFormData = useCallback(() => {
+    const options = optionsRef.current?.getValues() || [];
+
+    return {
+      id: postId,
+      author: authorRef.current?.getValue() || "Astor",
+      title: titleRef.current?.getValue() || "",
+      pinned: options.includes("pinned"),
+      draft: options.includes("draft"),
+      tags: tagsRef.current?.getValues() || [],
+      ogImage: ogImageRef.current?.getValue() || "",
+      seriesId: seriesRef.current?.getValue() || "",
+      description: descriptionRef.current?.getValue() || "",
+      createdAt: createdAtRef.current?.getValue() || defaultDate,
+      updatedAt: updatedAtRef.current?.getValue() || defaultDate,
+    };
+  }, [postId, defaultDate]);
+
+  // 로컬 스토리지에 폼 데이터와 마크다운 저장
+  const saveToLocalStorage = useCallback(() => {
+    try {
+      // 현재 에디터 내용 가져오기
+      const currentMarkdown =
+        editorRef.current?.getMarkdown() ?? markdownContent;
+
+      // 현재 폼 데이터 가져오기
+      const formData = getFormData();
+
+      // 내용이 비어있으면 저장하지 않음
+      if (!currentMarkdown.trim() && !formData.title.trim()) {
+        return;
+      }
+
+      const dataToSave = {
+        formData,
+        markdownContent: currentMarkdown,
+        timestamp: new Date().toISOString(),
+      };
+
+      localStorage.setItem(
+        getLocalStorageKey(postId),
+        JSON.stringify(dataToSave),
+      );
+      setLastSaved(dayjs().format("HH:mm:ss"));
+      setHasLocalDraft(true);
+
+      console.log("임시저장 완료:", formData);
+    } catch (error) {
+      console.error("임시 저장 실패:", error);
+    }
+  }, [getFormData, markdownContent, postId]);
+
+  // 자동 저장 함수
+  useEffect(() => {
+    // 1분마다 자동 저장
+    const saveInterval = setInterval(() => {
+      saveToLocalStorage();
+    }, 60000);
+
+    return () => {
+      clearInterval(saveInterval as unknown as number);
+    };
+  }, [saveToLocalStorage]);
+
+  // 특정 값으로 폼 데이터 설정
+  const setFormValues = useCallback(
+    (data: any) => {
+      if (!data) return;
+
+      console.log("폼 데이터 설정:", data);
+
+      try {
+        // 각 ref를 통해 값 설정 (setTimeout으로 비동기 처리)
+        setTimeout(() => {
+          if (titleRef.current && data.title !== undefined) {
+            titleRef.current.setValue(data.title);
+          }
+
+          if (authorRef.current && data.author !== undefined) {
+            authorRef.current.setValue(data.author);
+          }
+
+          if (descriptionRef.current && data.description !== undefined) {
+            descriptionRef.current.setValue(data.description);
+          }
+
+          if (optionsRef.current) {
+            const options: string[] = [];
+            if (data.pinned) options.push("pinned");
+            if (data.draft) options.push("draft");
+            optionsRef.current.setValues(options);
+          }
+
+          if (tagsRef.current && data.tags !== undefined) {
+            tagsRef.current.setValues(data.tags || []);
+          }
+
+          if (seriesRef.current && data.seriesId !== undefined) {
+            seriesRef.current.setValue(data.seriesId || "");
+          }
+
+          if (ogImageRef.current && data.ogImage !== undefined) {
+            ogImageRef.current.setValue(data.ogImage || "");
+          }
+
+          if (createdAtRef.current && data.createdAt !== undefined) {
+            createdAtRef.current.setValue(data.createdAt);
+          }
+
+          if (updatedAtRef.current) {
+            updatedAtRef.current.setValue(defaultDate); // 항상 현재 시간으로
+          }
+        }, 0);
+      } catch (error) {
+        console.error("폼 데이터 설정 중 오류:", error);
+      }
+    },
+    [defaultDate],
+  );
+
+  // 초기 데이터 로드 - setTimeout으로 렌더링 이후에 처리
+  useEffect(() => {
+    if (initialData?.data) {
+      setTimeout(() => {
+        setFormValues(initialData.data);
+        setDraftsList(getAllDrafts());
+      }, 100);
+    }
+  }, []);
+
+  // 특정 임시저장 데이터 불러오기
+  const loadDraft = useCallback((draftId: string) => {
+    const localStorageKey = getLocalStorageKey(draftId);
+    const savedData = localStorage.getItem(localStorageKey);
+
+    if (savedData) {
+      try {
+        const parsedData = JSON.parse(savedData);
+        console.log("parsedData", parsedData);
+
+        // 데이터 유효성 검사 추가
+        if (!parsedData.formData || !parsedData.markdownContent) {
+          alert("유효하지 않은 임시저장 데이터입니다.");
+          return false;
+        }
+
+        console.log("임시저장 데이터 불러오기:", parsedData);
+
+        // 임시저장 데이터로 폼 업데이트 (비동기로 처리)
+        setTimeout(() => {
+          setFormValues(parsedData.formData);
+
+          // 마크다운 에디터 내용 설정
+          if (editorRef.current && parsedData.markdownContent) {
+            editorRef.current.setMarkdown?.(parsedData.markdownContent);
+          }
+          setMarkdownContent(parsedData.markdownContent);
+
+          setLastSaved(dayjs(parsedData.timestamp).format("HH:mm:ss"));
+
+          // 목록 닫기
+          setShowDraftList(false);
+        }, 0);
+
+        return true;
+      } catch (error) {
+        console.error("임시 저장 데이터 로드 오류:", error);
+        alert("임시 저장 데이터를 불러오는 중 오류가 발생했습니다.");
+        return false;
+      }
+    }
+    return false;
+  }, []);
+
+  // 특정 임시저장 데이터 삭제
+  const deleteDraft = useCallback(
+    (draftId: string, event?: React.MouseEvent) => {
+      if (event) {
+        event.stopPropagation();
+      }
+
+      const localStorageKey = getLocalStorageKey(draftId);
+
+      if (window.confirm("정말 이 임시저장 데이터를 삭제하시겠습니까?")) {
+        localStorage.removeItem(localStorageKey);
+
+        // 목록 갱신
+        setDraftsList(getAllDrafts());
+
+        // 현재 포스트의 임시저장이었으면 상태 업데이트
+        if (draftId === postId) {
+          setHasLocalDraft(false);
+          setLastSaved(null);
+        }
+      }
+    },
+    [getAllDrafts, postId],
+  );
 
   // 에디터 ref 설정 콜백
   const handleEditorRef = useCallback(
@@ -77,47 +349,39 @@ const PostForm: React.FC<PostFormProps> = ({ initialData, tags, series }) => {
     [],
   );
 
-  // 폼의 기본적인 텍스트 입력 필드 변경 핸들러
-  const handleFormChange = useCallback(
-    (e: React.FormEvent<HTMLFormElement>) => {
-      const target = e.target as HTMLElement;
+  // 에디터 내용 변경 핸들러
+  const handleEditorChange = useCallback((content: string) => {
+    setMarkdownContent(content);
+  }, []);
 
-      // createdAt, updatedAt, ogImage, tags 등 특정 필드는 이 로직에 포함시키지 않음
-      if (
-        target.id === "ogImage" ||
-        target.id === "tags" ||
-        target.id === "createdAt" ||
-        target.id === "updatedAt"
-      ) {
-        return;
-      }
+  // 임시 저장 데이터 삭제 함수
+  const clearLocalDraft = useCallback(() => {
+    const localStorageKey = getLocalStorageKey(postId);
+    localStorage.removeItem(localStorageKey);
+    setHasLocalDraft(false);
+    setLastSaved(null);
 
-      const form = e.currentTarget;
-      const fd = new FormData(form);
-      const optionsValues = fd.getAll("options") as string[];
-      const pinned = optionsValues.includes("pinned");
-      const draft = optionsValues.includes("draft");
+    // 목록 갱신
+    setDraftsList(getAllDrafts());
+  }, [postId, getAllDrafts]);
 
-      setFormData(prev => ({
-        ...prev,
-        options: {
-          pinned,
-          draft,
-        },
-        author: fd.get("author") as string,
-        title: fd.get("title") as string,
-        seriesId: fd.get("series") as string,
-        description: fd.get("description") as string,
-        // createdAt, updatedAt 은 여기서 갱신하지 않음
-      }));
-    },
-    [],
-  );
+  // 수동으로 임시 저장하는 함수
+  const handleManualSave = useCallback(() => {
+    saveToLocalStorage();
+    alert("현재 내용이 임시 저장되었습니다.");
 
-  // 시리즈 초기값을 위한 상태와 로직
-  const [selectedSeriesId, setSelectedSeriesId] = useState(
-    initialData?.data?.seriesId || "",
-  );
+    // 목록 갱신
+    setDraftsList(getAllDrafts());
+  }, [saveToLocalStorage, getAllDrafts]);
+
+  // 임시저장 목록 토글
+  const toggleDraftList = useCallback(() => {
+    if (!showDraftList) {
+      // 목록을 열 때 최신 데이터로 갱신
+      setDraftsList(getAllDrafts());
+    }
+    setShowDraftList(!showDraftList);
+  }, [showDraftList, getAllDrafts]);
 
   // 시리즈 옵션 준비 - 이름과 ID 매핑
   const seriesOptions = series.map(s => ({
@@ -125,39 +389,29 @@ const PostForm: React.FC<PostFormProps> = ({ initialData, tags, series }) => {
     value: s.id, // 선택 시 실제 저장될 시리즈 ID
   }));
 
-  // 초기 선택된 시리즈 이름 찾기
-  const initialSeriesName = selectedSeriesId
-    ? series.find(s => s.id === selectedSeriesId)?.data.name || ""
-    : "";
-
   // 폼 제출 핸들러
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     try {
-      // 에디터에서 현재 마크다운 콘텐츠 가져오기
-      const markdownContent = editorRef.current?.getMarkdown() ?? "";
+      // 현재 폼 데이터 수집
+      const formData = getFormData();
 
-      const submissionData = {
-        id: initialData?.data?.id ?? generateId(),
-        author: formData.author,
-        title: formData.title,
-        seriesId: formData.seriesId,
-        tags: formData.tags,
-        ogImage: formData.ogImage,
-        description: formData.description,
-        pinned: formData.options.pinned,
-        draft: formData.options.draft,
-        createdAt: formData.createdAt, // readOnly이지만 전송 포함
-        updatedAt: formData.updatedAt,
-      };
+      console.log("폼 제출 데이터:", formData);
+
+      // 에디터에서 현재 마크다운 콘텐츠 가져오기
+      const currentMarkdown =
+        editorRef.current?.getMarkdown() ?? markdownContent;
 
       const postData = {
-        frontmatter: submissionData,
-        body: markdownContent,
+        frontmatter: formData,
+        body: currentMarkdown,
       };
 
       await postsService.createPost(postData);
-      // ... 이후 페이지 이동 or 알림
+
+      // 성공적으로 저장된 경우 로컬 스토리지에서 임시 데이터 삭제
+      clearLocalDraft();
+
       alert("포스트가 저장되었습니다.");
       window.location.href = "/admin/blog";
     } catch (error) {
@@ -170,18 +424,104 @@ const PostForm: React.FC<PostFormProps> = ({ initialData, tags, series }) => {
   };
 
   return (
-    <form
-      className="space-y-8"
-      onChange={handleFormChange}
-      onSubmit={handleSubmit}
-    >
+    <form className="space-y-8" onSubmit={handleSubmit}>
       <div className="rounded-lg border border-skin-line bg-white p-6">
-        <h2 className="mb-6 text-xl font-semibold text-black-accent">
-          기본 정보 (ID: {formData.id})
-        </h2>
+        <div className="mb-6 flex items-center justify-between">
+          <h2 className="text-xl font-semibold text-black-accent">
+            기본 정보 (ID: {postId})
+          </h2>
+          <div className="flex items-center space-x-4">
+            {lastSaved && (
+              <span className="text-sm text-gray-500">
+                마지막 자동 저장: {lastSaved}
+              </span>
+            )}
+            <button
+              type="button"
+              onClick={handleManualSave}
+              className="rounded bg-gray-200 px-3 py-1 text-sm text-gray-700 hover:bg-gray-300"
+            >
+              임시 저장
+            </button>
+            <button
+              type="button"
+              onClick={toggleDraftList}
+              className="rounded bg-blue-100 px-3 py-1 text-sm text-blue-700 hover:bg-blue-200"
+            >
+              {showDraftList ? "목록 닫기" : "임시저장 목록"}
+            </button>
+            {hasLocalDraft && (
+              <button
+                type="button"
+                onClick={clearLocalDraft}
+                className="rounded bg-red-100 px-3 py-1 text-sm text-red-700 hover:bg-red-200"
+              >
+                임시 데이터 삭제
+              </button>
+            )}
+          </div>
+        </div>
+
+        {/* 임시저장 목록 */}
+        {showDraftList && (
+          <div className="mb-6 rounded-lg border border-blue-200 bg-blue-50 p-4">
+            <h3 className="mb-2 font-medium text-blue-800">임시저장 목록</h3>
+            {draftsList.length === 0 ? (
+              <p className="text-gray-500">저장된 임시 데이터가 없습니다.</p>
+            ) : (
+              <div className="max-h-64 overflow-y-auto">
+                <table className="w-full">
+                  <thead>
+                    <tr className="border-b border-blue-200 text-left">
+                      <th className="pb-2">제목</th>
+                      <th className="pb-2">저장 시간</th>
+                      <th className="pb-2">작업</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {draftsList.map(draft => (
+                      <tr
+                        key={draft.id}
+                        className="cursor-pointer border-b border-blue-100 hover:bg-blue-100"
+                        onClick={() => loadDraft(draft.id)}
+                      >
+                        <td className="py-2">
+                          {draft.title || (
+                            <span className="italic text-gray-500">
+                              제목 없음
+                            </span>
+                          )}
+                          {draft.id === postId && (
+                            <span className="ml-2 rounded bg-green-100 px-1 py-0.5 text-xs text-green-800">
+                              현재
+                            </span>
+                          )}
+                        </td>
+                        <td className="py-2">
+                          {dayjs(draft.timestamp).format("YYYY-MM-DD HH:mm")}
+                        </td>
+                        <td className="py-2">
+                          <button
+                            type="button"
+                            onClick={e => deleteDraft(draft.id, e)}
+                            className="rounded bg-red-100 px-2 py-1 text-xs text-red-700 hover:bg-red-200"
+                          >
+                            삭제
+                          </button>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            )}
+          </div>
+        )}
+
         <div className="grid gap-6 lg:grid-cols-2">
           <div className="lg:col-span-2">
             <CheckboxGroupInput
+              ref={optionsRef}
               name="options"
               label="옵션"
               options={[
@@ -190,99 +530,100 @@ const PostForm: React.FC<PostFormProps> = ({ initialData, tags, series }) => {
               ]}
               required
               defaultValues={[
-                formData.options.pinned ? "pinned" : "",
-                formData.options.draft ? "draft" : "",
-              ]}
+                initialData?.data?.pinned ? "pinned" : "",
+                initialData?.data?.draft ? "draft" : "",
+              ].filter(Boolean)}
             />
           </div>
 
           {/* createdAt (읽기 전용 + date) */}
           <Input
+            ref={createdAtRef}
             id="createdAt"
             name="createdAt"
             label="작성일"
             type="datetime-local"
             required
-            defaultValue={formData.createdAt}
+            defaultValue={initialData?.data?.createdAt ?? defaultDate}
             disabled
           />
 
           {/* updatedAt (읽기 전용 + date) */}
           <Input
+            ref={updatedAtRef}
             id="updatedAt"
             name="updatedAt"
             label="수정일"
             type="datetime-local"
             required
-            defaultValue={formData.updatedAt}
+            defaultValue={defaultDate}
             disabled
           />
 
           <Input
+            ref={titleRef}
             id="title"
             name="title"
             label="제목"
             required
-            defaultValue={formData.title}
+            defaultValue={initialData?.data?.title ?? ""}
           />
 
           <Input
+            ref={authorRef}
             id="author"
             name="author"
             label="작성자"
             required
-            defaultValue={formData.author}
+            defaultValue={initialData?.data?.author ?? "Astor"}
           />
 
-          {/* 시리즈 자동완성 - 수정된 부분 */}
+          {/* 시리즈 자동완성 */}
           <AutoCompleteInput
+            ref={seriesRef}
             id="series"
             name="series"
             label="시리즈 (선택)"
-            defaultValue={selectedSeriesId}
-            defaultLabel={initialSeriesName}
+            defaultValue={initialData?.data?.seriesId || ""}
+            defaultLabel={
+              series.find(s => s.id === initialData?.data?.seriesId)?.data
+                .name || ""
+            }
             options={seriesOptions}
-            onValueChange={value => {
-              setSelectedSeriesId(value);
-              setFormData(prev => ({ ...prev, seriesId: value }));
-            }}
           />
 
           {/* 태그 다중 자동완성 */}
           <AutoCompleteMultiInput
+            ref={tagsRef}
             id="tags"
             name="tags"
             label="태그"
             required
             placeholder="태그를 입력하고 Enter나 ','로 확정"
             options={tags?.map(t => ({ label: t.tag, value: t.tag })) ?? []}
-            defaultValue={formData.tags}
-            onTagsChange={newTags => {
-              setFormData(prev => ({ ...prev, tags: newTags }));
-            }}
+            defaultValue={initialData?.data?.tags ?? []}
           />
 
           <div className="lg:col-span-2">
             <ImageFileInput
+              ref={ogImageRef}
               id="ogImage"
               name="ogImage"
               label="OG 이미지"
               type="posts"
               required
-              value={formData.ogImage}
-              setValue={url => {
-                setFormData(prev => ({ ...prev, ogImage: url || "" }));
-              }}
+              value={initialData?.data?.ogImage ?? ""}
             />
           </div>
 
           <div className="lg:col-span-2">
             <TextareaInput
+              ref={descriptionRef}
               id="description"
               name="description"
               label="간단 설명"
               required
-              defaultValue={formData.description}
+              defaultValue={initialData?.data?.description ?? ""}
             />
           </div>
         </div>
@@ -291,8 +632,8 @@ const PostForm: React.FC<PostFormProps> = ({ initialData, tags, series }) => {
       {/* 상세 내용 (마크다운) 입력 영역 */}
       <div className="items-center justify-center rounded-lg border border-skin-line bg-white">
         <Editor
-          markdown={initialMarkdown}
-          onChange={() => {}} // 빈 콜백 - 제출 시에만 값을 읽기 위함
+          markdown={markdownContent}
+          onChange={handleEditorChange}
           ref={handleEditorRef}
         />
       </div>
