@@ -3,7 +3,7 @@ id: "559634244213673985"
 author: "Astor"
 title: "NestJS의 의존성 주입, 코드 한 줄씩 뜯으며 이해하기"
 pinned: true
-draft: true
+draft: false
 tags:
   - NestJS
   - DI
@@ -11,7 +11,7 @@ ogImage: "https://d2r0pavv0lsiqc.cloudfront.net/posts/images/7731f5bf-d58f-4771-
 seriesId: "549808096239681536"
 description: "NestJS 프레임워크가 어떻게 의존성 주입을 하고 있는 지 프레임워크 코드를 뜯어서 해석합니다."
 createdAt: "2025-03-25 15:51:26"
-updatedAt: "2025-03-26 01:39:00"
+updatedAt: "2025-03-26 02:39:34"
 ---
 
 ## 들어가며
@@ -29,8 +29,10 @@ updatedAt: "2025-03-26 01:39:00"
 실제로 동작을 보면 NestJS는 TypeScript의 Reflect Metadata API와 데코레이터를 통해 DI를 구현합니다.
 
 - **Reflect Metadata API**
+
   : 클래스와 생성자에 메타데이터를 정의하여 런타임에 인스턴스를 동적으로 주입합니다.
 - **DI 컨테이너**
+
   : NestJS가 제공하는 컨테이너는 프로바이더의 라이프사이클을 관리하며, 모듈 컴파일 시점에 프로바이더를 등록하고, 런타임 시에 요청에 따라 인스턴스를 생성 및 반환합니다.
 
 한번 **내부 구조**를 뜯어보겠습니다.
@@ -373,14 +375,11 @@ export class Injector {
 핵심 메서드인 만큼 코드가 되게 깁니다. 기능을 요약하자면,
 
 - 초기
-
   **contextId**
-
   기반 인스턴스 조회
 - pending 상태(순환 참조 등) 체크
 - settlementSignal을 통한 비동기 완료 핸들링
 - 생성자 의존성(resolveConstructorParams)과 프로퍼티 의존성(resolveProperties)
-
   **resolve**
 - instantiateClass() 호출로 인스턴스 실제 생성
 
@@ -429,27 +428,17 @@ export class InstanceWrapper<T = any> {
 가져오는 쪽 코드를 보면,
 
 - `Default`
-
   스코프: 항상
-
   `STATIC_CONTEXT`
-
   사용 →
-
   **싱글톤**
 - `Request`
-
   스코프:
-
   `contextId`
-
   별로 따로 저장됨
 - `Transient`
-
   스코프:
-
   `contextId + inquirerId`
-
   조합으로 저장됨
 
 **스코프 + 컨텍스트 조합으로 인스턴스 구분하여 반환**하는 기능을 수행합니다.&#x20;
@@ -604,17 +593,21 @@ Nest Injection Scopes에 대한 공식 문서 내용입니다. 스코프에 대�
 **Request Scope \<-> Singleton**
 
 - **CatsService**
-  가 Request 스코프로 설정되어 있다면, 이를 주입받는 
+
+  가 Request 스코프로 설정되어 있다면, 이를 주입받는
+
   **CatsController**
+
   도 Request 스코프로 전환됩니다.
-- 반면, 
+- 반면,
+
   **CatsRepository**
+
   는 별도의 스코프가 지정되지 않았고, CatsService와의 의존성 체인에 직접 포함되어 있지 않으므로 기본(singleton) 스코프로 유지됩니다.
 
 **Transient Scope \<-> Singleton**
 
 - Transient로 지정된 의존성은 매번 새로운 인스턴스가 생성됩니다. 단, 이 경우에도
-   
   **의존성 주입 체인 전체가 Transient가 되는 것은 아닙니다.**
 - DogsService는 여전히 Singleton으로 유지됩니다.
 - DogsService 내부에서 LoggerService를 사용할 때마다 매번 새로운 LoggerService 인스턴스가 생성되어 주입됩니다.
