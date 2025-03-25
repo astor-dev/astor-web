@@ -10,12 +10,14 @@ ogImage: "https://d2r0pavv0lsiqc.cloudfront.net/posts/images/7731f5bf-d58f-4771-
 seriesId: "549808096239681536"
 description: "계속 쓸 예정"
 createdAt: "2025-03-25 15:51:26"
-updatedAt: "2025-03-25 22:13:27"
+updatedAt: "2025-03-26 00:40:28"
 ---
 
 ## 들어가며
 
 의존성 주입(DI, Dependency Injection)은 모던 백엔드 프레임워크의 핵심 설계 철학이자 아키텍처의 근간을 이루는 중요한 개념입니다. 이번 글에서는 NestJS 프레임워크의 DI를 프레임워크 코드를 파헤쳐가며 심도 있게 분석하며, 이론에 근거하여 실제 활용 가능한 고급 전략까지 자세히 다룰 예정입니다.
+
+글에선 NestJS 패키지 내부의 코드가 부분부분 발췌될 예정입니다. **글 읽으시면서 등장하는 코드는 대충 읽지 마시고 꼭 천천히 읽어보시길** 바랍니다. 아무래도 프레임워크 코드다 보니 설계가 되게 깔끔하게 되어있어 읽는 것 만으로도 꽤나 인사이트를 줄 수 있을 겁니다. 마찬가지로 코드 읽으시면서 따라오는게 이 글을 통해 얻어가는 것이 더 많을 것임을 보장합니다.
 
 ## NestJS DI의 내부 구조와 원리
 
@@ -26,8 +28,10 @@ updatedAt: "2025-03-25 22:13:27"
 실제로 동작을 보면 NestJS는 TypeScript의 Reflect Metadata API와 데코레이터를 통해 DI를 구현합니다.
 
 - **Reflect Metadata API**
+
   : 클래스와 생성자에 메타데이터를 정의하여 런타임에 인스턴스를 동적으로 주입합니다.
 - **DI 컨테이너**
+
   : NestJS가 제공하는 컨테이너는 프로바이더의 라이프사이클을 관리하며, 모듈 컴파일 시점에 프로바이더를 등록하고, 런타임 시에 요청에 따라 인스턴스를 생성 및 반환합니다.
 
 한번 **내부 구조**를 뜯어보겠습니다.
@@ -192,7 +196,7 @@ export class DependenciesScanner {
 }
 ```
 
-@Injectable()로 코드에서 마킹해둔 metaData를 읽고 있습니다. 이를 통해 스캐너의 기능은 @Module, @Controller, @Injectable 등 **데코레이터가 붙어있는 코드를 순회**하여 **의존하고 있는 클래스들을 체크**하는 것이라 볼 수 있습니다.
+@Injectable()로 코드에서 마킹해둔 metaData를 읽고 있습니다. 이를 통해 스캐너의 기능은 @Module, @Controller, @Injectable 등 **데코레이터가 붙어있는 코드를 그래프 탐색하듯 순회**하여 **의존하고 있는 클래스들을 체크**하는 것이라 볼 수 있습니다.
 
 ### Instance Loader
 
@@ -269,7 +273,7 @@ export class InstanceLoader<TInjector extends Injector = Injector> {
 
 ```
 
-상세 로직은 Injector 쪽에 들어있습니다.
+주입에 관한 상세 로직은 Injector 쪽에 들어있습니다.
 
 ### Injector
 
@@ -367,21 +371,18 @@ export class Injector {
 | Injector        | 의존성 인스턴스를 **생성하고 주입**하는 책임         |
 | InstanceWrapper | 생성된 인스턴스의 **스코프/컨텍스트 상태를 추적**하는 래퍼 |
 
-메서드의 플로우를 요약하면1) 인스턴스 생성 여부 확인 (
-   `isResolved`
-   )
-2) 의존성 주입 대상 파악
-3) 생성자 인자 주입 (
-   `resolveConstructorParams`
-   )
-4) 인스턴스 생성 (
-   `instantiateClass`
-   )
-5) 프로퍼티 주입 (
-   `applyProperties`
-   )
+핵심 메서드인 만큼 코드가 되게 깁니다. 기능을 요약하자면,
 
-위와 같은 기능을 수행합니다. 도출할 수 있는 인사이트가 되게 많은데, 제일 초반 부분에 스코프와 관련된 핵심 처리가 등장합니다.
+- 초기 
+  **contextId**
+   기반 인스턴스 조회
+- pending 상태(순환 참조 등) 체크
+- settlementSignal을 통한 비동기 완료 핸들링
+- 생성자 의존성(resolveConstructorParams)과 프로퍼티 의존성(resolveProperties) 
+  **resolve**
+- instantiateClass() 호출로 인스턴스 실제 생성
+
+한부분 한부분 쪼개보면 도출할 수 있는 인사이트가 되게 많은데, 제일 초반 부분에 스코프와 관련된 핵심 처리가 등장합니다.
 
 ```ts
 const instanceHost = wrapper.getInstanceByContextId(
@@ -425,46 +426,191 @@ export class InstanceWrapper<T = any> {
 
 가져오는 쪽 코드를 보면,
 
-
-
 - `Default`
-   스코프: 항상 
+  스코프: 항상
   `STATIC_CONTEXT`
-   사용 → 
+  사용 → 
   **싱글톤**
 - `Request`
-   스코프: 
+  스코프: 
   `contextId`
   별로 따로 저장됨
 - `Transient`
-   스코프: 
+  스코프: 
   `contextId + inquirerId`
-   조합으로 저장됨
+  조합으로 저장됨
 
-이에 따라 다른
+**스코프 + 컨텍스트 조합으로 인스턴스 구분하여 반환**하는 기능을 수행합니다.&#x20;
 
-NestJS는 스코프에 따라 인스턴스를 보관하는 context를 다르게 유지하며,
-Singleton 인스턴스가 이미 존재해도, 내부 의존성은 매 요청마다 해당 context에 맞게 resolve되는 구조를 사용한다.
-이를 통해 Nest는 스코프 간 주입이 유연하면서도 안전하게 이뤄지도록 보장한다.
+```ts
+  const properties = await this.resolveProperties(
+    wrapper,
+    moduleRef,
+    inject as InjectionToken[],
+    contextId,
+    wrapper,
+    inquirer,
+  );
+  const instance = await this.instantiateClass(
+    instances,
+    wrapper,
+    targetWrapper,
+    contextId,
+    inquirer,
+  );
+  this.applyProperties(instance, properties);
+  wrapper.initTime = this.getNowTimestamp() - t0;
+  settlementSignal.complete();
+};
+await this.resolveConstructorParams<T>(
+  wrapper,
+  moduleRef,
+  inject as InjectionToken[],
+  callback,
+  contextId,
+  wrapper,
+  inquirer,
+);
+```
+
+이후 플로우는 **프로퍼티 리졸브** ➡ **생성자 리졸브** ➡ **클래스의 인스턴스 생성(콜백)**&#xC73C;로 이어집니다.
+
+**Resolve** 라는 개념 또한 핵심인데, NestJS DI 시스템에서 **필요할 때마다(즉, 런타임에) 해당 의존성을 가져온다**는 의미입니다.
+
+즉, 싱글톤 인스턴스가 한 번만 생성되더라도, 그 내부에 주입된 Request 스코프 의존성은 고정된 인스턴스를 갖는 것이 아니라, 매번 접근할 때 현재 요청의 contextId를 기준으로 **새로운(혹은 해당 context에 맞는) 인스턴스로 resolve**됩니다.
+
+통상 클래스의 생성자를 통한 인스턴스화를 **정적 주입**이라고 칭한다면 아래와 같이 비교 가능합니다.
+
+**정적 주입 (통상 클래스에서의 생성자)**
+생성자나 프로퍼티에 주입된 의존성이 한 번 resolve되어 인스턴스에 고정되는 경우&#x20;
+
+**동적 주입 (resolve)**
+의존성을 매번 사용할 때, 또는 특정 시점에 DI 컨테이너에 요청하여 (즉, 런타임에) 현재 컨텍스트에 맞는 인스턴스를 가져오는 방식
+
+코드로 보겠습니다.
 
 
 
-2\. DI의 주요 개념과 전략
+```ts
+// packages/core/injector/instance-wrapper.ts
+export class InstanceWrapper<T = any> {
+ // 생략
+  public async resolveConstructorParams<T>(
+    wrapper: InstanceWrapper<T>,
+    moduleRef: Module,
+    inject: InjectorDependency[] | undefined,
+    callback: (args: unknown[]) => void | Promise<void>,
+    contextId = STATIC_CONTEXT,
+    inquirer?: InstanceWrapper,
+    parentInquirer?: InstanceWrapper,
+  ) {
+    let inquirerId = this.getInquirerId(inquirer);
+    const metadata = wrapper.getCtorMetadata();
 
-NestJS의 DI는 세 가지 주요 개념을 중심으로 합니다.
+    if (metadata && contextId !== STATIC_CONTEXT) {
+      const deps = await this.loadCtorMetadata(
+        metadata,
+        contextId,
+        inquirer,
+        parentInquirer,
+      );
+      return callback(deps);
+    }
 
-### Constructor-based DI
+    const isFactoryProvider = !isNil(inject);
+    const [dependencies, optionalDependenciesIds] = isFactoryProvider
+      ? this.getFactoryProviderDependencies(wrapper)
+      : this.getClassDependencies(wrapper);
 
-- 의존성은 주로 생성자를 통해 주입되어 명시적이고 관리가 쉽습니다.
+    let isResolved = true;
+    const resolveParam = async (param: unknown, index: number) => {
+      try {
+        if (this.isInquirer(param, parentInquirer)) {
+          return parentInquirer && parentInquirer.instance;
+        }
+        if (inquirer?.isTransient && parentInquirer) {
+          inquirer = parentInquirer;
+          inquirerId = this.getInquirerId(parentInquirer);
+        }
+        const paramWrapper = await this.resolveSingleParam<T>(
+          wrapper,
+          param as Type | string | symbol,
+          { index, dependencies },
+          moduleRef,
+          contextId,
+          inquirer,
+          index,
+        );
+        const instanceHost = paramWrapper.getInstanceByContextId(
+          this.getContextId(contextId, paramWrapper),
+          inquirerId,
+        );
+        if (!instanceHost.isResolved && !paramWrapper.forwardRef) {
+          isResolved = false;
+        }
+        return instanceHost?.instance;
+      } catch (err) {
+        const isOptional = optionalDependenciesIds.includes(index);
+        if (!isOptional) {
+          throw err;
+        }
+        return undefined;
+      }
+    };
+    const instances = await Promise.all(dependencies.map(resolveParam));
+    isResolved && (await callback(instances));
+  }
+}
+```
 
-### Provider 등록 방식
+**각 파라미터를 비동기로 resolve**하기 위해 `resolveParam` 함수를 정의합니다.
 
-- `useClass`
-  : 클래스 기반 프로바이더
-- `useValue`
-  : 상수값이나 미리 생성된 객체 제공
-- `useFactory`
-  : 복잡한 로직이나 환경변수에 따라 동적 객체 제공
+- 만약 해당 파라미터가 INQUIRER (즉, 요청자)라면, 이미 resolve된 부모 인스턴스를 반환합니다.
+- Transient 스코프의 경우, 부모 inquirer가 존재하면 이를 대체하여 사용합니다.
+- resolveSingleParam()를 호출하여, 해당 파라미터에 해당하는 InstanceWrapper를 얻고, 그 후 paramWrapper.getInstanceByContextId()를 통해 현재 contextId (즉, 요청 혹은 다른 컨텍스트)에 맞는 인스턴스를 가져옵니다.
+
+이후 모든 의존성 resolve후 `Promise.all(dependencies.map(resolveParam))`를 사용해 모든 파라미터의 인스턴스를 resolve합니다.
+
+만약 모든 의존성이 resolve되었다면, 준비된 인스턴스 배열을 callback으로 전달하여 아까 보았던 콜백 함수인 실제 인스턴스 생성(`instantiateClass`) 및 프로퍼티 주입(`applyProperties`)이 진행됩니다.
+
+
+
+이 리졸브 개념과 스코프 개념을 이해하시고 나면 아래의 질문에 대답할 수 있을 것입니다.
+
+> **"싱글톤 인스턴스는 한 번만 만들어지는데, 그 안에 있는 Request 스코프 의존성은 어떻게 매 요청마다 다르게 들어가는 걸까?"**
+
+**A) 싱글톤 인스턴스 내부에 주입된 Request 스코프 의존성**도, 싱글톤이 생성된 후에도 실제 사용 시점에 "현재 요청"의 contextId에 따라 동적으로 resolve되어 매 요청마다 다른 인스턴스가 주입되는 것이 가능하다.
+
+여태까지 내용을 정리해보겠습니다.
+
+| 메서드                                      | 역할                           |
+| ---------------------------------------- | ---------------------------- |
+| InstanceWrapper.getInstanceByContextId() | 스코프 + 컨텍스트 조합으로 인스턴스 분리      |
+| Injector.loadInstance()                  | 의존성 그래프 따라 재귀적으로 인스턴스 생성     |
+| Injector.resolveConstructorParams()      | 생성자 파라미터를 context-aware하게 주입 |
+
+### applyApplicationProviders
+
+
+
+```ts
+// packages/core/nest-factory.ts
+initialize(){
+  // 생략
+  await ExceptionsZone.asyncRun(
+    async () => {
+      await dependenciesScanner.scan(module);
+      await instanceLoader.createInstancesOfDependencies();
+      dependenciesScanner.applyApplicationProviders();
+    },
+    teardown,
+    this.autoFlushLogs,
+  );
+```
+
+다시 `initialize()`로 돌아와 보겠습니다.
+
+### &#xA;
 
 ### DI Token 전략
 
@@ -474,52 +620,7 @@ NestJS의 DI는 세 가지 주요 개념을 중심으로 합니다.
 
 NestJS의 DI Scope는 다음 세 가지로 구분됩니다.
 
-### Singleton Scope (기본)
-
-- NestJS는 기본적으로 모든 프로바이더를 Singleton으로 관리하여 애플리케이션 전체에서 하나의 인스턴스를 공유합니다.
-
-### Request Scope
-
-- 각 요청마다 별도의 인스턴스를 생성하여 상태를 격리합니다.
-- 인증, 권한, 로깅 컨텍스트 관리 등 요청별 상태 유지가 필요할 때 사용됩니다.
-
-### Transient Scope
-
-- 요청이나 의존성 주입 시마다 새로운 인스턴스를 생성하여 상태가 유지되지 않도록 합니다.
-- 매번 새로운 상태로 초기화가 필요한 프로토타입 객체나 빌더 패턴 활용 시 적합합니다.
-
-### Scope 상호작용과 주의점
-
-- **Singleton에 Request Scoped 인스턴스 주입**
-
-  : 직접 주입은 불가능하며, Injection Scope를 맞춰야 합니다. 해결 방법은 Provider에서 명시적으로 Scope를 지정하거나
-
-  `Scope.REQUEST`
-  의 프로바이더를 사용하는 클래스 자체도 Request Scoped로 설정해야 합니다.
-
-**잘못된 예시:**
-
-```ts
-@Injectable()
-export class SingletonService {
-  constructor(private readonly requestScopedService: RequestScopedService) {} // 오류 발생
-  constructor(private readonly requestScopedService: RequestScopedService) {} // 오류 발생
-}
-```
-
-**올바른 예시:**
-
-```ts
-@Injectable({ scope: Scope.REQUEST })
-export class SingletonService {
-  constructor(private readonly requestScopedService: RequestScopedService) {} // 요청마다 SingletonService도 Request Scope로 생성됨
-}
-```
-
-- **Transient의 상호작용**
-  : Transient 인스턴스는 요청과 싱글톤 모두에게 주입될 수 있으나, 매 주입 시마다 독립적인 새 인스턴스가 생성됩니다.
-
-## 4. 고급 DI 활용 전략: Abstract Class와 Symbol 기반 DI
+### 4. 고급 DI 활용 전략: Abstract Class와 Symbol 기반 DI
 
 - Abstract Class는 런타임에도 유지되므로 추상화 및 테스트 용이성에 탁월하며, 일반적인 DI 전략으로 권장됩니다.
 - Symbol 기반 DI는 강력한 고유성으로 런타임 충돌을 방지하며, 복수의 구현체나 모듈 내부에서만 노출될 때 유용합니다.
@@ -555,10 +656,13 @@ return this.prisma.user.findUnique({ where: { id } });
 ## 6. 실전 예제 및 Best Practices
 
 - **Singleton**
+
   : 대부분의 비즈니스 로직 서비스, 데이터 접근 레이어
 - **Request Scope**
+
   : 사용자 컨텍스트 서비스, 요청 기반 로깅 서비스
 - **Transient**
+
   : 상태 초기화가 매번 필요한 임시 작업(이메일 발송, 파일 생성 등)
 
 실제 서비스 예:
