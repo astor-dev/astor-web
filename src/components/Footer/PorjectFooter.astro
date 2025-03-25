@@ -2,6 +2,7 @@
 import ImageWithSkeleton from "~components/Skeleton/ImageWithSkeleton";
 import { FaCalendar } from "react-icons/fa";
 import type { ProjectEntry } from "~types/project.type";
+import dayjs from "dayjs";
 
 interface Props {
   latestProjects: ProjectEntry[];
@@ -45,13 +46,9 @@ const { latestProjects = [] } = Astro.props;
                       <div class="flex items-center gap-1 text-xs text-black-base/70">
                         <FaCalendar className="h-3 w-3" />
                         <time datetime={project.data.startedAt}>
-                          {new Date(project.data.startedAt).toLocaleDateString(
-                            "ko-KR",
-                          )} ~
+                          {dayjs(project.data.startedAt).format("YYYY.MM")} ~
                           {project.data.endedAt
-                            ? new Date(project.data.endedAt).toLocaleDateString(
-                                "ko-KR",
-                              )
+                            ? dayjs(project.data.endedAt).format("YYYY.MM")
                             : "진행중"}
                         </time>
                       </div>

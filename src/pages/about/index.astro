@@ -1,7 +1,7 @@
 ---
 import "~styles/global.css";
 import Layout from "~layouts/BaseLayout.astro";
-import { FEATURED_STACK_IDS } from "~constants/about";
+import { EDUCATIONS, FEATURED_STACK_IDS, ABOUT_ME } from "~constants/about";
 import profileImage from "~assets/images/profile.webp";
 import ProfileHeader from "~components/Header/ProfileHeader.astro";
 import SectionWithHeader from "~components/Section/SectionWithHeader.astro";
@@ -54,32 +54,6 @@ for (const stackId of FEATURED_STACK_IDS) {
   });
   relatedProjects[stackId] = projects.items;
 }
-
-// 학력 정보 데이터
-const educations = [
-  {
-    school: "고려대학교 서울캠퍼스",
-    majors: ["영어영문", "소프트웨어기술벤처"],
-    degree: "학사",
-    startedAt: "2020.03",
-    endedAt: "2026.02",
-    gpa: {
-      score: 3.8,
-      maxScore: 4.5,
-    },
-    description: `
-영어학 전공자로서 촘스키의 '보편 문법'을 통해 <strong>인간 언어가 사고를 표현하는 추상화의 과정</strong>임을 이해하게 되었습니다.
-이러한 '추상화' 개념이 단지 인간 언어에만 국한되지 않고 <strong>더 낮은 수준의 언어 체계에도 동일하다는 생각</strong>에 보다 근본적인 수준의 추상화인 <strong>기계어</strong>를 공부하게 되었습니다.
-특히, <strong>소프트웨어</strong>가 이러한 추상화의 정점에서 실제적이고 구체적인 가치를 창출하며, 무언가를 만들고 세상에 기여할 수 있는 실용적 도구라는 점에 깊은 흥미를 느껴 소프트웨어를 최종 진로로 삼게 되었습니다.
-`,
-    achievements: [
-      "데이터통신, 운영체제, 정보보호 등 CS 과목 다수 수강",
-      "소프트웨어 개발 학회 DevKor 운영진",
-      "교내 캡스톤 디자인 프로젝트 참여",
-      "영문학 소모임 LIT 부회장",
-    ],
-  },
-];
 ---
 
 <Layout title="About Me">
@@ -106,9 +80,9 @@ const educations = [
           phone: "010-3335-7862",
           email: "orangnlp@gmail.com",
           education: {
-            school: educations[0].school,
-            majors: educations[0].majors,
-            year: educations[0].startedAt + " - " + educations[0].endedAt,
+            school: EDUCATIONS[0].school,
+            majors: EDUCATIONS[0].majors,
+            year: EDUCATIONS[0].startedAt + " - " + EDUCATIONS[0].endedAt,
           },
           // location: "Seoul, Korea",
           github: "astor-dev",
@@ -118,32 +92,12 @@ const educations = [
 
       <div>
         <SectionWithHeader title="About Me">
-          <p class="text-sm leading-relaxed text-black-base">
-            안녕하세요! 저는 백엔드 개발자 Astor입니다. <strong
-              >소프트웨어 아키텍처</strong
-            >에 깊은 관심을 가지고 있으며, 문제 해결을 위한 최적의 구조화된
-            소프트웨어를 설계하는 것을 즐깁니다.<br />
-            스타트업의 <strong>초기 창업 멤버</strong>로서, 제로 베이스에서
-            견고한 아키텍처와 안정적인 시스템을 구축하여 일일 1000+ 건의 결제
-            요청을 성공적으로 처리하는 서비스를 개발했습니다.<br />
-            급변하는 환경에서도 유연한 아키텍처를 통해 효율적인 시스템 운영을 실현하고,
-            비즈니스 가치와 기술적 완성도를 균형 있게 달성하는 데 주력하고 있습니다.
-          </p>
+          <p
+            class="text-sm leading-relaxed text-black-base"
+            set:html={ABOUT_ME}
+          />
         </SectionWithHeader>
       </div>
-
-      <!-- <SectionWithHeader
-            title="Tech Stack"
-            description="제가 사용하는 기술 스택들입니다. 각 도구의 특성을 이해하고 최적의 솔루션을 제공하기 위해 노력합니다."
-            className="from-white-base to-skin-card/20 relative bg-gradient-to-b"
-          >
-            <StackSlider
-              client:load
-              stackIds={FEATURED_STACK_IDS}
-              enableFeatured={true}
-              relatedProjects={relatedProjects}
-            />
-          </SectionWithHeader> -->
 
       <SectionWithHeader title="Careers">
         <div>
@@ -173,10 +127,10 @@ const educations = [
       <SectionWithHeader title="Education">
         <div>
           {
-            educations.map((education, index) => (
+            EDUCATIONS.map((education, index) => (
               <>
                 <EducationListItems education={education} />
-                {index !== educations.length - 1 && <hr class="my-4" />}
+                {index !== EDUCATIONS.length - 1 && <hr class="my-4" />}
               </>
             ))
           }
