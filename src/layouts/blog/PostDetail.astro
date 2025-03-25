@@ -32,18 +32,19 @@ const formattedDate = dayjs(post.data.createdAt).format("YYYY년 MM월 DD일");
   <PostHero post={post} slot="hero" />
 
   <article class="relative mx-auto mb-10">
-    <div class="relative flex">
+    <div class="relative">
       {/* 본문 */}
       <div class="prose prose-sm md:prose ">
-        <HeadingsTable class="block xl:hidden" headings={headings} />
+        <!-- <HeadingsTable class="block xl:hidden" headings={headings} /> -->
+        <StickyTableOfContents class="hidden xl:block" headings={headings} />
+        <StickyButtons class="hidden xl:block" />
         {/* 마크다운 콘텐츠 */}
         <div>
           <Content />
           <Comments client:only="react" />
         </div>
       </div>
-      <StickyTableOfContents class="hidden xl:block" headings={headings} />
-      <StickyButtons class="hidden xl:block" />
+
     </div>
   </article>
   <Footer slot="footer" latestPosts={latestPosts} />

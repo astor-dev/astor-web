@@ -34,7 +34,7 @@ const minDepth = headings.length ? Math.min(...headings.map(h => h.depth)) : 1;
 
 <nav class={`toc-container not-prose ${className}`}>
   <div class="bg-white-base ml-4 w-64 rounded-lg">
-    <ul class="max-h-[calc(100vh-200px)] overflow-y-auto py-2">
+    <ul class="max-h-[60dvh] overflow-y-auto py-2">
       {
         computedHeadings.map(item => (
           <li
@@ -103,8 +103,6 @@ const minDepth = headings.length ? Math.min(...headings.map(h => h.depth)) : 1;
             behavior: 'smooth'
           });
           
-          // URL 해시 업데이트 (브라우저 히스토리 기록용)
-          history.pushState(null, '', `#${targetId}`);
         }
       });
     });
@@ -128,23 +126,6 @@ const minDepth = headings.length ? Math.min(...headings.map(h => h.depth)) : 1;
       }
     }, 1000);
 
-    // URL에 해시가 있는 경우 페이지 로드 시 위치 조정
-    window.addEventListener('load', () => {
-      if (window.location.hash) {
-        const targetId = window.location.hash.substring(1);
-        const targetElement = document.getElementById(targetId);
-        
-        if (targetElement) {
-          setTimeout(() => {
-            const targetPosition = targetElement.getBoundingClientRect().top + window.scrollY - SCROLL_OFFSET;
-            window.scrollTo({
-              top: targetPosition,
-              behavior: "smooth",
-            });
-          }, 100); // 페이지 로드 후 약간의 지연을 줌
-        }
-      }
-    });
 
     // 기존 IntersectionObserver 코드
     const observer = new IntersectionObserver(
