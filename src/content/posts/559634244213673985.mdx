@@ -2,15 +2,15 @@
 id: "559634244213673985"
 author: "Astor"
 title: "NestJS DI"
-seriesId: "NestJS 심화 활용"
-tags:
-
-ogImage: "https://d2r0pavv0lsiqc.cloudfront.net/posts/images/7731f5bf-d58f-4771-a4d9-3894fc503883.webp"
-description: "계속 쓸 예정"
 pinned: true
 draft: true
+tags:
+  - NestJS
+ogImage: "https://d2r0pavv0lsiqc.cloudfront.net/posts/images/7731f5bf-d58f-4771-a4d9-3894fc503883.webp"
+seriesId: "NestJS 심화 활용"
+description: "계속 쓸 예정"
 createdAt: "2025-03-25 15:51:26"
-updatedAt: "2025-03-25 15:51:26"
+updatedAt: "2025-03-25 19:38:26"
 ---
 
 의존성 주입(DI, Dependency Injection)은 NestJS의 핵심 설계 철학이자 아키텍처의 근간을 이루는 중요한 개념입니다. 이번 글에서는 NestJS의 DI를 프레임워크 수준에서 심도 있게 분석하며, 실제 활용 가능한 고급 전략까지 자세히 다룹니다.
@@ -24,8 +24,10 @@ updatedAt: "2025-03-25 15:51:26"
 실제로 동작을 보면 NestJS는 TypeScript의 Reflect Metadata API와 데코레이터를 통해 DI를 구현합니다.
 
 - **Reflect Metadata API**
+
   : 클래스와 생성자에 메타데이터를 정의하여 런타임에 인스턴스를 동적으로 주입합니다.
 - **DI 컨테이너**
+
   : NestJS가 제공하는 컨테이너는 프로바이더의 라이프사이클을 관리하며, 모듈 컴파일 시점에 프로바이더를 등록하고, 런타임 시에 요청에 따라 인스턴스를 생성 및 반환합니다.
 
 한번 내부 구조를 뜯어보겠습니다.
@@ -83,15 +85,15 @@ NestJS의 app을 만들어주는 nest-factory 클래스의 initialize() 메서�
 같은 메서드의 좀 더 아래를 보겠습니다.
 
 ```ts
-      await ExceptionsZone.asyncRun(
-        async () => {
-          await dependenciesScanner.scan(module);
-          await instanceLoader.createInstancesOfDependencies();
-          dependenciesScanner.applyApplicationProviders();
-        },
-        teardown,
-        this.autoFlushLogs,
-      );
+await ExceptionsZone.asyncRun(
+  async () => {
+    await dependenciesScanner.scan(module);
+    await instanceLoader.createInstancesOfDependencies();
+    dependenciesScanner.applyApplicationProviders();
+  },
+  teardown,
+  this.autoFlushLogs,
+);
 ```
 
 생성한 **dependenciesScanner**를 통해 scan ➡ createInstance ➡ apply 순으로 진행합니다.
@@ -170,10 +172,13 @@ NestJS의 DI는 세 가지 주요 개념을 중심으로 합니다.
 ### Provider 등록 방식
 
 - `useClass`
+
   : 클래스 기반 프로바이더
 - `useValue`
+
   : 상수값이나 미리 생성된 객체 제공
 - `useFactory`
+
   : 복잡한 로직이나 환경변수에 따라 동적 객체 제공
 
 ### DI Token 전략
@@ -201,27 +206,33 @@ NestJS의 DI Scope는 다음 세 가지로 구분됩니다.
 ### Scope 상호작용과 주의점
 
 - **Singleton에 Request Scoped 인스턴스 주입**
-  : 직접 주입은 불가능하며, Injection Scope를 맞춰야 합니다. 해결 방법은 Provider에서 명시적으로 Scope를 지정하거나 
+
+  : 직접 주입은 불가능하며, Injection Scope를 맞춰야 합니다. 해결 방법은 Provider에서 명시적으로 Scope를 지정하거나
+
   `Scope.REQUEST`
+
   의 프로바이더를 사용하는 클래스 자체도 Request Scoped로 설정해야 합니다.
 
 **잘못된 예시:**
 
+```ts
 @Injectable()
 export class SingletonService {
-&#x20; constructor(private readonly requestScopedService: RequestScopedService) {} // 오류 발생
+  constructor(private readonly requestScopedService: RequestScopedService) {} // 오류 발생
 }
-
+```
 
 **올바른 예시:**
 
+```ts
 @Injectable({ scope: Scope.REQUEST })
 export class SingletonService {
-&#x20; constructor(private readonly requestScopedService: RequestScopedService) {} // 요청마다 SingletonService도 Request Scope로 생성됨
+  constructor(private readonly requestScopedService: RequestScopedService) {} // 요청마다 SingletonService도 Request Scope로 생성됨
 }
-
+```
 
 - **Transient의 상호작용**
+
   : Transient 인스턴스는 요청과 싱글톤 모두에게 주입될 수 있으나, 매 주입 시마다 독립적인 새 인스턴스가 생성됩니다.
 
 ## 4. 고급 DI 활용 전략: Abstract Class와 Symbol 기반 DI
@@ -236,40 +247,48 @@ NestJS에서 DIP는 도메인과 인프라의 의존성을 추상화하는 데 �
 - 도메인 레이어에서 포트(Abstract Class)를 정의하고, 인프라 레이어에서 구체적인 어댑터를 구현하는 방식입니다.
 - 이를 통해 도메인은 구체적인 구현체가 아닌 추상화된 인터페이스나 Abstract Class에만 의존하게 됩니다.
 
+```ts
 // 포트
 export abstract class IUserRepository {
-&#x20; abstract findById(id: string): Promise\<User>;
+abstract findById(id: string): Promise\<User>;
 }
+```
 
 // 어댑터
+
+```ts
 @Injectable()
 export class UserRepositoryAdapter implements IUserRepository {
-&#x20; async findById(id: string): Promise\<User> {
-&#x20;   return this.prisma.user.findUnique({ where: { id } });
-&#x20; }
+async findById(id: string): Promise\<User> {
+return this.prisma.user.findUnique({ where: { id } });
 }
-
+}
+```
 
 ## 6. 실전 예제 및 Best Practices
 
 - **Singleton**
+
   : 대부분의 비즈니스 로직 서비스, 데이터 접근 레이어
 - **Request Scope**
+
   : 사용자 컨텍스트 서비스, 요청 기반 로깅 서비스
 - **Transient**
+
   : 상태 초기화가 매번 필요한 임시 작업(이메일 발송, 파일 생성 등)
 
 실제 서비스 예:
 
+```ts
 @Injectable({ scope: Scope.REQUEST })
 export class RequestLoggerService {
-&#x20; private readonly requestId: string;
+private readonly requestId: string;
 
-&#x20; constructor(@Inject(REQUEST) private request: Request) {
-&#x20;   this.requestId = request.headers\['x-request-id'] as string;
-&#x20; }
+constructor(@Inject(REQUEST) private request: Request) {
+this.requestId = request.headers\['x-request-id'] as string;
 }
-
+}
+```
 
 ## 7. 결론
 
