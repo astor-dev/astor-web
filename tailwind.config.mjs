@@ -187,8 +187,22 @@ export default {
         code: ["Fira Code", "monospace"],
       },
       typography: theme => ({
+        sm: {
+          css: {
+            "max-width": "none",
+            "margin-left": "auto",
+            "margin-right": "auto",
+          },
+        },
         DEFAULT: {
           css: {
+            "max-width": "76ch",
+            "margin-left": "auto",
+            "margin-right": "auto",
+            img: {
+              width: "100%",
+              margin: "0 auto",
+            },
             a: { color: theme("textColor.skin.accent") },
             pre: { color: theme("textColor.skin.accent") },
             code: {
