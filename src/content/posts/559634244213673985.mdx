@@ -7,39 +7,43 @@ draft: true
 tags:
   - NestJS
 ogImage: "https://d2r0pavv0lsiqc.cloudfront.net/posts/images/7731f5bf-d58f-4771-a4d9-3894fc503883.webp"
-seriesId: "NestJS 심화 활용"
+seriesId: "549808096239681536"
 description: "계속 쓸 예정"
 createdAt: "2025-03-25 15:51:26"
-updatedAt: "2025-03-25 19:38:26"
+updatedAt: "2025-03-25 22:13:27"
 ---
 
-의존성 주입(DI, Dependency Injection)은 NestJS의 핵심 설계 철학이자 아키텍처의 근간을 이루는 중요한 개념입니다. 이번 글에서는 NestJS의 DI를 프레임워크 수준에서 심도 있게 분석하며, 실제 활용 가능한 고급 전략까지 자세히 다룹니다.
+## 들어가며
 
-## 1. NestJS DI의 내부 구조와 원리
+의존성 주입(DI, Dependency Injection)은 모던 백엔드 프레임워크의 핵심 설계 철학이자 아키텍처의 근간을 이루는 중요한 개념입니다. 이번 글에서는 NestJS 프레임워크의 DI를 프레임워크 코드를 파헤쳐가며 심도 있게 분석하며, 이론에 근거하여 실제 활용 가능한 고급 전략까지 자세히 다룰 예정입니다.
+
+## NestJS DI의 내부 구조와 원리
 
 흔히 DI라고 하면 사용자 입장에선 아래 처럼 생각합니다.
 
-> Injectable이 붙어있는 놈을 Singletone(혹은 scope에 맞게) Nest가 알아서 넣어주는 것
+> Injectable이 붙은 class를 Singletone(혹은 scope에 맞게) 프레임워크가 알아서 주입해주는 것
 
 실제로 동작을 보면 NestJS는 TypeScript의 Reflect Metadata API와 데코레이터를 통해 DI를 구현합니다.
 
 - **Reflect Metadata API**
-
   : 클래스와 생성자에 메타데이터를 정의하여 런타임에 인스턴스를 동적으로 주입합니다.
-
 - **DI 컨테이너**
-
   : NestJS가 제공하는 컨테이너는 프로바이더의 라이프사이클을 관리하며, 모듈 컴파일 시점에 프로바이더를 등록하고, 런타임 시에 요청에 따라 인스턴스를 생성 및 반환합니다.
 
-한번 내부 구조를 뜯어보겠습니다.
+한번 **내부 구조**를 뜯어보겠습니다.
 
-![](https://d2r0pavv0lsiqc.cloudfront.net/projects/images/ff46c5b2-5e69-4c89-9453-8e055496a017.webp)![](https://d2r0pavv0lsiqc.cloudfront.net/projects/images/ae2f9149-9270-48b8-9109-a35afa64b727.webp)
+### Provider와 @Injectable 데코레이터
 
-주석 부분을 대충 요약하면 Injectable은 Provider로 만들어주는 데코레이터이며, Nest에서 Provider는 DI 가능한 요소로 모듈에 들어 있어야 DI가 가능하다 정도로 정의됩니다.
+![](https://d2r0pavv0lsiqc.cloudfront.net/projects/images/ff46c5b2-5e69-4c89-9453-8e055496a017.webp)
 
-왜 그럴까, 그리고 어떻게 동작할까 코드를 보겠습니다.
+> Injectable() 데코레이터 코드의 주석
+
+![](https://d2r0pavv0lsiqc.cloudfront.net/projects/images/ae2f9149-9270-48b8-9109-a35afa64b727.webp)요약하면 **@Injectable**은 Provider로 만들어주는 데코레이터이며, Nest에서 Provider란 **DI 가능한 요소**로 **모듈**에 들어 있어야 DI가 가능하다 정도로 정의됩니다.
+
+왜 그럴까, 그리고 어떻게 동작할까. **@Injectable() 의 구현부 코드**를 보겠습니다.
 
 ```ts
+// packages/common/decorators/core/injectable.decorator.ts
 export function Injectable(options?: InjectableOptions): ClassDecorator {
   return (target: object) => {
     Reflect.defineMetadata(INJECTABLE_WATERMARK, true, target);
@@ -48,9 +52,14 @@ export function Injectable(options?: InjectableOptions): ClassDecorator {
 }
 ```
 
-Injectable 데코레이터의 기능입니다. 굉장히 심플한데, Reflect를 통해 class의 메타데이터를 마킹합니다. 굉장히 심플하게 메타데이터 마킹만 되면 Provider로 기능한다는 건데, 이 마킹을 어떻게 활용하고 있을까 찾아보겠습니다.
+Injectable 데코레이터의 기능입니다. 굉장히 심플한데, **Reflect**를 통해 class의 **메타데이터를 마킹**합니다. 이 마킹을 어떻게 활용하고 있을까 찾아보겠습니다.
+
+### Nest Factory
 
 ```ts
+// packages/core/nest-factory.ts
+export class NestFactoryStatic {
+  // 생략
   private async initialize(
     module: any,
     container: NestContainer,
@@ -77,32 +86,42 @@ Injectable 데코레이터의 기능입니다. 굉장히 심플한데, Reflect�
       config,
     );
     //생략
+  }
+}
 ```
 
-NestJS의 app을 만들어주는 nest-factory 클래스의 initialize() 메서드입니다.&#x20;
+NestJS의 app을 만들어주는 **nest-factory** 클래스의 `initialize()` 메서드입니다.&#x20;
 
 **injector**, **instanceLoader**, **metadataScanner**, **dependencyScanner**를 차례로 생성합니다.
 
 같은 메서드의 좀 더 아래를 보겠습니다.
 
 ```ts
-await ExceptionsZone.asyncRun(
-  async () => {
-    await dependenciesScanner.scan(module);
-    await instanceLoader.createInstancesOfDependencies();
-    dependenciesScanner.applyApplicationProviders();
-  },
-  teardown,
-  this.autoFlushLogs,
-);
+// packages/core/nest-factory.ts
+initialize(){
+  // 생략
+  await ExceptionsZone.asyncRun(
+    async () => {
+      await dependenciesScanner.scan(module);
+      await instanceLoader.createInstancesOfDependencies();
+      dependenciesScanner.applyApplicationProviders();
+    },
+    teardown,
+    this.autoFlushLogs,
+  );
 ```
 
-생성한 **dependenciesScanner**를 통해 scan ➡ createInstance ➡ apply 순으로 진행합니다.
+**scan** ➡ **createInstance** ➡ **apply** 순으로 진행합니다.
 
-Scanner의 scan 메서드를 보겠습니다.
+하나하나 주요한 기능들인데, 먼저 Scanner의 scan 메서드를 보겠습니다.
+
+### Scanner
 
 ```ts
-  public async scan(
+// packages/core/scanner.ts
+export class DependenciesScanner {
+// 생략
+ public async scan(
     module: Type<any>,
     options?: { overrides?: ModuleOverride[] },
   ) {
@@ -116,11 +135,15 @@ Scanner의 scan 메서드를 보겠습니다.
     this.calculateModulesDistance();
     this.container.bindGlobalScope();
   }
+}
 ```
 
-의존성 부분만 좀 더 보면,
+의존성 스캔하는 부분(scanModulesForDependencies)만 좀 더 보면,
 
 ```ts
+// packages/core/scanner.ts
+export class DependenciesScanner {
+// 생략
   public async scanModulesForDependencies(
     modules: Map<string, Module> = this.container.getModules(),
   ) {
@@ -131,11 +154,15 @@ Scanner의 scan 메서드를 보겠습니다.
       this.reflectExports(metatype, token);
     }
   }
+}
 ```
 
-reflect들을 호출하고 있습니다. @Module에서 자주보던 imports, providers, controllers, exports들을 확인할 수 있습니다. reflect메서드의 기능은 모두 유사하여 하나만 꼽아 보겠습니다.
+reflect 관련 메서드들을 호출하고 있습니다. @Module에서 자주보던 **imports**, **providers**, **controllers**, **exports**들을 확인할 수 있습니다. reflect메서드의 기능은 모두 유사하여 하나만 꼽아 보겠습니다.
 
 ```ts
+// packages/core/scanner.ts
+export class DependenciesScanner {
+// 생략
   public reflectProviders(module: Type<any>, token: string) {
     const providers = [
       ...this.reflectMetadata(MODULE_METADATA.PROVIDERS, module),
@@ -149,20 +176,280 @@ reflect들을 호출하고 있습니다. @Module에서 자주보던 imports, pro
       this.reflectDynamicMetadata(provider, token);
     });
   }
+}
 ```
 
 ```ts
+// packages/core/scanner.ts
+export class DependenciesScanner {
+// 생략
   public reflectMetadata<T = any>(
     metadataKey: string,
     metatype: Type<any>,
   ): T[] {
     return Reflect.getMetadata(metadataKey, metatype) || [];
   }
+}
 ```
 
 @Injectable()로 코드에서 마킹해둔 metaData를 읽고 있습니다. 이를 통해 스캐너의 기능은 @Module, @Controller, @Injectable 등 **데코레이터가 붙어있는 코드를 순회**하여 **의존하고 있는 클래스들을 체크**하는 것이라 볼 수 있습니다.
 
-## 2. DI의 주요 개념과 전략
+### Instance Loader
+
+```ts
+// packages/core/nest-factory.ts
+initialize(){
+  // 생략
+  await ExceptionsZone.asyncRun(
+    async () => {
+      await dependenciesScanner.scan(module);
+      await instanceLoader.createInstancesOfDependencies();
+      dependenciesScanner.applyApplicationProviders();
+    },
+    teardown,
+    this.autoFlushLogs,
+  );
+```
+
+다시 `initialize()`로 돌아와서, **Instance Loader** 쪽을 보겠습니다.
+
+```ts
+// packages/core/injector/instance-loader.ts
+export class InstanceLoader<TInjector extends Injector = Injector> {
+// 생략
+    public async createInstancesOfDependencies(
+    modules: Map<string, Module> = this.container.getModules(),
+  ) {
+    this.createPrototypes(modules);
+
+    try {
+      await this.createInstances(modules);
+    } catch (err) {
+      this.graphInspector.inspectModules(modules);
+      this.graphInspector.registerPartial(err);
+      throw err;
+    }
+    this.graphInspector.inspectModules(modules);
+  }
+
+  
+  private async createInstances(modules: Map<string, Module>) {
+    await Promise.all(
+      [...modules.values()].map(async moduleRef => {
+        await this.createInstancesOfProviders(moduleRef);
+        await this.createInstancesOfInjectables(moduleRef);
+        await this.createInstancesOfControllers(moduleRef);
+
+        const { name } = moduleRef;
+        this.isModuleWhitelisted(name) &&
+          this.logger.log(MODULE_INIT_MESSAGE`${name}`);
+      }),
+    );
+  }
+}
+```
+
+Scanner쪽과 비슷한 구조입니다. 마찬가지로 하나만 보겠습니다.
+
+```ts
+// packages/core/injector/instance-loader.ts
+export class InstanceLoader<TInjector extends Injector = Injector> {
+  
+  private async createInstancesOfProviders(moduleRef: Module) {
+    const { providers } = moduleRef;
+    const wrappers = [...providers.values()];
+    await Promise.all(
+      wrappers.map(async item => {
+        await this.injector.loadProvider(item, moduleRef);
+        this.graphInspector.inspectInstanceWrapper(item, moduleRef);
+      }),
+    );
+  }
+}
+
+```
+
+상세 로직은 Injector 쪽에 들어있습니다.
+
+### Injector
+
+이 `Injector` 클래스는 **NestJS의 내부 의존성 주입 시스템(DI Container)** 의 핵심 구현체로, **클래스 인스턴스를 생성하고 의존성을 주입**하는 역할을 담당합니다. NestJS 프레임워크에서 컴포넌트, 서비스, 컨트롤러, 미들웨어 등의 객체를 생성하고 필요한 의존성을 제공하는 핵심 로직입니다.
+
+```ts
+// packages/core/injector/injector.ts
+export class Injector {
+  
+  public async loadInstance<T>(
+    wrapper: InstanceWrapper<T>,
+    collection: Map<InjectionToken, InstanceWrapper>,
+    moduleRef: Module,
+    contextId = STATIC_CONTEXT,
+    inquirer?: InstanceWrapper,
+  ) {
+    const inquirerId = this.getInquirerId(inquirer);
+    const instanceHost = wrapper.getInstanceByContextId(
+      this.getContextId(contextId, wrapper),
+      inquirerId,
+    );
+
+    if (instanceHost.isPending) {
+      const settlementSignal = wrapper.settlementSignal;
+      if (inquirer && settlementSignal?.isCycle(inquirer.id)) {
+        throw new CircularDependencyException(`"${wrapper.name}"`);
+      }
+
+      return instanceHost.donePromise!.then((err?: unknown) => {
+        if (err) {
+          throw err;
+        }
+      });
+    }
+
+    const settlementSignal = this.applySettlementSignal(instanceHost, wrapper);
+    const token = wrapper.token || wrapper.name;
+
+    const { inject } = wrapper;
+    const targetWrapper = collection.get(token);
+    if (isUndefined(targetWrapper)) {
+      throw new RuntimeException();
+    }
+    if (instanceHost.isResolved) {
+      return settlementSignal.complete();
+    }
+    try {
+      const t0 = this.getNowTimestamp();
+      const callback = async (instances: unknown[]) => {
+        const properties = await this.resolveProperties(
+          wrapper,
+          moduleRef,
+          inject as InjectionToken[],
+          contextId,
+          wrapper,
+          inquirer,
+        );
+        const instance = await this.instantiateClass(
+          instances,
+          wrapper,
+          targetWrapper,
+          contextId,
+          inquirer,
+        );
+        this.applyProperties(instance, properties);
+        wrapper.initTime = this.getNowTimestamp() - t0;
+        settlementSignal.complete();
+      };
+      await this.resolveConstructorParams<T>(
+        wrapper,
+        moduleRef,
+        inject as InjectionToken[],
+        callback,
+        contextId,
+        wrapper,
+        inquirer,
+      );
+    } catch (err) {
+      wrapper.removeInstanceByContextId(
+        this.getContextId(contextId, wrapper),
+        inquirerId,
+      );
+
+      settlementSignal.error(err);
+      throw err;
+    }
+  }
+}
+```
+
+**loadInstance()** 메서드로 주어진 `InstanceWrapper`에 해당하는 **인스턴스를 실제로 생성**하고 의존성 주입 수행합니다. InstanceWrapper과 Injector의 기능을 정리하고 가겠습니다.
+
+| 클래스             | 설명                                 |
+| --------------- | ---------------------------------- |
+| Injector        | 의존성 인스턴스를 **생성하고 주입**하는 책임         |
+| InstanceWrapper | 생성된 인스턴스의 **스코프/컨텍스트 상태를 추적**하는 래퍼 |
+
+메서드의 플로우를 요약하면1) 인스턴스 생성 여부 확인 (
+   `isResolved`
+   )
+2) 의존성 주입 대상 파악
+3) 생성자 인자 주입 (
+   `resolveConstructorParams`
+   )
+4) 인스턴스 생성 (
+   `instantiateClass`
+   )
+5) 프로퍼티 주입 (
+   `applyProperties`
+   )
+
+위와 같은 기능을 수행합니다. 도출할 수 있는 인사이트가 되게 많은데, 제일 초반 부분에 스코프와 관련된 핵심 처리가 등장합니다.
+
+```ts
+const instanceHost = wrapper.getInstanceByContextId(
+  this.getContextId(contextId, wrapper),
+  inquirerId,
+);
+```
+
+Nest는 **스코프(Scope)** 에 따라 인스턴스를 **다르게 보관**합니다. 그리고 의존성을 생성할 때 항상 `contextId`를 기준으로 인스턴스를 가져옵니다.
+
+| 스코프       | 보관 위치            | 컨텍스트             |
+| --------- | ---------------- | ---------------- |
+| DEFAULT   | 싱글톤              | STATIC\_CONTEXT  |
+| REQUEST   | 요청마다 새로 생성       | 요청의 contextId    |
+| TRANSIENT | 의존한 인스턴스마다 새로 생성 | inquirerId 기반 분기 |
+
+```ts
+// packages/core/injector/instance-wrapper.ts
+export class InstanceWrapper<T = any> {
+ // 생략
+  public getInstanceByContextId(
+    contextId: ContextId,
+    inquirerId?: string,
+  ): InstancePerContext<T> {
+    if (this.scope === Scope.TRANSIENT && inquirerId) {
+      return this.getInstanceByInquirerId(contextId, inquirerId);
+    }
+    const instancePerContext = this.values.get(contextId);
+    return instancePerContext
+      ? instancePerContext
+      : contextId !== STATIC_CONTEXT
+        ? this.cloneStaticInstance(contextId)
+        : {
+            instance: null as T,
+            isResolved: true,
+            isPending: false,
+          };
+  }
+}
+```
+
+가져오는 쪽 코드를 보면,
+
+
+
+- `Default`
+   스코프: 항상 
+  `STATIC_CONTEXT`
+   사용 → 
+  **싱글톤**
+- `Request`
+   스코프: 
+  `contextId`
+  별로 따로 저장됨
+- `Transient`
+   스코프: 
+  `contextId + inquirerId`
+   조합으로 저장됨
+
+이에 따라 다른
+
+NestJS는 스코프에 따라 인스턴스를 보관하는 context를 다르게 유지하며,
+Singleton 인스턴스가 이미 존재해도, 내부 의존성은 매 요청마다 해당 context에 맞게 resolve되는 구조를 사용한다.
+이를 통해 Nest는 스코프 간 주입이 유연하면서도 안전하게 이뤄지도록 보장한다.
+
+
+
+2\. DI의 주요 개념과 전략
 
 NestJS의 DI는 세 가지 주요 개념을 중심으로 합니다.
 
@@ -173,15 +460,10 @@ NestJS의 DI는 세 가지 주요 개념을 중심으로 합니다.
 ### Provider 등록 방식
 
 - `useClass`
-
   : 클래스 기반 프로바이더
-
 - `useValue`
-
   : 상수값이나 미리 생성된 객체 제공
-
 - `useFactory`
-
   : 복잡한 로직이나 환경변수에 따라 동적 객체 제공
 
 ### DI Token 전략
@@ -209,9 +491,10 @@ NestJS의 DI Scope는 다음 세 가지로 구분됩니다.
 ### Scope 상호작용과 주의점
 
 - **Singleton에 Request Scoped 인스턴스 주입**
-  : 직접 주입은 불가능하며, Injection Scope를 맞춰야 합니다. 해결 방법은 Provider에서 명시적으로 Scope를 지정하거나
-  `Scope.REQUEST`
 
+  : 직접 주입은 불가능하며, Injection Scope를 맞춰야 합니다. 해결 방법은 Provider에서 명시적으로 Scope를 지정하거나
+
+  `Scope.REQUEST`
   의 프로바이더를 사용하는 클래스 자체도 Request Scoped로 설정해야 합니다.
 
 **잘못된 예시:**
@@ -234,7 +517,6 @@ export class SingletonService {
 ```
 
 - **Transient의 상호작용**
-
   : Transient 인스턴스는 요청과 싱글톤 모두에게 주입될 수 있으나, 매 주입 시마다 독립적인 새 인스턴스가 생성됩니다.
 
 ## 4. 고급 DI 활용 전략: Abstract Class와 Symbol 기반 DI
@@ -273,15 +555,10 @@ return this.prisma.user.findUnique({ where: { id } });
 ## 6. 실전 예제 및 Best Practices
 
 - **Singleton**
-
   : 대부분의 비즈니스 로직 서비스, 데이터 접근 레이어
-
 - **Request Scope**
-
   : 사용자 컨텍스트 서비스, 요청 기반 로깅 서비스
-
 - **Transient**
-
   : 상태 초기화가 매번 필요한 임시 작업(이메일 발송, 파일 생성 등)
 
 실제 서비스 예:
@@ -301,8 +578,6 @@ this.requestId = request.headers\['x-request-id'] as string;
 
 NestJS에서 DI는 단순한 주입 메커니즘 이상의 아키텍처적 가치를 지닙니다. Scope와 DI 전략을 정확히 이해하고 상황에 맞게 활용하면 유지보수성 높은 유연한 시스템을 구축할 수 있습니다.
 
----
+***
 
 **태그**: `NestJS`, `DI`, `Dependency Injection`, `Advanced`, `Architecture`, `TypeScript`, `SOLID`, `Design Patterns`, `Scope`, `DIP`
-
-오랑❤️
