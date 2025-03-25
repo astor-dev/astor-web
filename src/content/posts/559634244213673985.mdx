@@ -224,8 +224,6 @@ export class SingletonService {
 }
 ```
 
-````
-
 **올바른 예시:**
 
 ```ts
@@ -233,7 +231,7 @@ export class SingletonService {
 export class SingletonService {
   constructor(private readonly requestScopedService: RequestScopedService) {} // 요청마다 SingletonService도 Request Scope로 생성됨
 }
-````
+```
 
 - **Transient의 상호작용**
 

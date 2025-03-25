@@ -396,8 +396,6 @@ const PostForm: React.FC<PostFormProps> = ({ initialData, tags, series }) => {
       // 현재 폼 데이터 수집
       const formData = getFormData();
 
-      console.log("폼 제출 데이터:", formData);
-
       // 에디터에서 현재 마크다운 콘텐츠 가져오기
       const currentMarkdown =
         editorRef.current?.getMarkdown() ?? markdownContent;
