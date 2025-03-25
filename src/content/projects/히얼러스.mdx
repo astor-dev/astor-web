@@ -47,11 +47,7 @@ stackIds:
 
 ***
 
-![](https://d2r0pavv0lsiqc.cloudfront.net/projects/images/399b187d-d2c6-45e2-86b9-72fe9b5717d1.webp)<img height="379" width="678" src="https://d2r0pavv0lsiqc.cloudfront.net/projects/images/276b36ca-78a0-46a4-9571-dcd9f69af904.webp" />
-
-![](https://d2r0pavv0lsiqc.cloudfront.net/projects/images/02d000dd-46b5-4223-a3dc-7bda6bcc6b60.webp)
-
-![](https://d2r0pavv0lsiqc.cloudfront.net/projects/images/a372e5d5-bdfb-4f34-99bf-db94eea75bef.webp)
+![](https://d2r0pavv0lsiqc.cloudfront.net/projects/images/399b187d-d2c6-45e2-86b9-72fe9b5717d1.webp)<img height="379" width="678" src="https://d2r0pavv0lsiqc.cloudfront.net/projects/images/276b36ca-78a0-46a4-9571-dcd9f69af904.webp" />![](https://d2r0pavv0lsiqc.cloudfront.net/projects/images/02d000dd-46b5-4223-a3dc-7bda6bcc6b60.webp)![](https://d2r0pavv0lsiqc.cloudfront.net/projects/images/a372e5d5-bdfb-4f34-99bf-db94eea75bef.webp)
 
 히얼러스는 "힘들어도 기대거나 털어놓지 못하고 혼자 곪는 사람들"을 위해 **심리 상담 이론에 근거한 AI** **상담사**를 통해 `편하게 마음을 털어놓을 곳을 제공해주고자` 시작하였습니다.
 
@@ -72,17 +68,23 @@ stackIds:
 히얼러스 프로젝트는 **gRPC** & **Kafka** 기반 `마이크로서비스 아키텍처(MSA)`로 설계 되었습니다. 저는 `백엔드 팀장`으로 MSA를 기획하고, 구조를 설계, 각각의 서비스들을 만들 팀원을 직접 리크루팅 하였습니다. 서비스의 전반적인 구조는 아래와 같습니다.
 
 - **IDL**
+
   : protobuf
 - **통신**
+
   : http(rest), gRPC, kafka
 - **게이트웨이**
+
   : java + spring (spring cloud gateway)
 - **서비스**
   - **결제**
+
     : kotlin + spring
   - **상담**
+
     : nest.js
   - **유저**
+
     : nest.js
 
 ### 주요 성과
