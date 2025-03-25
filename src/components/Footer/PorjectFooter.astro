@@ -25,7 +25,7 @@ const { latestProjects = [] } = Astro.props;
                 class="group overflow-hidden bg-skin-background"
                 style={`animation-delay: ${index * 100}ms`}
               >
-                <a href={`/projects/detail/${project.id}`} class="block h-full">
+                <a href={`/projects/${project.id}`} class="block h-full">
                   <div class="relative h-36 overflow-hidden">
                     <ImageWithSkeleton
                       src={
