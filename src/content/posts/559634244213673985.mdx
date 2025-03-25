@@ -1,16 +1,17 @@
 ---
 id: "559634244213673985"
 author: "Astor"
-title: "NestJS DI"
+title: "NestJS의 의존성 주입, 코드 한 줄씩 뜯으며 이해하기"
 pinned: true
 draft: true
 tags:
   - NestJS
+  - DI
 ogImage: "https://d2r0pavv0lsiqc.cloudfront.net/posts/images/7731f5bf-d58f-4771-a4d9-3894fc503883.webp"
 seriesId: "549808096239681536"
-description: "계속 쓸 예정"
+description: "NestJS 프레임워크가 어떻게 의존성 주입을 하고 있는 지 프레임워크 코드를 뜯어서 해석합니다."
 createdAt: "2025-03-25 15:51:26"
-updatedAt: "2025-03-26 00:40:28"
+updatedAt: "2025-03-26 01:39:00"
 ---
 
 ## 들어가며
@@ -28,10 +29,8 @@ updatedAt: "2025-03-26 00:40:28"
 실제로 동작을 보면 NestJS는 TypeScript의 Reflect Metadata API와 데코레이터를 통해 DI를 구현합니다.
 
 - **Reflect Metadata API**
-
   : 클래스와 생성자에 메타데이터를 정의하여 런타임에 인스턴스를 동적으로 주입합니다.
 - **DI 컨테이너**
-
   : NestJS가 제공하는 컨테이너는 프로바이더의 라이프사이클을 관리하며, 모듈 컴파일 시점에 프로바이더를 등록하고, 런타임 시에 요청에 따라 인스턴스를 생성 및 반환합니다.
 
 한번 **내부 구조**를 뜯어보겠습니다.
@@ -373,12 +372,15 @@ export class Injector {
 
 핵심 메서드인 만큼 코드가 되게 깁니다. 기능을 요약하자면,
 
-- 초기 
+- 초기
+
   **contextId**
-   기반 인스턴스 조회
+
+  기반 인스턴스 조회
 - pending 상태(순환 참조 등) 체크
 - settlementSignal을 통한 비동기 완료 핸들링
-- 생성자 의존성(resolveConstructorParams)과 프로퍼티 의존성(resolveProperties) 
+- 생성자 의존성(resolveConstructorParams)과 프로퍼티 의존성(resolveProperties)
+
   **resolve**
 - instantiateClass() 호출로 인스턴스 실제 생성
 
@@ -427,17 +429,27 @@ export class InstanceWrapper<T = any> {
 가져오는 쪽 코드를 보면,
 
 - `Default`
+
   스코프: 항상
+
   `STATIC_CONTEXT`
-  사용 → 
+
+  사용 →
+
   **싱글톤**
 - `Request`
-  스코프: 
+
+  스코프:
+
   `contextId`
+
   별로 따로 저장됨
 - `Transient`
-  스코프: 
+
+  스코프:
+
   `contextId + inquirerId`
+
   조합으로 저장됨
 
 **스코프 + 컨텍스트 조합으로 인스턴스 구분하여 반환**하는 기능을 수행합니다.&#x20;
@@ -488,8 +500,6 @@ await this.resolveConstructorParams<T>(
 의존성을 매번 사용할 때, 또는 특정 시점에 DI 컨테이너에 요청하여 (즉, 런타임에) 현재 컨텍스트에 맞는 인스턴스를 가져오는 방식
 
 코드로 보겠습니다.
-
-
 
 ```ts
 // packages/core/injector/instance-wrapper.ts
@@ -573,8 +583,6 @@ export class InstanceWrapper<T = any> {
 
 만약 모든 의존성이 resolve되었다면, 준비된 인스턴스 배열을 callback으로 전달하여 아까 보았던 콜백 함수인 실제 인스턴스 생성(`instantiateClass`) 및 프로퍼티 주입(`applyProperties`)이 진행됩니다.
 
-
-
 이 리졸브 개념과 스코프 개념을 이해하시고 나면 아래의 질문에 대답할 수 있을 것입니다.
 
 > **"싱글톤 인스턴스는 한 번만 만들어지는데, 그 안에 있는 Request 스코프 의존성은 어떻게 매 요청마다 다르게 들어가는 걸까?"**
@@ -589,9 +597,31 @@ export class InstanceWrapper<T = any> {
 | Injector.loadInstance()                  | 의존성 그래프 따라 재귀적으로 인스턴스 생성     |
 | Injector.resolveConstructorParams()      | 생성자 파라미터를 context-aware하게 주입 |
 
+![](https://d2r0pavv0lsiqc.cloudfront.net/projects/images/212ba0dc-5a8f-4de7-a49d-1730e3e66abf.webp)
+
+Nest Injection Scopes에 대한 공식 문서 내용입니다. 스코프에 대한 설명을 해줍니다.
+
+**Request Scope \<-> Singleton**
+
+- **CatsService**
+  가 Request 스코프로 설정되어 있다면, 이를 주입받는 
+  **CatsController**
+  도 Request 스코프로 전환됩니다.
+- 반면, 
+  **CatsRepository**
+  는 별도의 스코프가 지정되지 않았고, CatsService와의 의존성 체인에 직접 포함되어 있지 않으므로 기본(singleton) 스코프로 유지됩니다.
+
+**Transient Scope \<-> Singleton**
+
+- Transient로 지정된 의존성은 매번 새로운 인스턴스가 생성됩니다. 단, 이 경우에도
+   
+  **의존성 주입 체인 전체가 Transient가 되는 것은 아닙니다.**
+- DogsService는 여전히 Singleton으로 유지됩니다.
+- DogsService 내부에서 LoggerService를 사용할 때마다 매번 새로운 LoggerService 인스턴스가 생성되어 주입됩니다.
+
+이제 동작 원리를 이해하셨을까요? **contextId에 따라 매 요청마다 다른 인스턴스로 리졸브되는 메커니즘**이 contextId로 그루핑되는 **Request 스코프**의 특성 때문에 주입받는 사용자측을 리졸브하는 시점에서 Request 스코프로 버블링 되는 것입니다.
+
 ### applyApplicationProviders
-
-
 
 ```ts
 // packages/core/nest-factory.ts
@@ -609,79 +639,3 @@ initialize(){
 ```
 
 다시 `initialize()`로 돌아와 보겠습니다.
-
-### &#xA;
-
-### DI Token 전략
-
-- 클래스 자체, 문자열, Symbol, Abstract Class 등 다양한 형태의 DI 토큰을 사용하여 프로바이더를 관리합니다.
-
-## 3. DI Scope 심화 분석
-
-NestJS의 DI Scope는 다음 세 가지로 구분됩니다.
-
-### 4. 고급 DI 활용 전략: Abstract Class와 Symbol 기반 DI
-
-- Abstract Class는 런타임에도 유지되므로 추상화 및 테스트 용이성에 탁월하며, 일반적인 DI 전략으로 권장됩니다.
-- Symbol 기반 DI는 강력한 고유성으로 런타임 충돌을 방지하며, 복수의 구현체나 모듈 내부에서만 노출될 때 유용합니다.
-
-## 5. DIP(의존성 역전 원칙)의 NestJS 활용법
-
-NestJS에서 DIP는 도메인과 인프라의 의존성을 추상화하는 데 매우 유용한 전략입니다.
-
-- 도메인 레이어에서 포트(Abstract Class)를 정의하고, 인프라 레이어에서 구체적인 어댑터를 구현하는 방식입니다.
-- 이를 통해 도메인은 구체적인 구현체가 아닌 추상화된 인터페이스나 Abstract Class에만 의존하게 됩니다.
-
-```ts
-// 포트
-export abstract class IUserRepository {
-abstract findById(id: string): Promise\<User>;
-}
-```
-
-// 어댑터
-
-```ts
-@Injectable()
-export class UserRepositoryAdapter implements IUserRepository {
-async findById(id: string): Promise\<User> {
-return this.prisma.user.findUnique({ where: { id } });
-}
-async findById(id: string): Promise\<User> {
-return this.prisma.user.findUnique({ where: { id } });
-}
-}
-```
-
-## 6. 실전 예제 및 Best Practices
-
-- **Singleton**
-
-  : 대부분의 비즈니스 로직 서비스, 데이터 접근 레이어
-- **Request Scope**
-
-  : 사용자 컨텍스트 서비스, 요청 기반 로깅 서비스
-- **Transient**
-
-  : 상태 초기화가 매번 필요한 임시 작업(이메일 발송, 파일 생성 등)
-
-실제 서비스 예:
-
-```ts
-@Injectable({ scope: Scope.REQUEST })
-export class RequestLoggerService {
-private readonly requestId: string;
-
-constructor(@Inject(REQUEST) private request: Request) {
-this.requestId = request.headers\['x-request-id'] as string;
-}
-}
-```
-
-## 7. 결론
-
-NestJS에서 DI는 단순한 주입 메커니즘 이상의 아키텍처적 가치를 지닙니다. Scope와 DI 전략을 정확히 이해하고 상황에 맞게 활용하면 유지보수성 높은 유연한 시스템을 구축할 수 있습니다.
-
-***
-
-**태그**: `NestJS`, `DI`, `Dependency Injection`, `Advanced`, `Architecture`, `TypeScript`, `SOLID`, `Design Patterns`, `Scope`, `DIP`
