@@ -111,7 +111,7 @@ export const stacks: Stack[] = [
   },
   {
     id: 9,
-    stackType: stackTypeEnum.Enum.Frontend,
+    stackType: stackTypeEnum.Enum.Backend,
     name: "TypeScript",
     icon: SiTypescript,
     description: "정적 타입 지원으로 안정적인 JavaScript 개발",
@@ -326,7 +326,7 @@ export const stacks: Stack[] = [
     icon: SiSpring,
     description: "자바 기반의 프레임워크로 안정적인 애플리케이션 개발",
     color: "#6DB33D",
-    featured: false,
+    featured: true,
   },
   {
     id: 33,

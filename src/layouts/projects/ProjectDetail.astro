@@ -131,12 +131,30 @@ for (const stackId of project.data.stackIds) {
             />
           </div>
         </section>
+        <!-- 프로젝트 롤 섹션 -->
+        <section class="transition-all duration-700">
+          <h2 class="my-4 text-lg font-bold text-black-accent">역할</h2>
+          <div class="flex flex-wrap gap-2">
+            {project.data.roles.map((role) => (
+              <div class="flex items-center rounded-full bg-skin-accent/10 px-4 py-2 text-sm font-medium text-skin-accent">
+                {role}
+              </div>
+            ))}
+          </div>
+        </section>
+         
         <!-- 기술 스택 섹션 -->
         <section class="transition-all duration-700">
           <h2 class="my-4 text-lg font-bold text-black-accent">사용 기술</h2>
           <StackSlider
             stackIds={project.data.stackIds}
             relatedProjects={relatedProjects}
+            defaultType={
+              project.data.roles.includes("Frontend")
+                ? "all"
+                : "Backend"
+            }
+            enableFeatured={true}
             client:load
           />
         </section>

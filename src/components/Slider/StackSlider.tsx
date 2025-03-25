@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from "react";
 import { AnimatePresence } from "framer-motion";
 import { stacks } from "~constants/stacks";
 import { stackTypeEnum, type StackType } from "~types/stack.type";
-import { useIntersectionObserver } from "~hooks/UseIntersectionObserver/UseIntersectionObserver";
+
 import type { ProjectEntry } from "~types/project.type";
 import { Swiper, SwiperSlide, type SwiperRef } from "swiper/react";
 import { Autoplay, Navigation, Grid, Pagination } from "swiper/modules";
@@ -35,7 +35,6 @@ const StackSlider: React.FC<StackSliderProps> = ({
   );
   const containerRef = useRef<HTMLDivElement>(null);
   const swiperRef = useRef<SwiperRef>(null);
-  const isVisible = useIntersectionObserver(containerRef);
 
   const availableStacks = stacks
     .filter(stack => (stackIds ? stackIds.includes(stack.id) : true))
@@ -93,9 +92,7 @@ const StackSlider: React.FC<StackSliderProps> = ({
     <div ref={containerRef} className="relative w-full">
       {/* 필터 버튼 */}
       <div
-        className={`relative mb-6 flex max-h-[120px] flex-wrap justify-center gap-2 overflow-y-auto px-1 py-2 transition-all duration-300 ${
-          isVisible ? "translate-y-0 opacity-100" : "translate-y-10 opacity-0"
-        }`}
+        className={`relative mb-6 flex max-h-[120px] flex-wrap justify-center gap-2 overflow-y-auto px-1 py-2 duration-300`}
       >
         {availableTypes.map(type => (
           <button
@@ -114,7 +111,7 @@ const StackSlider: React.FC<StackSliderProps> = ({
       </div>
 
       {/* 스택 슬라이더 (4행 그리드) */}
-      <div className="relative pb-8">
+      <div className="relative">
         {filteredStacks.length > 0 ? (
           <Swiper
             ref={swiperRef}
@@ -127,6 +124,10 @@ const StackSlider: React.FC<StackSliderProps> = ({
             spaceBetween={0}
             slidesPerGroup={1}
             grabCursor={true}
+            autoplay={{
+              delay: 3000,
+              disableOnInteraction: false,
+            }}
             pagination={{
               clickable: true,
               enabled: true,
