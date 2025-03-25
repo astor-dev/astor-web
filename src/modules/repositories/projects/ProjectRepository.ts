@@ -1,4 +1,5 @@
 import { getCollection } from "astro:content";
+import dayjs from "dayjs";
 import type { GetProjectsOptions } from "~modules/repositories/projects/dto/GetProjects/GetProjectsOptions";
 import type { Paginated } from "~types/page.type";
 import type {
@@ -61,26 +62,36 @@ export class ProjectRepository {
     if (options?.sort) {
       const sort = options.sort;
       projects = projects.sort((a, b) => {
+        const sortWeight = sort.order === "asc" ? 1 : -1;
+
         if (sort.field === "endedAt") {
-          // endedAt 필드가 빈 값인 경우 내림차순 시 제일 앞으로
-          if (sort.order === "asc") {
-            if (a.data.endedAt === "") return 1;
-            if (b.data.endedAt === "") return -1;
-          } else {
-            if (a.data.endedAt === "") return -1;
-            if (b.data.endedAt === "") return 1;
+          // endedAt 필드가 빈 값인 경우 내림차순 시 제일 앞으로 (둘 다 ""이 아닌 경우만)
+          if (
+            (a.data.endedAt === "" || b.data.endedAt === "") &&
+            a.data.endedAt !== b.data.endedAt
+          ) {
+            if (a.data.endedAt === "") {
+              return 1 * sortWeight;
+            }
+            if (b.data.endedAt === "") {
+              return -1 * sortWeight;
+            }
+          } else if (a.data.endedAt !== "" && b.data.endedAt !== "") {
+            const diff = dayjs(a.data.endedAt).diff(dayjs(b.data.endedAt));
+            if (diff !== 0) return diff * sortWeight;
           }
         }
 
-        // 값이 같을 경우 projectName 기준 가나다순 정렬
+        // diff가 0인경 우의 정렬 기준
+        // Project Type은 Company-project -> Side-project -> Toy-project 순으로 정렬
+        const projectTypeOrder = {
+          "Company-project": 0,
+          "Side-project": 1,
+          "Toy-project": 2,
+        };
         const compareResult =
-          sort.order === "asc"
-            ? String(a.data[sort.field]).localeCompare(
-                String(b.data[sort.field]),
-              )
-            : String(b.data[sort.field]).localeCompare(
-                String(a.data[sort.field]),
-              );
+          projectTypeOrder[a.data.projectType] -
+          projectTypeOrder[b.data.projectType];
 
         if (compareResult === 0) {
           return String(a.data.projectName).localeCompare(

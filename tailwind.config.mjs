@@ -203,6 +203,9 @@ export default {
               width: "100%",
               margin: "0 auto",
             },
+            blockquote: {
+              quotes: "none",
+            },
             a: { color: theme("textColor.skin.accent") },
             pre: { color: theme("textColor.skin.accent") },
             code: {
