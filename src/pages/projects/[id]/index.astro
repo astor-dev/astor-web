@@ -5,17 +5,17 @@ import { PROJECT_REPOSITORY, type ProjectRepository } from "~modules/repositorie
 
 export async function getStaticPaths() {
   const projectRepository = repositoryContainer.get<ProjectRepository>(PROJECT_REPOSITORY);
-  const projects = await projectRepository.getProjects();
+  const projects = await projectRepository.getProjects({sort: {field: "endedAt", order: "desc"}});
 
   const postResult = projects.items.map(project => ({
     params: { id: project.id },
-    props: { project },
+    props: { project, latestProjects: projects.items.slice(0, 8) },
   }));
 
   return postResult;
 }
 
-const { project } = Astro.props;
+const { project, latestProjects } = Astro.props;
 ---
 
-<ProjectDetail project={project} isAdmin={false} />
+<ProjectDetail project={project} isAdmin={false} latestProjects={latestProjects} />

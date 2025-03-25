@@ -15,12 +15,14 @@ import IconButton from "~components/Button/IconButton";
 import StackSlider from "~components/Slider/StackSlider";
 import StickyTableOfContents from "~components/Nav/StickyTableOfContents.astro";
 import StickyButtons from "~components/Nav/StickyButtons.astro";
+import ProjectFooter from "~components/Footer/PorjectFooter.astro";
 interface Props {
   project: CollectionEntry<"projects">;
   isAdmin: boolean;
+  latestProjects: ProjectEntry[];
 }
 
-const { project, isAdmin } = Astro.props;
+const { project, isAdmin, latestProjects } = Astro.props;
 
 if (!project) {
   return Astro.redirect("/404");
@@ -168,6 +170,7 @@ for (const stackId of project.data.stackIds) {
       </div>
     </div>
   </article>
+  <ProjectFooter slot="footer" latestProjects={latestProjects} />
 </Layout>
 
 <style>
