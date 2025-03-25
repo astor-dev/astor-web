@@ -108,10 +108,23 @@ const currentPath = Astro.url.pathname;
       for (const codeBlock of codeBlocks) {
         const wrapper = document.createElement("div");
         wrapper.style.position = "relative";
+        wrapper.classList.add("group");
 
         const copyButton = document.createElement("button");
-        copyButton.className =
-          "copy-code absolute right-3 -top-3 rounded bg-skin-fill px-2 py-1 text-xs leading-4 text-skin-accent font-medium";
+        copyButton.className = `
+  opacity-0 pointer-events-none
+  group-hover:opacity-100 group-hover:pointer-events-auto
+  transition-opacity duration-200
+
+  absolute right-3 top-2
+  flex items-center gap-1
+  rounded-lg px-3 py-1.5 text-sm font-medium
+
+  bg-skin-fill bg-opacity-70 hover:bg-opacity-90
+  text-skin-accent shadow-md backdrop-blur
+`;
+
+
         copyButton.innerHTML = copyButtonLabel;
         codeBlock.setAttribute("tabindex", "0");
         codeBlock.appendChild(copyButton);
@@ -136,7 +149,7 @@ const currentPath = Astro.url.pathname;
 
         setTimeout(() => {
           button.innerText = copyButtonLabel;
-        }, 700);
+        }, 1000);
       }
     }
     attachCopyButtons();
