@@ -1,7 +1,7 @@
 ---
 id: "559634244213673985"
 author: "Astor"
-title: "NestJS의 의존성 주입, 코드 한 줄씩 뜯으며 이해하기"
+title: "NestJS DI는 어떻게 작동할까? 프레임워크 내부 코드로 직접 파헤쳐보기"
 pinned: true
 draft: false
 tags:
@@ -11,12 +11,12 @@ ogImage: "https://d2r0pavv0lsiqc.cloudfront.net/posts/images/7731f5bf-d58f-4771-
 seriesId: "549808096239681536"
 description: "NestJS 프레임워크가 어떻게 의존성 주입을 하고 있는 지 프레임워크 코드를 뜯어서 해석합니다."
 createdAt: "2025-03-25 15:51:26"
-updatedAt: "2025-03-26 03:32:25"
+updatedAt: "2025-03-26 13:53:47"
 ---
 
 ## 들어가며
 
-의존성 주입(DI, Dependency Injection)은 모던 백엔드 프레임워크의 핵심 설계 철학이자 아키텍처의 근간을 이루는 중요한 개념입니다. 이번 글에서는 NestJS 프레임워크의 DI를 프레임워크 코드를 파헤쳐가며 심도 있게 분석하며, 이론에 근거하여 실제 활용 가능한 고급 전략까지 자세히 다룰 예정입니다.
+의존성 주입(DI, Dependency Injection)은 모던 백엔드 프레임워크의 핵심 설계 철학이자 아키텍처의 근간을 이루는 중요한 개념입니다. 이번 글에서는 NestJS 프레임워크의 DI를 프레임워크 코드를 파헤쳐가며 심도 있게 분석하며, 프레임워크 기능들을 우아하게 사용하기 위해 필요한 여러 인사이트를 도출합니다.
 
 글에선 NestJS 패키지 내부의 코드가 부분부분 발췌될 예정입니다. **글 읽으시면서 등장하는 코드는 대충 읽지 마시고 꼭 천천히 읽어보시길** 바랍니다. 아무래도 프레임워크 코드다 보니 설계가 되게 깔끔하게 되어있어 읽는 것 만으로도 꽤나 인사이트를 줄 수 있을 겁니다. 마찬가지로 코드 읽으시면서 따라오는게 이 글을 통해 얻어가는 것이 더 많을 것임을 보장합니다.
 
@@ -29,8 +29,10 @@ updatedAt: "2025-03-26 03:32:25"
 실제로 동작을 보면 NestJS는 TypeScript의 Reflect Metadata API와 데코레이터를 통해 DI를 구현합니다.
 
 - **Reflect Metadata API**
+
   : 클래스와 생성자에 메타데이터를 정의하여 런타임에 인스턴스를 동적으로 주입합니다.
 - **DI 컨테이너**
+
   : NestJS가 제공하는 컨테이너는 프로바이더의 라이프사이클을 관리하며, 모듈 컴파일 시점에 프로바이더를 등록하고, 런타임 시에 요청에 따라 인스턴스를 생성 및 반환합니다.
 
 한번 **내부 구조**를 뜯어보겠습니다.
@@ -141,7 +143,7 @@ export class DependenciesScanner {
 }
 ```
 
-의존성 스캔하는 부분(scanModulesForDependencies)만 좀 더 보면,
+의존성 스캔하는 부분(scan Modules For Dependencies)만 좀 더 보면,
 
 ```ts
 // packages/core/scanner.ts
@@ -361,25 +363,20 @@ export class Injector {
 
 **loadInstance()** 메서드로 주어진 `InstanceWrapper`에 해당하는 **인스턴스를 실제로 생성**하고 의존성 주입 수행합니다. InstanceWrapper과 Injector의 기능을 정리하고 가겠습니다.
 
-| 클래스          | 설명                                                       |
-| --------------- | ---------------------------------------------------------- |
-| Injector        | 의존성 인스턴스를 **생성하고 주입**하는 책임               |
+| 클래스             | 설명                                 |
+| --------------- | ---------------------------------- |
+| Injector        | 의존성 인스턴스를 **생성하고 주입**하는 책임         |
 | InstanceWrapper | 생성된 인스턴스의 **스코프/컨텍스트 상태를 추적**하는 래퍼 |
 
 핵심 메서드인 만큼 코드가 되게 깁니다. 기능을 요약하자면,
 
 - 초기
-
   **contextId**
-
   기반 인스턴스 조회
-
 - pending 상태(순환 참조 등) 체크
 - settlementSignal을 통한 비동기 완료 핸들링
 - 생성자 의존성(resolveConstructorParams)과 프로퍼티 의존성(resolveProperties)
-
   **resolve**
-
 - instantiateClass() 호출로 인스턴스 실제 생성
 
 한부분 한부분 쪼개보면 도출할 수 있는 인사이트가 되게 많은데, 제일 초반 부분에 스코프와 관련된 핵심 처리가 등장합니다.
@@ -393,15 +390,16 @@ const instanceHost = wrapper.getInstanceByContextId(
 
 Nest는 **스코프(Scope)** 에 따라 인스턴스를 **다르게 보관**합니다. 그리고 의존성을 생성할 때 항상 `contextId`를 기준으로 인스턴스를 가져옵니다.
 
-| 스코프    | 보관 위치                     | 컨텍스트             |
-| --------- | ----------------------------- | -------------------- |
-| DEFAULT   | 싱글톤                        | STATIC_CONTEXT       |
-| REQUEST   | 요청마다 새로 생성            | 요청의 contextId     |
+| 스코프       | 보관 위치            | 컨텍스트             |
+| --------- | ---------------- | ---------------- |
+| DEFAULT   | 싱글톤              | STATIC\_CONTEXT  |
+| REQUEST   | 요청마다 새로 생성       | 요청의 contextId    |
 | TRANSIENT | 의존한 인스턴스마다 새로 생성 | inquirerId 기반 분기 |
 
 ```ts
 // packages/core/injector/instance-wrapper.ts
 export class InstanceWrapper<T = any> {
+ private readonly values = new WeakMap<ContextId, InstancePerContext<T>>();
   // 생략
   public getInstanceByContextId(
     contextId: ContextId,
@@ -424,35 +422,40 @@ export class InstanceWrapper<T = any> {
 }
 ```
 
-가져오는 쪽 코드를 보면,
+가져오는 쪽 코드를 보면,  `const instancePerContext = this.values.get(contextId)`이 부분에서 contextId 기반으로 인스턴스를 가져오는데, 싱글톤의 경우 STATIC\_CONTEXT라는 별도의 전용 contextId가 존재해서 같은 로직으로 Request Scope와 Default Scope를 같이 처리합니다.
+
+```ts
+export const STATIC_CONTEXT: ContextId = Object.freeze({
+  id: STATIC_CONTEXT_ID,
+});
+```
+
+> STATIC\_CONTEXT 정의 부분
+
+```ts
+private readonly values = new WeakMap<ContextId,  InstancePerContext<T>>();
+
+```
+
+또한 InstanceWrapper의 프로퍼트 부분을 보면 WeakMap으로 contextId에 해당하는 인스턴스를 저장해놓고 있습니다. STATIC\_CONTEXT에 해당하는 인스턴스 또한 이렇게 싱글톤으로 관리되고 있는 걸 알 수 있습니다. 마찬가지로 RequestScope 별 1개의 인스턴스를 유지하는 방식도 Wrapper를 통해 Map으로 관리되기에 가능하였습니다.
+
+정리하자면
 
 - `Default`
-
   스코프: 항상
-
   `STATIC_CONTEXT`
-
   사용 →
-
   **싱글톤**
-
 - `Request`
-
   스코프:
-
   `contextId`
-
   별로 따로 저장됨
-
 - `Transient`
-
   스코프:
-
   `contextId + inquirerId`
-
   조합으로 저장됨
 
-**스코프 + 컨텍스트 조합으로 인스턴스 구분하여 반환**하는 기능을 수행합니다.&#x20;
+**스코프 + 컨텍스트 조합으로 인스턴스를 구분하여 반환**하는 기능을 수행합니다.&#x20;
 
 ```ts
 const callback = async (instances: unknown[]) => {
@@ -580,13 +583,32 @@ export class InstanceWrapper<T = any> {
 
 만약 모든 의존성이 resolve되었다면, 준비된 인스턴스 배열을 callback으로 전달하여 아까 보았던 콜백 함수인 실제 인스턴스 생성(`instantiateClass`) 및 프로퍼티 주입(`applyProperties`)이 진행됩니다.
 
+
+
+```ts
+
+  private getContextId(
+    contextId: ContextId,
+    instanceWrapper: InstanceWrapper,
+  ): ContextId {
+    return contextId.getParent
+      ? contextId.getParent({
+          token: instanceWrapper.token,
+          isTreeDurable: instanceWrapper.isDependencyTreeDurable(),
+        })
+      : contextId;
+  }
+```
+
+
+
 여태까지 내용을 정리해보겠습니다.
 
-| 메서드                                   | 역할                                        |
-| ---------------------------------------- | ------------------------------------------- |
-| InstanceWrapper.getInstanceByContextId() | 스코프 + 컨텍스트 조합으로 인스턴스 분리    |
-| Injector.loadInstance()                  | 의존성 그래프 따라 재귀적으로 인스턴스 생성 |
-| Injector.resolveConstructorParams()      | 생성자 파라미터를 context-aware하게 주입    |
+| 메서드                        | 역할                           |
+| -------------------------- | ---------------------------- |
+| getInstanceByContextId()   | 스코프 + 컨텍스트 조합으로 인스턴스 분리      |
+| loadInstance()             | 의존성 그래프 따라 재귀적으로 인스턴스 생성     |
+| resolveConstructorParams() | 생성자 파라미터를 context-aware하게 주입 |
 
 ![](https://d2r0pavv0lsiqc.cloudfront.net/projects/images/212ba0dc-5a8f-4de7-a49d-1730e3e66abf.webp)
 
@@ -595,39 +617,52 @@ Nest Injection Scopes에 대한 공식 문서 내용입니다. 스코프에 대�
 **Request Scope \<-> Singleton**
 
 - **CatsService**
+
   가
+
   **Request**
+
   스코프로 설정되어 있다면, 이를 주입받는
+
   **CatsController**
+
   도
+
   `Request 스코프로 전환`
+
   됩니다.
 - 반면,
+
   **CatsRepository**
+
   는 별도의 스코프가 지정되지 않았고, CatsService와의 의존성 체인에 직접 포함되어 있지 않으므로 기본(singleton) 스코프로 유지됩니다.
 
 **Transient Scope \<-> Singleton**
 
 - Transient로 지정된 의존성은 주입 시점마다 매번 새로운 인스턴스가 생성됩니다. 단, 이 경우에도
-
   **의존성 주입 체인 전체가 Transient가 되는 것은 아닙니다.**
-
 - **DogsService**
+
   는 여전히
+
   **Singleton**
+
   으로 유지됩니다.
 - **Transient**
+
   한
+
   **LoggerService**
+
   는 DogsService에 주입될 때, DogsService 인스턴스 전용 LoggerService 인스턴스가 생성됩니다.
 
 이제 동작 원리를 이해하셨을까요? **contextId에 따라 매 요청마다 다른 인스턴스로 리졸브되는 메커니즘**이 contextId로 그루핑되는 **Request 스코프**의 특성 때문에 주입받는 사용자측을 리졸브하는 시점에서 Request 스코프로 버블링 되는 것입니다.
 
 아래와 같은 사항을 명심하시면 좋을 것 같습니다.
 
-_"Request 스코프 기능의 사용에는 상위 인스턴스 생성 스코프 버블링으로 인해 굉장한 주의가 필요하다"_&#x20;
+*"Request 스코프 기능의 사용에는 상위 인스턴스 생성 스코프 버블링으로 인해 굉장한 주의가 필요하다"*&#x20;
 
-_"Transient는 싱글톤 인스턴스를 해치지 않고 사용할 수 있다"_
+*"Transient는 싱글톤 인스턴스를 해치지 않고 사용할 수 있다"*
 
 ### Apply Application Providers
 
@@ -712,5 +747,5 @@ export class DependenciesScanner {
 }
 ```
 
-**APP_INTERCEPTOR**, **APP_PIPE**, **APP_GUARD**, **APP_FILTER** 로 등록된 프로바이더들은 글로벌 컨텍스트에 등록됩니다.
+**APP\_INTERCEPTOR**, **APP\_PIPE**, **APP\_GUARD**, **APP\_FILTER** 로 등록된 프로바이더들은 글로벌 컨텍스트에 등록됩니다.
 main.ts에서 `app.addGlobalXXX()`를 수행하는 것이나 모듈 프로바이더에서 `{provide: APP_FILTER, useClass: XXXFilter}` 로 등록하는 것이나 동일 로직으로 동작함을 알 수 있습니다.
