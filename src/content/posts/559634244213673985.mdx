@@ -11,7 +11,7 @@ ogImage: "https://d2r0pavv0lsiqc.cloudfront.net/posts/images/7731f5bf-d58f-4771-
 seriesId: "549808096239681536"
 description: "NestJS 프레임워크가 어떻게 의존성 주입을 하고 있는 지 프레임워크 코드를 뜯어서 해석합니다."
 createdAt: "2025-03-25 15:51:26"
-updatedAt: "2025-03-27 11:28:32"
+updatedAt: "2025-03-27 14:53:24"
 ---
 
 ## 들어가며
@@ -29,8 +29,10 @@ updatedAt: "2025-03-27 11:28:32"
 실제로 동작을 보면 NestJS는 TypeScript의 Reflect Metadata API와 데코레이터를 통해 DI를 구현합니다.
 
 - **Reflect Metadata API**
+
   : 클래스와 생성자에 메타데이터를 정의하여 런타임에 인스턴스를 동적으로 주입합니다.
 - **DI 컨테이너**
+
   : NestJS가 제공하는 컨테이너는 프로바이더의 라이프사이클을 관리하며, 모듈 컴파일 시점에 프로바이더를 등록하고, 런타임 시에 요청에 따라 인스턴스를 생성 및 반환합니다.
 
 한번 **내부 구조**를 뜯어보겠습니다.
@@ -57,7 +59,7 @@ export function Injectable(options?: InjectableOptions): ClassDecorator {
 
 Injectable 데코레이터의 기능입니다. 굉장히 심플한데, **Reflect**를 통해 class의 **메타데이터를 마킹**합니다. 이 마킹을 어떻게 활용하고 있을까 찾아보겠습니다.
 
-### Nest Factory
+## Nest Factory - initialize()
 
 ```ts
 // packages/core/nest-factory.ts
@@ -196,6 +198,200 @@ export class DependenciesScanner {
 ```
 
 @Injectable()로 코드에서 마킹해둔 metaData를 읽고 있습니다. 이를 통해 스캐너의 기능은 @Module, @Controller, @Injectable 등 **데코레이터가 붙어있는 코드를 그래프 탐색하듯 순회**하여 **의존하고 있는 클래스들을 체크**하는 것이라 볼 수 있습니다.
+
+insertProvider()부분도 보겠습니다.
+
+```ts
+// packages/core/scanner.ts
+export class DependenciesScanner {
+  // 생략
+  public insertProvider(provider: Provider, token: string) {
+    const isCustomProvider = this.isCustomProvider(provider);
+    if (!isCustomProvider) {
+      return this.container.addProvider(provider, token);
+    }
+    const applyProvidersMap = this.getApplyProvidersMap();
+    const providersKeys = Object.keys(applyProvidersMap);
+    const type = provider.provide;
+
+    if (!providersKeys.includes(type as string)) {
+      return this.container.addProvider(provider as any, token);
+    }
+    const uuid = UuidFactory.get(type.toString());
+    const providerToken = `${type as string} (UUID: ${uuid})`;
+
+    let scope = (provider as ClassProvider | FactoryProvider).scope;
+    if (isNil(scope) && (provider as ClassProvider).useClass) {
+      scope = getClassScope((provider as ClassProvider).useClass);
+    }
+    this.applicationProvidersApplyMap.push({
+      type,
+      moduleKey: token,
+      providerKey: providerToken,
+      scope,
+    });
+
+    const newProvider = {
+      ...provider,
+      provide: providerToken,
+      scope,
+    } as Provider;
+
+    const enhancerSubtype =
+      ENHANCER_TOKEN_TO_SUBTYPE_MAP[
+        type as
+          | typeof APP_GUARD
+          | typeof APP_PIPE
+          | typeof APP_FILTER
+          | typeof APP_INTERCEPTOR
+      ];
+    const factoryOrClassProvider = newProvider as
+      | FactoryProvider
+      | ClassProvider;
+    if (this.isRequestOrTransient(factoryOrClassProvider.scope!)) {
+      return this.container.addInjectable(newProvider, token, enhancerSubtype);
+    }
+    this.container.addProvider(newProvider, token, enhancerSubtype);
+  }
+}
+```
+
+통상적인 케이스`providers: [CatsService]` 의 경우 바로 container에 등록합니다. 다만 CustomProvider의 경우 별도의 처리를 하는데 자세히 보겠습니다.&#x20;
+
+```ts
+  public isCustomProvider(
+    provider: Provider,
+  ): provider is
+    | ClassProvider
+    | ValueProvider
+    | FactoryProvider
+    | ExistingProvider {
+    return provider && !isNil((provider as any).provide);
+  }
+```
+
+| 종류             | 예시                                                         | 설명                                             |
+| -------------- | ---------------------------------------------------------- | ---------------------------------------------- |
+| 일반 Provider    | `providers: [UserService]`                                 | 클래스 자체를 주입 대상 등록                               |
+| CustomProvider | `provide + useClass / useValue / useFactory / useExisting` | Nest에게 Token을 provide하며 “이 Token에는 이걸 써!”라고 명시 |
+
+코드를 보면 provide가 정의된 경우를 CustomProvider 취급 하는데, 자세한 예시를 보여드리자면 아래와 같은 케이스가 커스텀 provider입니다.
+
+```ts
+
+import { connection } from './connection';
+
+@Module({
+  providers: [
+    // NormalProvider
+    NormalProvider,
+    // ValueProvider
+    {
+      provide: 'CONNECTION1',
+      useValue: connection,
+    },
+    // ClassProvider
+    {
+      provide: ConfigService,
+      useClass:
+        process.env.NODE_ENV === 'development'
+        ? DevelopmentConfigService
+        : ProductionConfigService,
+    };
+    // FactoryProvider
+    {
+      provide: 'CONNECTION2',
+      useFactory: (optionsProvider: MyOptionsProvider, optionalProvider?: string) => {
+        const options = optionsProvider.get();
+        return new DatabaseConnection(options);
+      },
+      inject: [MyOptionsProvider, { token: 'SomeOptionalProvider', optional: true }],
+    },
+    // ExistingProvider
+    {
+      provide: "AliasedNormalProvider",
+      useExisting: NormalProvider
+    }
+  ],
+})
+export class AppModule {}
+
+```
+
+`provide` 에 아래와 같은 **InjectionToken**을 넣은 경우 CustomProvider입니다.
+
+```ts
+export type InjectionToken<T = any> =
+  | string
+  | symbol
+  | Type<T>
+  | Abstract<T>
+  | Function;
+```
+
+Token은 Provider를 주입할 때 식별하기 위한 일종의 식별자입니다. **사용가능한 타입들을 잘 봐두시기 바랍니다**. 위를 통해 DIP 등 여러 테크닉을 구사할 수 있습니다.
+
+바로 보겠습니다.
+
+Custom Provider과 Symbol을 활용한 Java Spring 스타일의 **interface 기반 DIP** 예제입니다.
+
+```ts
+const USER_SERVICE = Symbol("USER_SERVICE");
+export interface UserService {}
+@Injectable()
+export class UserServiceImpl implements UserService {}
+
+@Module({
+  providers: [
+    {
+      provide: USER_SERVICE,
+      useClass: UserServiceImpl
+    }
+  ]
+})
+export class UserModule{}
+
+@Controller()
+export class UserController(
+  constructor(
+    @Inject(USER_SERVICE) private readonly userService: UserService
+  ){}
+)
+```
+
+이렇게 심볼을 통해 provide를 해줘야하는 이유는 **TS에서는 interface가 런타임에서 휘발**되기 때문입니다. 별도로 Inject를 명시해야한다던가 용법이 굉장히 귀찮죠..?
+
+제가 조금 더 추천하는 좀 더 TS 스러운 **Abstract Class 기반 DIP** 예시입니다.
+
+```ts
+export abstract class UserReader{
+  abstract findOne(criteria: FindOneUserCriteria): Promise<User>
+}
+
+@Injectable()
+export class RepositoryUserReader extends UserReader{
+  override findOne(){} // 생략
+}
+
+@Module({
+  providers: [
+    {
+      provide: UserReader,
+      useClass: RepositoryUserReader
+    }
+  ]
+})
+export class UserModule{}
+
+@Injectable()
+export class UserService(
+  constructor(
+    private readonly userReader: UserReader
+  ){}
+)
+```
+
+AbstractClass+abstract 메서드를 사용하면 런타임에도 class 정보가 남아있기 때문에 다음과 같은 Inject 토큰 명시 없이 사용할 수 있습니다.
 
 ### Instance Loader
 
@@ -359,7 +555,7 @@ export class Injector {
 }
 ```
 
-**loadInstance()** 메서드로 주어진 `InstanceWrapper`에 해당하는 **인스턴스를 실제로 생성**하고 의존성 주입 수행합니다. InstanceWrapper과 Injector의 기능을 정리하고 가겠습니다.
+**loadInstance()** 메서드로 주어진 `InstanceWrapper`에 해당하는 **인스턴스를 실제로 생성**하고 의존성 주입을 수행합니다. InstanceWrapper과 Injector의 기능을 정리하고 가겠습니다.
 
 | 클래스             | 설명                                 |
 | --------------- | ---------------------------------- |
@@ -369,14 +565,11 @@ export class Injector {
 핵심 메서드인 만큼 코드가 되게 깁니다. 기능을 요약하자면,
 
 - 초기
-
   **contextId**
-
   기반 인스턴스 조회
 - pending 상태(순환 참조 등) 체크
 - settlementSignal을 통한 비동기 완료 핸들링
 - 생성자 의존성(resolveConstructorParams)과 프로퍼티 의존성(resolveProperties)
-
   **resolve**
 - instantiateClass() 호출로 인스턴스 실제 생성
 
@@ -443,27 +636,17 @@ private readonly values = new WeakMap<ContextId,  InstancePerContext<T>>();
 정리하자면
 
 - `Default`
-
   스코프: 항상
-
   `STATIC_CONTEXT`
-
   사용 →
-
   **싱글톤**
 - `Request`
-
   스코프:
-
   `contextId`
-
   별로 따로 저장됨
 - `Transient`
-
   스코프:
-
   `contextId + inquirerId`
-
   조합으로 저장됨
 
 **스코프 + 컨텍스트 조합으로 인스턴스를 구분하여 반환**하는 기능을 수행합니다.&#x20;
@@ -624,29 +807,43 @@ Nest Injection Scopes에 대한 공식 문서 내용입니다. 스코프에 대�
 **Request Scope \<-> Singleton**
 
 - **CatsService**
+
   가
+
   **Request**
+
   스코프로 설정되어 있다면, 이를 주입받는
+
   **CatsController**
+
   도
+
   `Request 스코프로 전환`
+
   됩니다.
 - 반면,
+
   **CatsRepository**
+
   는 별도의 스코프가 지정되지 않았고, CatsService와의 의존성 체인에 직접 포함되어 있지 않으므로 기본(singleton) 스코프로 유지됩니다.
 
 **Transient Scope \<-> Singleton**
 
 - Transient로 지정된 의존성은 주입 시점마다 매번 새로운 인스턴스가 생성됩니다. 단, 이 경우에도
-
   **의존성 주입 체인 전체가 Transient가 되는 것은 아닙니다.**
 - **DogsService**
+
   는 여전히
+
   **Singleton**
+
   으로 유지됩니다.
 - **Transient**
+
   한
+
   **LoggerService**
+
   는 DogsService에 주입될 때, DogsService 인스턴스 전용 LoggerService 인스턴스가 생성됩니다.
 
 이제 동작 원리를 이해하셨을까요? **contextId에 따라 매 요청마다 다른 인스턴스로 리졸브되는 메커니즘**이 contextId로 그루핑되는 **Request 스코프**의 특성 때문에 주입받는 사용자측을 리졸브하는 시점에서 Request 스코프로 버블링 되는 것입니다.
@@ -743,6 +940,8 @@ export class DependenciesScanner {
 **APP\_INTERCEPTOR**, **APP\_PIPE**, **APP\_GUARD**, **APP\_FILTER** 로 등록된 프로바이더들은 글로벌 컨텍스트에 등록됩니다.
 main.ts에서 `app.addGlobalXXX()`를 수행하는 것이나 모듈 프로바이더에서 `{provide: APP_FILTER, useClass: XXXFilter}` 로 등록하는 것이나 동일 로직으로 동작함을 알 수 있습니다.
 
+이후 graphInspector에 등록을 해줍니다.
+
 ```ts
 this.graphInspector.insertAttachedEnhancer(instanceWrapper);
 ```
@@ -776,23 +975,50 @@ public insertAttachedEnhancer(nodeId: string) {
 }
 ```
 
-실제 동작부분에 대한 인터페이스는 아래와 같이 정의됩니다.
+이런식으로 SerializedGraph에서 관리되는 모습. &#x20;
+
+(NestJS에서는 Guards, Interceptors, Pipes, Filters를 Enhancher라고 정의합니다.)
 
 ```ts
-export interface AttachedEnhancerDefinition {
-  nodeId: string;
-}
+export class NestFactoryStatic {
+public async create<T extends INestApplication = INestApplication>(
+    moduleCls: IEntryNestModule,
+    serverOrOptions?: AbstractHttpAdapter | NestApplicationOptions,
+    options?: NestApplicationOptions,
+  ): Promise<T> {
+    const [httpServer, appOptions] = this.isHttpServer(serverOrOptions!)
+      ? [serverOrOptions, options]
+      : [this.createHttpAdapter(), serverOrOptions];
 
-/**
- * Enhancers registered through "app.useGlobalPipes()", "app.useGlobalGuards()", "app.useGlobalInterceptors()", and "app.useGlobalFilters()" methods.
- */
-export interface OrphanedEnhancerDefinition {
-  subtype: EnhancerSubtype;
-  ref: unknown;
-}
+    const applicationConfig = new ApplicationConfig();
+    const container = new NestContainer(applicationConfig, appOptions);
+    const graphInspector = this.createGraphInspector(appOptions!, container);
 
-export interface Extras {
-  orphanedEnhancers: Array<OrphanedEnhancerDefinition>;
-  attachedEnhancers: Array<AttachedEnhancerDefinition>;
+    this.setAbortOnError(serverOrOptions, options);
+    this.registerLoggerConfiguration(appOptions);
+
+    await this.initialize(
+      moduleCls,
+      container,
+      graphInspector,
+      applicationConfig,
+      appOptions,
+      httpServer,
+    );
+
+    const instance = new NestApplication(
+      container,
+      httpServer,
+      applicationConfig,
+      graphInspector,
+      appOptions,
+    );
+    const target = this.createNestInstance(instance);
+    return this.createAdapterProxy<T>(target, httpServer);
+  }
 }
 ```
+
+`Initialize()`가 끝났습니다. 드디어 bootstrap()함수에 쓰는 app을 반환받습니다.
+
+&#x20;이후 factory에서 열심히 만든 모듈이 담긴 container, applicationConfig 등을 app으로 넘겨주고, `app.init()` 에서 실제 nestApp에 resolve됩니다.
