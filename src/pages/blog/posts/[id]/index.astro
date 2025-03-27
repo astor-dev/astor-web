@@ -9,6 +9,7 @@ export async function getStaticPaths() {
   const postRepository = repositoryContainer.get<PostRepository>(POST_REPOSITORY);
   const posts = await postRepository.getPosts({ filter: { draft: false } });
   const latestPosts: PostEntry[] = (await postRepository.getPosts({
+    filter: { draft: false },
   paging: {
     page: 1,
     limit: 8,

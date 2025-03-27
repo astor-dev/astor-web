@@ -62,8 +62,87 @@ const minDepth = headings.length ? Math.min(...headings.map(h => h.depth)) : 1;
   document.addEventListener("DOMContentLoaded", () => {
     const tocContainer = document.querySelector(".toc-container");
     const tocDiv = tocContainer?.querySelector("div");
+    const tocItems = document.querySelectorAll(".toc-item");
     let initialTopOffset = 0;
     const SCROLL_OFFSET = 100; // 헤딩이 화면 상단에서 얼마나 떨어져 있을지 설정 (픽셀)
+
+    // 모든 헤더의 위치 정보 수집
+    function getHeadingPositions() {
+      const headingElements = Array.from(
+        document.querySelectorAll(
+          "h1[id], h2[id], h3[id], h4[id], h5[id], h6[id]",
+        ),
+      );
+
+      // 헤더 위치 수집 및 정렬
+      const headingPositions = headingElements.map(heading => {
+        const id = heading.getAttribute("id") || "";
+        const offsetTop = heading.getBoundingClientRect().top + window.scrollY;
+        return { id, offsetTop };
+      });
+
+      // 마지막 위치는 문서의 끝으로 설정
+      headingPositions.push({
+        id: "document-end",
+        offsetTop: document.body.scrollHeight,
+      });
+
+      return headingPositions;
+    }
+
+    // 현재 스크롤 위치에 따라 활성화된 헤더 찾기
+    function updateActiveHeading() {
+      const headingPositions = getHeadingPositions();
+      const scrollPosition = window.scrollY + SCROLL_OFFSET;
+
+      // 현재 스크롤 위치가 어떤 두 헤더 사이에 있는지 확인
+      for (let i = 0; i < headingPositions.length - 1; i++) {
+        const currentHeading = headingPositions[i];
+        const nextHeading = headingPositions[i + 1];
+
+        if (
+          scrollPosition >= currentHeading.offsetTop &&
+          scrollPosition < nextHeading.offsetTop
+        ) {
+          // 모든 toc-item에서 active 클래스 제거
+          tocItems.forEach(item => {
+            item.classList.remove("active");
+          });
+
+          // 현재 헤더에 해당하는 목차 항목 활성화
+          const activeLink = document.querySelector(
+            `.toc-item a[data-heading-id="${currentHeading.id}"]`,
+          );
+
+          if (activeLink) {
+            activeLink.parentElement?.classList.add("active");
+          }
+
+          break;
+        }
+      }
+
+      // 문서 시작 부분에서 첫 번째 헤더 전에 있는 경우
+      if (
+        headingPositions.length > 0 &&
+        scrollPosition < headingPositions[0].offsetTop
+      ) {
+        // 모든 toc-item에서 active 클래스 제거
+        tocItems.forEach(item => {
+          item.classList.remove("active");
+        });
+
+        // 첫 번째 헤더가 있으면 활성화
+        if (headingPositions.length > 0) {
+          const firstHeadingLink = document.querySelector(
+            `.toc-item a[data-heading-id="${headingPositions[0].id}"]`,
+          );
+          if (firstHeadingLink) {
+            firstHeadingLink.parentElement?.classList.add("active");
+          }
+        }
+      }
+    }
 
     function updateTocPosition() {
       if (!tocContainer || !tocDiv) return;
@@ -87,28 +166,37 @@ const minDepth = headings.length ? Math.min(...headings.map(h => h.depth)) : 1;
       initialTopOffset =
         (tocContainer?.getBoundingClientRect().top || 0) + window.scrollY;
       updateTocPosition();
+      updateActiveHeading(); // 페이지 로드 시 활성 헤더 업데이트
     });
 
     // 목차 링크 클릭 시 스크롤 위치 조정
-    document.querySelectorAll('[data-toc-link]').forEach(link => {
-      link.addEventListener("click", function(this: HTMLAnchorElement, e: Event) {
-        e.preventDefault();
-        const targetId = this.getAttribute("href")?.substring(1);
-        const targetElement = document.getElementById(targetId || "");
+    document.querySelectorAll("[data-toc-link]").forEach(link => {
+      link.addEventListener(
+        "click",
+        function (this: HTMLAnchorElement, e: Event) {
+          e.preventDefault();
+          const targetId = this.getAttribute("href")?.substring(1);
+          const targetElement = document.getElementById(targetId || "");
 
-        if (targetElement) {
-          const targetPosition = targetElement.getBoundingClientRect().top + window.scrollY - SCROLL_OFFSET;
-          window.scrollTo({
-            top: targetPosition,
-            behavior: 'smooth'
-          });
-          
-        }
-      });
+          if (targetElement) {
+            const targetPosition =
+              targetElement.getBoundingClientRect().top +
+              window.scrollY -
+              SCROLL_OFFSET;
+            window.scrollTo({
+              top: targetPosition,
+              behavior: "smooth",
+            });
+          }
+        },
+      );
     });
 
-    // 스크롤 이벤트에 따라 목차 위치 업데이트
-    window.addEventListener("scroll", updateTocPosition);
+    // 스크롤 이벤트에 따라 목차 위치 및 활성 헤더 업데이트
+    window.addEventListener("scroll", () => {
+      updateTocPosition();
+      updateActiveHeading();
+    });
 
     // 페이지 사이즈 변경 시에도 위치 업데이트
     window.addEventListener("resize", () => {
@@ -116,6 +204,7 @@ const minDepth = headings.length ? Math.min(...headings.map(h => h.depth)) : 1;
       initialTopOffset =
         (tocContainer?.getBoundingClientRect().top || 0) + window.scrollY;
       updateTocPosition();
+      updateActiveHeading();
     });
 
     // 정기적으로 위치 확인하여 오류 예방
@@ -126,37 +215,8 @@ const minDepth = headings.length ? Math.min(...headings.map(h => h.depth)) : 1;
       }
     }, 1000);
 
-
-    // 기존 IntersectionObserver 코드
-    const observer = new IntersectionObserver(
-      entries => {
-        entries.forEach(entry => {
-          const id = entry.target.getAttribute("id");
-          if (entry.isIntersecting) {
-            // 모든 toc-item에서 active 클래스 제거
-            document.querySelectorAll(".toc-item").forEach(item => {
-              item.classList.remove("active");
-            });
-
-            // 해당 링크를 찾고 부모 li 요소에 active 클래스 추가
-            const activeLink = document.querySelector(
-              `.toc-item a[data-heading-id="${id}"]`,
-            );
-            if (activeLink) {
-              activeLink.parentElement?.classList.add("active");
-            }
-          }
-        });
-      },
-      { rootMargin: "0px 0px -80% 0px", threshold: 0 },
-    );
-
-    // 모든 헤딩을 관찰합니다
-    document
-      .querySelectorAll("h1[id], h2[id], h3[id], h4[id], h5[id], h6[id]")
-      .forEach(heading => {
-        observer.observe(heading);
-      });
+    // 초기 활성화 헤더 설정
+    updateActiveHeading();
   });
 </script>
 
