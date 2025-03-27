@@ -34,7 +34,7 @@ const minDepth = headings.length ? Math.min(...headings.map(h => h.depth)) : 1;
 
 <nav class={`toc-container not-prose ${className}`}>
   <div class="bg-white-base ml-4 w-64 rounded-lg">
-    <ul class="max-h-[60dvh] overflow-y-auto py-2">
+    <ul class="toc-list overflow-y-auto py-2">
       {
         computedHeadings.map(item => (
           <li
@@ -58,13 +58,35 @@ const minDepth = headings.length ? Math.min(...headings.map(h => h.depth)) : 1;
 </nav>
 
 <script>
-  // 스크롤에 따라 현재 보이는 섹션의 목차를 활성화하는 스크립트
   document.addEventListener("DOMContentLoaded", () => {
     const tocContainer = document.querySelector(".toc-container");
     const tocDiv = tocContainer?.querySelector("div");
     const tocItems = document.querySelectorAll(".toc-item");
     let initialTopOffset = 0;
-    const SCROLL_OFFSET = 100; // 헤딩이 화면 상단에서 얼마나 떨어져 있을지 설정 (픽셀)
+    const SCROLL_OFFSET = 100;
+    const HEADER_MARGIN = 20; // 헤더 간 최소 여백
+
+    // 활성 헤더가 변경될 때 목차 내 스크롤 조정
+    function scrollActiveItemIntoView(activeLink: Element | null) {
+      if (!activeLink || !tocContainer) return;
+
+      const tocList = tocContainer.querySelector(".toc-list");
+      if (!tocList) return;
+
+      const activeLi = activeLink.parentElement;
+      if (!activeLi) return;
+
+      const listRect = tocList.getBoundingClientRect();
+      const activeRect = activeLi.getBoundingClientRect();
+
+      // 활성 항목이 목차 컨테이너를 벗어났는지 확인
+      if (
+        activeRect.top < listRect.top ||
+        activeRect.bottom > listRect.bottom
+      ) {
+        activeLi.scrollIntoView({ behavior: "smooth", block: "nearest" });
+      }
+    }
 
     // 모든 헤더의 위치 정보 수집
     function getHeadingPositions() {
@@ -93,17 +115,23 @@ const minDepth = headings.length ? Math.min(...headings.map(h => h.depth)) : 1;
     // 현재 스크롤 위치에 따라 활성화된 헤더 찾기
     function updateActiveHeading() {
       const headingPositions = getHeadingPositions();
-      const scrollPosition = window.scrollY + SCROLL_OFFSET;
+      const scrollPosition = Math.round(window.scrollY); // 소수점 반올림
 
       // 현재 스크롤 위치가 어떤 두 헤더 사이에 있는지 확인
       for (let i = 0; i < headingPositions.length - 1; i++) {
         const currentHeading = headingPositions[i];
         const nextHeading = headingPositions[i + 1];
 
-        if (
-          scrollPosition >= currentHeading.offsetTop &&
-          scrollPosition < nextHeading.offsetTop
-        ) {
+        // 위치 계산을 정수로 반올림
+        const currentTop = Math.round(
+          currentHeading.offsetTop - SCROLL_OFFSET - HEADER_MARGIN,
+        );
+        const nextTop = Math.round(
+          nextHeading.offsetTop - SCROLL_OFFSET - HEADER_MARGIN,
+        );
+
+        // 약간의 여유 범위를 추가 (2px)
+        if (scrollPosition >= currentTop - 2 && scrollPosition < nextTop - 2) {
           // 모든 toc-item에서 active 클래스 제거
           tocItems.forEach(item => {
             item.classList.remove("active");
@@ -142,6 +170,10 @@ const minDepth = headings.length ? Math.min(...headings.map(h => h.depth)) : 1;
           }
         }
       }
+
+      // 활성 헤더가 변경될 때마다 스크롤 조정
+      const activeLink = document.querySelector(".toc-item.active a");
+      scrollActiveItemIntoView(activeLink);
     }
 
     function updateTocPosition() {
@@ -179,14 +211,21 @@ const minDepth = headings.length ? Math.min(...headings.map(h => h.depth)) : 1;
           const targetElement = document.getElementById(targetId || "");
 
           if (targetElement) {
-            const targetPosition =
+            // 스크롤 위치 계산을 정수로 반올림
+            const targetPosition = Math.round(
               targetElement.getBoundingClientRect().top +
-              window.scrollY -
-              SCROLL_OFFSET;
+                window.scrollY -
+                (SCROLL_OFFSET + HEADER_MARGIN),
+            );
+
             window.scrollTo({
               top: targetPosition,
               behavior: "smooth",
             });
+
+            // 클릭한 항목 즉시 활성화
+            tocItems.forEach(item => item.classList.remove("active"));
+            this.parentElement?.classList.add("active");
           }
         },
       );
@@ -223,40 +262,38 @@ const minDepth = headings.length ? Math.min(...headings.map(h => h.depth)) : 1;
 <style>
   .toc-container {
     position: absolute;
-    right: 0px; /* 본문 우측에 배치 */
+    right: 0px;
     width: 280px;
   }
 
-  /* @media (min-width: 1280px) {
-    .toc-container {
-      right: -50px;
-    }
+  .toc-list {
+    max-height: 50vh;
+    scrollbar-gutter: stable;
   }
-
-  @media (min-width: 1536px) {
-    .toc-container {
-      right: -50px;
-    }
-  } */
 
   .toc-item.active {
     font-weight: bold;
     background-color: rgba(var(--color-accent), 0.1);
   }
 
-  /* 스크롤바 스타일링 */
-  .toc-container ul::-webkit-scrollbar {
+  /* 스크롤바가 필요할 때만 표시 */
+  .toc-list::-webkit-scrollbar {
     width: 4px;
-    display: block;
   }
 
-  .toc-container ul::-webkit-scrollbar-track {
+  .toc-list::-webkit-scrollbar-track {
     background: rgba(var(--color-fill), 0.5);
     border-radius: 2px;
   }
 
-  .toc-container ul::-webkit-scrollbar-thumb {
+  .toc-list::-webkit-scrollbar-thumb {
     background: rgba(var(--color-accent), 0.7);
     border-radius: 2px;
+  }
+
+  /* Firefox를 위한 스크롤바 스타일링 */
+  .toc-list {
+    scrollbar-width: thin;
+    scrollbar-color: rgba(var(--color-accent), 0.7) rgba(var(--color-fill), 0.5);
   }
 </style>
