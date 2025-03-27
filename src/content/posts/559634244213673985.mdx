@@ -11,7 +11,7 @@ ogImage: "https://d2r0pavv0lsiqc.cloudfront.net/posts/images/7731f5bf-d58f-4771-
 seriesId: "549808096239681536"
 description: "NestJS 프레임워크가 어떻게 의존성 주입을 하고 있는 지 프레임워크 코드를 뜯어서 해석합니다."
 createdAt: "2025-03-25 15:51:26"
-updatedAt: "2025-03-26 13:53:47"
+updatedAt: "2025-03-27 11:28:32"
 ---
 
 ## 들어가며
@@ -29,10 +29,8 @@ updatedAt: "2025-03-26 13:53:47"
 실제로 동작을 보면 NestJS는 TypeScript의 Reflect Metadata API와 데코레이터를 통해 DI를 구현합니다.
 
 - **Reflect Metadata API**
-
   : 클래스와 생성자에 메타데이터를 정의하여 런타임에 인스턴스를 동적으로 주입합니다.
 - **DI 컨테이너**
-
   : NestJS가 제공하는 컨테이너는 프로바이더의 라이프사이클을 관리하며, 모듈 컴파일 시점에 프로바이더를 등록하고, 런타임 시에 요청에 따라 인스턴스를 생성 및 반환합니다.
 
 한번 **내부 구조**를 뜯어보겠습니다.
@@ -371,11 +369,14 @@ export class Injector {
 핵심 메서드인 만큼 코드가 되게 깁니다. 기능을 요약하자면,
 
 - 초기
+
   **contextId**
+
   기반 인스턴스 조회
 - pending 상태(순환 참조 등) 체크
 - settlementSignal을 통한 비동기 완료 핸들링
 - 생성자 의존성(resolveConstructorParams)과 프로퍼티 의존성(resolveProperties)
+
   **resolve**
 - instantiateClass() 호출로 인스턴스 실제 생성
 
@@ -442,17 +443,27 @@ private readonly values = new WeakMap<ContextId,  InstancePerContext<T>>();
 정리하자면
 
 - `Default`
+
   스코프: 항상
+
   `STATIC_CONTEXT`
+
   사용 →
+
   **싱글톤**
 - `Request`
+
   스코프:
+
   `contextId`
+
   별로 따로 저장됨
 - `Transient`
+
   스코프:
+
   `contextId + inquirerId`
+
   조합으로 저장됨
 
 **스코프 + 컨텍스트 조합으로 인스턴스를 구분하여 반환**하는 기능을 수행합니다.&#x20;
@@ -583,8 +594,6 @@ export class InstanceWrapper<T = any> {
 
 만약 모든 의존성이 resolve되었다면, 준비된 인스턴스 배열을 callback으로 전달하여 아까 보았던 콜백 함수인 실제 인스턴스 생성(`instantiateClass`) 및 프로퍼티 주입(`applyProperties`)이 진행됩니다.
 
-
-
 ```ts
 
   private getContextId(
@@ -599,8 +608,6 @@ export class InstanceWrapper<T = any> {
       : contextId;
   }
 ```
-
-
 
 여태까지 내용을 정리해보겠습니다.
 
@@ -617,43 +624,29 @@ Nest Injection Scopes에 대한 공식 문서 내용입니다. 스코프에 대�
 **Request Scope \<-> Singleton**
 
 - **CatsService**
-
   가
-
   **Request**
-
   스코프로 설정되어 있다면, 이를 주입받는
-
   **CatsController**
-
   도
-
   `Request 스코프로 전환`
-
   됩니다.
 - 반면,
-
   **CatsRepository**
-
   는 별도의 스코프가 지정되지 않았고, CatsService와의 의존성 체인에 직접 포함되어 있지 않으므로 기본(singleton) 스코프로 유지됩니다.
 
 **Transient Scope \<-> Singleton**
 
 - Transient로 지정된 의존성은 주입 시점마다 매번 새로운 인스턴스가 생성됩니다. 단, 이 경우에도
+
   **의존성 주입 체인 전체가 Transient가 되는 것은 아닙니다.**
 - **DogsService**
-
   는 여전히
-
   **Singleton**
-
   으로 유지됩니다.
 - **Transient**
-
   한
-
   **LoggerService**
-
   는 DogsService에 주입될 때, DogsService 인스턴스 전용 LoggerService 인스턴스가 생성됩니다.
 
 이제 동작 원리를 이해하셨을까요? **contextId에 따라 매 요청마다 다른 인스턴스로 리졸브되는 메커니즘**이 contextId로 그루핑되는 **Request 스코프**의 특성 때문에 주입받는 사용자측을 리졸브하는 시점에서 Request 스코프로 버블링 되는 것입니다.
@@ -749,3 +742,57 @@ export class DependenciesScanner {
 
 **APP\_INTERCEPTOR**, **APP\_PIPE**, **APP\_GUARD**, **APP\_FILTER** 로 등록된 프로바이더들은 글로벌 컨텍스트에 등록됩니다.
 main.ts에서 `app.addGlobalXXX()`를 수행하는 것이나 모듈 프로바이더에서 `{provide: APP_FILTER, useClass: XXXFilter}` 로 등록하는 것이나 동일 로직으로 동작함을 알 수 있습니다.
+
+```ts
+this.graphInspector.insertAttachedEnhancer(instanceWrapper);
+```
+
+이 부분을 타고타고 가면&#x20;
+
+```ts
+export class GraphInspector {
+  private readonly graph: SerializedGraph;
+  
+  public insertAttachedEnhancer(wrapper: InstanceWrapper) {
+    const existingNode = this.graph.getNodeById(wrapper.id)!;
+    existingNode.metadata.global = true;
+
+    this.graph.insertAttachedEnhancer(existingNode.id);
+  }
+}
+```
+
+```ts
+export class SerializedGraph {
+  private readonly extras: Extras = {
+    orphanedEnhancers: [],
+    attachedEnhancers: [],
+};
+public insertAttachedEnhancer(nodeId: string) {
+    this.extras.attachedEnhancers.push({
+      nodeId,
+    });
+  }
+}
+```
+
+실제 동작부분에 대한 인터페이스는 아래와 같이 정의됩니다.
+
+```ts
+export interface AttachedEnhancerDefinition {
+  nodeId: string;
+}
+
+/**
+ * Enhancers registered through "app.useGlobalPipes()", "app.useGlobalGuards()", "app.useGlobalInterceptors()", and "app.useGlobalFilters()" methods.
+ */
+export interface OrphanedEnhancerDefinition {
+  subtype: EnhancerSubtype;
+  ref: unknown;
+}
+
+export interface Extras {
+  orphanedEnhancers: Array<OrphanedEnhancerDefinition>;
+  attachedEnhancers: Array<AttachedEnhancerDefinition>;
+}
+```
