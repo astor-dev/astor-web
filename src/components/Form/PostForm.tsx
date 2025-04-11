@@ -92,7 +92,8 @@ const PostForm: React.FC<PostFormProps> = ({ initialData, tags, series }) => {
 
   // 기본 날짜 문자열(YYYY-MM-DD HH:mm:ss)
   const defaultDate = dayjs().format("YYYY-MM-DD HH:mm:ss");
-  const postId = initialData?.data?.id ?? generateId();
+  // postId를 useState로 관리하여 리렌더링에도 유지되도록 수정
+  const [postId] = useState(() => initialData?.data?.id ?? generateId());
 
   // 로컬 스토리지에서 모든 임시저장 데이터 가져오기
   const getAllDrafts = useCallback(() => {
@@ -194,8 +195,35 @@ const PostForm: React.FC<PostFormProps> = ({ initialData, tags, series }) => {
     }
   }, [getFormData, markdownContent, postId]);
 
+  // 초기 데이터 로드 - setTimeout으로 렌더링 이후에 처리
+  useEffect(() => {
+    // 모든 임시저장 데이터 목록 가져오기
+    setDraftsList(getAllDrafts());
+
+    if (initialData?.data) {
+      setTimeout(() => {
+        setFormValues(initialData.data);
+      }, 100);
+    }
+  }, [getAllDrafts, initialData?.data]);
+
   // 자동 저장 함수
   useEffect(() => {
+    // 페이지 로드 시 로컬 스토리지에 저장된 현재 포스트 임시저장 데이터 체크
+    const localStorageKey = getLocalStorageKey(postId);
+    const savedData = localStorage.getItem(localStorageKey);
+    if (savedData) {
+      setHasLocalDraft(true);
+      try {
+        const parsedData = JSON.parse(savedData);
+        if (parsedData.timestamp) {
+          setLastSaved(dayjs(parsedData.timestamp).format("HH:mm:ss"));
+        }
+      } catch (error) {
+        console.error("임시저장 데이터 파싱 오류:", error);
+      }
+    }
+
     // 1분마다 자동 저장
     const saveInterval = setInterval(() => {
       saveToLocalStorage();
@@ -204,7 +232,7 @@ const PostForm: React.FC<PostFormProps> = ({ initialData, tags, series }) => {
     return () => {
       clearInterval(saveInterval as unknown as number);
     };
-  }, [saveToLocalStorage]);
+  }, [saveToLocalStorage, postId]);
 
   // 특정 값으로 폼 데이터 설정
   const setFormValues = useCallback(
@@ -261,16 +289,6 @@ const PostForm: React.FC<PostFormProps> = ({ initialData, tags, series }) => {
     },
     [defaultDate],
   );
-
-  // 초기 데이터 로드 - setTimeout으로 렌더링 이후에 처리
-  useEffect(() => {
-    if (initialData?.data) {
-      setTimeout(() => {
-        setFormValues(initialData.data);
-        setDraftsList(getAllDrafts());
-      }, 100);
-    }
-  }, []);
 
   // 특정 임시저장 데이터 불러오기
   const loadDraft = useCallback((draftId: string) => {

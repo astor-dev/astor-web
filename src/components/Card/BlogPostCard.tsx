@@ -56,18 +56,18 @@ const BlogPostCard: React.FC<BlogPostCardProps> = props => {
 
         <div className="flex flex-1 flex-col justify-between py-3">
           <div>
-            <h3 className="mb-1 line-clamp-1 text-lg font-bold text-black-accent md:text-xl">
+            <h3 className="line-clamp-2 text-lg font-bold text-black-accent md:text-xl">
               {isLoading ? <Skeleton className="w-full" /> : props.data.title}
             </h3>
-            <p className="line-clamp-2 h-[2.5rem] text-sm">
+            {/* <p className="line-clamp-2 h-[2.5rem] text-sm">
               {isLoading ? (
                 <Skeleton className="h-full" />
               ) : (
                 props.data.description
               )}
-            </p>
+            </p> */}
           </div>
-          <div className="my-3 line-clamp-6 min-h-[7.5rem] text-sm text-black-muted">
+          <div className="my-2 line-clamp-5 min-h-[6rem] text-sm text-black-muted">
             {isLoading ? <Skeleton className="h-full" /> : body}
           </div>
           <div className="flex items-center gap-1 text-xs text-gray-500">
