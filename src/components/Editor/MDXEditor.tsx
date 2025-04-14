@@ -30,6 +30,9 @@ import {
   type MDXEditorMethods,
   InsertThematicBreak,
   directivesPlugin,
+  linkPlugin,
+  CreateLink,
+  linkDialogPlugin,
 } from "@mdxeditor/editor";
 import "~styles/editor.css";
 import { IMAGE_SERVICE, ImageService } from "~modules/services/image.service";
@@ -182,6 +185,7 @@ const Editor = forwardRef<EditorRefMethods, EditorProps>(
           },
         }),
         markdownShortcutPlugin(),
+        linkPlugin(),
         toolbarPlugin({
           toolbarContents: renderToolbarContents,
         }),
