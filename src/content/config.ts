@@ -34,7 +34,6 @@ const posts = defineCollection({
       tags: z.array(z.string()).default(["others"]),
       ogImage: z.string(),
       seriesId: z.string().optional(),
-      description: z.string(),
     }),
 });
 

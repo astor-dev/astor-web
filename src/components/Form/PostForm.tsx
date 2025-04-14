@@ -3,9 +3,6 @@ import dayjs from "dayjs";
 import Editor, { type EditorRefMethods } from "~components/Editor/MDXEditor";
 import IconButton from "~components/Button/IconButton";
 import Input, { type InputMethods } from "~components/Input/Input";
-import TextareaInput, {
-  type TextareaInputMethods,
-} from "~components/Input/TextareaInput";
 import ImageFileInput, {
   type ImageFileInputMethods,
 } from "~components/Input/ImageFileInput";
@@ -40,7 +37,6 @@ interface PostFormProps {
       tags: string[];
       ogImage: string;
       seriesId?: string;
-      description: string;
       createdAt: string; // ← 날짜
       updatedAt: string; // ← 날짜
     };
@@ -65,7 +61,6 @@ const PostForm: React.FC<PostFormProps> = ({ initialData, tags, series }) => {
   const authorRef = useRef<InputMethods>(null);
   const createdAtRef = useRef<InputMethods>(null);
   const updatedAtRef = useRef<InputMethods>(null);
-  const descriptionRef = useRef<TextareaInputMethods>(null);
   const optionsRef = useRef<CheckboxGroupInputMethods>(null);
   const tagsRef = useRef<AutoCompleteMultiInputMethods>(null);
   const seriesRef = useRef<AutoCompleteInputMethods>(null);
@@ -155,7 +150,6 @@ const PostForm: React.FC<PostFormProps> = ({ initialData, tags, series }) => {
       tags: tagsRef.current?.getValues() || [],
       ogImage: ogImageRef.current?.getValue() || "",
       seriesId: seriesRef.current?.getValue() || "",
-      description: descriptionRef.current?.getValue() || "",
       createdAt: createdAtRef.current?.getValue() || defaultDate,
       updatedAt: updatedAtRef.current?.getValue() || defaultDate,
     };
@@ -252,14 +246,14 @@ const PostForm: React.FC<PostFormProps> = ({ initialData, tags, series }) => {
             authorRef.current.setValue(data.author);
           }
 
-          if (descriptionRef.current && data.description !== undefined) {
-            descriptionRef.current.setValue(data.description);
-          }
-
           if (optionsRef.current) {
             const options: string[] = [];
             if (data.pinned) options.push("pinned");
             if (data.draft) options.push("draft");
+            console.log("옵션 설정:", options, "원본 데이터:", {
+              pinned: data.pinned,
+              draft: data.draft,
+            });
             optionsRef.current.setValues(options);
           }
 
@@ -545,10 +539,12 @@ const PostForm: React.FC<PostFormProps> = ({ initialData, tags, series }) => {
                 { value: "draft", label: "임시 저장" },
               ]}
               required
-              defaultValues={[
-                initialData?.data?.pinned ? "pinned" : "",
-                initialData?.data?.draft ? "draft" : "",
-              ].filter(Boolean)}
+              defaultValues={
+                [
+                  initialData?.data?.pinned ? "pinned" : undefined,
+                  initialData?.data?.draft ? "draft" : undefined,
+                ].filter(Boolean) as string[]
+              }
             />
           </div>
 
@@ -629,17 +625,6 @@ const PostForm: React.FC<PostFormProps> = ({ initialData, tags, series }) => {
               type="posts"
               required
               value={initialData?.data?.ogImage ?? ""}
-            />
-          </div>
-
-          <div className="lg:col-span-2">
-            <TextareaInput
-              ref={descriptionRef}
-              id="description"
-              name="description"
-              label="간단 설명"
-              required
-              defaultValue={initialData?.data?.description ?? ""}
             />
           </div>
         </div>

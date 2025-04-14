@@ -13,7 +13,6 @@ interface CreatePostRequest {
     tags: string[];
     ogImage: string;
     seriesId: string;
-    description: string;
     createdAt: string;
     updatedAt: string;
   };

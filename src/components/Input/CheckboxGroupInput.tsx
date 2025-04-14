@@ -61,20 +61,18 @@ const CheckboxGroupInput = forwardRef<
 
     // selectedValues를 부모로부터 받은 defaultValues로 동기화
     useEffect(() => {
-      setSelectedValues(defaultValues);
-    }, [defaultValues]);
+      if (Array.isArray(defaultValues)) {
+        setSelectedValues([...defaultValues]);
+      }
+    }, [id, defaultValues]);
 
     // 외부에서 접근 가능한 메서드 정의
     useImperativeHandle(ref, () => ({
-      getValues: () => selectedValues,
+      getValues: () => {
+        return selectedValues;
+      },
       setValues: (values: string[]) => {
-        console.log(
-          `CheckboxGroupInput[${id || "unknown"}] setValues:`,
-          values,
-        );
-
         if (!values || !Array.isArray(values)) {
-          console.warn("유효하지 않은 체크박스 값:", values);
           return;
         }
 
