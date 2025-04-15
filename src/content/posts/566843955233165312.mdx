@@ -14,7 +14,7 @@ tags:
 ogImage: "https://d2r0pavv0lsiqc.cloudfront.net/posts/images/29ab6e9b-e2f3-4204-b24b-1be63033d6b6.webp"
 seriesId: "556500951268069379"
 createdAt: "2025-04-11 14:23:31"
-updatedAt: "2025-04-15 11:58:28"
+updatedAt: "2025-04-15 12:34:06"
 ---
 
 ## 시작하며: 문제 및 필요성
@@ -47,25 +47,16 @@ ECS는 EC2 기반과 Fargate 기반이라는 두 가지 런타임 모드를 제�
 EC2 기반 ECS는 무중단 배포(Rolling Update)를 위해 신규 버전의 태스크를 실행할 때, 기존 태스크와의 공존을 위해 **일시적으로 더 많은 리소스를 필요로 합니다**. 이 과정에서 다음과 같은 문제가 발생합니다:
 
 - 새로운 태스크를 수용할 수 있는 여유 자원이 부족할 경우, ECS는 오토스케일링 그룹을 통해
-
   **추가 EC2 인스턴스를 생성**
-
   합니다.
 - 배포가 완료되고 기존 태스크가 중지되더라도,
-
   **인스턴스 레벨의 리소스는 즉시 회수되지 않습니다.**
 - 이는 특히
-
   **태스크 단위 리소스 요구량이 작고, 배포 주기가 짧은 서비스**
-
   일수록 인스턴스가
-
   **부분적으로만 활용된 채 계속 유지**
-
   되며
-
   **자원 낭비**
-
   로 이어집니다.
 
 예를 들어, 한 EC2 인스턴스가 4개의 태스크를 수용할 수 있는데, 배포 과정에서 잠시 2개 태스크가 더 필요해 인스턴스가 하나 추가되었다면, 이후 기존 태스크가 종료되더라도 그 **신규 인스턴스는 일부 리소스만 사용된 채 계속 떠 있는** 구조가 됩니다. ECS는 인스턴스가 부분적으로 비워져도 이를 자동으로 정리하지 않기 때문에, **리소스 릴리즈가 비효율적으로 작동합니다**.
@@ -74,9 +65,7 @@ EC2 기반 ECS는 무중단 배포(Rolling Update)를 위해 신규 버전의 �
 
 - 배포 중 리소스가 잠시 증가하더라도,
 - 배포 완료 후에는
-
   **불필요한 자원이 자동으로 제거**
-
   됩니다.
 
 이는 자원이 **부분적으로 유휴 상태로 남아있는 상황을 방지**하고, 실제 사용한 만큼만 과금되도록 함으로써, 운영 비용 최적화에 있어 구조적으로 유리합니다.
@@ -166,8 +155,6 @@ aws \<-> github간의 OIDC에 대한 자세한 내용은 아래를 참조해주�
 
 ![](https://d2r0pavv0lsiqc.cloudfront.net/projects/images/a6b64d8a-fb2d-484c-b5d2-e1b48b723307.webp)
 
-
-
 ```json
 https://token.actions.githubusercontent.com
 ```
@@ -227,12 +214,89 @@ Fargate로 생성합니다.
 
 OS 및 CPU, 메모리는 운용하시는 서버의 요구사항에 맞춰서 생성하시면 됩니다. 최근에 Fargate에서 ARM64를 지원해주기 시작하여 저는 ARM64 환경을 사용하겠습니다. 저처럼 ARM64를 사용하실 분은 Docker 이미지 빌드 시에 --platform을 명시해주셔야 합니다.
 
+![](https://d2r0pavv0lsiqc.cloudfront.net/projects/images/b3af1747-6b3b-4527-b4ff-c40e23151171.webp)
+
+task 실행역할은 이미 aws에서 정의해준 TaskExecutionRole을 사용해줍니다.
+
+만약 로깅을 하실 분들은 위와 같이 설정을 하고 생성을 했을 때 오류가 뜰수도 있습니다. ecsTaskExecutionRole에 CreateLogGroup 정책을 하나 만들어서 넣어줍니다.
+
+```json
+{
+	"Sid": "VisualEditor0",
+	"Effect": "Allow",
+	"Action": "logs:CreateLogGroup",
+	"Resource": "*"
+}
+```
+
+![](https://d2r0pavv0lsiqc.cloudfront.net/projects/images/03edc0c6-6da0-4546-8870-fa8ecf1cd0a2.webp)
+
+로그를 따지 않으실 분은 넘어가도 좋습니다.
+
+![](https://d2r0pavv0lsiqc.cloudfront.net/projects/images/03a27bf3-6d4d-4825-a011-688183288c5d.webp)
+
+아까 생성한 ecr의 URI 복사해서 넣습니다. 어차피 ci/cd하면서 덮어쓸 값인데 우선 초기값 설정은 해둡시다.
+
+컨테이너 포트는 서버가 실행되는 포트입니다. 서버가 3000에서 실행된다고 하면, 해당 값을 그대로 넣어주시면 됩니다. 도커의 80:3000 으로 매핑하는 건 fargate에선 지원해주지 않습니다.
+
+![](https://d2r0pavv0lsiqc.cloudfront.net/projects/images/3aba3116-6a10-43ce-89e4-5daa852b0247.webp)환경변수를 추가해야 하는데, 문제가 저희는 이 task-definition 자체를 cd를 위해 **repository에 저장**해두고 사용할 예정입니다. 따라서 여기에 환경변수를 설정해두시면 그대로 repository에 노출됩니다.
+
+이를 위해 Secrets Manager를 사용합니다.
+
+일단 비워두시고 생성합니다. 나중에 CICD때 수정할 예정입니다.
+
+### Secrets Manager로 환경변수 관리
+
+![](https://d2r0pavv0lsiqc.cloudfront.net/projects/images/0442c5be-2cdd-46d0-ac82-c7f85d43c424.webp)
+
+Secrets Manager에 들어가서 보안 암호를 생성합니다. 이렇게 생성해둔 암호는 task-definition에서
+
+`arn:aws:secretsmanager:ap-northeast-2:381492248147:secret:test-api-rDw6Wm:ADMIN_CLIENT_URL::`
+
+![](https://d2r0pavv0lsiqc.cloudfront.net/projects/images/b217726c-7785-43a9-b6df-31b357aed027.webp)
+
+위와 같이 설정하면 읽어올 수 있습니다.
+
+### service 생성
+
+![](https://d2r0pavv0lsiqc.cloudfront.net/projects/images/3bb58be8-9b28-47d7-824c-b84cd5cf6d05.webp)
+
+시작 유형 FARGATE로 service를 생성해줍니다.![](https://d2r0pavv0lsiqc.cloudfront.net/projects/images/190a10b4-7489-48e2-b87e-f74ab20a825b.webp)
+
+앞서 정의해둔 task definition을 가져와주고, 원하는 테스크 수를 정해줍니다. 이 수만큼 컨테이너가 올라갑니다.
+
+![](https://d2r0pavv0lsiqc.cloudfront.net/projects/images/beafe785-f27e-4dfc-aeee-48363c2e0cb7.webp)
+
+상태 검사 유예 기간을 넉넉하게 잡아줍니다. 서버가 부팅되는 동안 헬스체크가 진행되어 배포 실패로 처리되는 것을 막아줍니다.
+
+![](https://d2r0pavv0lsiqc.cloudfront.net/projects/images/83937646-8f21-4de0-ab56-4a2a91f73d5a.webp)
+
+무중단 배포 옵션을 선택할 수 있습니다.
+
+기본 값으로 두면 배포 시 task 수가 일시적으로 2배로 늘어나고, 새 task가 헬스체크를 통과하면 기존 task를 수거합니다.
+
+![](https://d2r0pavv0lsiqc.cloudfront.net/projects/images/a6774838-06e5-44b9-8f3c-36114f9214da.webp)보안그룹을 설정해줍시다. 네트워크 탭은 서비스 최초 생성 시를 제외하고는 변경이 불가능하니 신중하게 설정해주세요.
+
+퍼블릭 IP는 secrets manager를 사용하려면 필요합니다.
+
+![](https://d2r0pavv0lsiqc.cloudfront.net/projects/images/4b1ac6d4-edd1-4ae6-a290-161f272d3c86.webp)
+
+만약 클러스터 내부 서비스 간의 통신을 원한다면 서비스 연결을 켜야합니다. 인바운드 요청을 수신할 필요가 있으면 클라이언트 및 서버로 설정해주세요.
+
+![](https://d2r0pavv0lsiqc.cloudfront.net/projects/images/e72850cb-1a47-4ec3-9ef3-039e75af05b0.webp)
+
+만약 서버인 경우, 포트 매핑에서 설정한 DNS 값을 타 서비스에서 통신할 때 HOST로 넣어주면 됩니다.
+
+가령 redis를 띄운다고 했을 때, DNS 이름을 redis.test.internal 로 설정해주시고, 외부 서비스 환경변수에 `REDIS_HOST = redis.test.internal`로  넣어서 연결합니다.
+
+여러 인스턴스가 띄워져 있는 경우 여러 IP를 반환합니다. 별도의 복잡한 로드밸런싱이 필요 없는 경우, 라운드 로빈이나 랜덤한 IP를 엑세스 하는 방식으로 내부 통신을 쉽게 구현할 수 있습니다.
+
+![](https://d2r0pavv0lsiqc.cloudfront.net/projects/images/ff25d876-f550-4898-99f9-4e45fe0f64d0.webp)
+
+서버 등 외부에서 접근이 필요한 경우, 로드 밸런서를 꼭 연결해줍니다. 여기서 대상 그룹을 지정해두면, ecs task들을 자동으로 대상 그룹에 올려줍니다.
+
 ## CD: github action -> ecr -> ecs
 
 ###
 
-## E
-
 ## 마무리하며: 보완할 포인트들
-
-![](https://d2r0pavv0lsiqc.cloudfront.net/projects/images/53010398-01a5-4116-8439-651c8794a75f.webp)
