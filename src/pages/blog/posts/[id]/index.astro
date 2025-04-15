@@ -1,20 +1,28 @@
 ---
 import PostDetail from "~layouts/blog/PostDetail.astro";
-import Layout from "~layouts/BaseLayout.astro";
 import { repositoryContainer } from "~modules/repository.module";
-import { POST_REPOSITORY, type PostRepository } from "~modules/repositories/posts/PostRepository";
-import Footer from "~components/Footer/Footer.astro";
+import {
+  POST_REPOSITORY,
+  type PostRepository,
+} from "~modules/repositories/posts/PostRepository";
 import type { PostEntry } from "~types/post.type";
+import { remark } from "remark";
+import strip from "strip-markdown";
+
 export async function getStaticPaths() {
-  const postRepository = repositoryContainer.get<PostRepository>(POST_REPOSITORY);
+  const postRepository =
+    repositoryContainer.get<PostRepository>(POST_REPOSITORY);
   const posts = await postRepository.getPosts({ filter: { draft: false } });
-  const latestPosts: PostEntry[] = (await postRepository.getPosts({
-    filter: { draft: false },
-  paging: {
-    page: 1,
-    limit: 8,
-  },
-})).items;
+  const latestPosts: PostEntry[] = (
+    await postRepository.getPosts({
+      filter: { draft: false },
+      paging: {
+        page: 1,
+        limit: 8,
+      },
+    })
+  ).items;
+
   return posts.items.map(post => ({
     params: { id: post.id },
     props: { post, latestPosts },
@@ -22,5 +30,45 @@ export async function getStaticPaths() {
 }
 
 const { post, latestPosts } = Astro.props;
+
+// 메타 데이터 추출
+const postTitle = post.data.title;
+const postImage = post.data.ogImage;
+const postTags = post.data.tags.join(", ");
+const postUrl = new URL(Astro.request.url).href;
+const postAuthor = post.data.author;
+const publishedTime = post.data.createdAt;
+const modifiedTime = post.data.updatedAt;
+
+// 포스트 내용으로부터 description 생성 (최대 160자)
+let postDescription = "";
+try {
+  if (post.body) {
+    // remark와 strip-markdown을 사용하여 마크다운 제거
+    const result = await remark().use(strip).process(post.body);
+
+    const plainText = result.toString();
+    postDescription =
+      plainText.slice(0, 157) + (plainText.length > 157 ? "..." : "");
+  }
+} catch (error) {
+  console.error("Error generating description:", error);
+  // 대체 설명 제공
+  postDescription = `${postTitle} - astor의 개발 블로그`;
+}
 ---
-<PostDetail post={post} isAdmin={false} latestPosts={latestPosts} />
+
+<PostDetail
+  post={post}
+  isAdmin={false}
+  latestPosts={latestPosts}
+  title={postTitle}
+  description={postDescription}
+  image={postImage}
+  keywords={postTags}
+  url={postUrl}
+  type="article"
+  author={postAuthor}
+  publishedTime={publishedTime}
+  modifiedTime={modifiedTime}
+/>

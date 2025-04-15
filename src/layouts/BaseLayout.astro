@@ -20,7 +20,14 @@ import {
 import type { SeriesAndCount } from "~types/post.type";
 interface Props {
   title?: string;
+  author?: string;
   image?: string;
+  description?: string;
+  keywords?: string;
+  url?: string;
+  type?: string;
+  publishedTime?: string;
+  modifiedTime?: string;
 }
 
 const postRepository = repositoryContainer.get<PostRepository>(POST_REPOSITORY);
@@ -28,13 +35,33 @@ const tags: Tag[] = await postRepository.getAllTags();
 const posts: PostTitleAndId[] = await postRepository.getAllPostTitleAndId();
 const series: SeriesAndCount[] = await postRepository.getAllSeriesAndCount();
 
-const { title, image } = Astro.props;
+const {
+  title,
+  image,
+  description,
+  keywords,
+  url,
+  type,
+  author,
+  publishedTime,
+  modifiedTime,
+} = Astro.props;
 const currentPath = Astro.url.pathname;
 ---
 
 <!doctype html>
 <html lang="ko" data-theme="light" class="w-full">
-  <Seo title={title} image={image} />
+  <Seo
+    title={title}
+    image={image}
+    description={description}
+    keywords={keywords}
+    url={url || Astro.url.href}
+    type={type}
+    author={author}
+    publishedTime={publishedTime}
+    modifiedTime={modifiedTime}
+  />
   <body class="flex w-full flex-col text-skin-base">
     <!-- Google Tag Manager (noscript) -->
     <noscript
@@ -57,7 +84,7 @@ const currentPath = Astro.url.pathname;
       <slot name="hero" />
       <!-- 메인 콘텐츠 영역: 반응형 컨테이너 적용 예시 -->
       <main
-        class="relative mt-16  print:mt-0 w-full flex-1 bg-skin-background px-[5dvw] 2xl:px-[10dvw]"
+        class="relative mt-16 w-full flex-1 bg-skin-background px-[5dvw] 2xl:px-[10dvw] print:mt-0"
       >
         <!-- Navbar를 보여주는 경우 Navbar+12px 띄워줌 -->
         <!-- {shouldShowBreadcrumb && <BreadcrumbNavigator pathname={currentPath} client:load />} -->
@@ -123,7 +150,6 @@ const currentPath = Astro.url.pathname;
   bg-skin-fill bg-opacity-70 hover:bg-opacity-90
   text-skin-accent shadow-md backdrop-blur
 `;
-
 
         copyButton.innerHTML = copyButtonLabel;
         codeBlock.setAttribute("tabindex", "0");

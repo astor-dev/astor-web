@@ -13,9 +13,30 @@ interface Props {
   post: PostEntry;
   isAdmin: boolean;
   latestPosts: PostEntry[];
+  title?: string;
+  description?: string;
+  image?: string;
+  keywords?: string;
+  url?: string;
+  type?: string;
+  author?: string;
+  publishedTime?: string;
+  modifiedTime?: string;
 }
 
-const { post, latestPosts } = Astro.props;
+const {
+  post,
+  latestPosts,
+  title,
+  description,
+  image,
+  keywords,
+  url,
+  type,
+  author,
+  publishedTime,
+  modifiedTime,
+} = Astro.props;
 
 if (!post) {
   return Astro.redirect("/404");
@@ -28,13 +49,23 @@ const headings = renderResult.headings;
 const formattedDate = dayjs(post.data.createdAt).format("YYYY년 MM월 DD일");
 ---
 
-<Layout title={post.data.title} image={post.data.ogImage}>
+<Layout
+  title={title || post.data.title}
+  image={image || post.data.ogImage}
+  description={description}
+  keywords={keywords}
+  url={url}
+  type={type}
+  author={author || post.data.author}
+  publishedTime={publishedTime || post.data.createdAt}
+  modifiedTime={modifiedTime || post.data.updatedAt}
+>
   <PostHero post={post} slot="hero" />
 
   <article class="relative mx-auto mb-10">
     <div class="relative">
       {/* 본문 */}
-      <div class="prose prose-sm md:prose ">
+      <div class="prose prose-sm md:prose">
         <!-- <HeadingsTable class="block xl:hidden" headings={headings} /> -->
         <StickyTableOfContents class="hidden xl:block" headings={headings} />
         <StickyButtons class="hidden xl:block" />
@@ -44,7 +75,6 @@ const formattedDate = dayjs(post.data.createdAt).format("YYYY년 MM월 DD일");
           <Comments client:only="react" />
         </div>
       </div>
-
     </div>
   </article>
   <Footer slot="footer" latestPosts={latestPosts} />
