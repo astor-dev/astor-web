@@ -23,7 +23,7 @@
     --color-base: 156, 163, 175; /* #9CA3AF */
     --color-accent: 91, 95, 176; /* #5B5FB0 */
     --color-secondary: 133, 137, 204; /* #8589CC */
-    --color-background: 252, 252, 255; /* #FCFCFF */
+    --color-background: 255, 255, 255; /* #FCFCFF */
     --color-border: 204, 206, 218; /* #CCCEDA */
     --color-danger: 239, 68, 68; /* #EF4444 */
     --color-success: 34, 197, 94; /* #22C55E */
