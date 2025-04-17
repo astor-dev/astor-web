@@ -5,7 +5,14 @@ import { stackTypeEnum, type StackType } from "~types/stack.type";
 
 import type { ProjectEntry } from "~types/project.type";
 import { Swiper, SwiperSlide, type SwiperRef } from "swiper/react";
-import { Autoplay, Navigation, Grid, Pagination } from "swiper/modules";
+import {
+  Autoplay,
+  FreeMode,
+  Mousewheel,
+  Navigation,
+  Grid,
+  Pagination,
+} from "swiper/modules";
 
 // import "swiper/css/pagination";
 import StackItem from "~components/Stack/StackItem";
@@ -115,7 +122,14 @@ const StackSlider: React.FC<StackSliderProps> = ({
         {filteredStacks.length > 0 ? (
           <Swiper
             ref={swiperRef}
-            modules={[Grid, Navigation, Autoplay, Pagination]}
+            modules={[
+              Grid,
+              Navigation,
+              Autoplay,
+              Pagination,
+              FreeMode,
+              Mousewheel,
+            ]}
             grid={{
               rows: 4,
               fill: "row",
@@ -124,6 +138,8 @@ const StackSlider: React.FC<StackSliderProps> = ({
             spaceBetween={0}
             slidesPerGroup={1}
             grabCursor={true}
+            freeMode={false}
+            mousewheel={{ enabled: true, forceToAxis: true }}
             autoplay={{
               delay: 3000,
               disableOnInteraction: false,

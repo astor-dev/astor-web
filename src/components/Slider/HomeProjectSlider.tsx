@@ -1,5 +1,12 @@
 import { useEffect, useRef, useState } from "react";
-import { Autoplay, EffectFade, Navigation, Pagination } from "swiper/modules";
+import {
+  Autoplay,
+  EffectFade,
+  FreeMode,
+  Mousewheel,
+  Navigation,
+  Pagination,
+} from "swiper/modules";
 import { Swiper, SwiperSlide, type SwiperRef } from "swiper/react";
 import type { ProjectEntry } from "~types/project.type";
 import FullImageProjectCard from "~components/Card/FullImageProjectCard";
@@ -35,7 +42,14 @@ const HomeProjectSlider = (props: { projects: ProjectEntry[] }) => {
         <div className="h-full w-full">
           <Swiper
             ref={swiperRef}
-            modules={[Navigation, Pagination, Autoplay, EffectFade]}
+            modules={[
+              Navigation,
+              Pagination,
+              Autoplay,
+              EffectFade,
+              FreeMode,
+              Mousewheel,
+            ]}
             autoplay={{ delay: 3000, disableOnInteraction: false }}
             loop={true}
             effect={"fade"}
@@ -49,6 +63,8 @@ const HomeProjectSlider = (props: { projects: ProjectEntry[] }) => {
                 return `<span class="${className} swiper-pagination-bullet-custom"></span>`;
               },
             }}
+            freeMode={false}
+            mousewheel={{ enabled: true, forceToAxis: true }}
           >
             {projects?.map((project, index) => {
               return (

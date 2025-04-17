@@ -118,7 +118,8 @@ export class PostRepository {
 
     return Object.entries(tagCounts)
       .map(([tag, count]) => ({ tag, count }))
-      .sort((a, b) => a.tag.localeCompare(b.tag));
+      .sort((a, b) => a.tag.localeCompare(b.tag))
+      .sort((a, b) => b.count - a.count);
   }
 
   public async getAllPostTitleAndId(): Promise<PostTitleAndId[]> {
@@ -127,7 +128,7 @@ export class PostRepository {
   }
 
   public async getAllSeriesAndCount(): Promise<SeriesAndCount[]> {
-    const series = (await this.seriesRepository.getSeries()).items;
+    const series = (await this.seriesRepository.getSeries({})).items;
     const seriesAndCount = await Promise.all(
       series.map(async series => ({
         series: series,
@@ -135,27 +136,41 @@ export class PostRepository {
           .total,
       })),
     );
-    return seriesAndCount;
+    return seriesAndCount.sort((a, b) => b.count - a.count);
   }
 
-  public async getSeriesAndPosts(seriesId: string): Promise<SeriesAndPosts> {
+  public async getSeriesAndPosts(
+    seriesId: string,
+    order: "asc" | "desc" = "asc",
+  ): Promise<SeriesAndPosts> {
     const series = await this.seriesRepository.getSeriesById(seriesId);
     if (!series) {
       throw new Error("Series not found");
     }
     return {
       series: series,
-      posts: (await this.getPosts({ filter: { seriesId: seriesId } })).items,
+      posts: (
+        await this.getPosts({
+          filter: { seriesId: seriesId },
+          sort: { by: "createdAt", order: order },
+        })
+      ).items,
     };
   }
 
-  public async getAllSeriesAndPosts(): Promise<SeriesAndPosts[]> {
+  public async getAllSeriesAndPosts(
+    order: "asc" | "desc" = "asc",
+  ): Promise<SeriesAndPosts[]> {
     const series = (await this.seriesRepository.getSeries()).items;
     const seriesAndPosts = await Promise.all(
       series.map(async series => ({
         series: series,
-        posts: (await this.getPosts({ filter: { seriesId: series.data.id } }))
-          .items,
+        posts: (
+          await this.getPosts({
+            filter: { seriesId: series.data.id },
+            sort: { by: "createdAt", order: order },
+          })
+        ).items,
       })),
     );
     return seriesAndPosts;

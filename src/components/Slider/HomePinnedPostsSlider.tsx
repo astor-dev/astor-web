@@ -1,9 +1,15 @@
 import { useEffect, useRef, useState } from "react";
-import { Autoplay, Navigation, Pagination } from "swiper/modules";
+import {
+  Autoplay,
+  FreeMode,
+  Mousewheel,
+  Navigation,
+  Pagination,
+} from "swiper/modules";
 import { Swiper, SwiperSlide, type SwiperRef } from "swiper/react";
 import type { PostEntry } from "~types/post.type";
 import BlogPostCard from "~components/Card/BlogPostCard";
-import { IoIosArrowBack, IoIosArrowForward } from "react-icons/io";
+import SliderNavButtons from "~components/Slider/SliderNavButtons";
 
 const MagazineCarousel = (
   props: { pinnedPosts: PostEntry[] } = { pinnedPosts: [] },
@@ -35,17 +41,22 @@ const MagazineCarousel = (
       {isLoading ? (
         <div className="grid h-[500px] w-full"></div>
       ) : (
-        <div className="relative">
+        <div className="swiper-container-wrapper group relative">
           <Swiper
             ref={swiperRef}
-            modules={[Navigation, Autoplay]}
+            modules={[Navigation, Autoplay, FreeMode, Mousewheel]}
             loop={true}
             spaceBetween={30}
             slidesPerGroup={1}
             centeredSlidesBounds={true}
             grabCursor={true}
+            freeMode={false}
+            mousewheel={{
+              enabled: true,
+              forceToAxis: true,
+            }}
             pagination={{ clickable: true }}
-            className="h-full w-full"
+            className="h-full w-full overflow-hidden"
             breakpoints={{
               0: {
                 slidesPerView: 1.2,
@@ -70,18 +81,8 @@ const MagazineCarousel = (
               </SwiperSlide>
             ))}
           </Swiper>
-          <button
-            onClick={handlePrev}
-            className="z-base absolute -left-10 top-1/2 z-30 hidden rounded-full bg-skin-fill p-6 text-3xl text-black-accent opacity-70 md:block"
-          >
-            <IoIosArrowBack />
-          </button>
-          <button
-            onClick={handleNext}
-            className="z-base absolute -right-10 top-1/2 z-30 hidden rounded-full bg-skin-fill p-6 text-3xl text-black-accent opacity-70 md:block"
-          >
-            <IoIosArrowForward />
-          </button>
+
+          <SliderNavButtons onPrevClick={handlePrev} onNextClick={handleNext} />
         </div>
       )}
     </div>

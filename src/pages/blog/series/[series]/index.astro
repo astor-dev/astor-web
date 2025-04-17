@@ -10,7 +10,7 @@ export async function getStaticPaths() {
     const postRepository =
     repositoryContainer.get<PostRepository>(POST_REPOSITORY);
 
-  const seriesAndPosts = await postRepository.getAllSeriesAndPosts();
+  const seriesAndPosts = await postRepository.getAllSeriesAndPosts("asc");
   const paths: {
     params: { series: string };
     props: { series: SeriesEntry; posts: PostEntry[] };

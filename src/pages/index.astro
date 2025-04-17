@@ -39,9 +39,7 @@ const pinnedPosts: PostEntry[] = (
   })
 ).items;
 const tags: Tag[] = await postRepository.getAllTags();
-const seriesList: SeriesAndCount[] = (
-  await postRepository.getAllSeriesAndCount()
-).sort((a, b) => b.count - a.count);
+const seriesList: SeriesAndCount[] = await postRepository.getAllSeriesAndCount();
 ---
 
 <Layout>
