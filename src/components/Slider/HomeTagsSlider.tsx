@@ -50,7 +50,9 @@ const MagazineCarousel = (props: { tagList: Tag[] }) => {
             rows: 2,
           }}
           grabCursor={true}
-          freeMode={false}
+          freeMode={{
+            enabled: true,
+          }}
           mousewheel={{ enabled: true, forceToAxis: true }}
           centeredSlidesBounds={true}
           pagination={{

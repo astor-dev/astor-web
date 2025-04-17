@@ -50,7 +50,9 @@ const MagazineCarousel = (
             slidesPerGroup={1}
             centeredSlidesBounds={true}
             grabCursor={true}
-            freeMode={false}
+            freeMode={{
+              enabled: pinnedPosts.length >= 5 ? true : false,
+            }}
             mousewheel={{
               enabled: true,
               forceToAxis: true,

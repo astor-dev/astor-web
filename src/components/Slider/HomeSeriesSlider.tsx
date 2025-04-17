@@ -43,8 +43,13 @@ const MagazineCarousel = (props: { seriesList: SeriesAndCount[] }) => {
             spaceBetween={30}
             slidesPerGroup={1}
             grabCursor={true}
-            freeMode={false}
-            mousewheel={{ enabled: true, forceToAxis: true }}
+            freeMode={{
+              enabled: seriesList.length >= 6 ? true : false,
+            }}
+            mousewheel={{
+              enabled: true,
+              forceToAxis: true,
+            }}
             centeredSlidesBounds={true}
             pagination={{ clickable: true }}
             className="h-full w-full overflow-hidden"
