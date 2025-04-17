@@ -51,9 +51,11 @@ EC2 기반 ECS는 무중단 배포(Rolling Update)를 위해 신규 버전의 �
   **추가 EC2 인스턴스를 생성**
 
   합니다.
+
 - 배포가 완료되고 기존 태스크가 중지되더라도,
 
   **인스턴스 레벨의 리소스는 즉시 회수되지 않습니다.**
+
 - 이는 특히
 
   **태스크 단위 리소스 요구량이 작고, 배포 주기가 짧은 서비스**
@@ -190,7 +192,7 @@ ecs 관련 role 설정은 위 레포 README의 permissions 부분 참조해주�
 
 ## ECR repository 생성하기
 
-### ![](https://d2r0pavv0lsiqc.cloudfront.net/projects/images/31c351ed-853c-4886-8e4a-c54b5db09b20.webp)
+![](https://d2r0pavv0lsiqc.cloudfront.net/projects/images/31c351ed-853c-4886-8e4a-c54b5db09b20.webp)
 
 Amazon ECR로 들어가서 repo를 만들어줍니다. 이름만 입력하시고 기본값 그대로 두시고 생성하시면 됩니다.
 
@@ -233,10 +235,10 @@ task 실행역할은 이미 aws에서 정의해준 TaskExecutionRole을 사용�
 
 ```json
 {
-	"Sid": "VisualEditor0",
-	"Effect": "Allow",
-	"Action": "logs:CreateLogGroup",
-	"Resource": "*"
+  "Sid": "VisualEditor0",
+  "Effect": "Allow",
+  "Action": "logs:CreateLogGroup",
+  "Resource": "*"
 }
 ```
 
@@ -298,7 +300,7 @@ Secrets Manager에 들어가서 보안 암호를 생성합니다. 이렇게 생�
 
 만약 서버인 경우, 포트 매핑에서 설정한 DNS 값을 타 서비스에서 통신할 때 HOST로 넣어주면 됩니다.
 
-가령 redis를 띄운다고 했을 때, DNS 이름을 redis.test.internal 로 설정해주시고, 외부 서비스 환경변수에 `REDIS_HOST = redis.test.internal`로  넣어서 연결합니다.
+가령 redis를 띄운다고 했을 때, DNS 이름을 redis.test.internal 로 설정해주시고, 외부 서비스 환경변수에 `REDIS_HOST = redis.test.internal`로 넣어서 연결합니다.
 
 여러 인스턴스가 띄워져 있는 경우 여러 IP를 반환합니다. 별도의 복잡한 로드밸런싱이 필요 없는 경우, 라운드 로빈이나 랜덤한 IP를 엑세스 하는 방식으로 내부 통신을 쉽게 구현할 수 있습니다.
 
@@ -330,9 +332,8 @@ Secrets Manager에 들어가서 보안 암호를 생성합니다. 이렇게 생�
   "deregisteredAt",
   "registeredBy",
   "requiresAttributes",
-  "compatibilities"
-]
-
+  "compatibilities",
+];
 ```
 
 위 필드들은 ecs에서 자동으로 생성하는 값들로 지워줍니다.
@@ -381,7 +382,7 @@ aws credentials 방식은 access key 대신 더 안전하게 OIDC를 활용하�
 - **OIDC 권한 최소화**
   : GitHub OIDC Role에 최소 권한만 부여 (
   `sts:AssumeRoleWithWebIdentity`
-   \+ 필수 ECS 권한만)
+  \+ 필수 ECS 권한만)
 - **Redis 등 stateful 서비스는 EBS 또는 EFS로 볼륨 유지**
   : task 재시작/이동에도 데이터 보존
 - **컨테이너 이미지 서명 및 스캔 활성화**

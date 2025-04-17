@@ -5,6 +5,7 @@ export interface GetSeriesOptions {
   };
   filter?: {
     name?: string;
+    id?: string;
   };
   sort?: {
     field: "name";

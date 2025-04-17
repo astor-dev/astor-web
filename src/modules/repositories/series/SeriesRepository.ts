@@ -23,6 +23,9 @@ export class SeriesRepository {
       if (isDefined(filter.name)) {
         series = series.filter(series => series.data.name === filter.name);
       }
+      if (isDefined(filter.id)) {
+        series = series.filter(series => series.data.id === filter.id);
+      }
     }
 
     const total = series.length;
@@ -69,5 +72,10 @@ export class SeriesRepository {
   public async getSeriesByName(name: string): Promise<SeriesEntry | undefined> {
     const series = await getCollection("series");
     return series.find(series => series.data.name === name);
+  }
+
+  public async getSeriesById(id: string): Promise<SeriesEntry | undefined> {
+    const series = await getCollection("series");
+    return series.find(series => series.data.id === id);
   }
 }

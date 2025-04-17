@@ -138,6 +138,17 @@ export class PostRepository {
     return seriesAndCount;
   }
 
+  public async getSeriesAndPosts(seriesId: string): Promise<SeriesAndPosts> {
+    const series = await this.seriesRepository.getSeriesById(seriesId);
+    if (!series) {
+      throw new Error("Series not found");
+    }
+    return {
+      series: series,
+      posts: (await this.getPosts({ filter: { seriesId: seriesId } })).items,
+    };
+  }
+
   public async getAllSeriesAndPosts(): Promise<SeriesAndPosts[]> {
     const series = (await this.seriesRepository.getSeries()).items;
     const seriesAndPosts = await Promise.all(

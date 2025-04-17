@@ -1,5 +1,5 @@
 ---
-import type { PostEntry } from "~types/post.type";
+import type { PostEntry, SeriesAndPosts } from "~types/post.type";
 import Layout from "~layouts/BaseLayout.astro";
 import dayjs from "dayjs";
 import { render } from "astro:content";
@@ -9,8 +9,11 @@ import StickyTableOfContents from "~components/Nav/StickyTableOfContents.astro";
 import StickyButtons from "~components/Nav/StickyButtons.astro";
 import Comments from "~components/List/Comments.tsx";
 import Footer from "~components/Footer/Footer.astro";
+import SeriesTable from "~components/Table/SeriesTable.astro";
+
 interface Props {
   post: PostEntry;
+  series?: SeriesAndPosts;
   isAdmin: boolean;
   latestPosts: PostEntry[];
   title?: string;
@@ -26,6 +29,7 @@ interface Props {
 
 const {
   post,
+  series,
   latestPosts,
   title,
   description,
@@ -67,6 +71,7 @@ const formattedDate = dayjs(post.data.createdAt).format("YYYY년 MM월 DD일");
       {/* 본문 */}
       <div class="prose prose-sm md:prose">
         <!-- <HeadingsTable class="block xl:hidden" headings={headings} /> -->
+        {series && <SeriesTable series={series} />}
         <StickyTableOfContents class="hidden xl:block" headings={headings} />
         <StickyButtons class="hidden xl:block" />
         {/* 마크다운 콘텐츠 */}

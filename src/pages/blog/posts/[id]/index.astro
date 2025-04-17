@@ -5,9 +5,16 @@ import {
   POST_REPOSITORY,
   type PostRepository,
 } from "~modules/repositories/posts/PostRepository";
-import type { PostEntry } from "~types/post.type";
+import type { PostEntry, SeriesAndPosts } from "~types/post.type";
 import { remark } from "remark";
 import strip from "strip-markdown";
+
+// Props 타입을 명시적으로 정의
+interface Props {
+  post: PostEntry;
+  latestPosts: PostEntry[];
+  series?: SeriesAndPosts;
+}
 
 export async function getStaticPaths() {
   const postRepository =
@@ -23,13 +30,23 @@ export async function getStaticPaths() {
     })
   ).items;
 
-  return posts.items.map(post => ({
-    params: { id: post.id },
-    props: { post, latestPosts },
-  }));
+  const result : {params: {id: string}, props: {post: PostEntry, latestPosts: PostEntry[], series: SeriesAndPosts | undefined}}[] = [];
+  for (const post of posts.items) {
+    let series: SeriesAndPosts | undefined;
+    if (post.data.seriesId) {
+      series = await postRepository.getSeriesAndPosts(post.data.seriesId);
+    }
+    result.push({
+      params: { id: post.id },
+      props: { post, latestPosts, series },
+    });
+  }
+  
+  return result;
 }
 
-const { post, latestPosts } = Astro.props;
+// props 타입을 명시적으로 지정
+const { post, latestPosts, series } = Astro.props as Props;
 
 // 메타 데이터 추출
 const postTitle = post.data.title;
@@ -71,4 +88,5 @@ try {
   author={postAuthor}
   publishedTime={publishedTime}
   modifiedTime={modifiedTime}
+  series={series}
 />

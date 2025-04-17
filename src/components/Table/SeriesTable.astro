@@ -1,0 +1,148 @@
+---
+
+import { type SeriesAndPosts } from "~types/post.type";
+import { FaChevronDown, FaChevronLeft, FaChevronRight } from "react-icons/fa";
+
+interface Props {
+  series: SeriesAndPosts;
+}
+
+const { series } = Astro.props;
+
+// 현재 URL에서 포스트 ID 추출
+const currentUrl = Astro.url.pathname;
+const currentPostIndex = series.posts.findIndex(post => 
+  currentUrl.includes(post.data.id)
+);
+const currentIndex = currentPostIndex !== -1 ? currentPostIndex + 1 : 1;
+const totalPosts = series.posts.length;
+
+// 다음/이전 포스트 ID 계산
+const prevPostIndex = currentPostIndex > 0 ? currentPostIndex - 1 : -1;
+const nextPostIndex = currentPostIndex < totalPosts - 1 ? currentPostIndex + 1 : -1;
+const prevPostId = prevPostIndex >= 0 ? series.posts[prevPostIndex].data.id : null;
+const nextPostId = nextPostIndex >= 0 ? series.posts[nextPostIndex].data.id : null;
+
+---
+<div class="not-prose series-table mb-6 overflow-hidden bg-skin-fill transition-all duration-300">
+  <div class="p-4 relative">
+    <div class="series-corner-bookmark mr-6">
+      <svg width="32" height="48" fill="currentColor" viewBox="0 0 32 48" class="series-corner-image text-skin-accent">
+        <path fill="currentColor" d="M32 0H0v48h.163l16-16L32 47.836V0z"></path>
+      </svg>
+    </div>
+    
+    <div class="series-header mb-2 p-4">
+      <div class="flex items-center justify-between">
+        <h3 class="text-xl font-bold text-black-accent">{series.series.data.name}</h3>
+      </div>
+    </div>
+
+    <div class="series-content px-4 py-2">
+      <ol class="list-inside space-y-3">
+        {
+          series.posts.map((post, index) => (
+            <li class="series-item">
+              <span class="inline-flex items-center gap-3">
+                <span class="mr-1 text-black-base">{index + 1}.</span>
+                <a
+                  href={`/blog/posts/${post.data.id}`}
+                  class={`line-clamp-1 transition-colors hover:underline ${
+                    Astro.url.pathname.includes(post.data.id)
+                      ? "text-skin-accent font-extrabold"
+                      : "text-black-base"
+                  }`}
+                >
+                  {post.data.title}
+                </a>
+              </span>
+            </li>
+          ))
+        }
+      </ol>
+    </div>
+
+    <div class="series-footer flex items-center justify-between px-4 py-3">
+      <button 
+        class="series-toggle-btn flex items-center text-xs text-black-muted transition-colors hover:text-skin-accent"
+        data-series-toggle
+      >
+        <FaChevronDown className="mr-1 h-3 w-3 transform transition-transform duration-200" />
+        <span>접기</span>
+      </button>
+
+      <div class="navigation flex items-center gap-2">
+        <span class="text-xs text-black-muted">{currentIndex}/{totalPosts}</span>
+        <div class="flex">
+          <a 
+            href={prevPostId ? `/blog/posts/${prevPostId}` : '#'} 
+            class={`flex h-6 w-6 items-center justify-center text-black-muted transition-colors hover:text-skin-accent ${!prevPostId ? 'cursor-not-allowed opacity-30' : ''}`}
+            aria-disabled={!prevPostId}
+          >
+            <FaChevronLeft className="h-3 w-3" />
+          </a>
+          <a 
+            href={nextPostId ? `/blog/posts/${nextPostId}` : '#'} 
+            class={`flex h-6 w-6 items-center justify-center text-black-muted transition-colors hover:text-skin-accent ${!nextPostId ? 'cursor-not-allowed opacity-30' : ''}`}
+            aria-disabled={!nextPostId}
+          >
+            <FaChevronRight className="h-3 w-3" />
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    document.querySelectorAll('[data-series-toggle]').forEach(toggleBtn => {
+      toggleBtn.addEventListener('click', () => {
+        const container = toggleBtn.closest('.series-table') as HTMLElement;
+        const content = container.querySelector('.series-content') as HTMLElement;
+        const iconEl = toggleBtn.querySelector('svg') as SVGElement;
+        
+        if (content.classList.contains('hidden')) {
+          // 펼치기
+          content.classList.remove('hidden');
+          iconEl.classList.remove('rotate-180');
+          const textEl = toggleBtn.querySelector('span');
+          if (textEl) textEl.textContent = '접기';
+        } else {
+          // 접기
+          content.classList.add('hidden');
+          iconEl.classList.add('rotate-180');
+          const textEl = toggleBtn.querySelector('span');
+          if (textEl) textEl.textContent = '펼치기';
+        }
+      });
+    });
+    
+    // 비활성화된 링크 클릭 방지
+    document.querySelectorAll('[aria-disabled="true"]').forEach(link => {
+      link.addEventListener('click', (e) => {
+        e.preventDefault();
+      });
+    });
+  });
+</script>
+
+<style>
+  .series-table {
+    position: relative;
+    transition: transform 0.2s ease-in-out;
+  }
+  
+  .series-item {
+    position: relative;
+    line-height: 1.6;
+  }
+
+  .series-corner-bookmark {
+    position: absolute;
+    top: 0;
+    right: 0;
+    z-index: 1;
+    pointer-events: none;
+  }
+</style>
