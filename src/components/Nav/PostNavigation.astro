@@ -1,0 +1,69 @@
+---
+import type { PostEntry } from "~types/post.type";
+import { FaChevronLeft, FaChevronRight } from "react-icons/fa";
+
+interface Props {
+  prevPost: PostEntry | null;
+  nextPost: PostEntry | null;
+  className?: string;
+}
+
+const { prevPost, nextPost, className = "" } = Astro.props;
+---
+
+<div class={`not-prose post-navigation mt-12 mb-12 grid grid-cols-1 gap-6 md:grid-cols-2 ${className}`}>
+  {prevPost && (
+    <a
+      href={`/blog/posts/${prevPost.id}`}
+      class="prev-post flex h-[80px] items-center rounded-sm bg-skin-fill p-5"
+    >
+      <div class="mr-4 flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full border border-skin-accent text-skin-accent">
+        <FaChevronLeft className="h-4 w-4" />
+      </div>
+      <div class="flex flex-col text-left">
+        <span class="text-xs font-medium text-black-muted">이전 포스트</span>
+        <span class="mt-1 line-clamp-1 text-base font-bold text-black-accent">
+          {prevPost.data.title}
+        </span>
+      </div>
+    </a>
+  )}
+
+  {nextPost && (
+    <a
+      href={`/blog/posts/${nextPost.id}`}
+      class="next-post flex h-[80px] items-center justify-end rounded-sm bg-skin-fill p-5 md:col-start-2"
+    >
+      <div class="flex flex-col text-right">
+        <span class="text-xs font-medium text-black-muted">다음 포스트</span>
+        <span class="mt-1 line-clamp-1 text-base font-bold text-black-accent">
+          {nextPost.data.title}
+        </span>
+      </div>
+      <div class="ml-4 flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full border border-skin-accent text-skin-accent">
+        <FaChevronRight className="h-4 w-4" />
+      </div>
+    </a>
+  )}
+</div>
+
+<style>
+  .post-navigation {
+    position: relative;
+  }
+  
+  .post-navigation:before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    pointer-events: none;
+  }
+  
+  .prev-post, .next-post {
+    position: relative;
+    overflow: hidden;
+  }
+</style> 

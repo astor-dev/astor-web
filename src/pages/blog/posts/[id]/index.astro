@@ -14,31 +14,40 @@ interface Props {
   post: PostEntry;
   latestPosts: PostEntry[];
   series?: SeriesAndPosts;
+  nextPost: PostEntry | null;
+  prevPost: PostEntry | null;
 }
 
 export async function getStaticPaths() {
   const postRepository =
     repositoryContainer.get<PostRepository>(POST_REPOSITORY);
-  const posts = await postRepository.getPosts({ filter: { draft: false } });
-  const latestPosts: PostEntry[] = (
-    await postRepository.getPosts({
-      filter: { draft: false },
-      paging: {
-        page: 1,
-        limit: 8,
-      },
-    })
-  ).items;
+  const paginatedPosts = await postRepository.getPosts({ filter: { draft: false }, sort: { by: "createdAt", order: "desc" } });
+  const posts = paginatedPosts.items;
+  const latestPosts: PostEntry[] = posts.slice(0, 8);
 
-  const result : {params: {id: string}, props: {post: PostEntry, latestPosts: PostEntry[], series: SeriesAndPosts | undefined}}[] = [];
-  for (const post of posts.items) {
+  // 날짜 기준으로 포스트 정렬 (최신순)
+
+
+  const result : {params: {id: string}, props: {post: PostEntry, latestPosts: PostEntry[], series: SeriesAndPosts | undefined, nextPost: PostEntry | null, prevPost: PostEntry | null}}[] = [];
+  for (const post of posts) {
     let series: SeriesAndPosts | undefined;
+    let currentIndex: number | undefined;
+    let nextPost: PostEntry | null;
+    let prevPost: PostEntry | null;
     if (post.data.seriesId) {
       series = await postRepository.getSeriesAndPosts(post.data.seriesId);
+      currentIndex = series.posts.findIndex(p => p.id === post.id);
+      prevPost = currentIndex > 0 ? series.posts[currentIndex - 1] : null;
+      nextPost = currentIndex < series.posts.length - 1 ? series.posts[currentIndex + 1] : null;
+    } else {
+      currentIndex = posts.findIndex(p => p.id === post.id);
+      nextPost = currentIndex > 0 ? posts[currentIndex - 1] : null;
+      prevPost = currentIndex < posts.length - 1 ? posts[currentIndex + 1] : null;
     }
+
     result.push({
       params: { id: post.id },
-      props: { post, latestPosts, series },
+      props: { post, latestPosts, series, nextPost, prevPost },
     });
   }
   
@@ -46,7 +55,7 @@ export async function getStaticPaths() {
 }
 
 // props 타입을 명시적으로 지정
-const { post, latestPosts, series } = Astro.props as Props;
+const { post, latestPosts, series, nextPost, prevPost } = Astro.props as Props;
 
 // 메타 데이터 추출
 const postTitle = post.data.title;
@@ -79,6 +88,8 @@ try {
   post={post}
   isAdmin={false}
   latestPosts={latestPosts}
+  nextPost={nextPost}
+  prevPost={prevPost}
   title={postTitle}
   description={postDescription}
   image={postImage}

@@ -9,10 +9,13 @@ import StickyButtons from "~components/Nav/StickyButtons.astro";
 import Comments from "~components/List/Comments.tsx";
 import Footer from "~components/Footer/Footer.astro";
 import SeriesTable from "~components/Table/SeriesTable.astro";
+import PostNavigation from "~components/Nav/PostNavigation.astro";
 
 interface Props {
   post: PostEntry;
   series?: SeriesAndPosts;
+  nextPost: PostEntry | null;
+  prevPost: PostEntry | null;
   isAdmin: boolean;
   latestPosts: PostEntry[];
   title?: string;
@@ -29,6 +32,8 @@ interface Props {
 const {
   post,
   series,
+  nextPost,
+  prevPost,
   latestPosts,
   title,
   description,
@@ -49,7 +54,7 @@ const renderResult = await render(post);
 const Content = renderResult.Content;
 const headings = renderResult.headings;
 
-const formattedDate = dayjs(post.data.createdAt).format("YYYY년 MM월 DD일");
+
 ---
 
 <Layout
@@ -76,6 +81,9 @@ const formattedDate = dayjs(post.data.createdAt).format("YYYY년 MM월 DD일");
         {/* 마크다운 콘텐츠 */}
         <div>
           <Content />
+          
+          <PostNavigation prevPost={prevPost} nextPost={nextPost} className="my-8" />
+          
           <Comments client:only="react" />
         </div>
       </div>
