@@ -3,9 +3,6 @@ import React, { useState, useCallback, useRef } from "react";
 import Skeleton from "react-loading-skeleton";
 import ImageWithSkeleton from "~components/Skeleton/ImageWithSkeleton";
 
-import { loadSlim } from "tsparticles-slim";
-import { Particles as ReactParticles } from "react-tsparticles";
-import type { Engine } from "tsparticles-engine";
 import { useIntersectionObserver } from "~hooks/UseIntersectionObserver/UseIntersectionObserver";
 import type { ProjectEntry } from "~/types/project.type";
 import dayjs from "dayjs";
@@ -45,10 +42,6 @@ const ProjectCard = (props: ProjectCardProps) => {
     }
   };
 
-  const particlesInit = useCallback(async (engine: Engine) => {
-    await loadSlim(engine);
-  }, []);
-
   // 프로젝트 기간을 포맷팅하는 함수
   const formatProjectPeriod = (startDate: string, endDate: string | null) => {
     const start = dayjs(startDate).format("YYYY.MM");
@@ -75,96 +68,6 @@ const ProjectCard = (props: ProjectCardProps) => {
       >
         <div className="relative overflow-hidden">
           <div className="aspect-[4/3] h-full w-full overflow-hidden">
-            <ReactParticles
-              id={`particles-${props.id}`}
-              className={`absolute inset-0 z-10 opacity-0 transition-opacity duration-300 md:group-hover:opacity-100 ${
-                isTouched ? "opacity-100" : ""
-              }`}
-              init={particlesInit}
-              options={{
-                fullScreen: { enable: false },
-                background: {
-                  color: {
-                    value: "transparent",
-                  },
-                },
-                fpsLimit: 120,
-                particles: {
-                  color: {
-                    value: ["#ffffff", "#E3E6EC", "#f8f8ff"],
-                  },
-                  links: {
-                    color: {
-                      value: "rgba(255, 255, 255, 0.35)",
-                    },
-                    distance: 150,
-                    enable: true,
-                    opacity: 0.35,
-                    width: 0.8,
-                    triangles: {
-                      enable: true,
-                      opacity: 0.05,
-                      frequency: 0.01,
-                    },
-                  },
-                  move: {
-                    direction: "none",
-                    enable: true,
-                    outModes: {
-                      default: "out",
-                    },
-                    random: true,
-                    speed: 0.4,
-                    straight: false,
-                  },
-                  number: {
-                    density: {
-                      enable: true,
-                      area: 900,
-                    },
-                    value: 45,
-                  },
-                  opacity: {
-                    value: 1,
-                    random: true,
-                    animation: {
-                      enable: true,
-                      speed: 0.8,
-                      minimumValue: 0.3,
-                      sync: false,
-                    },
-                  },
-                  shape: {
-                    type: ["circle", "star"],
-                  },
-                  size: {
-                    value: { min: 1, max: 3 },
-                    random: true,
-                    animation: {
-                      enable: true,
-                      speed: 0.8,
-                      minimumValue: 0.5,
-                      sync: false,
-                    },
-                  },
-                  twinkle: {
-                    particles: {
-                      enable: true,
-                      frequency: 0.04,
-                      opacity: 1,
-                      color: {
-                        value: "#ffffff",
-                      },
-                    },
-                  },
-                  blur: {
-                    enable: true,
-                    strength: 2,
-                  },
-                },
-                detectRetina: true,
-              }}
-            />
             <ImageWithSkeleton
               src={props.data.imageUrl}
               alt={props.data.projectName}
