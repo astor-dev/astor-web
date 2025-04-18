@@ -1,7 +1,7 @@
 ---
 id: "568322124398202880"
 author: "Astor"
-title: "[계산이론] 1 – 집합, 함수, 그래프 및 언어·문법·오토마타 구조"
+title: "[계산이론] 1 – 집합, 함수, 그래프"
 pinned: false
 draft: false
 tags:
@@ -17,30 +17,124 @@ updatedAt: "2025-04-18 15:29:13"
 
 ![](https://d2r0pavv0lsiqc.cloudfront.net/projects/images/7517ee1b-cbc4-408e-82d9-b1d8b09faeec.webp)
 
-본 시리즈는  *An Introduction to Formal Languages and Automata, 7th Edition by Peter Linz, Susan H. Rodger* 를 교재로 사용하며, 내용을 요약, 압축하여 정리하는 것을 목적으로 합니다.
+본 시리즈는 _An Introduction to Formal Languages and Automata, 7th Edition by Peter Linz, Susan H. Rodger_ 를 교재로 사용하며, 내용을 요약, 압축하여 정리하는 것을 목적으로 합니다.
 
-## 수학적 기초 및 표기(Mathematical Preliminaries and Notation)
+## 집합 (Sets)
 
-### 집합(Sets)
+집합은 구조가 없는 원소들의 모임입니다.  
+원소 $x$가 집합 $S$의 원소일 경우: $x \in S$  
+그렇지 않을 경우: $x \notin S$
 
-$$ 1^2 + 3$$
+- 예시:
+  - 명시적 표기: $S = \{0, 1, 2\}$
+  - 조건부 표기: $S = \{i : i > 0, i \text\{는 짝수\}\}$
 
-### 함수와 관계(Functions and Relations)
+### 기본 연산
 
-### 그래프와 트리(Graphs and Trees)
+```math
+S_1 \cup S_2 = \{x : x \in S_1 \text{ 또는 } x \in S_2\} \\
+S_1 \cap S_2 = \{x : x \in S_1 \text{ 그리고 } x \in S_2\} \\
+S_1 - S_2 = \{x : x \in S_1 \text{ 그리고 } x \notin S_2\}
+```
 
-### 증명 기법(Proof Techniques)
+### 여집합
 
+전체 집합 $U$가 주어졌을 때, 집합 $S$의 여집합은 다음과 같습니다:
 
+```math
+\bar{S} = \{x \in U : x \notin S\}
+```
 
-## 세 가지 기본 개념(Three Basic Concepts)
+### 드 모르간의 법칙 (DeMorgan’s Laws)
 
-### 언어(Languages)
+```math
+\overline{S_1 \cup S_2} = \bar{S}_1 \cap \bar{S}_2 \\
+\overline{S_1 \cap S_2} = \bar{S}_1 \cup \bar{S}_2
+```
 
-### 문법(Grammars)
+### 멱집합 (Powerset)
 
-### 오토마타(Automata)
+- 정의: 집합 $S$의 모든 부분집합들의 집합
+- 표기: $2^S$
+- 원소 수: $|2^S| = 2^\{|S|\}$
 
+예시:
+$S = \{a, b, c\}$  
+$\Rightarrow 2^S = \{\emptyset, \{a\}, \{b\}, \{c\}, \{a,b\}, \{a,c\}, \{b,c\}, \{a,b,c\}\}$
 
+### 데카르트 곱 (Cartesian Product)
 
-## 응용 예시(Some Applications\*)
+```math
+S_1 \times S_2 = \{(x, y) : x \in S_1, y \in S_2\}
+```
+
+예시:
+$S_1 = \{2, 4\}, S_2 = \{2, 3\}$  
+$\Rightarrow S_1 \times S_2 = \{(2,2), (2,3), (4,2), (4,3)\}$
+
+---
+
+### 함수와 관계 (Functions and Relations)
+
+- 함수: $f: S_1 \rightarrow S_2$ 는 $S_1$의 각 원소에 대해 $S_2$의 정확히 하나의 원소를 대응시킴
+- 전역 함수 (Total): 모든 $x \in S_1$에 대해 정의됨
+- 부분 함수 (Partial): 일부 원소에 대해서만 정의됨
+
+### 점근 표기 (Asymptotic Notation)
+
+```math
+f(n) = O(g(n)) \Rightarrow f(n) \leq c \cdot |g(n)| \text{ for sufficiently large } n \\
+f(n) = \Omega(g(n)) \Rightarrow f(n) \geq c \cdot |g(n)| \\
+f(n) = \Theta(g(n)) \Rightarrow c_1 \cdot |g(n)| \leq f(n) \leq c_2 \cdot |g(n)|
+```
+
+### 관계 (Relation)
+
+- 일반적으로 $R \subseteq A \times A$
+- 등가 관계 (Equivalence Relation)는 다음 조건을 만족:
+  - 반사성: $x \equiv x$
+  - 대칭성: $x \equiv y \Rightarrow y \equiv x$
+  - 추이성: $x \equiv y, y \equiv z \Rightarrow x \equiv z$
+
+예시: $x \equiv y \iff x \bmod 3 = y \bmod 3$
+
+---
+
+## 그래프와 트리 (Graphs and Trees)
+
+### 그래프 (Graph)
+
+- 그래프: 정점 집합 $V$와 간선 집합 $E$
+- 유향 그래프 (Directed Graph): 간선에 방향 존재, $(v_i, v_j)$는 $v_i \rightarrow v_j$
+- 루프(loop): 자기 자신으로 향하는 간선 $(v, v)$
+
+### 트리 (Tree)
+
+- 사이클 없음
+- 루트(root)에서 모든 정점까지 유일 경로 존재
+- 리프(leaf): 자식 없는 노드
+- 높이(height): 루트에서 가장 먼 노드까지의 거리
+
+---
+
+## 증명 기법 (Proof Techniques)
+
+### 수학적 귀납법 (Mathematical Induction)
+
+1. 기초(Base case): $P(1)$이 참임을 보임
+2. 가정(Inductive Hypothesis): $P(k)$가 참이라고 가정
+3. 귀납 단계(Inductive Step): $P(k) \Rightarrow P(k+1)$을 증명
+
+예시:
+
+```math
+l(n) \le 2^n \quad \text{(높이 n인 이진 트리의 리프 개수)}
+```
+
+### 모순에 의한 증명 (Proof by Contradiction)
+
+- 명제 $P$를 부정하여 가정
+- 모순을 도출
+- $\Rightarrow$ $P$는 참
+
+예시: $\sqrt{2}$가 유리수라고 가정하면 $n, m$ 모두 짝수 → 모순 발생 → 무리수임

@@ -3,7 +3,8 @@
 @import url("https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@100..900&display=swap");
 @import url("https://cdn.jsdelivr.net/gh/fonts-archive/BOKEH/BOKEH.css");
 @import url("https://fonts.googleapis.com/css2?family=Fira+Code:wght@300..700&display=swap");
-@font-face {
+@import url("https://cdn.jsdelivr.net/npm/katex@0.15.2/dist/katex.min.css");
+둥 @font-face {
   font-family: "PurenJeonnam";
   src: url("https://fastly.jsdelivr.net/gh/projectnoonnu/noonfonts_two@1.0/PureunJeonnam.woff")
     format("woff");

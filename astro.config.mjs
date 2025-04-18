@@ -12,6 +12,7 @@ import imageminPngquant from "imagemin-pngquant";
 import remarkMath from "remark-math";
 import remarkDirective from "remark-directive";
 import rehypeUnwrapList from "./src/utils/rehype.utils";
+import rehypeKatex from "rehype-katex";
 import { visit } from "unist-util-visit";
 
 // YouTube URL에서 비디오 ID 추출
@@ -94,7 +95,7 @@ export default defineConfig({
     mdx({
       gfm: true,
       remarkPlugins: [remarkMath, remarkDirective, remarkIframeDirective],
-      rehypePlugins: [rehypeUnwrapList],
+      rehypePlugins: [rehypeUnwrapList, rehypeKatex],
       shikiConfig: {
         theme: "dracula",
         wrap: true,
