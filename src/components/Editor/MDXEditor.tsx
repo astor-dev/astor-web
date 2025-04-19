@@ -189,6 +189,7 @@ const Editor = forwardRef<EditorRefMethods, EditorProps>(
             yaml: "YAML",
             bash: "Bash",
             sql: "SQL",
+            math: "Math",
           },
           autoLoadLanguageSupport: true,
         }),
