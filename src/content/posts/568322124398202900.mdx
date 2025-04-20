@@ -10,26 +10,32 @@ tags:
 ogImage: "https://d2r0pavv0lsiqc.cloudfront.net/posts/images/3804f622-9a4a-4b1d-a66f-67b586eeeaf3.webp"
 seriesId: "568320227696185347"
 createdAt: "2025-04-18 15:49:13"
-updatedAt: "2025-04-18 15:49:13"
+updatedAt: "2025-04-20 10:53:01"
 ---
 
 ## 세 가지 기본 개념 (Three Basic Concepts)
 
 ### 언어 (Languages)
 
-형식 언어(formal language)는 **기호들의 집합(알파벳)**과 이들로부터 만들어진 **문자열의 집합**입니다.
+형식 언어(formal language)는 **기호들의 집합(알파벳)**&#xACFC; 이들로부터 만들어진 **문자열의 집합**입니다.
 
-- **알파벳**: 유한한 기호들의 집합 $\Sigma$
-- **문자열**: 알파벳의 유한한 순서열 $w = a_1a_2 \cdots a_n$, $a_i \in \Sigma$
-- **언어**: 문자열들의 집합 $L \subseteq \Sigma^*$
+- **알파벳(**
+  $\Sigma$
+  **)**
+  : 유한한 기호들의 집합 
+- **문자열($w$)**
+  : 알파벳의 유한한 순서열 $w = a_1a_2 \cdots a_n$, $a_i \in \Sigma$
+  - 빈문자열: $λ$ 또는 $ε$
+- **언어($L$)**
+  : 문자열들의 집합 $L \subseteq \Sigma^*$
 
-여기서 $\Sigma^*$는 $\Sigma$의 모든 유한 문자열들의 집합입니다.
+여기서 $\Sigma^\*$는 $\Sigma$의 모든 유한 문자열들의 집합입니다.
 
 #### 예시
 
-- $\Sigma = \{0,1\}$
-  - $L_1 = \{ w \in \Sigma^* \mid \text\{$w$는 짝수 개의 1을 포함함\} \}$
-  - $L_2 = \{ 0^n1^n \mid n \geq 0 \}$
+- $\Sigma = {0,1}$
+  - $L_1 = { w \in \Sigma^* \mid \text{$w$는 짝수 개의 1을 포함함} }$
+  - $L_2 = { 0^n1^n \mid n \geq 0 }$
 
 #### 공백 문자열과 문자열 연산
 
@@ -45,7 +51,7 @@ L_1 \cdot L_2 = \{ xy \mid x \in L_1, y \in L_2 \} \\
 L^* = \bigcup_{i=0}^\infty L^i, \quad L^0 = \{\varepsilon\}, \quad L^1 = L
 ```
 
----
+***
 
 ### 문법 (Grammars)
 
@@ -81,7 +87,7 @@ S \Rightarrow aSb \Rightarrow aaSbb \Rightarrow \cdots \Rightarrow a^nb^n
 - Type 1: 문맥 의존 문법 (Context-Sensitive)
 - Type 0: 일반 문법 (Unrestricted)
 
----
+***
 
 ### 오토마타 (Automata)
 
@@ -105,26 +111,26 @@ M = (Q, \Sigma, \delta, q_0, F)
 
 입력 문자열에 짝수 개의 $0$이 포함되어 있는지 인식하는 DFA:
 
-- $Q = \{q_\{\text\{even\}\}, q_\{\text\{odd\}\}\}$
-- $\Sigma = \{0, 1\}$
+- $Q = {q_{\text{even}}, q_{\text{odd}}}$
+- $\Sigma = {0, 1}$
 - 전이 함수 일부:
   ```math
   \delta(q_{\text{even}}, 0) = q_{\text{odd}},\quad \delta(q_{\text{even}}, 1) = q_{\text{even}} \\
   \delta(q_{\text{odd}}, 0) = q_{\text{even}},\quad \delta(q_{\text{odd}}, 1) = q_{\text{odd}}
   ```
-- $q_0 = q_\{\text\{even\}\}$
-- $F = \{q_\{\text\{even\}\}\}$
+- $q_0 = q_{\text{even}}$
+- $F = {q_{\text{even}}}$
 
 #### 오토마타의 역할
 
-오토마타는 형식 언어의 **수용기 역할**을 하며, **문법과 언어를 해석하는 실행 모델**로 사용됩니다. 다양한 오토마타는 다양한 문법과 대응되며, 이들 사이의 관계는 추후 이론 전개에서 핵심적 위치를 차지합니다.
+오토마타는 형식 언어의 **수용기 역할**을 하며, **문법과 언어를 해석하는 실행 모델**로 사용됩니다. 다양한 오토마타는 다양한 문법과 대응됩니다.
 
----
+***
 
 ## 요약
 
-| 구분     | 정의                        | 수학적 표현                   | 예시                       | 역할                           |
-| -------- | --------------------------- | ----------------------------- | -------------------------- | ------------------------------ |
-| 언어     | 기호들의 유한한 문자열 집합 | $L \subseteq \Sigma^*$        | $\{0^n1^n \mid n \geq 0\}$ | 어떤 문자열이 규칙을 따르는가? |
-| 문법     | 언어 생성 규칙 집합         | $(V, \Sigma, R, S)$           | $S \to aSb$ 등             | 어떤 문자열이 생성 가능한가?   |
-| 오토마타 | 언어를 인식하는 상태 기계   | $(Q, \Sigma, \delta, q_0, F)$ | DFA, NFA 등                | 어떤 문자열을 수용하는가?      |
+| 구분   | 정의              | 수학적 표현                         | 예시                       | 역할                |
+| ---- | --------------- | ------------------------------ | ------------------------ | ----------------- |
+| 언어   | 기호들의 유한한 문자열 집합 | $L \subseteq \Sigma^\*$        | ${0^n1^n \mid n \geq 0}$ | 어떤 문자열이 규칙을 따르는가? |
+| 문법   | 언어 생성 규칙 집합     | $(V, \Sigma, R, S)$            | $S \to aSb$ 등            | 어떤 문자열이 생성 가능한가?  |
+| 오토마타 | 언어를 인식하는 상태 기계  | $(Q, \Sigma, \delta, q\_0, F)$ | DFA, NFA 등               | 어떤 문자열을 수용하는가?    |
