@@ -12,7 +12,7 @@ tags:
 ogImage: "https://d2r0pavv0lsiqc.cloudfront.net/posts/images/a53c7d9c-b085-402f-8c4a-dcd73d54e522.webp"
 seriesId: "549808096239681536"
 createdAt: "2025-04-28 00:18:36"
-updatedAt: "2025-04-28 00:51:03"
+updatedAt: "2025-04-28 01:39:11"
 ---
 
 ## 시작하며: nest.js & typescript의 특성
@@ -35,45 +35,28 @@ nest.js와 spring등 DI를 제공하는 프레임워크들은 **인터페이스*
 
 - **인터페이스 사용**
   - **런타임 타입 정보**
-
     가 전혀 필요 없고,
-
     **컴파일 타임**
-
     만으로 충분할 때
   - **객체 리터럴**
-
     이나 여러
-
     `implements`
-
     구현체가
-
     **느슨하게**
-
     결합되어야 할 때
   - JS 번들 크기 최적화를 위해
-
     **런타임 코드 생성 없이**
-
     타입만 정의할 때
 - **추상 클래스 사용**
   - **부분 구현**
-
     (default 메서드,
-
     `protected`
-
     필드)을 통해 코드 재사용이 필요할 때
   - **런타임 타입 확인**
-
     (
-
     `instanceof`
-
     )을 사용해야 할 때
   - **단일 상속**
-
     을 활용해 공통 기능을 중앙에서 제어할 때
 
 java 진영에서는 **런타임 타입 정보**가 둘 다 모두 존재하기 때문에 부분 구현이 필요하지 않는 경우엔 인터페이스 활용이 권장됩니다. 그마저도 인터페이스에서 default 로직을 선언할 수 있게 되면서 가급적 인터페이스를 활용하는 편이죠.
@@ -145,7 +128,7 @@ class ReservationModule
 constructor(reservationReader: ReservationReader)
 ```
 
-런타임에 유실되지 않기 때문에 모듈 선언부나 사용부의 코드가 굉장히 심플해집니다. 개인적으로는 ts에선 위와 같은 추상 클래스 패턴 사용을 꽤나 권장하는 편인데, 주로 **설계도 : 구현체가 1:1 대응될 확률이 높은 경우** 위 패턴 사용을 추천합니다. java로 치면 service -> serviceImpl 혹은 DefaultService 만 존재하는 케이스에 속하죠.
+런타임에 유실되지 않기 때문에 모듈 선언부나 사용부의 코드가 굉장히 심플해집니다. 개인적으로는 ts에선 위와 같은 추상 클래스 패턴 사용을 꽤나 권장하는 편인데, 주로 **설계도 : 구현체가 일대일 대응될 확률이 높은 경우** 위 패턴 사용을 추천합니다. java로 치면 service -> serviceImpl 혹은 DefaultService 만 존재하는 케이스에 속하죠.
 
 애초에 *단일한 구현체만 존재한다면 굳이 설계도를 따로 정의할 필요가 있는가?* 라는 부분에 대해서는 이견이 갈릴 수 있다 생각합니다. 저는 협업적인 면, 코드 가독성 및 시스템의 설계 측면에 있어서라도 느슨한 결합이 주는 메리트가 꽤 있다고 생각하는 편이여서 단일 구현체여도 가급적 설계도를 선언합니다. 이부분은 취향 껏 하시면 될 것 같네요.
 
@@ -209,7 +192,7 @@ export class DefaultTodoManager implements TodoFind, TodoStore
 
 ```ts
   constructor(
-    @Inject(TODO_FIND) private readonly finder: TodoFind,
+    @Inject(TODO_READER) private readonly reader: TodoReader,
     @Inject(TODO_STORE) private readonly store: TodoStore,
   ) {}
 
