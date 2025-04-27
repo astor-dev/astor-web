@@ -1,0 +1,351 @@
+---
+id: "571725006657032192"
+author: "Astor"
+title: "NestJS DI 활용 디자인패턴 총정리"
+pinned: false
+draft: false
+tags:
+  - NestJS
+  - 디자인 패턴
+  - OOP
+  - DI
+ogImage: "https://d2r0pavv0lsiqc.cloudfront.net/posts/images/a53c7d9c-b085-402f-8c4a-dcd73d54e522.webp"
+seriesId: "549808096239681536"
+createdAt: "2025-04-28 00:18:36"
+updatedAt: "2025-04-28 00:51:03"
+---
+
+## 시작하며: nest.js & typescript의 특성
+
+nest.js는 spring처럼 ts에서도 프레임워크에게 템플릿을 의존한 채, 견고한 백엔드 설계를 도와줍니다. 다만, java & kotlin과 ts의 언어적 차이 및 Angular에서 파생한 nest.js의 설계 철학 자체가 spring과는 꽤나 차이가 있어 spring 진영에서 사용하는 설계 패턴을 그대로 사용하기에는 적합하지 않습니다.
+
+구체적인 예시는 본문에서 다룰 예정이지만, 가장 큰 차이는 TS의 특성상 **런타임에서 소실되는 JS에 존재하지 않는 기능**들, **Module 기반으로 작동하는 Nest.js 시스템**에서 기인합니다.
+
+이 글에선 제가 실제로 ts & nest.js 서비스를 운용하면서 꽤나 재미를 본 디자인 패턴들 중에, 특히 DI를 활용하는 테크닉들만 담아 정리합니다.&#x20;
+
+## **런타임 타입 보존: 추상 클래스 vs 인터페이스 + 심볼**
+
+DI를 위해서는 프레임워크가 원형(interface || abstract class || class)을 런타임에서 알아야하며, 어떤 구현체를 사용할 건지 또한 정의가 되어 있어야 합니다.
+
+nest.js와 spring등 DI를 제공하는 프레임워크들은 **인터페이스**와 **데코레이터(어노테이션)**&#xC744; 활용하여 서버의 bootstrap 시점에서 주입할 구현체를 결정합니다.
+
+다만, TypeScript에서 `interface`는 컴파일 시 제거되어 **런타임에 흔적이 남지 않으므로**, NestJS DI에서는 **추상 클래스로 런타임 타입을 유지**하거나 **동일 인터페이스 구현체임을 식별할 수 있는 토큰을 제공하는 것** 중\*\*\*\* 선택해야 합니다.
+
+우선 typescript 활용에 있어 추상클래스와 인터페이스 사용의 유스케이스 차이에 대해 한번 알아보고 지나가겠습니다.
+
+- **인터페이스 사용**
+  - **런타임 타입 정보**
+
+    가 전혀 필요 없고,
+
+    **컴파일 타임**
+
+    만으로 충분할 때
+  - **객체 리터럴**
+
+    이나 여러
+
+    `implements`
+
+    구현체가
+
+    **느슨하게**
+
+    결합되어야 할 때
+  - JS 번들 크기 최적화를 위해
+
+    **런타임 코드 생성 없이**
+
+    타입만 정의할 때
+- **추상 클래스 사용**
+  - **부분 구현**
+
+    (default 메서드,
+
+    `protected`
+
+    필드)을 통해 코드 재사용이 필요할 때
+  - **런타임 타입 확인**
+
+    (
+
+    `instanceof`
+
+    )을 사용해야 할 때
+  - **단일 상속**
+
+    을 활용해 공통 기능을 중앙에서 제어할 때
+
+java 진영에서는 **런타임 타입 정보**가 둘 다 모두 존재하기 때문에 부분 구현이 필요하지 않는 경우엔 인터페이스 활용이 권장됩니다. 그마저도 인터페이스에서 default 로직을 선언할 수 있게 되면서 가급적 인터페이스를 활용하는 편이죠.
+
+다만 ts는 interface 사용 시 give and take가 있습니다. 바로 런타임 정보를 활용할 수 없다는 점이죠.
+
+가장 크리티컬한 점은 nest.js DI 시점에서도 이미 인터페이스는 컴파일 되며 사라져서 어떤 것이 인터페이스 구현체임을 알 수가 없다는 점이죠. interface를 통한 DI를 하려면 결국 명시적으로 DI 가능한 대상임을 아래와 같이 모듈과 주입받는 class에 알릴 필요가 있습니다 .
+
+```ts
+// 정의부
+@Module(
+  provider: [{
+    provide: "HELLO_REPOSITORY", // 인터페이스를 provide X, 심볼 혹은 string 제공
+    useClass: TypeOrmHelloRepository
+  }]
+
+)
+class HelloModule{}
+
+// 사용부
+constructor(@Inject("HELLO_REPOSITORY") helloRepository: HelloRepository)
+```
+
+굉장히 귀찮고, 의존성 주입 부분에 대한 구현이 분산되는 구조이죠.
+
+이에 대한 대안으로 괜찮은 방식을 아래에 2가지 제안합니다.
+
+### **추상 클래스 사용**
+
+추상 클래스를 사용하면 굳이 provider로 **임의의 문자열이나 심볼 등 토큰을 제공할 필요가 없습**니다. class 자체는 컴파일 되어도 보존되기 때문이죠.
+
+다만 **extends를 통한 class 구현은 오직 1개만 가능**합니다. 이 때문에 추상클래스를 활용하면 일부 패턴을 사용할 수 없습니다.
+
+구현 예시입니다.
+
+```ts
+export abstract class ReservationReader {
+  abstract findOne(props: {
+    uniqueCriteria: ReservationCriteriaUniqueKey;
+    options?: ReservationCriteriaFindOne;
+  }): Promise<Reservation | null>;
+  abstract findMany(options?: ReservationCriteriaFindMany): Promise<Reservation[]>;
+}
+```
+
+```ts
+@Injectable()
+export class RepositoryReservationReader extends ReservationReader {
+  constructor(private readonly reservationRepository: ReservationRepository) {
+    super();
+  }
+// ... 생략
+}
+```
+
+```ts
+@Module({
+  providers: [
+    {
+      provide: ReservationReader,
+      useClass: RepositoryReservationReader,
+    },
+  ],
+})
+class ReservationModule
+```
+
+```ts
+constructor(reservationReader: ReservationReader)
+```
+
+런타임에 유실되지 않기 때문에 모듈 선언부나 사용부의 코드가 굉장히 심플해집니다. 개인적으로는 ts에선 위와 같은 추상 클래스 패턴 사용을 꽤나 권장하는 편인데, 주로 **설계도 : 구현체가 1:1 대응될 확률이 높은 경우** 위 패턴 사용을 추천합니다. java로 치면 service -> serviceImpl 혹은 DefaultService 만 존재하는 케이스에 속하죠.
+
+애초에 *단일한 구현체만 존재한다면 굳이 설계도를 따로 정의할 필요가 있는가?* 라는 부분에 대해서는 이견이 갈릴 수 있다 생각합니다. 저는 협업적인 면, 코드 가독성 및 시스템의 설계 측면에 있어서라도 느슨한 결합이 주는 메리트가 꽤 있다고 생각하는 편이여서 단일 구현체여도 가급적 설계도를 선언합니다. 이부분은 취향 껏 하시면 될 것 같네요.
+
+abstract class나 interface 안쓰시면 그냥 DIP 굳이 안하고 직접 class 자체를 참조하셔도 됩니다.&#x20;
+
+### **인터페이스 + Symbol 토큰**
+
+반면, 인터페이스는 TypeScript 상에서 컴파일 타임 타입 체크만 수행하고, 컴파일 후에는 **런타임에 타입 정보가 완전히 사라집니다**.
+
+따라서, NestJS에서는 **런타임 식별자(Injection Token)** 를 명시적으로 제공해야 합니다. 이때 단순 문자열보다는, **충돌 방지와 안전성 확보를 위해 Symbol**을 사용한 토큰 정의를 권장합니다.
+
+```ts
+// Symbol Token 정의
+export const UserRepoToken = Symbol('UserRepository');
+
+// Provider 등록
+providers: [
+  { provide: UserRepoToken, useClass: SqlUserRepository },
+];
+
+// 주입
+constructor(
+  @Inject(UserRepoToken) 
+  private readonly repo: UserRepository
+) {}
+
+```
+
+이 방식 역시 런타임에서 적절한 구현체를 사용할 수 있도록 느슨한 결합과 유연성을 확보할 수 있습니다. 다만 코드가 조금 더러워지고, 심볼을 따로 선언 및 관리할 필요가 있습니다. 대신 장점으로는 interface의 특성상 한 클래스가 여러 인터페이스의 구현체로 기능하게 할 수 있다는 점입니다. 바로 살펴보겠습니다.
+
+## **Delegation 패턴**&#x20;
+
+여러 인터페이스를 모두 관장하는 하나의 구현체를 사용하는게 효과적일 때도 있습니다.
+
+가령 `ReservationReader`, `ReservationStore`, `ReservationValidator`를 활용할 필요가 있는데, **이들이 저장소(repository)의 구현 방식에 따라서만 분기**할 때, `InMemoryReservationManager`과 `TypeOrmReservationManager` 로 분기 방식에 따라 단일 구현체로 나누는게 개별 구현체를 따로 다 만드는 것 보다 효과적이지 않을까요? 이럴 경우 활용할 수 있는 패턴입니다.
+
+이 패턴은 인터페이스를 통해 DI 하여야만 활용할 수 있습니다.
+
+```ts
+providers: [
+  DefaultTodoManager,
+  { provide: TODO_READER, useExisting: DefaultTodoManager },
+  { provide: TODO_STORE, useExisting: DefaultTodoManager },
+]
+
+```
+
+`useExisting`을 활용하면 provider의 구현체로 모듈에 이미 등록한 특정 class를 사용할 수 있습니다. 이 경우 provide에서 제공하는 token을 통해 inject된 부분의 구현체에 대해 해당 모듈에 한해, 해당 구현체를 사용하게 됩니다.
+
+(꼭 useExisting을 써서 delegation 패턴을 사용할 필요는 없습니다. TodoFind에 대한 useClass로 DefaultTodoManager을 직접 주입하는 등으로 구현 가능합니다.)
+
+구현체 쪽은 여러 interface를 아래와 같이 구현하도록 강제해 설계합니다.
+
+```ts
+
+@Injectable()
+export class DefaultTodoManager implements TodoFind, TodoStore 
+```
+
+사용측은 심볼 혹은 토큰을 명시적으로 주입해야 합니다.
+
+```ts
+  constructor(
+    @Inject(TODO_FIND) private readonly finder: TodoFind,
+    @Inject(TODO_STORE) private readonly store: TodoStore,
+  ) {}
+
+```
+
+이런 패턴은 활용도가 되게 무궁무진한데, 특히 useCase별로 class를 지정해서 OOP를 할 때 효과적입니다.
+
+비즈니스 로직을 담은 상위 계층의 레이어에선 useCase에 대한 인터페이스만 정의합니다. OauthLoginUseCase, RefrestOauthTokenUseCase 등.
+
+이 인터페이스에 대한 구현체는 여럿이 될 수도 있고, 구현 사정 및 책임 분리에 대한 요구사항에 따라 delegation 패턴을 활용해 하나(혹은 유스케이스보단 적은 수)가 될 수 있습니다.
+
+OauthLoginUseCase에 login 메서드가, RefrestOauthTokenUseCase 에  refresh 메서드가 정의되어 있다고 가정하면,  KakaoOauthService에서 두 메서드를 모두 구현할 수도 있겠죠.
+
+```ts
+@Injectable()
+export class KakaoOauthService implements OauthLoginUseCase, RefreshOauthTokenUseCase {
+  async login(params: LoginDto) { /* ... */ }
+  async refresh(params: RefreshDto) { /* ... */ }
+}
+
+```
+
+## List DI
+
+여기까지 delegation을 통해 **여러 역할에 하나의 구현체를 주입**하는 방법을 다뤘습니다.
+그렇다면, **구현체가 여럿일 때, 이를 "리스트" 형태로 한 번에 주입할 수 있을까?**
+
+결론부터 말하면:
+
+> **NestJS 기본 DI 시스템은 List 주입을 자동 지원하지 않는다.**
+
+Spring처럼 `List<Interface>`를 바로 주입하는 기능은 없으며, NestJS는 **명시적 DI(Explicit DI)**&#xB97C; 지향하기 때문에 **수동으로 List Provider를 생성해 주입**해야 합니다.
+
+### 개별 구현체 등록
+
+```ts
+@Injectable()
+export class CardPaymentStrategy implements PaymentStrategy {
+  pay(amount: number) { console.log('Card payment:', amount); }
+}
+
+@Injectable()
+export class PaypalPaymentStrategy implements PaymentStrategy {
+  pay(amount: number) { console.log('Paypal payment:', amount); }
+}
+
+```
+
+### 리스트 Provider 작성
+
+```ts
+@Module({
+  providers: [
+    {
+      provide: 'PAYMENT_STRATEGIES',
+      useFactory: (
+        card: CardPaymentStrategy,
+        paypal: PaypalPaymentStrategy,
+      ): PaymentStrategy[] => {
+        return [card, paypal];
+      },
+      inject: [CardPaymentStrategy, PaypalPaymentStrategy],
+    }
+    
+ ]
+)
+```
+
+### 사용처
+
+```ts
+@Injectable()
+export class PaymentService {
+  constructor(
+    @Inject('PAYMENT_STRATEGIES')
+    private readonly strategies: PaymentStrategy[],
+  ) {}
+
+  payAll(amount: number) {
+    for (const strategy of this.strategies) {
+      strategy.pay(amount);
+    }
+  }
+}
+
+```
+
+이렇게 각 인터페이스의 구현체를 하나의 Token을 통해 묶으면서, 해당 토큰에 리스트 형태로 명시적으로 provide하여야 여러 인터페이스에 대한 복수의 구현체를 주입할 수 있습니다.
+
+어떻게 보면 해당 token에 대한 주입체 자체를 이미 선언 시 리스트 형태로 해놓는 것이죠. 설계도에 대한 여러 구현체가 존재할 경우 List가 아닌 형태로 주입하려 하면 에러가 뜨는 스프링 보다는 명시적이면서도.. 귀찮습니다.
+
+이 방식을 통해 스프링에서 사용하는 패턴도 마음 껏 사용할 수 있습니다. 가령 oauth의 provider 별로 enum인 OauthProvider를 만들어놓고, oauthProviderService의 구현체에 `support(provider: OauthProivider)`를 둔 뒤에 사용부에선 모든 oauthProvider 구현체를 주입받고 support를 호출해 적절한 provider를 주입받는 방식이죠.
+
+```ts
+export enum OauthProvider {
+  KAKAO = 'KAKAO',
+  GOOGLE = 'GOOGLE',
+  NAVER = 'NAVER',
+}
+
+export interface OauthProviderService {
+  support(provider: OauthProvider): boolean;
+  login(authCode: string): Promise<string>; // 예시로 accessToken 반환
+}
+
+
+@Injectable()
+export class KakaoOauthService implements OauthProviderService {
+  support(provider: OauthProvider): boolean {
+    return provider === OauthProvider.KAKAO;
+  }
+
+  async login(authCode: string): Promise<string> {
+    console.log('Kakao 로그인 처리');
+    return 'kakao-access-token';
+  }
+}
+// 등등 기타 구현체
+
+
+@Injectable()
+export class OauthService {
+  constructor(
+    @Inject('OAUTH_PROVIDER_SERVICES')
+    private readonly providers: OauthProviderService[],
+  ) {}
+
+  async login(provider: OauthProvider, authCode: string): Promise<string> {
+    const selectedProvider = this.providers.find(p => p.support(provider));
+    if (!selectedProvider) {
+      throw new Error(`지원하지 않는 OAuth Provider입니다: ${provider}`);
+    }
+    return selectedProvider.login(authCode);
+  }
+}
+
+```
+
+마찬가지로 oauth 말고도 PG사 등 유사한 통신 규격을 준수하는 여러 구현체가 존재할 때 활용 가능합니다
