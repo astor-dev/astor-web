@@ -47,8 +47,10 @@ const minDepth = headings.length ? Math.min(...headings.map(h => h.depth)) : 1;
               data-heading-id={item.slug}
               data-toc-link
             >
-              <span class="mr-2 text-skin-accent">{item.numbering}</span>
-              <span class="text-black-accent">{item.text}</span>
+              <span class="toc-content">
+                <span class="mr-2 text-skin-accent">{item.numbering}</span>
+                <span class="text-black-accent">{item.text}</span>
+              </span>
             </a>
           </li>
         ))
@@ -220,7 +222,7 @@ const minDepth = headings.length ? Math.min(...headings.map(h => h.depth)) : 1;
 
             window.scrollTo({
               top: targetPosition,
-              behavior: "smooth",
+              behavior: "auto",
             });
 
             // 클릭한 항목 즉시 활성화
@@ -271,9 +273,23 @@ const minDepth = headings.length ? Math.min(...headings.map(h => h.depth)) : 1;
     scrollbar-gutter: stable;
   }
 
+  .toc-item {
+    transition: background-color 0.2s ease;
+  }
+
   .toc-item.active {
-    font-weight: bold;
     background-color: rgba(var(--color-accent), 0.1);
+  }
+
+  .toc-content {
+    transition: transform 0.2s ease;
+    will-change: transform;
+    display: inline-block;
+    width: 100%;
+  }
+
+  .toc-item.active .toc-content {
+    transform: scale(1.03);
   }
 
   /* 스크롤바가 필요할 때만 표시 */
