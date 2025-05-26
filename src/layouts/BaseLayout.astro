@@ -84,7 +84,7 @@ const currentPath = Astro.url.pathname;
       <slot name="hero" />
       <!-- 메인 콘텐츠 영역: 반응형 컨테이너 적용 예시 -->
       <main
-        class="relative mt-16 w-full flex-1 bg-skin-background px-[5dvw] 2xl:px-[10dvw] print:mt-0"
+        class="relative mx-auto mt-16 w-full max-w-[1200px] flex-1 bg-skin-background px-4 md:px-6 print:mt-0"
       >
         <!-- Navbar를 보여주는 경우 Navbar+12px 띄워줌 -->
         <!-- {shouldShowBreadcrumb && <BreadcrumbNavigator pathname={currentPath} client:load />} -->

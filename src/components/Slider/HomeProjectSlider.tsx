@@ -38,8 +38,8 @@ const HomeProjectSlider = (props: { projects: ProjectEntry[] }) => {
   return (
     <div className="flex h-full w-full">
       <div className="relative h-full w-full">
-        {/* 4:3 비율을 유지하는 컨테이너 */}
-        <div className="h-full w-full">
+        {/* 4:3 비율을 유지하는 컨테이너 */}{" "}
+        <div className="aspect-[4/3] w-full">
           <Swiper
             ref={swiperRef}
             modules={[
@@ -73,7 +73,7 @@ const HomeProjectSlider = (props: { projects: ProjectEntry[] }) => {
                   virtualIndex={index}
                   className="h-full"
                 >
-                  <div className="aspect-[4/3] h-full w-full">
+                  <div className="h-full w-full">
                     <FullImageProjectCard key={project.id} {...project} />
                   </div>
                 </SwiperSlide>

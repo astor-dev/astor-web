@@ -1,6 +1,5 @@
 ---
 import Layout from "~layouts/BaseLayout.astro";
-import BlogPostCard from "~components/Card/BlogPostCard";
 import { ShootingStarHeader } from "~components/Header/ShootingStarHeader";
 import { repositoryContainer } from "~modules/repository.module";
 import {
@@ -17,13 +16,14 @@ import HomeHero from "~components/Hero/HomeHero";
 import type { Paginated } from "~types/page.type";
 import HomeSeriesCarousel from "~components/Slider/HomeSeriesSlider";
 import HomeProjectSlider from "~components/Slider/HomeProjectSlider";
-import HomeTagsSlider from "~components/Slider/HomeTagsSlider";
 import HomePinnedPostsSlider from "~components/Slider/HomePinnedPostsSlider";
-import HomeProjectIntroSection from "~components/Section/HomeProjectIntroSection";
-import type { SeriesEntry } from "~types/series.type";
+import HistoryTimeline from "~components/HistoryTimeline";
+import HomeTagsSlider from "~components/Slider/HomeTagsSlider";
+
 const projectRepository =
   repositoryContainer.get<ProjectRepository>(PROJECT_REPOSITORY);
 const postRepository = repositoryContainer.get<PostRepository>(POST_REPOSITORY);
+
 const projects: Paginated<ProjectEntry> = await projectRepository.getProjects({
   paging: { page: 0, limit: 5 },
   sort: { field: "endedAt", order: "desc" },
@@ -39,7 +39,8 @@ const pinnedPosts: PostEntry[] = (
   })
 ).items;
 const tags: Tag[] = await postRepository.getAllTags();
-const seriesList: SeriesAndCount[] = await postRepository.getAllSeriesAndCount();
+const seriesList: SeriesAndCount[] =
+  await postRepository.getAllSeriesAndCount();
 ---
 
 <Layout>
@@ -62,23 +63,35 @@ const seriesList: SeriesAndCount[] = await postRepository.getAllSeriesAndCount()
       <HomePinnedPostsSlider pinnedPosts={pinnedPosts} client:idle />
     </section>
 
-    {/* 프로젝트 섹션 */}
     <section class="mb-16">
-      <div
-        class="-ml-[5dvw] -mr-[5dvw] grid aspect-[8/3] w-[calc(100%+10dvw)] grid-cols-1 md:grid-cols-2 2xl:-ml-[15dvw] 2xl:-mr-[15dvw] 2xl:w-[calc(100%+30dvw)]"
-      >
-        <HomeProjectIntroSection client:load />
-        <HomeProjectSlider projects={projects.items} client:load />
+      <div class="relative">
+        <div class="relative z-10 grid grid-cols-1 gap-8 lg:grid-cols-2">
+          <section>
+            <div class="mb-6">
+              <ShootingStarHeader title="연혁" client:load />
+            </div>
+            <div>
+              <HistoryTimeline client:load />
+            </div>
+          </section>
+
+          <section>
+            <div class="mb-6">
+              <ShootingStarHeader
+                title="프로젝트 모음"
+                moreLink="/projects"
+                client:load
+              />
+            </div>
+            <div>
+              <HomeProjectSlider projects={projects.items} client:load />
+            </div>
+          </section>
+        </div>
       </div>
     </section>
-    {/* 인기 태그 섹션 */}
     <section class="mb-16">
-      <ShootingStarHeader
-        title="인기 태그"
-        description="자주 다루는 주제들이에요"
-        moreLink="/blog"
-        client:load
-      />
+      <ShootingStarHeader title="인기 태그" moreLink="/blog" client:load />
       <HomeTagsSlider tagList={tags} client:load />
     </section>
   </div>

@@ -53,8 +53,6 @@ if (!post) {
 const renderResult = await render(post);
 const Content = renderResult.Content;
 const headings = renderResult.headings;
-
-
 ---
 
 <Layout
@@ -81,9 +79,13 @@ const headings = renderResult.headings;
         {/* 마크다운 콘텐츠 */}
         <div>
           <Content />
-          
-          <PostNavigation prevPost={prevPost} nextPost={nextPost} className="my-8" />
-          
+
+          <PostNavigation
+            prevPost={prevPost}
+            nextPost={nextPost}
+            className="my-8"
+          />
+
           <Comments client:only="react" />
         </div>
       </div>

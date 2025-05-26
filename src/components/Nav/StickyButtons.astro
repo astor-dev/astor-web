@@ -147,21 +147,21 @@ const { class: className }: Props = Astro.props;
 <style>
   .sticky-buttons {
     position: absolute;
-    left: 0px;
+    left: calc((100% - 1200px) / 2 - 70px);
     width: 70px;
   }
 
-  /* @media (min-width: 1280px) {
+  @media (max-width: 1536px) {
     .sticky-buttons {
-      left: -80px;
+      left: 24px;
     }
   }
 
-  @media (min-width: 1536px) {
+  @media (max-width: 1280px) {
     .sticky-buttons {
-      left: -100px;
+      display: none;
     }
-  } */
+  }
 
   /* 버튼 호버 효과 */
   .sticky-buttons button {
