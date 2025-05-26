@@ -147,14 +147,9 @@ const { class: className }: Props = Astro.props;
 <style>
   .sticky-buttons {
     position: absolute;
-    left: calc((100% - 1200px) / 2 - 70px);
+    /* 768px 기준 중앙 정렬 && width + 40px 여백*/
+    left: calc((100% - 768px) / 2 - 120px);
     width: 70px;
-  }
-
-  @media (max-width: 1536px) {
-    .sticky-buttons {
-      left: 24px;
-    }
   }
 
   @media (max-width: 1280px) {

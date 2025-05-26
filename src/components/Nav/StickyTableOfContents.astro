@@ -264,14 +264,9 @@ const minDepth = headings.length ? Math.min(...headings.map(h => h.depth)) : 1;
 <style>
   .toc-container {
     position: absolute;
-    right: calc((100% - 1200px) / 2 - 280px);
+    /* 768px 기준 중앙 정렬 && width + 40px */
+    right: calc((100% - 768px) / 2 - 320px);
     width: 280px;
-  }
-
-  @media (max-width: 1536px) {
-    .toc-container {
-      right: 24px;
-    }
   }
 
   @media (max-width: 1280px) {
