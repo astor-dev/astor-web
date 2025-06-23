@@ -56,25 +56,34 @@ const StackSlider: React.FC<StackSliderProps> = ({
       }
       if (a.stackType !== b.stackType) {
         return (
-          (stackTypeOrder[a.stackType] ?? Infinity) -
-          (stackTypeOrder[b.stackType] ?? Infinity)
+          (stackTypeOrder[a.stackType[0]] ?? Infinity) -
+          (stackTypeOrder[b.stackType[0]] ?? Infinity)
         );
       }
       return a.name.localeCompare(b.name);
     });
 
   // 사용 가능한 스택 타입도 정의된 순서대로 정렬
-  const availableTypes = [
-    "all" as const,
-    ...Array.from(new Set(availableStacks.map(stack => stack.stackType))).sort(
-      (a, b) =>
-        (stackTypeOrder[a] ?? Infinity) - (stackTypeOrder[b] ?? Infinity),
+  const allStackTypes = Array.from(
+    new Set(
+      availableStacks.flatMap(stack =>
+        Array.isArray(stack.stackType) ? stack.stackType : [stack.stackType],
+      ),
     ),
-  ];
-
-  const filteredStacks = availableStacks.filter(stack =>
-    selectedType === "all" ? true : stack.stackType === selectedType,
+  ).sort(
+    (a, b) => (stackTypeOrder[a] ?? Infinity) - (stackTypeOrder[b] ?? Infinity),
   );
+
+  const availableTypes: (StackType | "all")[] = ["all", ...allStackTypes];
+
+  const filteredStacks = availableStacks.filter(stack => {
+    if (selectedType === "all") return true;
+
+    const stackTypes = Array.isArray(stack.stackType)
+      ? stack.stackType
+      : [stack.stackType];
+    return stackTypes.includes(selectedType as StackType);
+  });
 
   useEffect(() => {
     if (selectedType !== defaultType) {

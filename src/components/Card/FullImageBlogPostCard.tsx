@@ -57,9 +57,7 @@ const FullImageBlogPostCard: React.FC<FullImageBlogPostCardProps> = props => {
             <h3 className="line-clamp-2 text-lg font-bold text-white-accent md:text-xl">
               {props.data.title}
             </h3>
-            <p className="mt-2 line-clamp-2 min-h-[2.5rem] text-sm text-skin-inverted">
-              {props.data.description}
-            </p>
+            <p className="mt-2 line-clamp-2 min-h-[2.5rem] text-sm text-skin-inverted"></p>
           </div>
 
           {/* 하단 메타 정보 */}

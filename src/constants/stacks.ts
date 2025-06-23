@@ -32,13 +32,19 @@ import {
   SiFastapi,
   SiSpring,
   SiFirebase,
+  SiRabbitmq,
+  SiElasticsearch,
+  SiKotlin,
+  SiMariadb,
+  SiWearos,
+  SiOpenai,
 } from "react-icons/si";
 import { stackTypeEnum, type Stack } from "~types/stack.type";
 
 export const stacks: Stack[] = [
   {
     id: 1,
-    stackType: stackTypeEnum.Enum.Frontend,
+    stackType: [stackTypeEnum.Enum.Frontend],
     name: "React",
     icon: SiReact,
     description: "컴포넌트 기반의 UI 라이브러리로 동적인 웹 애플리케이션 구축",
@@ -47,7 +53,7 @@ export const stacks: Stack[] = [
   },
   {
     id: 2,
-    stackType: stackTypeEnum.Enum.Backend,
+    stackType: [stackTypeEnum.Enum.Backend],
     name: "NestJS",
     icon: SiNestjs,
     description: "TypeScript 기반의 확장 가능한 Node.js 서버 프레임워크",
@@ -57,7 +63,7 @@ export const stacks: Stack[] = [
   },
   {
     id: 3,
-    stackType: stackTypeEnum.Enum.Backend,
+    stackType: [stackTypeEnum.Enum.Backend],
     name: "Docker",
     icon: SiDocker,
     description: "컨테이너 기반 가상화로 일관된 개발 및 배포 환경 구성",
@@ -66,7 +72,7 @@ export const stacks: Stack[] = [
   },
   {
     id: 4,
-    stackType: stackTypeEnum.Enum.DevOps,
+    stackType: [stackTypeEnum.Enum.DevOps],
     name: "Git",
     icon: SiGit,
     description: "분산 버전 관리 시스템으로 효율적인 협업과 코드 관리",
@@ -75,7 +81,7 @@ export const stacks: Stack[] = [
   },
   {
     id: 5,
-    stackType: stackTypeEnum.Enum.Backend,
+    stackType: [stackTypeEnum.Enum.Backend],
     name: "Kubernetes",
     icon: SiKubernetes,
     description: "컨테이너 오케스트레이션으로 자동화된 배포 및 스케일링",
@@ -84,7 +90,7 @@ export const stacks: Stack[] = [
   },
   {
     id: 6,
-    stackType: stackTypeEnum.Enum.Backend,
+    stackType: [stackTypeEnum.Enum.Backend],
     name: "Nginx",
     icon: SiNginx,
     description: "고성능 웹 서버 및 리버스 프록시로 트래픽 관리",
@@ -93,7 +99,7 @@ export const stacks: Stack[] = [
   },
   {
     id: 7,
-    stackType: stackTypeEnum.Enum.Backend,
+    stackType: [stackTypeEnum.Enum.Backend],
     name: "Python",
     icon: SiPython,
     description: "범용 프로그래밍 언어로 데이터 처리 및 백엔드 개발",
@@ -102,7 +108,7 @@ export const stacks: Stack[] = [
   },
   {
     id: 8,
-    stackType: stackTypeEnum.Enum.Frontend,
+    stackType: [stackTypeEnum.Enum.Frontend],
     name: "TailwindCSS",
     icon: SiTailwindcss,
     description: "유틸리티 우선 CSS 프레임워크로 빠른 UI 스타일링",
@@ -111,7 +117,7 @@ export const stacks: Stack[] = [
   },
   {
     id: 9,
-    stackType: stackTypeEnum.Enum.Backend,
+    stackType: [stackTypeEnum.Enum.Frontend, stackTypeEnum.Enum.Backend],
     name: "TypeScript",
     icon: SiTypescript,
     description: "정적 타입 지원으로 안정적인 JavaScript 개발",
@@ -121,7 +127,7 @@ export const stacks: Stack[] = [
   },
   {
     id: 10,
-    stackType: stackTypeEnum.Enum.Frontend,
+    stackType: [stackTypeEnum.Enum.Frontend],
     name: "Next.js",
     icon: SiNextdotjs,
     description: "React 기반 프레임워크로 SSR 및 정적 사이트 생성",
@@ -130,7 +136,7 @@ export const stacks: Stack[] = [
   },
   {
     id: 11,
-    stackType: stackTypeEnum.Enum.Backend,
+    stackType: [stackTypeEnum.Enum.Backend],
     name: "MongoDB",
     icon: SiMongodb,
     description: "유연한 스키마의 NoSQL 데이터베이스",
@@ -139,7 +145,7 @@ export const stacks: Stack[] = [
   },
   {
     id: 12,
-    stackType: stackTypeEnum.Enum.Backend,
+    stackType: [stackTypeEnum.Enum.Backend],
     name: "PostgreSQL",
     icon: SiPostgresql,
     description: "강력한 관계형 데이터베이스로 복잡한 쿼리 처리",
@@ -148,7 +154,7 @@ export const stacks: Stack[] = [
   },
   {
     id: 13,
-    stackType: stackTypeEnum.Enum.Backend,
+    stackType: [stackTypeEnum.Enum.Backend],
     name: "Redis",
     icon: SiRedis,
     description: "인메모리 데이터 스토어로 고성능 캐싱 구현",
@@ -157,7 +163,7 @@ export const stacks: Stack[] = [
   },
   {
     id: 14,
-    stackType: stackTypeEnum.Enum.Backend,
+    stackType: [stackTypeEnum.Enum.Backend],
     name: "AWS",
     icon: SiAmazonwebservices,
     description: "클라우드 컴퓨팅 서비스로 확장 가능한 인프라 구축",
@@ -166,7 +172,7 @@ export const stacks: Stack[] = [
   },
   {
     id: 15,
-    stackType: stackTypeEnum.Enum.Backend,
+    stackType: [stackTypeEnum.Enum.Backend],
     name: "GCP",
     icon: SiGooglecloud,
     description: "구글 클라우드 플랫폼으로 현대적인 클라우드 인프라 운영",
@@ -175,7 +181,7 @@ export const stacks: Stack[] = [
   },
   {
     id: 16,
-    stackType: stackTypeEnum.Enum.DevOps,
+    stackType: [stackTypeEnum.Enum.DevOps],
     name: "Jenkins",
     icon: SiJenkins,
     description: "자동화된 CI/CD 파이프라인 구축 및 관리",
@@ -184,7 +190,7 @@ export const stacks: Stack[] = [
   },
   {
     id: 17,
-    stackType: stackTypeEnum.Enum.DevOps,
+    stackType: [stackTypeEnum.Enum.DevOps],
     name: "GitHub Actions",
     icon: SiGithubactions,
     description: "GitHub 기반 워크플로우 자동화 및 CI/CD",
@@ -193,7 +199,7 @@ export const stacks: Stack[] = [
   },
   {
     id: 18,
-    stackType: stackTypeEnum.Enum.Backend,
+    stackType: [stackTypeEnum.Enum.Backend],
     name: "GraphQL",
     icon: SiGraphql,
     description: "효율적인 API 쿼리 언어로 최적화된 데이터 요청",
@@ -202,7 +208,7 @@ export const stacks: Stack[] = [
   },
   {
     id: 19,
-    stackType: stackTypeEnum.Enum.Backend,
+    stackType: [stackTypeEnum.Enum.Backend],
     name: "Prisma",
     icon: SiPrisma,
     description: "타입 안전한 데이터베이스 ORM으로 효율적인 데이터 접근",
@@ -211,7 +217,7 @@ export const stacks: Stack[] = [
   },
   {
     id: 20,
-    stackType: stackTypeEnum.Enum.Frontend,
+    stackType: [stackTypeEnum.Enum.Frontend, stackTypeEnum.Enum.Backend],
     name: "JavaScript",
     icon: SiJavascript,
     description: "웹 브라우저에서 동작하는 동적 프로그래밍 언어",
@@ -220,7 +226,7 @@ export const stacks: Stack[] = [
   },
   {
     id: 21,
-    stackType: stackTypeEnum.Enum.Backend,
+    stackType: [stackTypeEnum.Enum.Backend],
     name: "Node.js",
     icon: SiNodedotjs,
     description: "확장 가능한 서버 사이드 JavaScript 런타임 환경",
@@ -229,7 +235,7 @@ export const stacks: Stack[] = [
   },
   {
     id: 22,
-    stackType: stackTypeEnum.Enum.Frontend,
+    stackType: [stackTypeEnum.Enum.Frontend],
     name: "Astro",
     icon: SiAstro,
     description: "콘텐츠 중심의 고성능 웹사이트를 위한 최신 프레임워크",
@@ -238,7 +244,7 @@ export const stacks: Stack[] = [
   },
   {
     id: 23,
-    stackType: stackTypeEnum.Enum.Backend,
+    stackType: [stackTypeEnum.Enum.Backend],
     name: "MySQL",
     icon: SiMysql,
     description: "신뢰성 높은 오픈소스 관계형 데이터베이스 시스템",
@@ -247,7 +253,7 @@ export const stacks: Stack[] = [
   },
   {
     id: 24,
-    stackType: stackTypeEnum.Enum.DevOps,
+    stackType: [stackTypeEnum.Enum.DevOps],
     name: "Slack",
     icon: SiSlack,
     description: "실시간 커뮤니케이션과 협업을 위한 메시징 플랫폼",
@@ -256,7 +262,7 @@ export const stacks: Stack[] = [
   },
   {
     id: 25,
-    stackType: stackTypeEnum.Enum.DevOps,
+    stackType: [stackTypeEnum.Enum.DevOps],
     name: "Notion",
     icon: SiNotion,
     description: "문서 작성과 지식 관리를 위한 올인원 워크스페이스",
@@ -265,7 +271,7 @@ export const stacks: Stack[] = [
   },
   {
     id: 26,
-    stackType: stackTypeEnum.Enum.DevOps,
+    stackType: [stackTypeEnum.Enum.DevOps],
     name: "Discord",
     icon: SiDiscord,
     description:
@@ -275,7 +281,7 @@ export const stacks: Stack[] = [
   },
   {
     id: 27,
-    stackType: stackTypeEnum.Enum.Frontend,
+    stackType: [stackTypeEnum.Enum.Frontend],
     name: "Figma",
     icon: SiFigma,
     description: "디자인 툴로 웹 및 모바일 앱 디자인 및 협업",
@@ -284,7 +290,7 @@ export const stacks: Stack[] = [
   },
   {
     id: 28,
-    stackType: stackTypeEnum.Enum.Backend,
+    stackType: [stackTypeEnum.Enum.Backend],
     name: "Java",
     icon: FaJava,
     description: "객체 지향 프로그래밍 언어로 다양한 애플리케이션 개발",
@@ -293,7 +299,7 @@ export const stacks: Stack[] = [
   },
   {
     id: 29,
-    stackType: stackTypeEnum.Enum.Backend,
+    stackType: [stackTypeEnum.Enum.Backend],
     name: "Kafka",
     icon: SiApachekafka,
     description: "빠르고 확장 가능한 메시지 브로커로 데이터 스트리밍 처리",
@@ -302,7 +308,7 @@ export const stacks: Stack[] = [
   },
   {
     id: 30,
-    stackType: stackTypeEnum.Enum.Backend,
+    stackType: [stackTypeEnum.Enum.Backend],
     name: "gRPC",
     icon: SiGoogle,
     description:
@@ -312,7 +318,7 @@ export const stacks: Stack[] = [
   },
   {
     id: 31,
-    stackType: stackTypeEnum.Enum.Backend,
+    stackType: [stackTypeEnum.Enum.Backend],
     name: "FastAPI",
     icon: SiFastapi,
     description: "빠르고 효율적인 Python 웹 프레임워크로 최적화된 API 개발",
@@ -321,7 +327,7 @@ export const stacks: Stack[] = [
   },
   {
     id: 32,
-    stackType: stackTypeEnum.Enum.Backend,
+    stackType: [stackTypeEnum.Enum.Backend],
     name: "Spring",
     icon: SiSpring,
     description: "자바 기반의 프레임워크로 안정적인 애플리케이션 개발",
@@ -330,12 +336,69 @@ export const stacks: Stack[] = [
   },
   {
     id: 33,
-    stackType: stackTypeEnum.Enum.Backend,
+    stackType: [stackTypeEnum.Enum.Backend],
     name: "Firebase",
     icon: SiFirebase,
     description:
       "실시간 데이터베이스와 클라우드 서비스로 빠른 애플리케이션 개발",
     color: "#FFCA28",
+    featured: false,
+  },
+  {
+    id: 34,
+    stackType: [stackTypeEnum.Enum.Backend],
+    name: "RabbitMQ",
+    icon: SiRabbitmq,
+    description: "메시지 브로커로 데이터 스트리밍 처리",
+    color: "#FF6600",
+    featured: false,
+  },
+  {
+    id: 35,
+    stackType: [stackTypeEnum.Enum.Backend],
+    name: "Elasticsearch",
+    icon: SiElasticsearch,
+    description: "데이터 검색 및 분석을 위한 오픈소스 검색 엔진",
+    color: "#005571",
+    featured: false,
+  },
+  {
+    id: 36,
+    stackType: [stackTypeEnum.Enum.Backend],
+    name: "Kotlin",
+    icon: SiKotlin,
+    description:
+      "현대적이고 간결하며, 자바와 호환되는 정적 타입 지정 프로그래밍 언어",
+    color: "#7F52FF",
+    featured: true,
+  },
+  {
+    id: 37,
+    stackType: [stackTypeEnum.Enum.Backend],
+    name: "MariaDB",
+    icon: SiMariadb,
+    description: "MySQL과 호환되는 오픈소스 관계형 데이터베이스 관리 시스템",
+    color: "#003545",
+    featured: true,
+  },
+  {
+    id: 38,
+    stackType: [stackTypeEnum.Enum.Backend],
+    name: "Weaviate",
+    icon: SiWearos, // 임시 아이콘
+    description:
+      "벡터 데이터베이스로 AI 기반 의미론적 검색 및 추천 시스템 구축",
+    color: "#005571",
+    featured: false,
+  },
+  {
+    id: 39,
+    stackType: [stackTypeEnum.Enum.Backend],
+    name: "OpenAI",
+    icon: SiOpenai,
+    description:
+      "GPT, DALL-E, Whisper 등 다양한 AI 모델을 제공하는 OpenAI의 API 플랫폼",
+    color: "#000000",
     featured: false,
   },
 ];

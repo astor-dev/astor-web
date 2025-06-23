@@ -2,7 +2,6 @@ import { useEffect, useRef, useState } from "react";
 import {
   Autoplay,
   EffectFade,
-  FreeMode,
   Mousewheel,
   Navigation,
   Pagination,
@@ -39,14 +38,7 @@ const HomeProjectSlider = (props: { projects: ProjectEntry[] }) => {
     <div className="relative -mx-4 flex aspect-[4/3] h-full w-[calc(100%+32px)] md:mx-0 md:w-full">
       <Swiper
         ref={swiperRef}
-        modules={[
-          Navigation,
-          Pagination,
-          Autoplay,
-          EffectFade,
-          FreeMode,
-          Mousewheel,
-        ]}
+        modules={[Navigation, Pagination, Autoplay, EffectFade, Mousewheel]}
         autoplay={{ delay: 3000, disableOnInteraction: false }}
         loop={true}
         effect={"fade"}
@@ -60,8 +52,7 @@ const HomeProjectSlider = (props: { projects: ProjectEntry[] }) => {
             return `<span class="${className} swiper-pagination-bullet-custom"></span>`;
           },
         }}
-        freeMode={false}
-        mousewheel={{ enabled: true, forceToAxis: true }}
+        mousewheel={{ enabled: true, forceToAxis: true, thresholdDelta: 10 }}
       >
         {projects?.map((project, index) => {
           return (

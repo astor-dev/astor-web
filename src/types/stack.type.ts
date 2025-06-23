@@ -6,7 +6,7 @@ export type StackType = z.infer<typeof stackTypeEnum>;
 
 export const stackSchema = z.object({
   id: z.number(),
-  stackType: stackTypeEnum,
+  stackType: z.array(stackTypeEnum),
   name: z.string(),
   icon: z.custom<IconType>(() => true),
   description: z.string(),
