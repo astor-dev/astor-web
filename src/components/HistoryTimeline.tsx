@@ -64,7 +64,7 @@ const HistoryTimeline: React.FC = () => {
 
   return (
     <section className="w-full">
-      <div className="text-black aspect-[4/3] overflow-hidden rounded-lg bg-white md:aspect-[4/3]">
+      <div className="text-black h-[400px] overflow-hidden rounded-lg bg-white md:aspect-[4/3] md:h-auto">
         {/* 내부 그리드 - 반응형 */}
         <div className="grid h-full grid-cols-1 gap-0 md:grid-cols-3">
           {/* 년도 네비게이션 - 반응형 */}
@@ -79,11 +79,8 @@ const HistoryTimeline: React.FC = () => {
               <FaChevronUp className="-rotate-90 md:hidden" />
             </button>
             <div className="mx-8 flex flex-row items-center justify-center md:mx-0 md:flex-col">
-              <span className="text-[40px] font-extrabold tracking-tight text-black-accent md:text-[80px]">
-                {String(currentYear).slice(0, 2)}
-              </span>
-              <span className="text-[40px] font-extrabold tracking-tight text-black-base md:text-[80px]">
-                {String(currentYear).slice(2, 4)}
+              <span className="-translate-y-[3px] py-2 text-[40px] font-extrabold leading-none tracking-tight text-black-base md:-translate-y-[6px] md:text-[80px]">
+                {currentYear}
               </span>
             </div>
             <button

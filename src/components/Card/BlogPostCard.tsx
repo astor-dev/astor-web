@@ -27,7 +27,10 @@ const BlogPostCard: React.FC<BlogPostCardProps> = props => {
   const formatDate = (date: string) => dayjs(date).format("YYYY.MM.DD");
 
   return (
-    <div ref={cardRef} className={` ${props.className ?? ""} h-[500px] w-full`}>
+    <div
+      ref={cardRef}
+      className={` ${props.className ?? ""} h-[300px] w-full md:h-[500px]`}
+    >
       <a
         href={`/blog/posts/${props.id}`}
         className="group relative flex h-full flex-col overflow-hidden bg-gradient-to-br from-transparent via-transparent to-skin-fill/5"
@@ -67,7 +70,7 @@ const BlogPostCard: React.FC<BlogPostCardProps> = props => {
               )}
             </p> */}
           </div>
-          <div className="my-2 line-clamp-5 min-h-[6rem] text-sm text-black-muted">
+          <div className="my-2 line-clamp-3 min-h-[3.75rem] text-sm text-black-muted md:line-clamp-5 md:min-h-[6rem]">
             {isLoading ? <Skeleton className="h-full" /> : body}
           </div>
           <div className="flex items-center gap-1 text-xs text-gray-500">

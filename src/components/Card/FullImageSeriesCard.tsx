@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useRef, useState } from "react";
 import { motion } from "framer-motion";
 import Skeleton from "react-loading-skeleton";
 import ImageWithSkeleton from "~components/Skeleton/ImageWithSkeleton";
@@ -53,20 +53,37 @@ const SeriesCard: React.FC<SeriesCardProps> = ({ series }) => {
         onPointerDown={handlePointerDown}
         onPointerMove={handlePointerMove}
         onClick={handleClick}
+        className="relative block h-full w-full"
       >
-        {/* 이미지 영역 */}
         <ImageWithSkeleton
-          className="h-[150px] w-full bg-cover bg-center md:h-[200px]"
+          className="absolute inset-0 h-full w-full object-cover md:relative md:h-[200px]"
           src={imageUrl}
           alt={series.series.data.name}
           onLoadComplete={handleImageLoad}
         />
-        {/* 카드 내용 */}
-        <div className="py-4">
+
+        {/* 반투명 오버레이와 카드 내용 - 모바일용 */}
+        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent md:hidden">
+          <div className="text-white absolute bottom-0 left-0 right-0 p-4">
+            <h2 className="text-xl font-bold text-white-base">
+              {isLoading ? <Skeleton width="50%" /> : series.series.data.name}
+            </h2>
+            <p className="mt-1 text-sm text-white-base/80">
+              {isLoading ? (
+                <Skeleton width="40%" />
+              ) : (
+                `${series.count}개의 포스트`
+              )}
+            </p>
+          </div>
+        </div>
+
+        {/* 카드 내용 - 데스크톱용 */}
+        <div className="hidden py-4 md:block">
           <h2 className="text-xl font-bold text-black-accent">
             {isLoading ? <Skeleton width="50%" /> : series.series.data.name}
           </h2>
-          <p className="mt-1 text-sm text-gray-600">
+          <p className="mt-1 text-sm text-black-base">
             {isLoading ? (
               <Skeleton width="40%" />
             ) : (

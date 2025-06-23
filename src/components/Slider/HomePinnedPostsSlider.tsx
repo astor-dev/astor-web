@@ -1,11 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import {
-  Autoplay,
-  FreeMode,
-  Mousewheel,
-  Navigation,
-  Pagination,
-} from "swiper/modules";
+import { Autoplay, FreeMode, Mousewheel, Navigation } from "swiper/modules";
 import { Swiper, SwiperSlide, type SwiperRef } from "swiper/react";
 import type { PostEntry } from "~types/post.type";
 import BlogPostCard from "~components/Card/BlogPostCard";
@@ -39,7 +33,7 @@ const MagazineCarousel = (
   return (
     <div className="relative">
       {isLoading ? (
-        <div className="grid h-[500px] w-full"></div>
+        <div className="grid h-[300px] w-full md:h-[500px]"></div>
       ) : (
         <div className="swiper-container-wrapper group relative">
           <Swiper
