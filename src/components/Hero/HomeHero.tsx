@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from "react";
+import { useEffect, useState, useRef } from "react";
 import heroMilkyway from "~assets/images/hero-milkyway.webp";
 import FloatingIcons from "~components/Hero/FloatingIcons";
 import LoadingSpinner from "~components/LoadingSpinner/LoadingSpinner";
@@ -188,7 +188,7 @@ export default function HomeHero() {
     <div>
       <section
         id="hero-section"
-        className="relative flex h-[300px] w-full flex-col items-center justify-center overflow-hidden bg-skin-fill md:h-[400px] lg:h-[500px]"
+        className="relative flex h-[450px] w-full flex-col items-center justify-center overflow-hidden bg-skin-fill md:h-[500px]"
       >
         <ImageWithSkeleton
           id="hero-img"
