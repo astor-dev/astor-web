@@ -63,7 +63,11 @@ const SeriesCard: React.FC<SeriesCardProps> = ({ series }) => {
         />
 
         {/* 반투명 오버레이와 카드 내용 - 모바일용 */}
-        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent md:hidden">
+        <div className="absolute inset-0 md:hidden">
+          {/* 하단 그라디언트만 덮도록 제한된 영역 */}
+          <div className="absolute bottom-0 left-0 right-0 h-1/2 bg-gradient-to-t from-black/80 via-black/50 to-transparent md:hidden" />
+
+          {/* 텍스트는 하단에 별도로 위치 */}
           <div className="text-white absolute bottom-0 left-0 right-0 p-4">
             <h2 className="text-xl font-bold text-white-base">
               {isLoading ? <Skeleton width="50%" /> : series.series.data.name}

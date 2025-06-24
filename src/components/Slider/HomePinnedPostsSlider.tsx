@@ -31,7 +31,7 @@ const MagazineCarousel = (
   };
 
   return (
-    <div className="relative">
+    <div className="relative -mx-4 md:mx-0">
       {isLoading ? (
         <div className="grid h-[300px] w-full md:h-[500px]"></div>
       ) : (
@@ -56,6 +56,7 @@ const MagazineCarousel = (
             breakpoints={{
               0: {
                 slidesPerView: 1.2,
+                slidesOffsetBefore: 16,
               },
               640: {
                 //sm

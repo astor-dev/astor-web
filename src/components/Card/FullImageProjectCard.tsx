@@ -1,4 +1,3 @@
-import React from "react";
 import ImageWithSkeleton from "~components/Skeleton/ImageWithSkeleton";
 import type { ProjectEntry } from "~/types/project.type";
 
@@ -24,7 +23,7 @@ const FullImageProjectCard = (props: ProjectCardProps) => {
           />
 
           {/* 그라데이션 오버레이 */}
-          <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent" />
+          <div className="absolute bottom-0 left-0 right-0 h-1/2 bg-gradient-to-t from-black/80 via-black/50 to-transparent" />
         </div>
 
         {/* 프로젝트 정보 */}
