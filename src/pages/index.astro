@@ -19,6 +19,7 @@ import HomeProjectSlider from "~components/Slider/HomeProjectSlider";
 import HomePinnedPostsSlider from "~components/Slider/HomePinnedPostsSlider";
 import HistoryTimeline from "~components/HistoryTimeline";
 import HomeTagsSlider from "~components/Slider/HomeTagsSlider";
+import RecentPostsSection from "~components/Section/RecentPostsSection.astro";
 
 const projectRepository =
   repositoryContainer.get<ProjectRepository>(PROJECT_REPOSITORY);
@@ -38,6 +39,15 @@ const pinnedPosts: PostEntry[] = (
     filter: { pinned: true, draft: false },
   })
 ).items;
+
+// 최근 게시글 가져오기
+const recentPosts: PostEntry[] = (
+  await postRepository.getPosts({
+    paging: { page: 1, limit: 6 },
+    filter: { draft: false },
+  })
+).items;
+
 const tags: Tag[] = await postRepository.getAllTags();
 const seriesList: SeriesAndCount[] =
   await postRepository.getAllSeriesAndCount();
@@ -62,7 +72,6 @@ const seriesList: SeriesAndCount[] =
       <ShootingStarHeader title="주목할만한 글" moreLink="/blog" client:load />
       <HomePinnedPostsSlider pinnedPosts={pinnedPosts} client:idle />
     </section>
-
     <section class="mb-16">
       <div class="relative">
         <div class="relative z-10 grid grid-cols-1 gap-8 lg:grid-cols-2">
@@ -91,8 +100,14 @@ const seriesList: SeriesAndCount[] =
       </div>
     </section>
     <section class="mb-16">
+      <div class="mb-6">
+        <ShootingStarHeader title="최근 게시글" moreLink="/blog" client:load />
+      </div>
+      <RecentPostsSection recentPosts={recentPosts} />
+    </section>
+    <!-- <section class="mb-16">
       <ShootingStarHeader title="인기 태그" moreLink="/blog" client:load />
       <HomeTagsSlider tagList={tags} client:load />
-    </section>
+    </section> -->
   </div>
 </Layout>

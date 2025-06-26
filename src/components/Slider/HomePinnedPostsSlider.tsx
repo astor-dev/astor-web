@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { Autoplay, FreeMode, Mousewheel, Navigation } from "swiper/modules";
+import { Autoplay, Mousewheel, Navigation } from "swiper/modules";
 import { Swiper, SwiperSlide, type SwiperRef } from "swiper/react";
 import type { PostEntry } from "~types/post.type";
 import BlogPostCard from "~components/Card/BlogPostCard";
@@ -38,15 +38,12 @@ const MagazineCarousel = (
         <div className="swiper-container-wrapper group relative">
           <Swiper
             ref={swiperRef}
-            modules={[Navigation, Autoplay, FreeMode, Mousewheel]}
+            modules={[Navigation, Autoplay, Mousewheel]}
             loop={true}
             spaceBetween={30}
             slidesPerGroup={1}
             centeredSlidesBounds={true}
             grabCursor={true}
-            freeMode={{
-              enabled: pinnedPosts.length >= 5 ? true : false,
-            }}
             mousewheel={{
               enabled: true,
               forceToAxis: true,

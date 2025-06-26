@@ -1,0 +1,99 @@
+---
+import type { PostEntry } from "~types/post.type";
+import { remark } from "remark";
+import strip from "strip-markdown";
+
+interface Props {
+  recentPosts: PostEntry[];
+}
+
+const { recentPosts } = Astro.props;
+
+// 마크다운 제거 함수
+const stripMarkdown = async (content: string): Promise<string> => {
+  const result = await remark().use(strip).process(content);
+  return result.toString();
+};
+
+// 각 포스트의 본문에서 마크다운 제거
+const postsWithCleanContent = await Promise.all(
+  recentPosts.map(async post => ({
+    ...post,
+    cleanBody: post.body ? await stripMarkdown(post.body) : "",
+  })),
+);
+---
+
+<!-- 최근 게시글 섹션 -->
+<section>
+  <div class="bg-transparent">
+    <!-- 컨텐츠 영역 -->
+    <div>
+      {
+        postsWithCleanContent.length === 0 ? (
+          <div class="py-12 text-center">
+            <div class="mb-2 text-gray-400">📝</div>
+            <p class="text-gray-600 dark:text-gray-400">
+              아직 게시글이 없습니다.
+            </p>
+          </div>
+        ) : (
+          <div class="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
+            {postsWithCleanContent.slice(0, 6).map((post, index) => (
+              <a href={`/blog/posts/${post.id}`} class="group relative block">
+                <article class="h-full bg-white transition-all duration-300 hover:bg-gray-50 dark:bg-gray-900 dark:hover:bg-gray-800">
+                  <div class="h-px w-full bg-violet-500/40" />
+
+                  <div class="p-6">
+                    <div class="mb-4 flex items-start justify-between">
+                      <h3 class="dark:text-white line-clamp-2 min-h-[3rem] text-lg font-bold text-black-accent transition-colors duration-200 group-hover:text-violet-600 dark:group-hover:text-violet-400">
+                        {post.data.title}
+                      </h3>
+                      {index < 3 && (
+                        <span class="ml-3 shrink-0 bg-violet-100 px-2 py-1 text-xs font-medium text-violet-700 dark:bg-violet-900/50 dark:text-violet-300">
+                          NEW
+                        </span>
+                      )}
+                    </div>
+
+                    <p class="mb-2 line-clamp-2 text-sm leading-relaxed text-gray-600 dark:text-gray-400">
+                      {post.cleanBody?.slice(0, 120) ||
+                        "게시글 내용을 확인해보세요..."}
+                    </p>
+
+                    <div class="flex items-center justify-between pt-4">
+                      <time class="text-xs font-medium uppercase tracking-wider text-black-muted dark:text-gray-500">
+                        {new Date(post.data.createdAt).toLocaleDateString(
+                          "ko-KR",
+                          {
+                            year: "numeric",
+                            month: "short",
+                            day: "numeric",
+                          },
+                        )}
+                      </time>
+                      {post.data.tags && post.data.tags.length > 0 && (
+                        <div class="flex gap-1">
+                          {post.data.tags.slice(0, 2).map((tag: string) => (
+                            <span class="bg-gray-100 px-2 py-0.5 text-xs font-medium text-gray-600 dark:bg-gray-800 dark:text-gray-400">
+                              {tag}
+                            </span>
+                          ))}
+                          {post.data.tags.length > 2 && (
+                            <span class="text-xs text-gray-400">
+                              +{post.data.tags.length - 2}
+                            </span>
+                          )}
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                </article>
+              </a>
+            ))}
+          </div>
+        )
+      }
+    </div>
+  </div>
+</section>

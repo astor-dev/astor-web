@@ -223,7 +223,7 @@ export default function HomeHero() {
               id="code-editor"
               ref={codeEditorRef}
               // "whitespace-pre-wrap break-all" 대신 아래와 같이 수정
-              className="relative block w-full whitespace-normal break-words rounded-lg p-4 text-center font-code text-2xl text-white-accent md:text-4xl lg:text-5xl"
+              className="relative block w-full whitespace-normal break-words rounded-lg p-4 text-center font-code text-3xl text-white-accent md:text-4xl lg:text-5xl"
             >
               <div className="flex w-full flex-wrap items-center justify-center gap-1">
                 <span
@@ -255,7 +255,7 @@ export default function HomeHero() {
 
               <p
                 id="hero-text"
-                className="mt-4 font-sans text-xs font-light text-gray-200 md:mt-12 md:text-base lg:text-lg"
+                className="mt-4 font-sans text-sm font-light text-gray-200 md:mt-12 md:text-base lg:text-lg"
               >
                 안녕하세요!{" "}
                 <span className="font-bold">
