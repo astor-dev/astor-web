@@ -255,7 +255,7 @@ export default function HomeHero() {
 
               <p
                 id="hero-text"
-                className="mt-4 font-sans text-sm font-light text-gray-200 md:mt-12 md:text-base lg:text-lg"
+                className="mt-4 font-sans text-xs font-light text-gray-200 md:mt-12 md:text-base lg:text-lg"
               >
                 안녕하세요!{" "}
                 <span className="font-bold">
