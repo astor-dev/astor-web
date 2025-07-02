@@ -1,8 +1,8 @@
 ---
 id: "595495016655228928"
 author: "Astor"
-title: "NestJS 모듈 시스템에 맞춘 계층형 모놀리식 아키텍처 설계"
-pinned: false
+title: "NestJS에 자연스럽게 녹아드는 모듈러 모놀리식 아키텍처 가이드"
+pinned: true
 draft: false
 tags:
   - NestJS
@@ -12,7 +12,7 @@ tags:
 ogImage: "https://d2r0pavv0lsiqc.cloudfront.net/posts/images/43b5d07c-0d7b-4550-9565-b69d47bf224b.webp"
 seriesId: "549808096239681536"
 createdAt: "2025-07-02 15:04:35"
-updatedAt: "2025-07-02 15:04:35"
+updatedAt: "2025-07-02 16:40:49"
 ---
 
 ## 시작하며: NestJS와 아키텍처
@@ -51,3 +51,132 @@ NestJS에서는 모듈을 도메인 단위로 나누되, **각 모듈 내부에 
 즉, **모듈 간의 계층적 의존 방향은 다음과 같은 상향식 참조 흐름**을 가집니다
 
 ![](https://d2r0pavv0lsiqc.cloudfront.net/projects/images/f76e8bfb-9d7c-4ac2-bc5e-19ec305dd1b7.webp)
+
+사진을 보시면 각 모듈간의 참조관계를 확인할 수 있습니다.
+
+레이어는 도메인 주도 설계의 전술적 설계 테크닉에서 파생된 presentation - application -domain -infrastructure 4계층 전략을 사용합니다.
+
+### 서비스 모듈
+
+결제와 환불, 쿠폰 등 금전적인 요소들을 응집해서 처리하는 최상위 billing 서비스가 존재한다고 했을 때, 이에 대응하는 billing module을 우선 최상위에 모듈로 둡니다. 이 모듈은 응용 계층들의 모듈을 import하고 controller를 등록합니다.
+
+```ts
+@Module({
+  imports: [PaymentProcessingModule, PromotionModule, LeaderElectionModule, CachingModule],
+  controllers: controllers,
+  providers: [],
+  exports: [],
+})
+export class BillingCommandModule {}
+```
+
+위와 같은 구성이 될 수 있죠. 추가적으로 횡단 관심사 모듈들인 캐싱이나 리더 선출 모듈을 주입받고 있습니다.
+
+이 모듈에서 controller \<-> application 레이어를 조합하고 처리합니다.
+
+### 애플리케이션 모듈
+
+여러 도메인 로직을 조합하고, 외부 채널 등과 소통하며 비즈니스 로직을 직접적으로 처리하는 것을 애플리케이션 모듈에서 맡아서합니다.
+
+```ts
+@Module({
+  imports: [
+    BillingSupportModule.forFeature({ reservation: true, shuttleRoute: true }),
+    PaymentModule,
+    IssuedCouponModule,
+  ],
+  providers: [PaymentFacade, ...paymentOrigins, PaymentOriginFactory, DiscountManager],
+  exports: [PaymentProcessingFacade],
+})
+export class PaymentProcessingModule {}
+
+```
+
+아래와 같이 도메인 모듈을 조합해서 사용합니다.
+
+과정에서 특정 서비스 내지 bounded-context 내부에서 공통적으로 사용할만한 응용 로직이 존재하면 애플리케이션의 **SupportModule**로 등록해서, 타 애플리케이션 모듈들에서 재활용해서 씁니다. 가령 다른 서비스와 직접적으로 소통할 일이 있는 경우 외부 포트 등을 SupportModule에 넣어서 사용하는 식입니다.
+
+내부에서는 여러 클래스들 조합해서 OOP를 하시면 됩니다. 다만 상위 모듈로 넘겨줄 &#xB550;**, facade class에 응집하여서 내부 상세 로직을 캡슐화**합니다.
+
+### 도메인 모듈
+
+**도메인 모듈은 시스템의 비즈니스 개념과 규칙을 가장 순수한 형태로 담고 있는 계층입니다.**
+이곳에는 핵심 엔터티, 밸류 오브젝트(Value Object), 도메인 서비스, 리포지토리 인터페이스 등 **도메인의 불변성과 일관성을 보장하는 요소들만 포함**됩니다.
+
+도메인 모듈은 응용 계층이나 인프라 계층과는 **기술적·상황적 의존 없이 독립적으로 설계**되어야 하며,
+외부 시스템이나 채널, 프레임워크와의 연결 지점은 **인프라 레이어를 통해 위임**합니다.
+즉, 외부와의 상호작용(알림, 외부 API 호출 등)은 도메인 내부에 포함되지 않고,
+그에 대한 계약(인터페이스)만 정의한 채 구현은 바깥 계층에 맡깁니다.
+
+이러한 설계는 도메인 모듈의 **변경 가능성을 최소화하고, 비즈니스 규칙의 순수성과 가독성을 유지하는 데 목적**이 있습니다.
+
+```ts
+@Module({
+  imports: [TypeOrmModule.forFeature([CouponsEntity])],
+  controllers: [],
+  providers: [
+    CouponService,
+    CouponCalculator,
+    {
+      provide: CouponValidator,
+      useClass: DefaultCouponValidator,
+    },
+    {
+      provide: CouponRepository,
+      useClass: TypeormCouponRepository,
+    },
+    {
+      provide: CouponReader,
+      useClass: RepositoryCouponReader,
+    },
+    {
+      provide: CouponStore,
+      useClass: RepositoryCouponStore,
+    },
+  ],
+  exports: [CouponService],
+})
+export class CouponModule {}
+```
+
+모듈의 구성입니다. 응용 계층과 마찬가지로 Service는 도메인 계층의 Facade역할을 합니다. 또한 class를 직접 provide하지 않고 인터페이스 기반 DI가 들어간 요소들이 있는데, 이는 **인프라 레이어에 구현체가 등록된 케이스**에 해당합니다. 디렉토리를 보겠습니다.
+
+![](https://d2r0pavv0lsiqc.cloudfront.net/projects/images/0a5a1834-754a-443e-890c-66597f0be430.webp)
+
+인프라계층에 해당하는 요소를 위와 같이 분리합니다. CouponReader 등은 인터페이스만 정의되어있습니다.
+
+models쪽에는 **실제 도메인 메서드**를 지니고 있는 **AggregateRoot**나 **DomainEntity**, **ValueObject** 들을 정의해 놓습니다.
+
+이 엔티티는 도메인 레이어 외부에 누설되는 순간 도메인 모듈 내부에 대한 캡슐화가 깨지기 때문에, 서비스 계층에서 return해 상위 모듈로 올릴 때는 **순수히 데이터만 지닌 info라는 객체로 매핑**해서 올립니다.
+
+![](https://d2r0pavv0lsiqc.cloudfront.net/projects/images/2b5a812b-55a4-4ec6-898b-bfe08577ccbe.webp)
+
+앞서 말한 외부 세계와의 의존성, 기술적 상세 구현에 대한 내용은 infrastructures로 몰아 넣어 놓습니다. 여기서 Orm에서 사용하는 영속성 Entity는 은닉합니다. 인자와 리턴 값 모두 도메인레이어의 모델을 사용하고, 내부에서 처리할 때 영속성 Entity로 매핑합니다.  [https://deviq.com/principles/persistence-ignorance](https://deviq.com/principles/persistence-ignorance)
+
+## 모듈러 모놀리스
+
+`billing`과 같은 서브도메인 단위의 서비스 모듈을 **Bounded Context 또는 팀 단위로 설계**하고,
+이러한 모듈들을 응집하여 **하나의 통합된 서버에서 구동**하는 구조가 바로 **모듈러 모놀리식 아키텍처(Modular Monolith Architecture)**&#xC785;니다.
+
+이렇게 구성된 각 모듈은 하나의 명확한 서브 도메인을 책임지며,
+전체 시스템은 이들을 조합함으로써 도메인 주도 설계에서 말하는 **도메인 전체의 구성**을 형성합니다.
+
+[https://www.sktenterprise.com/bizInsight/blogDetail/dev/7765](https://www.sktenterprise.com/bizInsight/blogDetail/dev/7765)
+
+![](https://d2r0pavv0lsiqc.cloudfront.net/projects/images/0ac37345-9754-4b6f-8d4e-3fc0db31b4eb.webp)NestJS의 **모듈 시스템은 이 아키텍처와 자연스럽게 맞물립니다.**
+NestJS는 기능 단위가 아닌 **도메인 단위의 모듈 구성**을 중심으로 하고 있으며, 각 모듈은 독립적인 DI 컨텍스트를 갖고 책임과 경계를 분리할 수 있도록 설계되어 있습니다. 이는 모듈러 모놀리식 아키텍처의 핵심인 **명확한 Bounded Context 구분 및 내부 응집도**와 정확히 일치합니다.
+
+서비스 모듈 간 통신은 **이벤트 기반 또는 명시적인 API 호출**을 통해 이루어집니다.
+NestJS 환경에서는 이를 별도의 메시지 브로커 없이도 **인메모리 이벤트 큐로 구현**할 수 있으며,
+이 구조를 통해 **메시지 큐 기반 아키텍처와 유사한 decoupling 효과**를 확보할 수 있습니다.
+
+**이벤트 핸들러를 각 모듈에 분산 등록**하면, 마치 컨슈머 그룹을 갖춘 메시지 큐처럼 동작할 수 있으며, **graceful shutdown과 이벤트 처리 보장만 신중히 설계**하면 운영 안정성도 확보할 수 있습니다.
+
+이 방식은 초기에는 **인프라 리소스를 최소화한 채** 서비스 간 의존도를 느슨하게 유지할 수 있는 장점을 가지며,
+추후 Kafka, Redis Streams 등 외부 메시지 브로커로 이관할 수 있는 확장성도 열어둡니다.
+
+### 번외) 메시지 브로커 추상화에 대한 고려
+
+물론 메시지 큐 인프라를 사용하게 되는 경우, 인터페이스를 추상화해두는 것이 이관에 도움이 될 수 있습니다.
+다만 **Kafka, Redis 등은 각각의 고유 기능과 최적화 방식이 다르기 때문에**, 너무 일반화된 추상 레이어는 오히려 각 인프라의 특화된 기능을 쓰기 어렵게 만드는 비용이 발생할 수 있습니다.
+따라서 인메모리 이벤트 기반을 사용할 경우, **초기부터 과도한 추상화보다는, 사용하는 메시징 인프라에 맞춘 구체적 설계를** 하는 것이 나을 수 도 있습니다.
