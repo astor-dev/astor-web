@@ -1,19 +1,22 @@
 import React, { useEffect, useRef, useState } from "react";
-import { FaClock, FaUser } from "react-icons/fa";
 import type { PostEntry } from "~/types/post.type";
 import dayjs from "dayjs";
 import ImageWithSkeleton from "~components/Skeleton/ImageWithSkeleton";
 import { remark } from "remark";
 import strip from "strip-markdown";
 import Skeleton from "react-loading-skeleton";
+
 interface BlogPostCardProps extends PostEntry {
   className?: string;
 }
 
 const BlogPostCard: React.FC<BlogPostCardProps> = props => {
   const cardRef = useRef<HTMLDivElement>(null);
+  const titleRef = useRef<HTMLHeadingElement>(null);
   const [body, setBody] = useState("");
   const [isLoading, setIsLoading] = useState(true);
+  const [titleLines, setTitleLines] = useState<1 | 2>(2); // 제목 줄 수 상태
+
   useEffect(() => {
     remark()
       .use(strip)
@@ -24,12 +27,43 @@ const BlogPostCard: React.FC<BlogPostCardProps> = props => {
       });
   }, [props.body]);
 
+  // 제목의 실제 줄 수를 계산하는 함수
+  useEffect(() => {
+    const calculateTitleLines = () => {
+      if (!titleRef.current || isLoading) return;
+
+      const titleElement = titleRef.current;
+      const styles = window.getComputedStyle(titleElement);
+      const lineHeight = parseFloat(styles.lineHeight);
+      const actualHeight = titleElement.scrollHeight;
+
+      // 실제 줄 수 계산 (1줄 또는 2줄)
+      const calculatedLines = Math.round(actualHeight / lineHeight);
+      setTitleLines(calculatedLines <= 1 ? 1 : 2);
+    };
+
+    // 로딩이 완료되고 DOM이 렌더링된 후 계산
+    if (!isLoading) {
+      const timer = setTimeout(calculateTitleLines, 50);
+      return () => clearTimeout(timer);
+    }
+  }, [isLoading, props.data.title]);
+
   const formatDate = (date: string) => dayjs(date).format("YYYY.MM.DD");
+
+  // 제목 줄 수에 따른 본문 클래스 결정
+  const getBodyClasses = () => {
+    if (titleLines === 1) {
+      return "mt-2 mb-1 line-clamp-4 min-h-[5rem] text-sm text-black-muted md:line-clamp-5 md:min-h-[6.5rem]";
+    } else {
+      return "my-1 line-clamp-3 min-h-[3.75rem] text-sm text-black-muted md:line-clamp-4 md:min-h-[4.8rem]";
+    }
+  };
 
   return (
     <div
       ref={cardRef}
-      className={` ${props.className ?? ""} h-[300px] w-full md:h-[500px]`}
+      className={` ${props.className ?? ""} h-[300px] w-full md:h-[350px]`}
     >
       <a
         href={`/blog/posts/${props.id}`}
@@ -42,24 +76,14 @@ const BlogPostCard: React.FC<BlogPostCardProps> = props => {
             alt={props.data.title}
             className="absolute inset-0 h-full w-full object-cover"
           />
-
-          {/* {props.data.series && (
-            <div className="absolute left-2 top-2">
-              {isLoading ? (
-                <Skeleton className="h-3 w-3" />
-              ) : (
-                <span className="inline-block rounded bg-skin-accent px-2 py-1 text-xs font-bold text-white-accent">
-                  <FaBookmark className="mr-1 inline h-3 w-3" />
-                  {props.data.series}
-                </span>
-              )}
-            </div>
-          )} */}
         </div>
 
         <div className="flex flex-1 flex-col justify-between py-3">
           <div>
-            <h3 className="line-clamp-2 text-lg font-bold text-black-accent md:text-xl">
+            <h3
+              ref={titleRef}
+              className="line-clamp-2 text-lg font-bold text-black-accent md:text-xl"
+            >
               {isLoading ? <Skeleton className="w-full" /> : props.data.title}
             </h3>
             {/* <p className="line-clamp-2 h-[2.5rem] text-sm">
@@ -70,16 +94,8 @@ const BlogPostCard: React.FC<BlogPostCardProps> = props => {
               )}
             </p> */}
           </div>
-          <div className="my-2 line-clamp-3 min-h-[3.75rem] text-sm text-black-muted md:line-clamp-5 md:min-h-[6rem]">
+          <div className={getBodyClasses()}>
             {isLoading ? <Skeleton className="h-full" /> : body}
-          </div>
-          <div className="flex items-center gap-1 text-xs text-gray-500">
-            <FaClock className="h-3 w-3" />
-            <time dateTime={props.data.createdAt}>
-              {isLoading ? <Skeleton /> : formatDate(props.data.createdAt)}
-            </time>
-            <FaUser className="h-3 w-3" />
-            <span>{isLoading ? <Skeleton /> : props.data.author}</span>
           </div>
         </div>
       </a>

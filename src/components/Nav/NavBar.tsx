@@ -148,7 +148,7 @@ const NavBar = ({ pathname }: NavBarProps) => {
       <nav className="mx-auto flex w-full max-w-[1200px] items-center justify-between px-4 py-1 md:px-6 md:py-3">
         {/* 왼쪽: 로고 */}
         <div className="flex-shrink-0">
-          <a href="/" title="홈" className={`font-logo text-lg md:text-2xl`}>
+          <a href="/" title="홈" className={`font-logo text-xl md:text-2xl`}>
             astor-dev
           </a>
         </div>
