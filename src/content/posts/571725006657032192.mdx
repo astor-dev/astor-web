@@ -2,7 +2,7 @@
 id: "571725006657032192"
 author: "Astor"
 title: "TS & NestJS 디자인패턴 총정리"
-pinned: false
+pinned: true
 draft: false
 tags:
   - NestJS
@@ -33,6 +33,7 @@ nest.js와 spring등 DI를 제공하는 프레임워크들은 **인터페이스*
 우선 typescript 활용에 있어 추상클래스와 인터페이스 사용의 유스케이스 차이에 대해 한번 알아보고 지나가겠습니다.
 
 - **인터페이스 사용**
+
   - **런타임 타입 정보**
 
     가 전혀 필요 없고,
@@ -40,6 +41,7 @@ nest.js와 spring등 DI를 제공하는 프레임워크들은 **인터페이스*
     **컴파일 타임**
 
     만으로 충분할 때
+
   - **객체 리터럴**
 
     이나 여러
@@ -51,12 +53,15 @@ nest.js와 spring등 DI를 제공하는 프레임워크들은 **인터페이스*
     **느슨하게**
 
     결합되어야 할 때
+
   - JS 번들 크기 최적화를 위해
 
     **런타임 코드 생성 없이**
 
     타입만 정의할 때
+
 - **추상 클래스 사용**
+
   - **부분 구현**
 
     (default 메서드,
@@ -64,6 +69,7 @@ nest.js와 spring등 DI를 제공하는 프레임워크들은 **인터페이스*
     `protected`
 
     필드)을 통해 코드 재사용이 필요할 때
+
   - **런타임 타입 확인**
 
     (
@@ -71,6 +77,7 @@ nest.js와 spring등 DI를 제공하는 프레임워크들은 **인터페이스*
     `instanceof`
 
     )을 사용해야 할 때
+
   - **단일 상속**
 
     을 활용해 공통 기능을 중앙에서 제어할 때
@@ -114,7 +121,9 @@ export abstract class ReservationReader {
     uniqueCriteria: ReservationCriteriaUniqueKey;
     options?: ReservationCriteriaFindOne;
   }): Promise<Reservation | null>;
-  abstract findMany(options?: ReservationCriteriaFindMany): Promise<Reservation[]>;
+  abstract findMany(
+    options?: ReservationCriteriaFindMany,
+  ): Promise<Reservation[]>;
 }
 ```
 
@@ -124,7 +133,7 @@ export class RepositoryReservationReader extends ReservationReader {
   constructor(private readonly reservationRepository: ReservationRepository) {
     super();
   }
-// ... 생략
+  // ... 생략
 }
 ```
 
@@ -146,7 +155,7 @@ constructor(reservationReader: ReservationReader)
 
 런타임에 유실되지 않기 때문에 모듈 선언부나 사용부의 코드가 굉장히 심플해집니다. 개인적으로는 ts에선 위와 같은 추상 클래스 패턴 사용을 꽤나 권장하는 편인데, 주로 **설계도 : 구현체가 일대일 대응될 확률이 높은 경우** 위 패턴 사용을 추천합니다. java로 치면 service -> serviceImpl 혹은 DefaultService 만 존재하는 케이스에 속하죠.
 
-애초에 *단일한 구현체만 존재한다면 굳이 설계도를 따로 정의할 필요가 있는가?* 라는 부분에 대해서는 이견이 갈릴 수 있다 생각합니다. 저는 협업적인 면, 코드 가독성 및 시스템의 설계 측면에 있어서라도 느슨한 결합이 주는 메리트가 꽤 있다고 생각하는 편이여서 단일 구현체여도 가급적 설계도를 선언합니다. 테스트 할 때 모킹하기도 수월하구요. 이부분은 취향 껏 하시면 될 것 같네요.
+애초에 _단일한 구현체만 존재한다면 굳이 설계도를 따로 정의할 필요가 있는가?_ 라는 부분에 대해서는 이견이 갈릴 수 있다 생각합니다. 저는 협업적인 면, 코드 가독성 및 시스템의 설계 측면에 있어서라도 느슨한 결합이 주는 메리트가 꽤 있다고 생각하는 편이여서 단일 구현체여도 가급적 설계도를 선언합니다. 테스트 할 때 모킹하기도 수월하구요. 이부분은 취향 껏 하시면 될 것 같네요.
 
 abstract class나 interface 안쓰시면 그냥 DIP 굳이 안하고 직접 class 자체를 참조하셔도 됩니다.&#x20;
 
@@ -167,7 +176,7 @@ providers: [
 
 // 주입
 constructor(
-  @Inject(UserRepoToken) 
+  @Inject(UserRepoToken)
   private readonly repo: UserRepository
 ) {}
 
@@ -188,8 +197,7 @@ providers: [
   DefaultTodoManager,
   { provide: TODO_READER, useExisting: DefaultTodoManager },
   { provide: TODO_STORE, useExisting: DefaultTodoManager },
-]
-
+];
 ```
 
 `useExisting`을 활용하면 provider의 구현체로 모듈에 이미 등록한 특정 class를 사용할 수 있습니다. 이 경우 provide에서 제공하는 token을 통해 inject된 부분의 구현체에 대해 해당 모듈에 한해, 해당 구현체를 사용하게 됩니다.
@@ -201,7 +209,7 @@ providers: [
 ```ts
 
 @Injectable()
-export class DefaultTodoManager implements TodoFind, TodoStore 
+export class DefaultTodoManager implements TodoFind, TodoStore
 ```
 
 사용측은 심볼 혹은 토큰을 명시적으로 주입해야 합니다.
@@ -220,15 +228,20 @@ export class DefaultTodoManager implements TodoFind, TodoStore
 
 이 인터페이스에 대한 구현체는 여럿이 될 수도 있고, 구현 사정 및 책임 분리에 대한 요구사항에 따라 delegation 패턴을 활용해 하나(혹은 유스케이스보단 적은 수)가 될 수 있습니다.
 
-OauthLoginUseCase에 login 메서드가, RefrestOauthTokenUseCase 에  refresh 메서드가 정의되어 있다고 가정하면,  KakaoOauthService에서 두 메서드를 모두 구현할 수도 있겠죠.
+OauthLoginUseCase에 login 메서드가, RefrestOauthTokenUseCase 에 refresh 메서드가 정의되어 있다고 가정하면, KakaoOauthService에서 두 메서드를 모두 구현할 수도 있겠죠.
 
 ```ts
 @Injectable()
-export class KakaoOauthService implements OauthLoginUseCase, RefreshOauthTokenUseCase {
-  async login(params: LoginDto) { /* ... */ }
-  async refresh(params: RefreshDto) { /* ... */ }
+export class KakaoOauthService
+  implements OauthLoginUseCase, RefreshOauthTokenUseCase
+{
+  async login(params: LoginDto) {
+    /* ... */
+  }
+  async refresh(params: RefreshDto) {
+    /* ... */
+  }
 }
-
 ```
 
 ## List DI
@@ -247,14 +260,17 @@ Spring처럼 `List<Interface>`를 바로 주입하는 기능은 없으며, NestJ
 ```ts
 @Injectable()
 export class CardPaymentStrategy implements PaymentStrategy {
-  pay(amount: number) { console.log('Card payment:', amount); }
+  pay(amount: number) {
+    console.log("Card payment:", amount);
+  }
 }
 
 @Injectable()
 export class PaypalPaymentStrategy implements PaymentStrategy {
-  pay(amount: number) { console.log('Paypal payment:', amount); }
+  pay(amount: number) {
+    console.log("Paypal payment:", amount);
+  }
 }
-
 ```
 
 ### 리스트 Provider 작성
@@ -272,7 +288,7 @@ export class PaypalPaymentStrategy implements PaymentStrategy {
       },
       inject: [CardPaymentStrategy, PaypalPaymentStrategy],
     }
-    
+
  ]
 )
 ```
@@ -283,7 +299,7 @@ export class PaypalPaymentStrategy implements PaymentStrategy {
 @Injectable()
 export class PaymentService {
   constructor(
-    @Inject('PAYMENT_STRATEGIES')
+    @Inject("PAYMENT_STRATEGIES")
     private readonly strategies: PaymentStrategy[],
   ) {}
 
@@ -293,7 +309,6 @@ export class PaymentService {
     }
   }
 }
-
 ```
 
 이렇게 각 인터페이스의 구현체를 하나의 Token을 통해 묶으면서, 해당 토큰에 리스트 형태로 명시적으로 provide하여야 여러 인터페이스에 대한 복수의 구현체를 주입할 수 있습니다.
@@ -304,16 +319,15 @@ export class PaymentService {
 
 ```ts
 export enum OauthProvider {
-  KAKAO = 'KAKAO',
-  GOOGLE = 'GOOGLE',
-  NAVER = 'NAVER',
+  KAKAO = "KAKAO",
+  GOOGLE = "GOOGLE",
+  NAVER = "NAVER",
 }
 
 export interface OauthProviderService {
   support(provider: OauthProvider): boolean;
   login(authCode: string): Promise<string>; // 예시로 accessToken 반환
 }
-
 
 @Injectable()
 export class KakaoOauthService implements OauthProviderService {
@@ -322,17 +336,16 @@ export class KakaoOauthService implements OauthProviderService {
   }
 
   async login(authCode: string): Promise<string> {
-    console.log('Kakao 로그인 처리');
-    return 'kakao-access-token';
+    console.log("Kakao 로그인 처리");
+    return "kakao-access-token";
   }
 }
 // 등등 기타 구현체
 
-
 @Injectable()
 export class OauthService {
   constructor(
-    @Inject('OAUTH_PROVIDER_SERVICES')
+    @Inject("OAUTH_PROVIDER_SERVICES")
     private readonly providers: OauthProviderService[],
   ) {}
 
@@ -344,14 +357,13 @@ export class OauthService {
     return selectedProvider.login(authCode);
   }
 }
-
 ```
 
 마찬가지로 oauth 말고도 PG사 등 유사한 통신 규격을 준수하는 여러 구현체가 존재할 때 활용 가능합니다.
 
 ## 사용자 정의 타입 가드 활용하기
 
-typescript는  **type predicate**를 통해 타입 추론을 정교하게 제어할 수 있습니다.
+typescript는 **type predicate**를 통해 타입 추론을 정교하게 제어할 수 있습니다.
 
 ```ts
 /**
@@ -361,8 +373,6 @@ export declare function isDefined<T>(value: T | undefined | null): value is T;
 ```
 
 &#x20; 이는 제가 주로 사용하는 class-validator 내부의 isDefined()함수 입니다. 이 함수가 `true`를 반환하면, TypeScript는 **value의 타입을 `T`로 좁혀서 추론**합니다.
-
-
 
 만약, 통일된 인자를 사용하되, ID의 존재 유무에 따라 없으면 생성, 있으면 수정을 처리하려 한다고 합시다.
 

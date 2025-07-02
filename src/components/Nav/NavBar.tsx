@@ -7,17 +7,20 @@ const BREAKPOINT_MD = 768;
 const HERO_HEIGHT_MOBILE = 450;
 const HERO_HEIGHT_DESKTOP = 500;
 const BLOG_MAIN_HEIGHT = 1;
-const isBlogPage = (pathname: string): boolean => {
-  return pathname.match(/^\/blog(\/(?!posts\/|series\/).+)?$/) !== null;
+const isBlogNoHeroPage = (pathname: string): boolean => {
+  return (
+    pathname.match(/^\/blog(?!\/posts(?:\/|$))(?!\/series\/.+).*/) !== null
+  );
+};
+
+const isProjectNoHeroPage = (pathname: string): boolean => {
+  return pathname === "/projects" || pathname === "/projects/";
 };
 
 const isNoHeroPage = (pathname: string): boolean => {
   // blog/posts/* || blog/series/* 제외한 모든 블로그 페이지 + project 메인 페이지 (/projects)
-  return (
-    isBlogPage(pathname) ||
-    pathname === "/projects" ||
-    pathname === "/projects/"
-  );
+  console.log("pathname", pathname);
+  return isBlogNoHeroPage(pathname) || isProjectNoHeroPage(pathname);
 };
 
 const isAdminPage = (pathname: string): boolean => {
@@ -70,9 +73,9 @@ const NavBar = ({ pathname }: NavBarProps) => {
       return pathname === "/" || pathname === "";
     }
     if (route === "/blog") {
-      return isBlogPage(pathname);
+      return isBlogNoHeroPage(pathname);
     }
-    return pathname === route;
+    return pathname === route || pathname === `${route}/`;
   };
 
   // 활성화 메뉴 스타일 생성 함수
