@@ -1,18 +1,17 @@
 ---
 id: "571725006657032192"
 author: "Astor"
-title: "NestJS DI 활용 디자인패턴 총정리"
+title: "TS & NestJS 디자인패턴 총정리"
 pinned: false
 draft: false
 tags:
   - NestJS
   - 디자인 패턴
   - OOP
-  - DI
 ogImage: "https://d2r0pavv0lsiqc.cloudfront.net/posts/images/a53c7d9c-b085-402f-8c4a-dcd73d54e522.webp"
 seriesId: "549808096239681536"
 createdAt: "2025-04-28 00:18:36"
-updatedAt: "2025-04-28 01:39:11"
+updatedAt: "2025-07-02 14:20:00"
 ---
 
 ## 시작하며: nest.js & typescript의 특성
@@ -21,7 +20,7 @@ nest.js는 spring처럼 ts에서도 프레임워크에게 템플릿을 의존한
 
 구체적인 예시는 본문에서 다룰 예정이지만, 가장 큰 차이는 TS의 특성상 **런타임에서 소실되는 JS에 존재하지 않는 기능**들, **Module 기반으로 작동하는 Nest.js 시스템**에서 기인합니다.
 
-이 글에선 제가 실제로 ts & nest.js 서비스를 운용하면서 꽤나 재미를 본 디자인 패턴들 중에, 특히 DI를 활용하는 테크닉들만 담아 정리합니다.&#x20;
+이 글에선 제가 실제로 ts & nest.js 서비스를 운용하면서 꽤나 재미를 본 디자인 패턴 테크닉들을 담아 정리합니다.&#x20;
 
 ## **런타임 타입 보존: 추상 클래스 vs 인터페이스 + 심볼**
 
@@ -29,34 +28,51 @@ DI를 위해서는 프레임워크가 원형(interface || abstract class || clas
 
 nest.js와 spring등 DI를 제공하는 프레임워크들은 **인터페이스**와 **데코레이터(어노테이션)**&#xC744; 활용하여 서버의 bootstrap 시점에서 주입할 구현체를 결정합니다.
 
-다만, TypeScript에서 `interface`는 컴파일 시 제거되어 **런타임에 흔적이 남지 않으므로**, NestJS DI에서는 **추상 클래스로 런타임 타입을 유지**하거나 **동일 인터페이스 구현체임을 식별할 수 있는 토큰을 제공하는 것** 중\*\*\*\* 선택해야 합니다.
+다만, TypeScript에서 `interface`는 컴파일 시 제거되어 **런타임에 흔적이 남지 않으므로**, NestJS DI에서는 **추상 클래스로 런타임 타입을 유지**하거나 **동일 인터페이스 구현체임을 식별할 수 있는 토큰을 제공하는 것** 중 선택해야 합니다.
 
 우선 typescript 활용에 있어 추상클래스와 인터페이스 사용의 유스케이스 차이에 대해 한번 알아보고 지나가겠습니다.
 
 - **인터페이스 사용**
   - **런타임 타입 정보**
+
     가 전혀 필요 없고,
+
     **컴파일 타임**
+
     만으로 충분할 때
   - **객체 리터럴**
+
     이나 여러
+
     `implements`
+
     구현체가
+
     **느슨하게**
+
     결합되어야 할 때
   - JS 번들 크기 최적화를 위해
+
     **런타임 코드 생성 없이**
+
     타입만 정의할 때
 - **추상 클래스 사용**
   - **부분 구현**
+
     (default 메서드,
+
     `protected`
+
     필드)을 통해 코드 재사용이 필요할 때
   - **런타임 타입 확인**
+
     (
+
     `instanceof`
+
     )을 사용해야 할 때
   - **단일 상속**
+
     을 활용해 공통 기능을 중앙에서 제어할 때
 
 java 진영에서는 **런타임 타입 정보**가 둘 다 모두 존재하기 때문에 부분 구현이 필요하지 않는 경우엔 인터페이스 활용이 권장됩니다. 그마저도 인터페이스에서 default 로직을 선언할 수 있게 되면서 가급적 인터페이스를 활용하는 편이죠.
@@ -130,7 +146,7 @@ constructor(reservationReader: ReservationReader)
 
 런타임에 유실되지 않기 때문에 모듈 선언부나 사용부의 코드가 굉장히 심플해집니다. 개인적으로는 ts에선 위와 같은 추상 클래스 패턴 사용을 꽤나 권장하는 편인데, 주로 **설계도 : 구현체가 일대일 대응될 확률이 높은 경우** 위 패턴 사용을 추천합니다. java로 치면 service -> serviceImpl 혹은 DefaultService 만 존재하는 케이스에 속하죠.
 
-애초에 *단일한 구현체만 존재한다면 굳이 설계도를 따로 정의할 필요가 있는가?* 라는 부분에 대해서는 이견이 갈릴 수 있다 생각합니다. 저는 협업적인 면, 코드 가독성 및 시스템의 설계 측면에 있어서라도 느슨한 결합이 주는 메리트가 꽤 있다고 생각하는 편이여서 단일 구현체여도 가급적 설계도를 선언합니다. 이부분은 취향 껏 하시면 될 것 같네요.
+애초에 *단일한 구현체만 존재한다면 굳이 설계도를 따로 정의할 필요가 있는가?* 라는 부분에 대해서는 이견이 갈릴 수 있다 생각합니다. 저는 협업적인 면, 코드 가독성 및 시스템의 설계 측면에 있어서라도 느슨한 결합이 주는 메리트가 꽤 있다고 생각하는 편이여서 단일 구현체여도 가급적 설계도를 선언합니다. 테스트 할 때 모킹하기도 수월하구요. 이부분은 취향 껏 하시면 될 것 같네요.
 
 abstract class나 interface 안쓰시면 그냥 DIP 굳이 안하고 직접 class 자체를 참조하셔도 됩니다.&#x20;
 
@@ -159,7 +175,7 @@ constructor(
 
 이 방식 역시 런타임에서 적절한 구현체를 사용할 수 있도록 느슨한 결합과 유연성을 확보할 수 있습니다. 다만 코드가 조금 더러워지고, 심볼을 따로 선언 및 관리할 필요가 있습니다. 대신 장점으로는 interface의 특성상 한 클래스가 여러 인터페이스의 구현체로 기능하게 할 수 있다는 점입니다. 바로 살펴보겠습니다.
 
-## **Delegation 패턴**&#x20;
+## 단일 구현체 전략
 
 여러 인터페이스를 모두 관장하는 하나의 구현체를 사용하는게 효과적일 때도 있습니다.
 
@@ -217,7 +233,7 @@ export class KakaoOauthService implements OauthLoginUseCase, RefreshOauthTokenUs
 
 ## List DI
 
-여기까지 delegation을 통해 **여러 역할에 하나의 구현체를 주입**하는 방법을 다뤘습니다.
+여기까지 **여러 역할에 하나의 구현체를 주입**하는 방법을 다뤘습니다.
 그렇다면, **구현체가 여럿일 때, 이를 "리스트" 형태로 한 번에 주입할 수 있을까?**
 
 결론부터 말하면:
@@ -331,4 +347,38 @@ export class OauthService {
 
 ```
 
-마찬가지로 oauth 말고도 PG사 등 유사한 통신 규격을 준수하는 여러 구현체가 존재할 때 활용 가능합니다
+마찬가지로 oauth 말고도 PG사 등 유사한 통신 규격을 준수하는 여러 구현체가 존재할 때 활용 가능합니다.
+
+## 사용자 정의 타입 가드 활용하기
+
+typescript는  **type predicate**를 통해 타입 추론을 정교하게 제어할 수 있습니다.
+
+```ts
+/**
+ * Checks if value is defined (!== undefined, !== null).
+ */
+export declare function isDefined<T>(value: T | undefined | null): value is T;
+```
+
+&#x20; 이는 제가 주로 사용하는 class-validator 내부의 isDefined()함수 입니다. 이 함수가 `true`를 반환하면, TypeScript는 **value의 타입을 `T`로 좁혀서 추론**합니다.
+
+
+
+만약, 통일된 인자를 사용하되, ID의 존재 유무에 따라 없으면 생성, 있으면 수정을 처리하려 한다고 합시다.
+
+```ts
+  private hasAllPropsForCreateShuttleRouteHub(
+    shuttleRouteHubProps: InputForModifyShuttleRouteHubUseCaseProps,
+  ): shuttleRouteHubProps is ShuttleRouteHubNewProps {
+    if (isDefined(shuttleRouteHubProps.shuttleRouteHubId)) {
+      return false;
+    }
+    return true;
+  }
+```
+
+위와 같이 타입가드를 활용해 처리하면, 해당 타입가드가 통과된 이후에는 컴파일러가 타입을 생성용 Props로 narrowing 해줍니다.
+
+보통 이런 시스템을 활용하지 않고 코드를 짜시는 경우, 타입적으로는 nullable한데, 논리적으로는 더이상 null이 아니게 된 경우 `something as string` 이런 식으로 강제 캐스팅을 많이하는데, 굉장히 나중에 위험한 코드가 됩니다.
+
+as를 최대한 쓰지 않는 코드를 작성하는 데 큰 도움을 줍니다.
