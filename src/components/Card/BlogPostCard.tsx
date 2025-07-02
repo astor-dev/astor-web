@@ -54,7 +54,7 @@ const BlogPostCard: React.FC<BlogPostCardProps> = props => {
   // 제목 줄 수에 따른 본문 클래스 결정
   const getBodyClasses = () => {
     if (titleLines === 1) {
-      return "mt-2 mb-1 line-clamp-4 min-h-[5rem] text-sm text-black-muted md:line-clamp-5 md:min-h-[6.5rem]";
+      return "mt-3 mb-1 line-clamp-4 min-h-[5rem] text-sm text-black-muted md:line-clamp-5 md:min-h-[5.05rem]";
     } else {
       return "my-1 line-clamp-3 min-h-[3.75rem] text-sm text-black-muted md:line-clamp-4 md:min-h-[4.8rem]";
     }
