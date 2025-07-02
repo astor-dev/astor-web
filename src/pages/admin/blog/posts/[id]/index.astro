@@ -2,18 +2,24 @@
 import AdminOnly from "~components/Wrapper/AdminOnly";
 import PostDetail from "~layouts/blog/PostDetail.astro";
 import { repositoryContainer } from "~modules/repository.module";
-import { POST_REPOSITORY, type PostRepository } from "~modules/repositories/posts/PostRepository";
+import {
+  POST_REPOSITORY,
+  type PostRepository,
+} from "~modules/repositories/posts/PostRepository";
 import type { PostEntry } from "~types/post.type";
 
 export async function getStaticPaths() {
-  const postRepository = repositoryContainer.get<PostRepository>(POST_REPOSITORY);
+  const postRepository =
+    repositoryContainer.get<PostRepository>(POST_REPOSITORY);
   const posts = await postRepository.getPosts();
-  const latestPosts: PostEntry[] = (await postRepository.getPosts({
-  paging: {
-    page: 1,
-    limit: 8,
-    },
-  })).items;
+  const latestPosts: PostEntry[] = (
+    await postRepository.getPosts({
+      paging: {
+        page: 1,
+        limit: 8,
+      },
+    })
+  ).items;
   const postResult = posts.items.map(post => ({
     params: { id: post.id },
     props: { post, latestPosts },
@@ -25,7 +31,13 @@ export async function getStaticPaths() {
 const { post, latestPosts } = Astro.props;
 ---
 
-<PostDetail post={post} latestPosts={latestPosts} isAdmin={true}>
+<PostDetail
+  post={post}
+  latestPosts={latestPosts}
+  isAdmin={true}
+  nextPost={null}
+  prevPost={null}
+>
   <AdminOnly client:load>
     <></>
   </AdminOnly>

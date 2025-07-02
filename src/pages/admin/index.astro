@@ -7,6 +7,7 @@ import ActivityItem, {
 } from "~components/Item/ActivityItem";
 import AdminOnly from "~components/Wrapper/AdminOnly";
 import { repositoryContainer } from "~modules/repository.module";
+import heroMilkyWay from "~assets/images/hero-milkyway.webp";
 import {
   PROJECT_REPOSITORY,
   type ProjectRepository,
@@ -20,7 +21,7 @@ import type { ProjectEntry } from "~types/project.type";
 import type { PostEntry } from "~types/post.type";
 import dayjs from "dayjs";
 import Hero from "~components/Hero/Hero.astro";
-import blogHeader from "~assets/images/blog-header.webp";
+
 const projectRepository =
   repositoryContainer.get<ProjectRepository>(PROJECT_REPOSITORY);
 const projects: Paginated<ProjectEntry> = await projectRepository.getProjects({
@@ -82,12 +83,7 @@ const ACTIVITIES: ActivityItemProps[] = [
 ---
 
 <Layout title="관리자 대시보드">
-  <Hero
-    title="관리자 대시보드"
-    description="프로젝트와 블로그 글을 관리할 수 있습니다"
-    imageSrc={blogHeader.src}
-    slot="hero"
-  />
+  <Hero title="관리자 대시보드" imageSrc={heroMilkyWay.src} slot="hero" />
   <AdminOnly client:load>
     <div class="mx-auto w-full max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
       <!-- 빠른 작성 버튼 -->
