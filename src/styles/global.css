@@ -59,19 +59,11 @@
     /* text-skin-inverted은 필요하다면 변수로 정의, 혹은 간단히 #fff 등으로 지정 가능 */
   }
 
-  /* ===== 기본 스크롤바 숨기기 ===== */
-  ::-webkit-scrollbar {
-    display: none;
-  }
-
-  /* Firefox 스크롤바 숨기기 */
-  * {
-    scrollbar-width: none;
-  }
-
-  /* IE and Edge 스크롤바 숨기기 */
-  * {
-    -ms-overflow-style: none;
+  /* ===== 가로 스크롤바만 숨기기 (세로 스크롤바는 유지) ===== */
+  body,
+  html {
+    overflow-x: hidden; /* 가로 스크롤 숨김 */
+    overflow-y: auto; /* 세로 스크롤 표시 */
   }
 
   /* ===== 코드 블럭 & Syntax Highlight ===== */

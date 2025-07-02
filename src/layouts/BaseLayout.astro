@@ -82,38 +82,6 @@ const currentPath = Astro.url.pathname;
       <slot name="footer" />
     </SkeletonProvider>
   </body><script is:inline data-astro-rerun>
-    /** Create a progress indicator at the top */
-    function createProgressBar() {
-      const progressContainer = document.createElement("div");
-      progressContainer.className =
-        "progress-container fixed top-0 z-[999] h-0.5 w-full";
-
-      const progressBar = document.createElement("div");
-      progressBar.className = "progress-bar h-0.5 w-0 bg-skin-accent";
-      progressBar.id = "myBar";
-
-      progressContainer.appendChild(progressBar);
-      document.body.appendChild(progressContainer);
-    }
-    createProgressBar();
-
-    /** Update the progress bar when user scrolls */
-    function updateScrollProgress() {
-      document.addEventListener("scroll", () => {
-        const winScroll =
-          document.body.scrollTop || document.documentElement.scrollTop;
-        const height =
-          document.documentElement.scrollHeight -
-          document.documentElement.clientHeight;
-        const scrolled = (winScroll / height) * 100;
-        const myBar = document.getElementById("myBar");
-        if (myBar) {
-          myBar.style.width = scrolled + "%";
-        }
-      });
-    }
-    updateScrollProgress();
-
     /** Attaches copy buttons to code blocks in the document,
      * allowing users to copy code easily. */
     function attachCopyButtons() {
