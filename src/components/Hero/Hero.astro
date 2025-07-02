@@ -5,8 +5,6 @@ interface Props {
   title: string;
   /** 부제목 (선택) */
   subtitle?: string;
-  /** 설명 텍스트 (선택) */
-  description?: string;
   imageSrc: string;
   /** 콜 투 액션 버튼 텍스트 (선택) */
   buttonText?: string;
@@ -14,28 +12,12 @@ interface Props {
   buttonLink?: string;
   className?: string;
 }
-const {
-  title,
-  subtitle,
-  description,
-  imageSrc,
-  buttonText,
-  buttonLink,
-  className,
-} = Astro.props;
-
-const parsedDescription = description
-  ? description
-      .replace(
-        /\*\*(.*?)\*\*/g,
-        "<strong class='text-white-accent'>$1</strong>",
-      )
-      .replace(/\n/g, "<br>")
-  : "";
+const { title, subtitle, imageSrc, buttonText, buttonLink, className } =
+  Astro.props;
 ---
 
 <section
-  class={`relative w-full h-[250px] md:h-[400px] overflow-hidden ${className ?? ""}`}
+  class={`relative w-full h-[150px] md:h-[200px] overflow-hidden ${className ?? ""}`}
 >
   <!-- 배경 이미지 (맨 뒤) -->
   <div class="absolute inset-0 z-0">
@@ -65,14 +47,6 @@ const parsedDescription = description
     {
       subtitle && (
         <h2 class="mb-4 text-3xl font-semibold text-white-base">{subtitle}</h2>
-      )
-    }
-    {
-      description && (
-        <p
-          class="mb-8 max-w-2xl text-base text-black-muted"
-          set:html={parsedDescription}
-        />
       )
     }
     {

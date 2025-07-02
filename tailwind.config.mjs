@@ -192,6 +192,13 @@ export default {
             "max-width": "none",
             "margin-left": "auto",
             "margin-right": "auto",
+            img: {
+              width: "100%",
+              margin: "0 auto",
+            },
+            code: {
+              letterSpacing: "0.05em",
+            },
           },
         },
         DEFAULT: {

@@ -4,6 +4,54 @@ import SearchModal from "~components/Modal/SearchModal";
 import type { PostTitleAndId, Tag, SeriesAndCount } from "~types/post.type";
 import IconDropdown from "~components/Dropdown/IconDropdown";
 
+// Constants
+const BREAKPOINT_MD = 768;
+const HERO_HEIGHT_MOBILE = 450;
+const HERO_HEIGHT_DESKTOP = 500;
+const BLOG_MAIN_HEIGHT = 1;
+
+const isNoHeroPage = (pathname: string): boolean => {
+  // blog/posts/* || blog/series/* 제외한 모든 블로그 페이지 + project 메인 페이지 (/projects)
+  return (
+    pathname.match(/^\/blog(\/(?!posts\/|series\/).*)?$/) !== null ||
+    pathname === "/projects"
+  );
+};
+
+const isAdminPage = (pathname: string): boolean => {
+  return pathname.includes("/admin");
+};
+
+const isAboutPage = (pathname: string): boolean => {
+  return pathname === "/about" || pathname === "/about/";
+};
+
+const getHeroHeight = (pathname: string): number => {
+  if (window.innerWidth >= BREAKPOINT_MD) {
+    if (isNoHeroPage(pathname)) {
+      return BLOG_MAIN_HEIGHT;
+    }
+    return HERO_HEIGHT_DESKTOP;
+  } else {
+    if (isNoHeroPage(pathname)) {
+      return BLOG_MAIN_HEIGHT;
+    }
+    return HERO_HEIGHT_MOBILE;
+  }
+};
+
+const calculateIsInHero = (pathname: string, scrollY: number): boolean => {
+  const heroHeight = getHeroHeight(pathname);
+
+  if (scrollY < heroHeight || isAdminPage(pathname)) {
+    // Hero 영역에 있거나 관리자 페이지인 경우
+    return true;
+  }
+
+  // 스크롤이 Hero 영역을 벗어난 경우
+  return false;
+};
+
 interface NavBarProps {
   pathname: string;
   tags: Tag[];
@@ -11,10 +59,11 @@ interface NavBarProps {
   posts: PostTitleAndId[];
 }
 
-function NavBar({ pathname, tags, series, posts }: NavBarProps) {
+const NavBar = ({ pathname, tags, series, posts }: NavBarProps) => {
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [showAdmin, setShowAdmin] = useState(false);
   const [showLogin, setShowLogin] = useState(false);
+  const [isTextWhite, setIsTextWhite] = useState(true);
   const navBarRef = useRef<HTMLDivElement>(null);
 
   // 로그인 쿠키 감지
@@ -30,38 +79,29 @@ function NavBar({ pathname, tags, series, posts }: NavBarProps) {
     }
   }, []);
 
-  // 추가: Hero 영역에 있을 때 네브바 숨김 처리 (홈페이지일 경우)
   const [isInHero, setIsInHero] = useState(true);
-  const [isRoot, setIsRoot] = useState(true);
+  const [shouldHideNavBar, setShouldHideNavBar] = useState(true);
+
+  // 스크롤 위치와 URL에 따른 네브바 상태 관리
   useEffect(() => {
-    if (pathname === "/about" || pathname === "/about/") {
-      setIsRoot(true);
-    } else {
-      setIsRoot(false);
-    }
-  }, [pathname]);
-  useEffect(() => {
+    let ticking = false;
+
     const handleScroll = () => {
-      // 홈 페이지가 아니라면 네브바를 항상 보여줍니다.
-      // Hero 컴포넌트의 높이(300px~md:400~lg:500px)를 픽셀로 변환
-      let heroHeight = 300;
-      if (window.innerWidth >= 768) {
-        heroHeight = 400;
-      }
-      if (window.innerWidth >= 1024) {
-        heroHeight = 500;
-      }
-      if (window.scrollY < heroHeight || pathname.includes("/admin")) {
-        setIsInHero(true);
-      } else {
-        setIsInHero(false);
+      if (!ticking) {
+        requestAnimationFrame(() => {
+          const newIsInHero = calculateIsInHero(pathname, window.scrollY);
+          setIsInHero(newIsInHero);
+          ticking = false;
+        });
+        ticking = true;
       }
     };
 
-    // 초기 scroll 상태 반영
     handleScroll();
+    setShouldHideNavBar(isAboutPage(pathname));
+    setIsTextWhite(!isNoHeroPage(pathname));
 
-    window.addEventListener("scroll", handleScroll);
+    window.addEventListener("scroll", handleScroll, { passive: true });
     return () => window.removeEventListener("scroll", handleScroll);
   }, [pathname]);
 
@@ -69,13 +109,15 @@ function NavBar({ pathname, tags, series, posts }: NavBarProps) {
     <>
       <header
         ref={navBarRef}
-        className={`left-1/2 z-30 w-full max-w-screen-lg -translate-x-1/2 transform duration-200 2xl:max-w-screen-xl print:hidden ${
+        className={`left-1/2 z-30 w-full -translate-x-1/2 print:hidden ${
           isInHero
-            ? isRoot
+            ? shouldHideNavBar
               ? "pointer-events-none absolute opacity-0"
-              : "absolute bg-opacity-0 text-white-base"
-            : "fixed bg-skin-fill bg-opacity-90 text-black-muted shadow-md"
-        } sm:top-4 sm:rounded-3xl`}
+              : `absolute bg-opacity-0 ${
+                  isTextWhite ? "text-white-base" : "text-black-base"
+                }`
+            : `fixed bg-white text-black-base shadow-[inset_0_-1px_0_0_rgb(229,231,235)]`
+        }`}
       >
         {/* container 클래스로 좌우 여백을 지정 (모바일 대응) */}
         <nav className="container mx-auto flex items-center justify-between px-4 py-1 sm:px-6 sm:py-2 lg:px-8">
@@ -141,9 +183,7 @@ function NavBar({ pathname, tags, series, posts }: NavBarProps) {
             <a
               href="/"
               title="홈"
-              className={`transform font-logo text-lg duration-200 sm:text-lg md:text-xl ${
-                isInHero ? "text-white-base" : "text-black-base"
-              }`}
+              className={`font-logo text-lg sm:text-lg md:text-xl`}
             >
               astor-dev
             </a>
@@ -235,6 +275,6 @@ function NavBar({ pathname, tags, series, posts }: NavBarProps) {
       />
     </>
   );
-}
+};
 
 export default NavBar;

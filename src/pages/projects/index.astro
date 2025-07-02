@@ -7,9 +7,8 @@ import {
   PROJECT_REPOSITORY,
   type ProjectRepository,
 } from "~modules/repositories/projects/ProjectRepository";
-import projectHeader from "~assets/images/project-header.webp";
-import Hero from "~components/Hero/Hero.astro";
 import type { Paginated } from "~types/page.type";
+import ModernBlogHero from "~components/Hero/ModernBlogHero";
 const projectRepository =
   repositoryContainer.get<ProjectRepository>(PROJECT_REPOSITORY);
 const projects: Paginated<ProjectEntry> = await projectRepository.getProjects();
@@ -27,11 +26,10 @@ const toyProjects = projects.items.filter(
 ---
 
 <Layout title="프로젝트">
-  <Hero
-    title="프로젝트 갤러리"
-    description="하나하나 정성을 담아 만든 프로젝트들이에요. 예쁘게 봐주세요 :)"
-    imageSrc={projectHeader.src}
-    slot="hero"
+  <ModernBlogHero
+    title="*Projects*"
+    content="여태 진행한 프로젝트들을 소개합니다"
+    client:load
   />
   <div class="mx-auto w-full">
     <!-- 회사 프로젝트 섹션 -->
@@ -43,7 +41,7 @@ const toyProjects = projects.items.filter(
               회사 프로젝트
             </h2>
             <p class="text-lg text-black-base/80">
-              실무에서 진행한 프로젝트들입니다.
+              실무에서 진행한 프로젝트들입니다
             </p>
           </div>
           <div class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
@@ -68,7 +66,7 @@ const toyProjects = projects.items.filter(
               사이드 프로젝트
             </h2>
             <p class="text-lg text-black-base/80">
-              개인적으로 진행한 프로젝트들입니다.
+              개인적으로 진행한 프로젝트들입니다
             </p>
           </div>
           <div class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
@@ -93,7 +91,7 @@ const toyProjects = projects.items.filter(
               토이 프로젝트
             </h2>
             <p class="text-lg text-black-base/80">
-              학습과 실험을 위한 작은 프로젝트들입니다.
+              학습과 실험을 위한 작은 프로젝트들입니다
             </p>
           </div>
           <div class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">

@@ -9,8 +9,7 @@ import {
 import { POST_PER_PAGE } from "~constants/page";
 import CenterNav from "~components/Nav/CenterNav.astro";
 import { navItems } from "~constants/blog";
-import blogHeader from "~assets/images/blog-header.webp";
-import Hero from "~components/Hero/Hero.astro";
+import ModernBlogHero from "~components/Hero/ModernBlogHero";
 export async function getStaticPaths() {
   const postRepository =
     repositoryContainer.get<PostRepository>(POST_REPOSITORY);
@@ -35,10 +34,10 @@ const { page, tag } = Astro.props;
 ---
 
 <Layout title="블로그">
-  <Hero
-    title="Astor's Devlog"
-    description="각 **태그**가 담은 **특별한 이야기**\n내게 딱 맞는 **주제**와 **영감**을 찾아보세요."
-    imageSrc={blogHeader.src}
+  <ModernBlogHero
+    title="*Tech* Blog"
+    content="직접 구현하고 검토를 거친 기술적 선택과 설계를 정리해 남깁니다"
+    client:load
   />
   <CenterNav items={navItems} currentPath="/blog" />
   <PostList page={page} currentTag={tag.tag} />

@@ -257,7 +257,6 @@ export default function HomeHero() {
                 id="hero-text"
                 className="mt-4 font-sans text-xs font-light text-gray-200 md:mt-12 md:text-base lg:text-lg"
               >
-                안녕하세요!{" "}
                 <span className="font-bold">
                   소프트웨어 개발자 Astor, 김도훈
                 </span>

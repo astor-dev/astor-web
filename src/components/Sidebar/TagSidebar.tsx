@@ -13,13 +13,15 @@ const TagSidebar: React.FC<TagSidebarProps> = ({
   className,
 }) => {
   return (
-    <div className={`rounded-lg bg-white p-4 shadow-lg ${className}`}>
-      <h2 className="mb-4 text-2xl font-bold text-black-accent">태그 목록</h2>
-      <ul className="space-y-2">
+    <div className={`rounded-lg bg-white px-3 ${className}`}>
+      <h2 className="mb-4 border-b border-gray-200 pb-1 text-2xl font-bold text-black-accent">
+        태그 목록
+      </h2>
+      <ul className="space-y-1">
         {/* 제일 앞은 전체보기 */}
         <li
           key="all"
-          className="flex items-center justify-between rounded bg-skin-fill/5 p-2 hover:bg-skin-accent/5"
+          className="flex items-center justify-between rounded bg-skin-fill/5 hover:bg-skin-accent/5"
         >
           <a href="/blog" className="flex w-full items-center justify-between">
             <span className="text-sm font-medium text-black-accent">
@@ -32,7 +34,7 @@ const TagSidebar: React.FC<TagSidebarProps> = ({
         {tags.map((tag, index) => (
           <li
             key={tag.tag + "/" + index}
-            className="flex items-center justify-between rounded bg-skin-fill/5 p-2 hover:bg-skin-accent/5"
+            className="flex items-center justify-between rounded bg-skin-fill/5 py-1 hover:bg-skin-accent/5"
           >
             <a
               href={`/blog/tags/${tag.tag}`}
