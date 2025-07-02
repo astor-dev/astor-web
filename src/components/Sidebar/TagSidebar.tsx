@@ -5,12 +5,14 @@ export interface TagSidebarProps {
   tags: Tag[];
   totalPosts: number;
   className?: string;
+  currentTag?: string;
 }
 
 const TagSidebar: React.FC<TagSidebarProps> = ({
   tags,
   totalPosts,
   className,
+  currentTag,
 }) => {
   return (
     <div className={`rounded-lg bg-white px-3 ${className}`}>
@@ -40,7 +42,13 @@ const TagSidebar: React.FC<TagSidebarProps> = ({
               href={`/blog/tags/${tag.tag}`}
               className="flex w-full items-center justify-between"
             >
-              <span className="text-sm font-medium text-black-accent">
+              <span
+                className={`text-sm font-medium ${
+                  currentTag === tag.tag
+                    ? "text-skin-accent"
+                    : "text-black-accent"
+                }`}
+              >
                 {tag.tag}
               </span>
               <span className="text-xs text-black-muted">{tag.count}</span>

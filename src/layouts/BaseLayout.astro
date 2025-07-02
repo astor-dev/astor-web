@@ -30,11 +30,6 @@ interface Props {
   modifiedTime?: string;
 }
 
-const postRepository = repositoryContainer.get<PostRepository>(POST_REPOSITORY);
-const tags: Tag[] = await postRepository.getAllTags();
-const posts: PostTitleAndId[] = await postRepository.getAllPostTitleAndId();
-const series: SeriesAndCount[] = await postRepository.getAllSeriesAndCount();
-
 const {
   title,
   image,
@@ -73,14 +68,7 @@ const currentPath = Astro.url.pathname;
     >
     <!-- End Google Tag Manager (noscript) -->
     <SkeletonProvider>
-      <NavBar
-        client:load
-        tags={tags}
-        posts={posts}
-        series={series}
-        pathname={currentPath}
-        client:load
-      />
+      <NavBar pathname={currentPath} client:load />
       <slot name="hero" />
       <!-- 메인 콘텐츠 영역: 반응형 컨테이너 적용 예시 -->
       <main
