@@ -5,6 +5,7 @@ import type { Tag as TagType } from "~types/post.type";
 
 interface MobileTagScrollProps {
   tags: TagType[];
+  totalPosts: number;
   className?: string;
 }
 
@@ -16,6 +17,7 @@ interface MobileTagScrollProps {
  */
 const MobileTagScroll: React.FC<MobileTagScrollProps> = ({
   tags,
+  totalPosts,
   className,
 }) => {
   const scrollRef = useRef<HTMLDivElement>(null);
@@ -41,7 +43,7 @@ const MobileTagScroll: React.FC<MobileTagScrollProps> = ({
         className="flex cursor-grab space-x-1 active:cursor-grabbing"
       >
         <div className="h-full w-[10dvw]" />
-        <Tag tag="전체보기" href="/blog" count={tags.length} size="sm" />
+        <Tag tag="전체보기" href="/blog" count={totalPosts} size="sm" />
         {tags.map((tag, index) => (
           <Tag
             key={index}

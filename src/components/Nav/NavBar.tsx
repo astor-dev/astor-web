@@ -134,7 +134,7 @@ const NavBar = ({ pathname }: NavBarProps) => {
   return (
     <header
       ref={navBarRef}
-      className={`left-1/2 z-30 w-full -translate-x-1/2 print:hidden ${
+      className={`left-1/2 z-50 w-full -translate-x-1/2 print:hidden ${
         isInHero
           ? shouldHideNavBar
             ? "pointer-events-none absolute opacity-0"

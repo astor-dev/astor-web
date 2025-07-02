@@ -3,6 +3,7 @@ import React, {
   useEffect,
   useImperativeHandle,
   forwardRef,
+  useRef,
 } from "react";
 import type { IconType } from "react-icons";
 import { FiSearch } from "react-icons/fi";
@@ -59,12 +60,18 @@ const CheckboxGroupInput = forwardRef<
     const [selectedCategory, setSelectedCategory] = useState<string>("전체");
     const [currentPage, setCurrentPage] = useState(1);
 
-    // selectedValues를 부모로부터 받은 defaultValues로 동기화
+    // 외부에서 setValues로 설정되었는지 추적하는 ref
+    const isExternallySetRef = useRef(false);
+    // 초기화 완료 여부 추적
+    const isInitializedRef = useRef(false);
+
+    // selectedValues를 부모로부터 받은 defaultValues로 동기화 (초기화 시에만)
     useEffect(() => {
-      if (Array.isArray(defaultValues)) {
+      if (Array.isArray(defaultValues) && !isInitializedRef.current) {
         setSelectedValues([...defaultValues]);
+        isInitializedRef.current = true;
       }
-    }, [id, defaultValues]);
+    }, [defaultValues]);
 
     // 외부에서 접근 가능한 메서드 정의
     useImperativeHandle(ref, () => ({
@@ -76,6 +83,8 @@ const CheckboxGroupInput = forwardRef<
           return;
         }
 
+        console.log("CheckboxGroupInput setValues 호출:", values);
+        isExternallySetRef.current = true;
         setSelectedValues(values.filter(Boolean));
         if (onChange) {
           onChange(values.filter(Boolean));
