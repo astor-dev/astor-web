@@ -7,14 +7,17 @@ const BREAKPOINT_MD = 768;
 const HERO_HEIGHT_MOBILE = 450;
 const HERO_HEIGHT_DESKTOP = 500;
 const BLOG_MAIN_HEIGHT = 1;
-
 const isBlogPage = (pathname: string): boolean => {
-  return pathname.match(/^\/blog(\/(?!posts\/|series\/).*)?$/) !== null;
+  return pathname.match(/^\/blog(\/(?!posts\/|series\/).+)?$/) !== null;
 };
 
 const isNoHeroPage = (pathname: string): boolean => {
   // blog/posts/* || blog/series/* 제외한 모든 블로그 페이지 + project 메인 페이지 (/projects)
-  return isBlogPage(pathname) || pathname === "/projects";
+  return (
+    isBlogPage(pathname) ||
+    pathname === "/projects" ||
+    pathname === "/projects/"
+  );
 };
 
 const isAdminPage = (pathname: string): boolean => {
