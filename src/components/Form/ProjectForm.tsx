@@ -151,7 +151,7 @@ const ProjectForm: React.FC<ProjectFormProps> = ({ initialData }) => {
         <h2 className="mb-6 text-xl font-semibold text-black-accent">
           기본 정보
         </h2>
-        <div className="grid gap-6 lg:grid-cols-2">
+        <div className="grid gap-6 md:grid-cols-2">
           <div className="lg:col-span-2">
             <Input
               ref={projectNameRef}
@@ -184,7 +184,7 @@ const ProjectForm: React.FC<ProjectFormProps> = ({ initialData }) => {
             }
           />
 
-          <div className="lg:col-span-2">
+          <div className="md:col-span-2">
             <ImageFileInput
               ref={imageUrlRef}
               id="imageUrl"
@@ -199,7 +199,7 @@ const ProjectForm: React.FC<ProjectFormProps> = ({ initialData }) => {
             </p>
           </div>
 
-          <div className="lg:col-span-2">
+          <div className="md:col-span-2">
             <Input
               ref={siteUrlRef}
               id="siteUrl"
@@ -263,7 +263,7 @@ const ProjectForm: React.FC<ProjectFormProps> = ({ initialData }) => {
             </div>
           </div>
 
-          <div className="lg:col-span-2">
+          <div className="md:col-span-2">
             <CheckboxGroupInput
               ref={rolesRef}
               name="roles"
@@ -286,7 +286,7 @@ const ProjectForm: React.FC<ProjectFormProps> = ({ initialData }) => {
             defaultValue={initialData?.data?.shortDescription ?? ""}
           />
 
-          <div className="lg:col-span-2">
+          <div className="md:col-span-2">
             <CheckboxGroupInput
               ref={stackIdsRef}
               name="stackIds"

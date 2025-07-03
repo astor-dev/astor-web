@@ -19,7 +19,7 @@ export default function HoverableImage({
       <ImageWithSkeleton
         src={src}
         alt={alt}
-        className={`h-full w-full object-cover transition-all duration-300 group-hover:scale-110 ${className}`}
+        className={`h-full w-full object-cover transition-all duration-300 md:group-hover:scale-110 ${className}`}
         style={style}
       />
       {/* <div className="absolute inset-0 bg-black/0 transition-all duration-300 group-hover:bg-black/70" /> */}

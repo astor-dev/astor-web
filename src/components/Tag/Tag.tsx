@@ -35,10 +35,10 @@ const Tag: React.FC<TagProps> = ({
   };
 
   const sizeStyles = {
-    xs: "px-1 py-0.5 text-[8px]",
+    xs: "px-1 py-0 text-[10px]",
     sm: "px-2.5 py-0.5 text-xs",
     md: "px-4 py-2 text-sm",
-    responsive: "px-1.5 py-0.5 text-[10px] md:px-2.5 md:py-0.5 md:text-xs",
+    responsive: "px-1 py-0 text-[10px] md:px-2.5 md:py-0.5 md:text-xs",
   };
 
   // 클릭 가능한 경우와 정적인 경우 스타일 분리

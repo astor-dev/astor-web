@@ -24,72 +24,87 @@ const processedBody = await remark()
   .then(result => result.toString())
   .catch(() => "");
 
-// 본문을 100자로 제한하고 말줄임표 추가
-const description =
-  processedBody.length > 100
-    ? processedBody.slice(0, 100) + "..."
-    : processedBody;
+// 태그 개수 제한 설정
+const maxTagsToShow = 2;
+const visibleTags = data.tags.slice(0, maxTagsToShow);
+const remainingTagsCount = data.tags.length - maxTagsToShow;
 ---
 
 <a
   href={`/blog/posts/${id}`}
   class:list={["group block w-full pr-3 md:py-2", className]}
 >
-  <article class="my-3 flex items-stretch gap-4 md:my-6 md:gap-6">
-    {/* 텍스트 컨테이너 */}
-    <div class="flex min-w-0 flex-1 flex-col overflow-hidden">
-      <div>
+  <article class="my-3 break-all md:my-6">
+    {/* 제목 + 내용과 이미지 영역 */}
+    <div class="flex items-stretch gap-4 md:gap-6">
+      {/* 제목 + 내용 컨테이너 */}
+      <div class="flex min-w-0 flex-1 flex-col overflow-hidden">
         <h3
-          class="line-clamp-1 text-base font-bold text-black-accent transition-all duration-300 ease-in-out group-hover:text-skin-accent md:text-xl"
+          class="text-[0.9rem] font-bold text-black-accent transition-all duration-300 ease-in-out md:text-xl md:group-hover:text-skin-accent"
         >
           {data.title}
         </h3>
         <p
-          class="mt-3 line-clamp-3 text-xs text-black-base md:line-clamp-2 md:text-base"
+          class="mt-3 line-clamp-2 text-xs text-black-base md:line-clamp-3 md:text-base"
         >
-          {description}
+          {processedBody}
         </p>
       </div>
 
-      <div class="mt-2 flex flex-col gap-2 md:mt-4 md:gap-3">
-        {/* 태그 영역 */}
-        <div class="flex flex-wrap gap-1.5">
+      {/* 이미지 영역 */}
+      <div
+        class="relative h-20 w-20 shrink-0 overflow-hidden rounded-md md:h-32 md:w-auto"
+        style="aspect-ratio: 4 / 3;"
+      >
+        <HoverableImage
+          src={data.ogImage?.toString() || "/default-blog-image.jpg"}
+          alt={data.title}
+          client:load
+        />
+      </div>
+    </div>
+
+    {/* 태그 + 메타 정보 영역 */}
+    <div class="mt-3 flex items-start gap-4 md:mt-4">
+      {/* 태그 영역 (모바일 70%, md: 80%) */}
+      <div class="flex min-w-0 flex-[7] flex-wrap gap-1.5 md:flex-[8]">
+        {/* 모바일: 제한된 태그 + "+n" */}
+        <div class="flex flex-wrap gap-1.5 md:hidden">
+          {
+            visibleTags.map((tag: string) => (
+              <Tag client:load tag={tag} size="xs" theme="secondary" />
+            ))
+          }
+          {
+            remainingTagsCount > 0 && (
+              <span class="inline-flex items-center rounded-full bg-skin-fill px-1 py-0 text-[10px] font-medium text-black-muted">
+                +{remainingTagsCount}
+              </span>
+            )
+          }
+        </div>
+
+        {/* 데스크톱: 모든 태그 */}
+        <div class="hidden flex-wrap gap-1.5 md:flex">
           {
             data.tags.map((tag: string) => (
               <Tag client:load tag={tag} size="responsive" theme="secondary" />
             ))
           }
         </div>
+      </div>
 
-        {/* 메타 정보 */}
-        <div
-          class="flex items-center gap-3 text-[11px] text-black-muted md:gap-4 md:text-xs"
-        >
-          <div class="flex items-center">
-            <FaClock
-              className="mr-1 h-2.5 w-2.5 opacity-70 md:mr-1.5 md:h-3 md:w-3"
-            />
-            <time datetime={data.createdAt}>{formatDate(data.createdAt)}</time>
-          </div>
-          <span class="flex items-center">
-            <FaUser
-              className="mr-1 h-2.5 w-2.5 opacity-70 md:mr-1.5 md:h-3 md:w-3"
-            />
-            {data.author}
-          </span>
+      {/* 메타 정보 (30%) */}
+      <div
+        class="flex flex-[3] items-center justify-end gap-3 text-[11px] text-black-muted md:flex-[2] md:gap-4 md:text-xs"
+      >
+        <div class="flex items-center">
+          <FaClock
+            className="mr-1 h-2.5 w-2.5 opacity-70 md:mr-1.5 md:h-3 md:w-3"
+          />
+          <time datetime={data.createdAt}>{formatDate(data.createdAt)}</time>
         </div>
       </div>
-    </div>
-
-    <div
-      class="relative h-20 w-20 shrink-0 overflow-hidden rounded-md md:h-32 md:w-auto"
-      style="aspect-ratio: 4 / 3;"
-    >
-      <HoverableImage
-        src={data.ogImage?.toString() || "/default-blog-image.jpg"}
-        alt={data.title}
-        client:load
-      />
     </div>
   </article>
 </a>

@@ -2,6 +2,7 @@
 import type { PostEntry } from "~types/post.type";
 import { remark } from "remark";
 import strip from "strip-markdown";
+import dayjs from "dayjs";
 
 interface Props {
   recentPosts: PostEntry[];
@@ -38,30 +39,32 @@ const postsWithCleanContent = await Promise.all(
             </p>
           </div>
         ) : (
-          <div class="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
+          <div class="grid grid-cols-1 gap-2 md:grid-cols-2 md:gap-4 lg:grid-cols-3">
             {postsWithCleanContent.slice(0, 6).map((post, index) => (
               <a href={`/blog/posts/${post.id}`} class="group relative block">
-                <article class="h-full bg-white transition-all duration-300 hover:bg-gray-50 dark:bg-gray-900 dark:hover:bg-gray-800">
+                <article class="h-full bg-white transition-all duration-300 md:hover:bg-gray-50 dark:bg-gray-900 md:dark:hover:bg-gray-800">
                   <div class="h-px w-full bg-violet-500/40" />
 
-                  <div class="p-6">
-                    <div class="mb-4 flex items-start justify-between">
-                      <h3 class="dark:text-white line-clamp-2 min-h-[3rem] text-lg font-bold text-black-accent transition-colors duration-200 group-hover:text-violet-600 dark:group-hover:text-violet-400">
+                  <div class="p-3 md:p-6">
+                    <div class="mb-2 flex items-start justify-between md:mb-4">
+                      <h3 class="dark:text-white line-clamp-2 min-h-[3rem] text-lg font-bold text-black-accent transition-colors duration-200 md:group-hover:text-violet-600 md:dark:group-hover:text-violet-400">
                         {post.data.title}
                       </h3>
-                      {index < 3 && (
+                      {dayjs(post.data.createdAt).isAfter(
+                        dayjs().subtract(2, "month"),
+                      ) && (
                         <span class="ml-3 shrink-0 bg-violet-100 px-2 py-1 text-xs font-medium text-violet-700 dark:bg-violet-900/50 dark:text-violet-300">
                           NEW
                         </span>
                       )}
                     </div>
 
-                    <p class="mb-2 line-clamp-2 text-sm leading-relaxed text-gray-600 dark:text-gray-400">
+                    <p class="mb-1 line-clamp-2 text-sm leading-relaxed text-gray-600 md:mb-2 dark:text-gray-400">
                       {post.cleanBody?.slice(0, 120) ||
                         "게시글 내용을 확인해보세요..."}
                     </p>
 
-                    <div class="flex items-center justify-between pt-4">
+                    <div class="flex items-center justify-between pt-2 md:pt-4">
                       <time class="text-xs font-medium uppercase tracking-wider text-black-muted dark:text-gray-500">
                         {new Date(post.data.createdAt).toLocaleDateString(
                           "ko-KR",
