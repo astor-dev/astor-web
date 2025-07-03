@@ -5,7 +5,7 @@ imageUrl: "https://d2r0pavv0lsiqc.cloudfront.net/projects/images/0a70dba3-5ab8-4
 siteUrl: "https://www.handybus.co.kr/"
 companyName: "핸디버스"
 startedAt: "2024-08"
-endedAt: ""
+endedAt: "2025-06"
 roles:
   - Backend
   - Infra
@@ -26,6 +26,8 @@ stackIds:
   - 8
   - 9
   - 24
+  - 21
+  - 13
 ---
 
 ## 프로젝트 개요
@@ -34,25 +36,39 @@ stackIds:
 
 핸디버스는 공연/행사 관람객들의 **이동 수요**를 모아 편안하게 공연을 관람할 수 있도록 **버스 노선을 개설, 제공**해주는 `수요 응답형 모빌리티 서비스`입니다.
 
-### 문제 정의 및 솔루션
+24년 8월, 구글폼, 노션을 활용한 작은 MVP 서비스 시절에 합류하여 25년 2월 V1 서비스를 런칭, 한달만에 **누적 7000명**의 유저, **1600개**의 예약 건수를 기록, **1억의 매출**을 달성하였습니다.
 
-***
+체계가 부족하던 초기 단계의 서비스에서 모빌리티 도메인의 복잡한 비즈니스 로직을 분석해 시스템과 서비스에 구조적으로 반영하였고, 이를 기반으로 많은 유저와 결제 건을 안정적으로 처리할 수 있는 WAS를 설계·개발·배포하였습니다.
 
-![](https://d2r0pavv0lsiqc.cloudfront.net/projects/images/5a31651e-bed5-44ff-8507-5b91cd7bda96.webp)![](https://d2r0pavv0lsiqc.cloudfront.net/projects/images/3b0cd938-62df-4704-ae8f-a05a6a8fdd99.webp)![](https://d2r0pavv0lsiqc.cloudfront.net/projects/images/3504e95c-21e7-4f2a-81c1-23e1c5168e14.webp)![](https://d2r0pavv0lsiqc.cloudfront.net/projects/images/f9e319cd-9c90-4e7a-87a3-77b521f8b0b9.webp)
+이후 2025년 5월, 개선된 UX와 시스템을 바탕으로 V2 서비스를 성공적으로 런칭했으며, 타다와의 MOU 체결을 통해 수요 기반 도어 투 도어 서비스를 제공하는 신규 상품도 기획·개발하였습니다.
 
 ## 기술적 차별점과 개인 기여
 
 핸디버스는 제대로된 소프트웨어도 없던 시절, 팀에 `초기 창업 멤버`로 합류하여 **기획**과 **백엔드** 개발 전과정을 참여하였습니다.
 
-### 백엔드 개발
+### 복잡한 도메인 분석, 시스템화
 
-#### 수요 기반 노선 설계 자동화 기술 개발
+제가 합류한 초기 핸디버스는, 단순한 MVP 웹사이트와 노션, 구글폼 등으로 운영되며 유저 수요 수집부터 예약, 버스 대절, 공지 전달까지 **전 과정을 수기로 처리**하고 있었습니다. 결제 역시 계좌이체 후 수기 확인 방식으로, 시스템화가 전혀 이루어지지 않은 상태였습니다. **"공연 시장에서 열악한 교통 환경으로 인해 셔틀버스를 원하는 수요가 있다"**&#xB294; 문제 인식에서 출발한 이 서비스가 성공적인 비즈니스로 발전하기 위해서는, 이러한 **복잡하고 파편화된 오퍼레이션 전 과정을 정밀하게 분석하고, 이를 구조화하여 시스템에 반영**하는 작업이 필수적이었습니다.
+
+![](https://d2r0pavv0lsiqc.cloudfront.net/projects/images/14708762-1ab0-42f8-9935-72ee891ff402.webp)
+
+> 수요조사 받기 및 문자 보내기 기능만 있던 열악한 MVP
+
+저는 서비스를 단순 자동화하는 것을 넘어, 우리가 해결하려는 핵심 도메인—즉 "공연행사 특화", "수요기반", "셔틀 운영"이라는 복합적인 도메인을 근본적으로 재정의하는 작업부터 시작했습니다.&#x20;
+
+**도메인 주도 설계(DDD)**&#xB97C; 차용하여, 이를 다수의 **서브도메인**(예: 예약, 정산, 배차, 셔틀 운영, 고객 관리 등)으로 나누고, 각 도메인 간 상호작용과 외부 오퍼레이션 흐름을 시각화하기 위해 **이벤트 스토밍**을 수행했습니다. 이 과정을 통해 시**스템이 책임질 수 있는 경계**, **구체적인 정책 포인트**, 추상적이었던 **운영 기준**들을 명확히 했고, **유비쿼터스 언어**도 함께 정립했습니다. 결과적으로 각 기능을 독립적으로 모듈화 할 수 있는 **바운디드 컨텍스트**들이 도출되어, 아키텍처의 기반을 형성할 수 있었습니다.
+
+![](https://d2r0pavv0lsiqc.cloudfront.net/projects/images/d206f979-2bd7-4b83-96fb-729c17f20f60.webp)
+
+> 이벤트 스토밍을 통한 도메인 분석
+
+### 수요 기반 노선 설계 자동화 기술 개발
 
 ![](https://d2r0pavv0lsiqc.cloudfront.net/projects/images/6d1ea1a9-1f3a-4f51-b347-d7086af9fd02.webp)![](https://d2r0pavv0lsiqc.cloudfront.net/projects/images/bdd4e31c-2dd7-407c-b331-a21171dde0f3.webp)![](https://d2r0pavv0lsiqc.cloudfront.net/projects/images/8d89ef72-70bd-4f09-b4d6-b7ba190ad8e1.webp)![](https://d2r0pavv0lsiqc.cloudfront.net/projects/images/1afebb0e-0045-40c0-b870-b155b4c38ea5.webp)
 
 모집된 수요조사를 기반으로, 지역 별 최적화된 노선 설계를 자동으로 해주는 알고리즘을 개발했습니다.
 
-![](https://d2r0pavv0lsiqc.cloudfront.net/projects/images/4b1e31f8-6057-4d1c-83d8-f2eb24cf9733.webp)
+![](https://d2r0pavv0lsiqc.cloudfront.net/projects/images/3e8aa4a2-0b30-4998-a928-c2a31b7da7f4.webp)
 
 > *실제 서비스 데이터에서 도출된 노선 추천 화면*
 
@@ -78,153 +94,26 @@ stackIds:
 
 ex) AggregateRoot class와 생성시 추가되는 도메인 이벤트
 
-```ts
-
-export class Payment extends AggregateRoot<PaymentProps> {
-  private constructor(props: PaymentProps, id: UniqueEntityID) {
-    super(props, id);
-  }
-
-// 생략
-  
-  public static createNew(newProps: PaymentNewProps): Result<Payment> {
-    const nowDayjs: Dayjs = getNowDayjs();
-    const paymentOrError: Result<Payment> = this.create(
-      {
-        ...newProps,
-        discountAmount: newProps.principalAmount - newProps.paymentAmount,
-        refundableAmount: newProps.paymentAmount,
-        createdAt: nowDayjs,
-        updatedAt: nowDayjs,
-        isConfirmed: false,
-        refundRequests: [],
-      },
-      new UniqueEntityID(),
-    );
-    if (paymentOrError.isSuccess) {
-      paymentOrError.value.addDomainEvent(
-        PaymentCreatedEvent.create(paymentOrError.value.id.getString(), {
-          paymentId: paymentOrError.value.id.getString(),
-          originType: newProps.originType,
-          originId: newProps.originId.getString(),
-          userId: newProps.userId.getString(),
-        }),
-      );
-    }
-    return paymentOrError;
-  }
-```
-
 ex) 데코레이터로 영속화 시 이벤트 발행에 대한 관심사 처리
 
-```ts
-@Injectable()
-@DomainEventsDispatcher()
-export class MysqlPaymentRepository extends PaymentRepository {}
-```
-
 ex) 이벤트 핸들러
-
-```ts
-@Injectable()
-export class ShuttleOperationPaymentCreatedHandler extends EventHandler<PaymentCreatedEvent> {
-  constructor(
-    @Inject(EVENT_SUBSCRIBER)
-    private readonly eventSubscriber: IEventSubscriber,
-    private readonly reservationService: ReservationService,
-    slackWhenErrorOccuredUseCase: SlackWhenErrorOccuredUseCase,
-  ) {
-    super(slackWhenErrorOccuredUseCase);
-  }
-
-  async onModuleInit() {
-    await this.eventSubscriber.subscribe(PaymentCreatedEvent, this);
-  }
-
-  @Transactional()
-  async processEvent(event: PaymentCreatedEvent): Promise<void> {
-    const { paymentId, originType, originId, userId }: PaymentCreatedPayload = event.payload;
-    if (originType === OriginType.RESERVATION) {
-      const reservation = await this.reservationService.getById(new UniqueEntityID(originId), {
-        userId: new UniqueEntityID(userId),
-      });
-      if (!reservation) {
-        throw new InternalServerErrorException("Reservation not found");
-      }
-      reservation.injectPaymentId(new UniqueEntityID(paymentId));
-      await this.reservationService.update(reservation);
-    }
-  }
-}
-
-```
 
 EventHandler의 상속체는 처리중인 이벤트를 Promise Set으로 보유하며 리트라이, 알림, graceful-shutdown을 보장받습니다.
 
 ex) PG사 내부 서비스 로직 추상화
 
-```ts
-export interface PaymentProvider<T extends ProviderPaymentData = ProviderPaymentData> {
-  confirmPayment(payment: Payment, paymentKey: string): Promise<boolean>;
-  fetchProviderPayment(payment: Payment): Promise<T>;
-  getInprogressPayment(payment: Payment): Promise<T>;
-  refundPayment(
-    payment: Payment,
-    paymentKey: string,
-    refundAmount: number,
-    refundReason: string,
-  ): Promise<ProviderRefundResponse>;
-}
-
-```
-
-```ts
-  @Transactional()
-  async confirmPayment(payment: Payment, paymentKey: string) {
-    const provider: PaymentProvider = this.paymentFactory.getProvider(payment.pgType);
-    await provider.confirmPayment(payment, paymentKey);
-    payment.confirmPayment();
-    await this.paymentPersistor.update(payment);
-  }
-```
-
 ex) 계층간의 DIP
 
 > domains/reservations/reservation.persistor
 
-```ts
-@Injectable()
-export abstract class ReservationPersistor {
-  abstract create(reservation: Reservation): Promise<Reservation>;
-  abstract update(reservation: Reservation): Promise<Reservation>;
-  abstract updateMany(reservations: Reservation[]): Promise<Reservation[]>;
-  abstract delete(reservation: Reservation): Promise<void>;
-  abstract deleteMany(reservationIds: UniqueEntityID[]): Promise<void>;
-}
-
-```
-
 > infrastructues/reservations/repository-reservation.persistor
-
-```ts
-@Injectable()
-export class RepositoryReservationPersistor extends ReservationPersistor {
-  constructor(private readonly reservationRepository: ReservationRepository) {
-    super();
-  }
-
-  override async create(reservation: Reservation): Promise<Reservation> {
-    return this.reservationRepository.save(reservation);
-  }
-//생략
-```
 
 TS는 런타임 시 인터페이스가 휘발되기에 추상 클래스를 활용하였습니다. 마찬가지로 ReservationRepository는 MysqlReservationRepository 등의 구현체를 가지며 DI됩니다.
 
 ### 기획 기여
 
-![](https://d2r0pavv0lsiqc.cloudfront.net/projects/images/d206f979-2bd7-4b83-96fb-729c17f20f60.webp)
 
-**도메인 주도 설계(DDD)**&#xC758; 전략적 설계 방법론들을 차용하여, 이벤트 스토밍을 통해 제품의 비즈니스 도메인을 도출하고, 모호했던 정책들을 구체화 했습니다.
+
+
 
 ### 주요 성과&#xA;![](https://d2r0pavv0lsiqc.cloudfront.net/projects/images/affc9644-c5fe-4b45-a5bb-6f8bc3d52c3f.webp)
