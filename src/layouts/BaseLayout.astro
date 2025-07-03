@@ -50,16 +50,18 @@ const currentPath = Astro.url.pathname;
     publishedTime={publishedTime}
     modifiedTime={modifiedTime}
   />
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-12JS91KD4D"
+  ></script>
+  <script is:inline>
+    window.dataLayer = window.dataLayer || [];
+    function gtag() {
+      window.dataLayer.push(arguments);
+    }
+    gtag("js", new Date());
+    gtag("config", "G-12JS91KD4D");
+  </script>
   <body class="flex w-full flex-col text-skin-base">
-    <!-- Google Tag Manager (noscript) -->
-    <noscript
-      ><iframe
-        src="https://www.googletagmanager.com/ns.html?id=GTM-MFD92VH3"
-        height="0"
-        width="0"
-        style="display:none;visibility:hidden"></iframe></noscript
-    >
-    <!-- End Google Tag Manager (noscript) -->
     <SkeletonProvider>
       <NavBar pathname={currentPath} client:load />
       <slot name="hero" />
