@@ -31,7 +31,6 @@ import {
   InsertThematicBreak,
   directivesPlugin,
   linkPlugin,
-  CreateLink,
   linkDialogPlugin,
 } from "@mdxeditor/editor";
 import "~styles/editor.css";
@@ -195,7 +194,10 @@ const Editor = forwardRef<EditorRefMethods, EditorProps>(
         }),
         markdownShortcutPlugin(),
         linkPlugin(),
+        linkDialogPlugin(),
         toolbarPlugin({
+          toolbarClassName:
+            "mdx-editor-toolbar sticky top-0 z-50 bg-white border-b border-gray-200 backdrop-blur-sm shadow-sm",
           toolbarContents: renderToolbarContents,
         }),
       ],

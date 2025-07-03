@@ -62,7 +62,12 @@ NestJS에서는 모듈을 도메인 단위로 나누되, **각 모듈 내부에 
 
 ```ts
 @Module({
-  imports: [PaymentProcessingModule, PromotionModule, LeaderElectionModule, CachingModule],
+  imports: [
+    PaymentProcessingModule,
+    PromotionModule,
+    LeaderElectionModule,
+    CachingModule,
+  ],
   controllers: controllers,
   providers: [],
   exports: [],
@@ -85,11 +90,15 @@ export class BillingCommandModule {}
     PaymentModule,
     IssuedCouponModule,
   ],
-  providers: [PaymentFacade, ...paymentOrigins, PaymentOriginFactory, DiscountManager],
+  providers: [
+    PaymentFacade,
+    ...paymentOrigins,
+    PaymentOriginFactory,
+    DiscountManager,
+  ],
   exports: [PaymentProcessingFacade],
 })
 export class PaymentProcessingModule {}
-
 ```
 
 아래와 같이 도메인 모듈을 조합해서 사용합니다.
@@ -151,7 +160,7 @@ models쪽에는 **실제 도메인 메서드**를 지니고 있는 **AggregateRo
 
 ![](https://d2r0pavv0lsiqc.cloudfront.net/projects/images/2b5a812b-55a4-4ec6-898b-bfe08577ccbe.webp)
 
-앞서 말한 외부 세계와의 의존성, 기술적 상세 구현에 대한 내용은 infrastructures로 몰아 넣어 놓습니다. 여기서 Orm에서 사용하는 영속성 Entity는 은닉합니다. 인자와 리턴 값 모두 도메인레이어의 모델을 사용하고, 내부에서 처리할 때 영속성 Entity로 매핑합니다.  [https://deviq.com/principles/persistence-ignorance](https://deviq.com/principles/persistence-ignorance)
+앞서 말한 외부 세계와의 의존성, 기술적 상세 구현에 대한 내용은 infrastructures로 몰아 넣어 놓습니다. 여기서 Orm에서 사용하는 영속성 Entity는 은닉합니다. 인자와 리턴 값 모두 도메인레이어의 모델을 사용하고, 내부에서 처리할 때 영속성 Entity로 매핑합니다. [https://deviq.com/principles/persistence-ignorance](https://deviq.com/principles/persistence-ignorance)
 
 ## 모듈러 모놀리스
 
@@ -180,11 +189,3 @@ NestJS 환경에서는 이를 별도의 메시지 브로커 없이도 **인메�
 물론 메시지 큐 인프라를 사용하게 되는 경우, 인터페이스를 추상화해두는 것이 이관에 도움이 될 수 있습니다.
 다만 **Kafka, Redis 등은 각각의 고유 기능과 최적화 방식이 다르기 때문에**, 너무 일반화된 추상 레이어는 오히려 각 인프라의 특화된 기능을 쓰기 어렵게 만드는 비용이 발생할 수 있습니다.
 따라서 인메모리 이벤트 기반을 사용할 경우, **초기부터 과도한 추상화보다는, 사용하는 메시징 인프라에 맞춘 구체적 설계를** 하는 것이 나을 수 도 있습니다.
-
-:::tip
-흠
-
-어떻게
-
-보이지
-:::

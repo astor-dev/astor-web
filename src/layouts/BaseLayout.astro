@@ -11,13 +11,6 @@ import NavBar from "~components/Nav/NavBar";
 import BreadcrumbNavigator from "~components/Breadcrumb/BreadcrumbNavigator";
 import { SkeletonProvider } from "~components/Skeleton/SkeletonProvider";
 import Seo from "~components/Seo/Seo.astro";
-import type { PostEntry, PostTitleAndId, Tag } from "~types/post.type";
-import { repositoryContainer } from "~modules/repository.module";
-import {
-  POST_REPOSITORY,
-  type PostRepository,
-} from "~modules/repositories/posts/PostRepository";
-import type { SeriesAndCount } from "~types/post.type";
 interface Props {
   title?: string;
   author?: string;

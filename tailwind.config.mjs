@@ -213,7 +213,7 @@ export default {
             blockquote: {
               quotes: "none",
             },
-            a: { color: theme("textColor.skin.accent") },
+            a: { color: theme("textColor.skin.accent"), lineBreak: "anywhere" },
             pre: { color: theme("textColor.skin.accent") },
             code: {
               color: theme("textColor.skin.accent"),

@@ -1,19 +1,47 @@
 @import "@mdxeditor/editor/style.css";
 
+/* 에디터 컨테이너 스타일 */
+.editor-container {
+  position: relative;
+  overflow: visible;
+  isolation: isolate; /* 새로운 stacking context 생성 */
+}
+
 .mdxeditor {
   border: 1px solid var(--color-border);
   border-radius: 0.5rem;
   background: white;
+  position: relative;
+  height: auto;
+  min-height: 500px;
+  max-height: 70vh;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
 }
 
-.mdxeditor .toolbar {
+.mdxeditor .toolbar,
+.mdx-editor-toolbar {
   border-bottom: 1px solid var(--color-border);
   background: var(--color-fill);
+  position: sticky !important;
+  top: 0 !important;
+  z-index: 50 !important;
+  flex-shrink: 0;
+  width: 100% !important;
+  contain: layout style !important;
 }
 
 .mdxeditor .content-editable {
   min-height: 500px;
   padding: 1rem;
+  overflow-y: auto;
+  flex: 1;
+}
+
+.mdxeditor-root-contenteditable {
+  overflow-y: auto !important;
+  max-height: calc(70vh - 60px);
 }
 
 .mdxeditor-image-upload-dialog {

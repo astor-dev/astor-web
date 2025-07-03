@@ -63,7 +63,13 @@
   body,
   html {
     overflow-x: hidden; /* 가로 스크롤 숨김 */
-    overflow-y: auto; /* 세로 스크롤 표시 */
+    /* overflow-y: auto 제거 - sticky positioning 방해 */
+  }
+
+  /* 에디터가 포함된 컨테이너에서는 overflow 제한 해제 */
+  .editor-container,
+  .editor-container * {
+    contain: none !important;
   }
 
   /* ===== 코드 블럭 & Syntax Highlight ===== */

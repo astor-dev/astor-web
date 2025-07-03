@@ -315,7 +315,7 @@ const ProjectForm: React.FC<ProjectFormProps> = ({ initialData }) => {
       </div>
 
       {/* 상세 설명(마크다운) 입력 영역 */}
-      <div className="items-center rounded-lg border border-skin-line bg-white">
+      <div className="editor-container rounded-lg border border-skin-line bg-white">
         <Editor
           markdown={initialMarkdown}
           onChange={() => {}} // 빈 콜백 - 제출 시에만 값을 읽기 위함
