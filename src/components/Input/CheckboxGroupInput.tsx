@@ -21,7 +21,7 @@ interface CheckboxOption {
     color?: string;
   };
   description?: string;
-  category?: string;
+  category?: string[];
 }
 
 interface CheckboxGroupInputProps {
@@ -117,7 +117,8 @@ const CheckboxGroupInput = forwardRef<
           option.description?.toLowerCase().includes(searchTerm.toLowerCase());
       const matchesCategory = !hasCategories
         ? true
-        : selectedCategory === "전체" || option.category === selectedCategory;
+        : selectedCategory === "전체" ||
+          option.category?.includes(selectedCategory);
       return matchesSearch && matchesCategory;
     });
 
@@ -127,6 +128,14 @@ const CheckboxGroupInput = forwardRef<
     const paginatedOptions = filteredOptions.slice(
       startIndex,
       startIndex + itemsPerPage,
+    );
+    const uniqueCategories = Array.from(
+      new Set(
+        filteredOptions
+          .map(option => option.category)
+          .flat()
+          .filter(category => category !== undefined),
+      ),
     );
 
     // 페이지 변경 핸들러
@@ -158,7 +167,7 @@ const CheckboxGroupInput = forwardRef<
             )}
             {hasCategories && (
               <div className="flex flex-wrap gap-2">
-                {categories.map(category => (
+                {uniqueCategories.map(category => (
                   <button
                     key={category}
                     type="button"
