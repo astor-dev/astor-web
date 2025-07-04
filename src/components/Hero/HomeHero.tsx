@@ -262,7 +262,7 @@ export default function HomeHero() {
                 </span>
                 입니다.
                 <br />
-                문제의 복잡함을 꿰뚫어보고,
+                문제의 복잡함을 꿰뚫어보고,{" "}
                 <span className="font-bold">간결하고 명확한 구조</span>로
                 <br />
                 현실에 녹아들 수 있는 솔루션을 만듭니다.
