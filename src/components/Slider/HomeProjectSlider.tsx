@@ -35,7 +35,7 @@ const HomeProjectSlider = (props: { projects: ProjectEntry[] }) => {
   };
 
   return (
-    <div className="relative -mx-4 flex aspect-[4/3] h-full w-[calc(100%+32px)] md:mx-0 md:w-full">
+    <div className="relative -mx-4 flex h-[400px] w-[calc(100%+32px)] md:mx-0 md:w-full">
       <Swiper
         ref={swiperRef}
         modules={[Navigation, Pagination, Autoplay, EffectFade, Mousewheel]}
