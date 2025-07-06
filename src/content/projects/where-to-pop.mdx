@@ -47,15 +47,13 @@ Where to Pop은 **축적된 팝업스토어 운영 데이터, 지역 상권 정�
 
 상세한 유스케이스입니다. "마케팅 대행사가 팝업스토어를 열고 싶어하는 상황에서, 가장 적합한 건물 위치를 찾고자하는 상황"을 가정한 시나리오입니다.
 
-1. 타겟층을 고려한 지역 선정
+**step 1) 타겟층을 고려한 지역 선정**
 
-![](https://d2r0pavv0lsiqc.cloudfront.net/projects/images/36fef51f-d154-49bf-93ef-841e29959bdc.webp)![](https://d2r0pavv0lsiqc.cloudfront.net/projects/images/32f1bfbb-c372-469d-92ea-91ced271a597.webp)
-
-1. SNS 반응을 기반으로 한 지역 내 팝업스토어 사례 분석
+![](https://d2r0pavv0lsiqc.cloudfront.net/projects/images/36fef51f-d154-49bf-93ef-841e29959bdc.webp)![](https://d2r0pavv0lsiqc.cloudfront.net/projects/images/32f1bfbb-c372-469d-92ea-91ced271a597.webp)**step 2) SNS 반응을 기반으로 한 지역 내 팝업스토어 사례 분석**
 
 ![](https://d2r0pavv0lsiqc.cloudfront.net/projects/images/fc0ac2b6-c948-40a5-b9d8-579dbb1d8242.webp)
 
-1. 팝업스토어가 열린 건물에 대한 상세 정보
+**step 3) 팝업스토어가 열린 건물에 대한 상세 정보 취득**
 
 ![](https://d2r0pavv0lsiqc.cloudfront.net/projects/images/72aa5490-4450-4fe1-8129-cdeeac485027.webp)
 
@@ -88,7 +86,7 @@ Where to Pop은 **축적된 팝업스토어 운영 데이터, 지역 상권 정�
 SSE를 활용해 응답 생성 과정을 단계별 메시지로 실시간 표시하도록 구현하였습니다.
 실제 답변은 스트리밍 형태로 전달되며, 각 글자를 state로 관리하여 응답 시간이 긴 상황에서도 사용자에게 즉각적인 피드백을 제공함으로써 UX를 크게 향상시켰습니다.
 
-자바의 **Reactive Streams** 기반 비동기 처리 방식으로, **에이전트 파이프라인을 백그라운드**에서 실행하고 실시간 응답을 SSE 기술로 스트리밍 형태로 제공합니다. 각 전략은 병렬로 실행되며, 그 결과는 구독 시점에 맞춰 순차적으로 전송됩니다..
+자바의 **Reactive Streams** 기반 비동기 처리 방식으로, **에이전트 파이프라인을 백그라운드**에서 실행하고 실시간 응답을 SSE 기술로 스트리밍 형태로 제공합니다. 각 전략은 병렬로 실행되며, 그 결과는 구독 시점에 맞춰 순차적으로 전송됩니다.
 
 - **Cold Flow**: 질의 시점마다 AI 파이프라인이 새로 시작
 - **Mutable Flow**: 전략 단위의 병렬 비동기 작업 수행 및 결과 emit
