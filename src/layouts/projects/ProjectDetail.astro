@@ -12,10 +12,11 @@ import {
 import ImageWithSkeleton from "~components/Skeleton/ImageWithSkeleton";
 import { FaCalendar, FaBuilding } from "react-icons/fa";
 import IconButton from "~components/Button/IconButton";
-import StackSlider from "~components/Slider/StackSlider";
 import StickyTableOfContents from "~components/Nav/StickyTableOfContents.astro";
 import StickyButtons from "~components/Nav/StickyButtons.astro";
 import ProjectFooter from "~components/Footer/ProjectFooter.astro";
+import StackTable from "~components/Table/StackTable";
+
 interface Props {
   project: CollectionEntry<"projects">;
   isAdmin: boolean;
@@ -150,7 +151,7 @@ for (const stackId of project.data.stackIds) {
         <!-- 기술 스택 섹션 -->
         <section class="transition-all duration-700">
           <h2 class="my-4 text-lg font-bold text-black-accent">사용 기술</h2>
-          <StackSlider
+          <StackTable
             stackIds={project.data.stackIds}
             relatedProjects={relatedProjects}
             defaultType={project.data.roles.includes("Frontend")
