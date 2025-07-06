@@ -14,16 +14,17 @@ roles:
   - Plan
 shortDescription: "기술과 경험을 기록하고, 성장의 흔적을 남기는 개인 홈페이지"
 stackIds:
-  - 1101 # TypeScript
-  - 1102 # JavaScript
-  - 1201 # React
-  - 1202 # Next.js
-  - 2201 # NestJS
-  - 2302 # MySQL
-  - 2501 # Docker
-  - 2502 # Nginx
-primaryColor: "#5B5FB0"
-backgroundColor: "#f3f4f6"
+  - 1102
+  - 1201
+  - 2201
+  - 2501
+  - 1203
+  - 1204
+  - 2204
+  - 2401
+  - 2503
+  - 3503
+  - 3501
 ---
 
 ## 프로젝트 개요
@@ -67,27 +68,15 @@ FE 배포는 githubPage를 통해 처리하기 때문에 비용도 없으며, �
 
 전체적인 테마색은 astor 닉네임에 어울리게 우주 느낌을 내고 싶었습니다. 우주 사진을 unspash에서 몇장 고른 후 사진과 어울리는 색상 디자인 시스템을 구축했습니다. 그렇게 고른 색들은 아래와 같습니다.
 
-<img
-  height="587"
-  width="711"
-  src="https://d2r0pavv0lsiqc.cloudfront.net/projects/images/48bb3d43-89f9-4e72-9d90-0abbcb408e21.png"
-/>
+<img height="587" width="711" src="https://d2r0pavv0lsiqc.cloudfront.net/projects/images/48bb3d43-89f9-4e72-9d90-0abbcb408e21.png" />
 
 ### 기술스택과 아키텍처
 
 #### **프론트엔드**
 
-- **Framework**
-
-  : Astro (SSG 활용 서버 없이 SEO)
-
-- **Styling**
-
-  : Tailwind CSS
-
-- **Deployment**
-
-  : GitHub Pages
+- **Framework**: Astro (SSG 활용 서버 없이 SEO)
+- **Styling**: Tailwind CSS
+- **Deployment**: GitHub Pages
 
 가장 핵심인 포인트는 FE 프레임 워크로 `Astro`를 썼다는 점입니다. Astro 프레임워크의 철학이 제 프로젝트 컨셉과 가장 잘 맞아서 결정하게 되었습니다.
 Astro의 내장된 mdx 프론트 메터 기반 data저장, mdx->html 렌더링 기능으로 별다른 노력없이 md 렌더러 구현 + SEO를 동시에 해결할 수 있는 점이 매력적이었습니다.
