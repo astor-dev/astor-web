@@ -24,26 +24,22 @@ const StackItem: React.FC<StackItemProps> = ({
     <>
       <motion.div
         ref={itemRef}
-        layout="position"
         initial={{ opacity: 0 }}
         animate={{ opacity: isVisible ? 1 : 0 }}
-        exit={{ opacity: 0 }}
         transition={{
           opacity: { duration: 0.2 },
-          layout: { duration: 0.2 },
         }}
         onClick={() => setShowRelated(true)}
-        className="group relative flex cursor-pointer items-center gap-3 rounded-lg bg-transparent px-3 py-2.5 transition-all duration-200 hover:-translate-y-0.5 hover:bg-white/80 active:translate-y-0 active:bg-white/70 active:shadow"
+        className="group relative flex cursor-pointer items-center gap-3 rounded-lg bg-transparent px-3 py-2.5 transition-all duration-200 hover:-translate-y-0.5 hover:bg-white/80"
       >
         <div className="text-lg text-skin-accent">
           <stack.icon
-            className="transition-transform duration-200 ease-out group-hover:scale-110 group-active:scale-95"
+            className="transition-transform duration-200 ease-out group-hover:scale-110"
             style={{ color: stack.color }}
           />
         </div>
-
         <div className="min-w-0 flex-1">
-          <h3 className="truncate text-sm font-medium text-black-accent group-hover:text-skin-accent group-active:text-skin-accent/90">
+          <h3 className="truncate text-sm font-medium text-black-accent group-hover:text-skin-accent">
             {stack.name}
             {showFeatured && stack.featured && (
               <span
