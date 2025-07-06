@@ -1,7 +1,7 @@
 import ImageWithSkeleton from "~components/Skeleton/ImageWithSkeleton";
 import type { ProjectEntry } from "~/types/project.type";
 import { stacks } from "~constants/stacks";
-import type { Stack } from "~types/stack.type";
+import { stackTypeEnum, type Stack } from "~types/stack.type";
 
 /** HeroCard 스타일로 완전히 재구성한 컴포넌트 */
 interface ProjectCardProps extends ProjectEntry {
@@ -34,7 +34,7 @@ const getProjectColorTheme = (projectName: string): ColorTheme => {
       primary: "#006400",
       secondary: "#008000",
       accent: "#228B22",
-      background: "#ffffff",
+      background: "#f8faf8",
       text: "#006400",
     },
     히얼러스: {
@@ -98,7 +98,8 @@ const ProjectStacksSection = ({ stackIds, theme }: ProjectStacksMiniProps) => {
   const getStacksForProject = (stackIds: number[]): Stack[] => {
     const projectStacks = stackIds
       .map(id => stacks.find(stack => stack.id === id))
-      .filter(Boolean) as Stack[];
+      .filter(Boolean)
+      .filter(stack => stack !== undefined);
 
     // 우선순위 정렬: superFeatured > featured > Backend > DevOps > 나머지
     const sortedStacks = projectStacks.sort((a, b) => {
@@ -107,13 +108,13 @@ const ProjectStacksSection = ({ stackIds, theme }: ProjectStacksMiniProps) => {
       if (a.featured && !b.featured) return -1;
       if (!a.featured && b.featured) return 1;
 
-      const aHasBackend = a.stackType.includes("Backend");
-      const bHasBackend = b.stackType.includes("Backend");
+      const aHasBackend = a.stackType.includes(stackTypeEnum.options[1]);
+      const bHasBackend = b.stackType.includes(stackTypeEnum.options[1]);
       if (aHasBackend && !bHasBackend) return -1;
       if (!aHasBackend && bHasBackend) return 1;
 
-      const aHasDevOps = a.stackType.includes("DevOps");
-      const bHasDevOps = b.stackType.includes("DevOps");
+      const aHasDevOps = a.stackType.includes(stackTypeEnum.options[2]);
+      const bHasDevOps = b.stackType.includes(stackTypeEnum.options[2]);
       if (aHasDevOps && !bHasDevOps) return -1;
       if (!aHasDevOps && bHasDevOps) return 1;
 
@@ -182,14 +183,12 @@ const FullImageProjectCard = (props: ProjectCardProps) => {
       <div className="grid h-full grid-cols-1 md:grid-cols-5">
         {/* 이미지 섹션 - 3/5 비율 */}
         <div className="relative h-full w-full overflow-hidden md:col-span-3">
+          <div className="absolute bottom-0 left-0 right-0 h-1/2 bg-gradient-to-t from-black/80 via-black/50 to-transparent md:hidden" />
           <ImageWithSkeleton
             src={imageUrl}
             alt={projectName}
-            className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
+            className="h-full w-full object-cover transition-transform duration-300 md:group-hover:scale-105"
           />
-
-          {/* 그라데이션 오버레이 */}
-          {/* <div className="absolute bottom-0 left-0 right-0 h-1/2 bg-gradient-to-t from-black/80 via-black/50 to-transparent" /> */}
 
           {/* 프로젝트 정보 (모바일에서만 표시) */}
           <div className="absolute bottom-0 left-0 w-full p-4 md:hidden">
@@ -202,7 +201,7 @@ const FullImageProjectCard = (props: ProjectCardProps) => {
           </div>
 
           {/* 데스크톱 hover 시 오버레이 효과 */}
-          <div className="absolute inset-0 hidden bg-black/0 transition-all duration-300 group-hover:bg-black/10 md:block" />
+          <div className="absolute inset-0 hidden bg-black/0 transition-all duration-300 md:block md:group-hover:bg-black/10" />
         </div>
 
         {/* 프로젝트 상세 정보 섹션 - 2/5 비율 (md 이상에서만 표시) */}
@@ -214,7 +213,7 @@ const FullImageProjectCard = (props: ProjectCardProps) => {
             {/* 프로젝트 기본 정보 */}
             <div className="mb-3">
               <h3
-                className="text-lg font-bold leading-tight transition-colors duration-300 group-hover:opacity-90"
+                className="text-lg font-bold leading-tight transition-colors duration-300 md:group-hover:opacity-90"
                 style={{ color: theme.text }}
               >
                 {projectName}
@@ -239,7 +238,7 @@ const FullImageProjectCard = (props: ProjectCardProps) => {
             {/* 클릭 유도 힌트 */}
             <div className="flex items-center justify-end">
               <div
-                className="flex items-center gap-1 rounded-md px-2 py-1 text-xs opacity-60 transition-all duration-300 group-hover:opacity-100"
+                className="flex items-center gap-1 rounded-md px-2 py-1 text-xs opacity-60 transition-all duration-300 md:group-hover:opacity-100"
                 style={{
                   backgroundColor: theme.primary + "20",
                   color: theme.secondary,
@@ -247,7 +246,7 @@ const FullImageProjectCard = (props: ProjectCardProps) => {
               >
                 <span>상세보기</span>
                 <svg
-                  className="h-3 w-3 transition-transform duration-300 group-hover:translate-x-0.5"
+                  className="h-3 w-3 transition-transform duration-300 md:group-hover:translate-x-0.5"
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"

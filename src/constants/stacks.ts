@@ -296,6 +296,7 @@ export const stacks: Stack[] = [
     description: "객체 지향 프로그래밍 언어로 다양한 애플리케이션 개발",
     color: "#F89820",
     featured: true,
+    superFeatured: true,
   },
   {
     id: 29,
@@ -333,6 +334,7 @@ export const stacks: Stack[] = [
     description: "자바 기반의 프레임워크로 안정적인 애플리케이션 개발",
     color: "#6DB33D",
     featured: true,
+    superFeatured: true,
   },
   {
     id: 33,
@@ -371,6 +373,7 @@ export const stacks: Stack[] = [
       "현대적이고 간결하며, 자바와 호환되는 정적 타입 지정 프로그래밍 언어",
     color: "#7F52FF",
     featured: true,
+    superFeatured: true,
   },
   {
     id: 37,
