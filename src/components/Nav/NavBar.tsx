@@ -18,8 +18,7 @@ const isProjectNoHeroPage = (pathname: string): boolean => {
 };
 
 const isNoHeroPage = (pathname: string): boolean => {
-  // blog/posts/* || blog/series/* 제외한 모든 블로그 페이지 + project 메인 페이지 (/projects)
-  console.log("pathname", pathname);
+  // blog/posts/* || blog/series/* 제외한 모든 블로그 페이지 + project 메인 페이지 (/projects)3
   return isBlogNoHeroPage(pathname) || isProjectNoHeroPage(pathname);
 };
 
