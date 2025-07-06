@@ -7,24 +7,24 @@
     "endedAt": "2025-08",
     "body": [
       {
-        "heading": "학회 내 서비스 인프라 총괄",
-        "description": "초기 프로젝트 팀을 위한 인프라 구축 및 운영 지원",
+        "heading": "학회 통합 배포 환경 구축 및 예산 관리 시스템 운영",
+        "description": "서버 비용 청구 정책 수립 및 프로젝트 성과 기반 학회 지원 체계 구축",
         "lists": [
           "학회 내 서비스 통합 배포 환경 구축 및 운영, 예산 관리",
           "프로젝트 운영 성과에 따른 서버 비용 청구 및 학회 지원 정책 수립"
         ]
       },
       {
-        "heading": "기술 세미나 및 내부 교육",
-        "description": "학회 세미나 진행 및 인프라 가이드라인 배포 ",
+        "heading": "DDD 기술 세미나 진행 및 AWS 인프라 가이드라인 제공",
+        "description": "1시간 분량 도메인 주도 설계 세미나 및 초기 프로젝트 팀 AWS 인프라 지원",
         "lists": [
           "도메인 주도 설계(DDD) 관련 1시간 분량의 기술 세미나 진행",
           "초기 프로젝트 팀을 위한 AWS 인프라 가이드라인 제공 및 지원"
         ]
       },
       {
-        "heading": "팀 프로젝트 참여",
-        "description": "블꾸 프로젝트를 통한 WAS 개발 및 인프라 운영",
+        "heading": "블꾸 프로젝트 NestJS 백엔드 개발 및 AWS 인프라 운영",
+        "description": "Redis SSE 실시간 알림 시스템 및 Grafana + Prometheus 모니터링 구축",
         "lists": [
           "NestJS 기반 백엔드 아키텍처 설계 및 JWT/OAuth 인증 시스템 구축",
           "Redis 기반 SSE 실시간 알림 시스템 개발",
@@ -43,8 +43,8 @@
     "endedAt": null,
     "body": [
       {
-        "heading": "MSA 백엔드 아키텍처 설계",
-        "description": "MSA 기반의 시스템 설계 및 핵심 서비스 개발",
+        "heading": "gRPC + Kafka 기반 MSA 백엔드 아키텍처 설계",
+        "description": "protobuf 마이크로서비스 통신 체계 및 GCP Docker/GKE 배포 환경 구축",
         "lists": [
           "protobuf + gRPC 기반 마이크로서비스 통신 체계 설계 및 구현",
           "Kafka - KRaft 기반 비동기 메시징 시스템 구축",
@@ -52,8 +52,8 @@
         ]
       },
       {
-        "heading": "API Gateway 및 서비스 개발",
-        "description": "API Gateway와 핵심 마이크로서비스 개발 및 운영",
+        "heading": "Spring API Gateway 및 LangChain AI 채팅 서비스 개발",
+        "description": "HTTP-gRPC 라우팅 Gateway 서버 구축 및 NestJS 기반 인증/AI 서비스 개발",
         "lists": [
           "HTTP-gRPC 라우팅 및 트래픽 관리, 인증처리 Gateway 서버 구축 (Java + Spring)",
           "사용자 인증/인가 및 관리 서비스 개발 (NestJS)",
@@ -71,8 +71,8 @@
     "endedAt": "2025-06",
     "body": [
       {
-        "heading": "프로젝트 기획 및 아키텍처 설계",
-        "description": "다양한 데이터 소스를 활용한 팝업스토어 최적 입지 분석 AI 어시스턴트 기획",
+        "heading": "팝업스토어 입지 분석 AI 어시스턴트 기획 및 Kotlin 백엔드 설계",
+        "description": "SNS·커뮤니티·공공데이터 크롤링 파이프라인 및 Reactive Streams 기반 SSE 스트리밍 구축",
         "lists": [
           "SNS·커뮤니티·공공데이터 크롤링을 통한 종합적 데이터 파이프라인 상위 설계",
           "Kotlin + Spring 기반 모듈화 및 확장성을 고려한 백엔드 아키텍처 설계",
@@ -80,8 +80,8 @@
         ]
       },
       {
-        "heading": "Agentic RAG 시스템 구현",
-        "description": "능동적으로 Retrieve, Augmentation, Generation 전략을 선택하는 Agentic RAG 시스템 구현",
+        "heading": "Spring AI 기반 Agentic RAG 시스템 구현",
+        "description": "Weaviate Vector DB + Multi-Agent Router Pattern 기반 하이브리드 검색 및 다단계 추론 처리",
         "lists": [
           "Spring AI를 활용한 다단계 맥락 유지 Tool Selection Chaining, Function Calling 파이프라인 구축",
           "Weaviate Vector DB + RDBMS + MCP 기반의 하이브리드 검색",
