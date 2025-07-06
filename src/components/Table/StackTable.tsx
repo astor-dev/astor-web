@@ -54,12 +54,8 @@ const StackTable: React.FC<StackSliderProps> = ({
   useEffect(() => {
     const updateItemsPerPage = () => {
       const width = window.innerWidth;
-      if (width >= 1024) {
-        setItemsPerPage(20); // lg: 5열 × 4행
-      } else if (width >= 768) {
+      if (width >= 768) {
         setItemsPerPage(16); // md: 4열 × 4행
-      } else if (width >= 640) {
-        setItemsPerPage(12); // sm: 3열 × 4행
       } else {
         setItemsPerPage(8); // 2열 × 4행
       }
@@ -191,7 +187,7 @@ const StackTable: React.FC<StackSliderProps> = ({
             <Skeleton height="100%" borderRadius={8} />
           </div>
         ) : filteredStacks.length > 0 ? (
-          <div className="grid grid-cols-2 gap-2 p-1 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
+          <div className="grid grid-cols-2 gap-2 p-1 md:grid-cols-4">
             {currentStacks.map(stack => (
               <div
                 key={stack.id}

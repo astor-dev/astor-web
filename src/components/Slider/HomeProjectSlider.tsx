@@ -61,7 +61,7 @@ const HomeProjectSlider = (props: { projects: ProjectEntry[] }) => {
       <Swiper
         ref={swiperRef}
         modules={[Navigation, Pagination, Autoplay, EffectFade, Mousewheel]}
-        autoplay={{ delay: 3000, disableOnInteraction: false }}
+        autoplay={{ delay: 5000, disableOnInteraction: true }}
         loop={true}
         effect={"fade"}
         spaceBetween={0}

@@ -52,7 +52,8 @@ const ProjectForm: React.FC<ProjectFormProps> = ({ initialData }) => {
   const rolesRef = useRef<CheckboxGroupInputMethods>(null);
   const shortDescriptionRef = useRef<TextareaInputMethods>(null);
   const stackIdsRef = useRef<CheckboxGroupInputMethods>(null);
-
+  const primaryColorRef = useRef<InputMethods>(null);
+  const backgroundColorRef = useRef<InputMethods>(null);
   // 종료일 무기한 체크박스 상태만 관리 (UI 업데이트 필요)
   const [isInfiniteEndDate, setIsInfiniteEndDate] = useState(
     () => !initialData?.data?.endedAt,
@@ -96,6 +97,8 @@ const ProjectForm: React.FC<ProjectFormProps> = ({ initialData }) => {
       roles: (rolesRef.current?.getValues() as ProjectRole[]) || [],
       shortDescription: shortDescriptionRef.current?.getValue() || "",
       stackIds: (stackIdsRef.current?.getValues() || []).map(id => Number(id)),
+      primaryColor: primaryColorRef.current?.getValue() || null,
+      backgroundColor: backgroundColorRef.current?.getValue() || null,
     };
   }, [isInfiniteEndDate]);
 
@@ -284,6 +287,26 @@ const ProjectForm: React.FC<ProjectFormProps> = ({ initialData }) => {
             label="간단 설명"
             required
             defaultValue={initialData?.data?.shortDescription ?? ""}
+          />
+
+          <Input
+            ref={primaryColorRef}
+            id="primaryColor"
+            name="primaryColor"
+            label="기본 색상"
+            type="text"
+            required
+            defaultValue={initialData?.data?.primaryColor ?? ""}
+          />
+
+          <Input
+            ref={backgroundColorRef}
+            id="backgroundColor"
+            name="backgroundColor"
+            label="배경 색상"
+            type="text"
+            required
+            defaultValue={initialData?.data?.backgroundColor ?? ""}
           />
 
           <div className="md:col-span-2">

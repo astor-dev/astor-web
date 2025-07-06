@@ -92,7 +92,7 @@ const MagazineCarousel = (props: {
           <Swiper
             ref={swiperRef}
             modules={[Navigation, Autoplay, EffectFade, FreeMode, Mousewheel]}
-            autoplay={{ delay: 3000, disableOnInteraction: false }}
+            autoplay={{ delay: 3000, disableOnInteraction: true }}
             loop={true}
             effect={currentOptions.effect}
             spaceBetween={currentOptions.spaceBetween}

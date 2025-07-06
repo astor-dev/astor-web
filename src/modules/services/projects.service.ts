@@ -1,4 +1,3 @@
-import { z } from "zod";
 import type { HttpInstance } from "~modules/services/core/http.instance";
 import type { ProjectRole, ProjectType } from "~types/project.type";
 
@@ -17,6 +16,8 @@ interface CreateProjectRequest {
     startedAt: string;
     endedAt?: string;
     stackIds: number[];
+    primaryColor: string | null;
+    backgroundColor: string | null;
   };
   body: string;
 }
