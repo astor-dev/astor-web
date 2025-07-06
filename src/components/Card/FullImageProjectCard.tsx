@@ -28,12 +28,22 @@ interface ColorTheme {
 }
 
 // 프로젝트별 색상 테마 정의
-const getProjectColorTheme = (
-  projectName: string,
-  imageUrl: string,
-): ColorTheme => {
-  // 프로젝트 이름이나 이미지 URL 패턴에 따라 색상 테마 반환
+const getProjectColorTheme = (projectName: string): ColorTheme => {
   const themes: Record<string, ColorTheme> = {
+    핸디버스: {
+      primary: "#006400",
+      secondary: "#008000",
+      accent: "#228B22",
+      background: "#ffffff",
+      text: "#006400",
+    },
+    히얼러스: {
+      primary: "#4d317e",
+      secondary: "#6b46c1",
+      accent: "#86198f",
+      background: "#f5f3ff",
+      text: "#4d317e",
+    },
     "where-to-pop": {
       primary: "#3B82F6",
       secondary: "#1E40AF",
@@ -47,13 +57,6 @@ const getProjectColorTheme = (
       accent: "#A78BFA",
       background: "#F3F4F6",
       text: "#581C87",
-    },
-    st_archive: {
-      primary: "#10B981",
-      secondary: "#047857",
-      accent: "#34D399",
-      background: "#F0FDF4",
-      text: "#064E3B",
     },
     default: {
       primary: "#6366F1",
@@ -169,15 +172,12 @@ const FullImageProjectCard = (props: ProjectCardProps) => {
     stackIds,
   } = data;
 
-  const theme = getProjectColorTheme(projectName, imageUrl);
+  const theme = getProjectColorTheme(projectName);
 
   return (
     <a
       href={`/projects/${projectName}`}
-      className="group relative block h-full w-full cursor-pointer overflow-hidden rounded-lg transition-all duration-300 hover:shadow-2xl"
-      style={{
-        boxShadow: `0 4px 20px ${theme.primary}20`,
-      }}
+      className="group relative block h-full w-full cursor-pointer overflow-hidden transition-all duration-300"
     >
       <div className="grid h-full grid-cols-1 md:grid-cols-5">
         {/* 이미지 섹션 - 3/5 비율 */}
@@ -189,7 +189,7 @@ const FullImageProjectCard = (props: ProjectCardProps) => {
           />
 
           {/* 그라데이션 오버레이 */}
-          <div className="absolute bottom-0 left-0 right-0 h-1/2 bg-gradient-to-t from-black/80 via-black/50 to-transparent" />
+          {/* <div className="absolute bottom-0 left-0 right-0 h-1/2 bg-gradient-to-t from-black/80 via-black/50 to-transparent" /> */}
 
           {/* 프로젝트 정보 (모바일에서만 표시) */}
           <div className="absolute bottom-0 left-0 w-full p-4 md:hidden">
@@ -207,7 +207,7 @@ const FullImageProjectCard = (props: ProjectCardProps) => {
 
         {/* 프로젝트 상세 정보 섹션 - 2/5 비율 (md 이상에서만 표시) */}
         <div
-          className="hidden h-full transition-all duration-300 group-hover:shadow-inner md:col-span-2 md:block"
+          className="hidden h-full transition-all duration-300 md:col-span-2 md:block"
           style={{ backgroundColor: theme.background }}
         >
           <div className="flex h-full flex-col justify-between p-4">
