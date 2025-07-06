@@ -33,13 +33,12 @@ const ProjectRolesSection = ({ roles, theme }: ProjectRolesMiniProps) => {
       <h2 className="mb-2 text-base font-bold" style={{ color: theme.primary }}>
         역할
       </h2>
-      <div className="flex flex-wrap gap-1.5">
+      <div className="flex flex-wrap gap-2">
         {roles.map(role => (
           <div
             key={role}
-            className="flex items-center rounded-full px-2.5 py-1 text-xs font-medium"
+            className="flex items-center py-1 text-xs font-medium"
             style={{
-              backgroundColor: theme.background,
               color: theme.primary,
             }}
           >
@@ -94,7 +93,7 @@ const ProjectStacksSection = ({ stackIds, theme }: ProjectStacksMiniProps) => {
         {displayStacks.map(stack => (
           <div
             key={stack.id}
-            className="flex items-center space-x-1.5 rounded-md p-1.5 text-xs"
+            className="flex items-center space-x-1.5 rounded-md py-1.5 text-xs"
             style={{ backgroundColor: theme.background }}
           >
             <stack.icon
