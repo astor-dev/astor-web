@@ -213,7 +213,7 @@ const FullImageProjectCard = (props: ProjectCardProps) => {
             {/* 프로젝트 기본 정보 */}
             <div className="mb-3">
               <h3
-                className="text-lg font-bold leading-tight transition-colors duration-300 md:group-hover:opacity-90"
+                className="line-clamp-1 text-lg font-bold leading-tight transition-colors duration-300 md:group-hover:opacity-90"
                 style={{ color: theme.text }}
               >
                 {projectName}
@@ -225,7 +225,7 @@ const FullImageProjectCard = (props: ProjectCardProps) => {
                 {companyName}
               </p>
               <p
-                className="mt-1.5 text-xs leading-relaxed opacity-80 transition-colors duration-300"
+                className="mt-1.5 line-clamp-2 min-h-[2rem] text-xs opacity-80 transition-colors duration-300"
                 style={{ color: theme.text }}
               >
                 {shortDescription}
