@@ -16,6 +16,8 @@ const projects = defineCollection({
     startedAt: z.string(),
     endedAt: z.string(), // ""의 경우 현재 진행중인 프로젝트
     stackIds: z.array(z.number()),
+    primaryColor: z.string().optional(),
+    backgroundColor: z.string().optional(),
   }),
 });
 
