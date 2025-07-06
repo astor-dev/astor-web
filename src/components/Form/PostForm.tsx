@@ -624,7 +624,7 @@ const PostForm: React.FC<PostFormProps> = ({ initialData, tags, series }) => {
               label="OG 이미지"
               type="posts"
               required
-              value={initialData?.data?.ogImage ?? ""}
+              defaultValue={initialData?.data?.ogImage ?? ""}
             />
           </div>
         </div>

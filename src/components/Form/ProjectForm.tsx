@@ -195,7 +195,7 @@ const ProjectForm: React.FC<ProjectFormProps> = ({ initialData }) => {
               label="이미지"
               type="projects"
               required
-              value={initialData?.data?.imageUrl ?? ""}
+              defaultValue={initialData?.data?.imageUrl ?? ""}
             />
             <p className="mt-2 text-sm text-skin-accent">
               이미지는 4:3 비율을 권장드립니다.

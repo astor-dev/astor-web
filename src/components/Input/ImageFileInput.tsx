@@ -1,4 +1,4 @@
-import React, {
+import {
   useEffect,
   useRef,
   useState,
@@ -33,6 +33,7 @@ interface Props {
   type: ImageKey;
   required?: boolean;
   value?: string;
+  defaultValue?: string;
   setValue?: (value: string | undefined) => void;
 }
 
@@ -44,63 +45,63 @@ const ImageFileInput = forwardRef<ImageFileInputMethods, Props>(
       label,
       type,
       required = false,
-      value: propValue = "",
+      value: propValue,
+      defaultValue: propDefaultValue = "",
       setValue: propSetValue,
     },
     ref,
   ) => {
     const [file, setFile] = useState<File | null>(null);
     const [previewUrl, setPreviewUrl] = useState<string | null>(null);
-    const [internalValue, setInternalValue] = useState<string>(propValue);
+    const [internalValue, setInternalValue] = useState<string>(
+      propDefaultValue || "",
+    );
     const inputRef = useRef<HTMLInputElement>(null);
     const containerRef = useRef<HTMLDivElement>(null);
     const imageService = serviceContainer.get<ImageService>(IMAGE_SERVICE);
 
-    // 외부에서 값이 변경되면 내부 상태 업데이트
-    useEffect(() => {
-      if (propValue !== undefined) {
-        setInternalValue(propValue);
-      }
-    }, [propValue]);
-
-    // 실제 사용할 값 (props에서 제공한 값 또는 내부 상태)
-    const value = propValue || internalValue;
+    // 실제 사용할 값은 항상 internalValue
+    const value = internalValue;
 
     const isLoading = file !== null;
     const isPending = !value && !previewUrl;
     const displayUrl = previewUrl || value;
 
     // 외부에서 접근 가능한 메서드 정의
-    useImperativeHandle(ref, () => ({
-      getValue: () => value,
-      setValue: (newValue: string) => {
-        setInternalValue(newValue);
-        if (propSetValue) {
-          propSetValue(newValue);
-        }
-      },
-      getFile: () => file,
-      uploadFile: async (newFile: File) => {
-        setFile(newFile);
-        const objectUrl = URL.createObjectURL(newFile);
-        setPreviewUrl(objectUrl);
-
-        try {
-          const newUrl = await imageService.uploadImage(type, newFile);
-          setFile(null);
-          setPreviewUrl(null);
-          setInternalValue(newUrl);
+    useImperativeHandle(
+      ref,
+      () => ({
+        getValue: () => internalValue,
+        setValue: (newValue: string) => {
+          setInternalValue(newValue);
           if (propSetValue) {
-            propSetValue(newUrl);
+            propSetValue(newValue);
           }
-        } catch (error) {
-          console.error("이미지 업로드 실패:", error);
-          setFile(null);
-          URL.revokeObjectURL(objectUrl);
-          throw error;
-        }
-      },
-    }));
+        },
+        getFile: () => file,
+        uploadFile: async (newFile: File) => {
+          setFile(newFile);
+          const objectUrl = URL.createObjectURL(newFile);
+          setPreviewUrl(objectUrl);
+
+          try {
+            const newUrl = await imageService.uploadImage(type, newFile);
+            setFile(null);
+            setPreviewUrl(null);
+            setInternalValue(newUrl);
+            if (propSetValue) {
+              propSetValue(newUrl);
+            }
+          } catch (error) {
+            console.error("이미지 업로드 실패:", error);
+            setFile(null);
+            URL.revokeObjectURL(objectUrl);
+            throw error;
+          }
+        },
+      }),
+      [internalValue, file, propSetValue, type],
+    );
 
     // 클립보드 이미지 처리 함수
     const handlePaste = (e: ClipboardEvent) => {
