@@ -1,7 +1,7 @@
 import { z } from "zod";
 // import { fakerKO as faker } from "@faker-js/faker";
 import type { IconType } from "react-icons";
-export const stackTypeEnum = z.enum(["Frontend", "Backend", "DevOps"]);
+export const stackTypeEnum = z.enum(["Frontend", "Backend", "DevOps", "ETC"]);
 export type StackType = z.infer<typeof stackTypeEnum>;
 
 export const stackSchema = z.object({

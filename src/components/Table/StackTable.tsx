@@ -18,6 +18,22 @@ const stackTypeOrder: Record<StackType, number> = {
   [stackTypeEnum.Enum.Frontend]: 1,
   [stackTypeEnum.Enum.Backend]: 2,
   [stackTypeEnum.Enum.DevOps]: 3,
+  [stackTypeEnum.Enum.ETC]: 4,
+};
+
+const parseType = (type: StackType | "all") => {
+  switch (type) {
+    case stackTypeEnum.Enum.Frontend:
+      return "FE";
+    case stackTypeEnum.Enum.Backend:
+      return "BE";
+    case stackTypeEnum.Enum.DevOps:
+      return "DevOps";
+    case stackTypeEnum.Enum.ETC:
+      return "ETC";
+    default:
+      return type.charAt(0).toUpperCase() + type.slice(1).toLowerCase();
+  }
 };
 
 const StackTable: React.FC<StackSliderProps> = ({
@@ -161,7 +177,7 @@ const StackTable: React.FC<StackSliderProps> = ({
                   : "bg-skin-card hover:bg-skin-card-muted text-skin-base"
               }`}
             >
-              {type.charAt(0).toUpperCase() + type.slice(1)}
+              {parseType(type)}
             </button>
           ))
         )}
