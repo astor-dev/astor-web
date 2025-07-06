@@ -129,14 +129,10 @@ const CheckboxGroupInput = forwardRef<
       startIndex,
       startIndex + itemsPerPage,
     );
-    const uniqueCategories = Array.from(
-      new Set(
-        filteredOptions
-          .map(option => option.category)
-          .flat()
-          .filter(category => category !== undefined),
-      ),
-    );
+    // 전체 옵션을 기반으로 카테고리 계산 (filteredOptions 기반이 아님)
+    const uniqueCategories = hasCategories
+      ? ["전체", ...new Set(options.map(opt => opt.category || "기타").flat())]
+      : [];
 
     // 페이지 변경 핸들러
     const handlePageChange = (e: React.MouseEvent, page: number) => {

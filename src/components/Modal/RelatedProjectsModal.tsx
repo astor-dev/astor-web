@@ -111,7 +111,7 @@ const RelatedProjects: React.FC<RelatedProjectsProps> = ({
                     {stack.stackType.map(type => (
                       <span
                         key={type}
-                        className="bg-skin-card inline-block rounded-full px-2 py-0.5 text-xs text-black-base"
+                        className="bg-skin-card inline-block rounded-full py-0.5 text-xs text-black-base"
                       >
                         {type}
                       </span>
@@ -182,12 +182,7 @@ const RelatedProjects: React.FC<RelatedProjectsProps> = ({
                           {project.data.roles.map(role => (
                             <span
                               key={role}
-                              className={`inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium md:px-2.5 ${
-                                isStackType(role) &&
-                                stack.stackType.includes(role)
-                                  ? "bg-skin-accent/10 text-skin-accent"
-                                  : "bg-skin-card text-black-base"
-                              }`}
+                              className={`inline-flex items-center rounded-full bg-skin-accent/10 px-2 py-0.5 text-xs text-skin-accent md:px-2.5`}
                             >
                               {role}
                             </span>

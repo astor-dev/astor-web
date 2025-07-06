@@ -4,7 +4,7 @@ import "react-loading-skeleton/dist/skeleton.css";
 import { stacks } from "~constants/stacks";
 import { stackTypeEnum, type StackType } from "~types/stack.type";
 import type { ProjectEntry } from "~types/project.type";
-import StackItem from "~components/Stack/StackItem";
+import StackItem from "~components/Item/StackItem";
 
 interface StackSliderProps {
   stackIds?: number[];

@@ -1,4 +1,4 @@
-import { FaJava } from "react-icons/fa";
+import { FaBrain, FaJava } from "react-icons/fa";
 import {
   SiDocker,
   SiGit,
@@ -38,7 +38,12 @@ import {
   SiOpenai,
   SiWearos,
   SiPython,
+  SiShadcnui,
+  SiRemix,
+  SiLangchain,
+  SiNaver,
 } from "react-icons/si";
+import { TbBrandReactNative } from "react-icons/tb";
 import { stackTypeEnum, type Stack } from "~types/stack.type";
 
 /**
@@ -120,6 +125,33 @@ export const stacks: Stack[] = [
     color: "#06B6D4",
     featured: false,
   },
+  {
+    id: 1205,
+    stackType: [stackTypeEnum.Enum.Frontend],
+    name: "Shadcn/UI",
+    icon: SiShadcnui,
+    description: "빠르고 편리한 UI 컴포넌트 라이브러리",
+    color: "#000000",
+    featured: false,
+  },
+  {
+    id: 1206,
+    stackType: [stackTypeEnum.Enum.Frontend],
+    name: "Remix",
+    icon: SiRemix,
+    description: "React Router를 기반으로 구축된 오픈소스 react 프레임워크",
+    color: "#000000",
+    featured: false,
+  },
+  {
+    id: 1207,
+    stackType: [stackTypeEnum.Enum.Frontend],
+    name: "React-Native",
+    icon: TbBrandReactNative,
+    description: "React를 사용하여 모바일 앱을 개발하기 위한 프레임워크",
+    color: "#61DAFB",
+    featured: false,
+  },
 
   // Backend (2xxx) - 언어 (21xx)
   {
@@ -186,10 +218,29 @@ export const stacks: Stack[] = [
   {
     id: 2204,
     stackType: [stackTypeEnum.Enum.Backend],
-    name: "Node.js",
+    name: "NodeJS",
     icon: SiNodedotjs,
     description: "확장 가능한 서버 사이드 JavaScript 런타임 환경",
     color: "#339933",
+    featured: false,
+  },
+  {
+    id: 2205,
+    stackType: [stackTypeEnum.Enum.Backend],
+    name: "LangChain",
+    icon: SiLangchain,
+    description:
+      "대규모 언어 모델(LLM)을 기반으로 애플리케이션을 구축하기 위한 오픈 소스 프레임워크",
+    color: "#000000",
+    featured: false,
+  },
+  {
+    id: 2206,
+    stackType: [stackTypeEnum.Enum.Backend],
+    name: "SpringAI",
+    icon: FaBrain,
+    description: "Spring 기반의 AI 프레임워크",
+    color: "#6DB33D",
     featured: false,
   },
 
@@ -276,6 +327,15 @@ export const stacks: Stack[] = [
     description:
       "실시간 데이터베이스와 클라우드 서비스로 빠른 애플리케이션 개발",
     color: "#FFCA28",
+    featured: false,
+  },
+  {
+    id: 2404,
+    stackType: [stackTypeEnum.Enum.Backend],
+    name: "NCP",
+    icon: SiNaver,
+    description: "네이버 클라우드가 제공하는 기업용 클라우드 서비스",
+    color: "#00C853",
     featured: false,
   },
 
@@ -395,7 +455,7 @@ export const stacks: Stack[] = [
   {
     id: 3503,
     stackType: [stackTypeEnum.Enum.DevOps],
-    name: "GitHub Actions",
+    name: "GitHub-Actions",
     icon: SiGithubactions,
     description: "GitHub 기반 워크플로우 자동화 및 CI/CD",
     color: "#2088FF",

@@ -292,17 +292,15 @@ const ProjectForm: React.FC<ProjectFormProps> = ({ initialData }) => {
               name="stackIds"
               id="stackIds"
               label="사용 기술"
-              options={stacks
-                .sort((a, b) => a.name.localeCompare(b.name))
-                .map(stack => ({
-                  value: stack.id.toString(),
-                  label: stack.name,
-                  icon: {
-                    Icon: stack.icon,
-                    color: stack.color,
-                  },
-                  category: stack.stackType,
-                }))}
+              options={stacks.map(stack => ({
+                value: stack.id.toString(),
+                label: stack.name,
+                icon: {
+                  Icon: stack.icon,
+                  color: stack.color,
+                },
+                category: stack.stackType,
+              }))}
               required
               defaultValues={(initialData?.data?.stackIds ?? []).map(id =>
                 id.toString(),
