@@ -1,17 +1,3 @@
-/* @import url("https://cdn.jsdelivr.net/gh/fonts-archive/AppleSDGothicNeo/AppleSDGothicNeo.css"); */
-@import url("https://fonts.googleapis.com/css2?family=Nanum+Gothic&display=swap");
-@import url("https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@100..900&display=swap");
-@import url("https://cdn.jsdelivr.net/gh/fonts-archive/BOKEH/BOKEH.css");
-@import url("https://fonts.googleapis.com/css2?family=Fira+Code:wght@300..700&display=swap");
-@import url("https://cdn.jsdelivr.net/npm/katex@0.15.2/dist/katex.min.css");
-@font-face {
-  font-family: "PurenJeonnam";
-  src: url("https://fastly.jsdelivr.net/gh/projectnoonnu/noonfonts_two@1.0/PureunJeonnam.woff")
-    format("woff");
-  font-weight: normal;
-  font-style: normal;
-}
-
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -40,6 +26,10 @@
     --base-gradient-start: 240, 240, 245;
     --base-gradient-mid: 220, 220, 230;
     --base-gradient-end: 240, 240, 245;
+
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    font-smooth: never;
   }
 
   /* ===== Global Base 스타일 ===== */

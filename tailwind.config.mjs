@@ -180,8 +180,8 @@ export default {
         },
       },
       fontFamily: {
-        sans: ["Noto Sans KR", "sans-serif"],
-        mono: ["Noto Sans KR", "monospace"],
+        sans: ["Pretendard", "system-ui", "-apple-system", "sans-serif"],
+        mono: ["Pretendard", "ui-monospace", "monospace"],
         body: ["PurenJeonnam", "sans-serif"],
         logo: ["BOKEH", "sans-serif"],
         code: ["Fira Code", "monospace"],
