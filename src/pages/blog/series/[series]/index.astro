@@ -1,13 +1,19 @@
 ---
-import { POST_REPOSITORY, type PostRepository } from '~modules/repositories/posts/PostRepository';
-import { SERIES_REPOSITORY, type SeriesRepository } from '~modules/repositories/series/SeriesRepository';
-import { repositoryContainer } from '~modules/repository.module';
-import type { PostEntry } from '~types/post.type';
-import SeriesDetail from '~layouts/blog/SeriesDetail.astro';
-import type { SeriesEntry } from '~types/series.type';
+import {
+  POST_REPOSITORY,
+  type PostRepository,
+} from "~modules/repositories/posts/PostRepository";
+import {
+  SERIES_REPOSITORY,
+  type SeriesRepository,
+} from "~modules/repositories/series/SeriesRepository";
+import { repositoryContainer } from "~modules/repository.module";
+import type { PostEntry } from "~common/types/post.type";
+import type { SeriesEntry } from "~common/types/series.type";
+import SeriesDetail from "~features/blog/layouts/series-detail.astro";
 
 export async function getStaticPaths() {
-    const postRepository =
+  const postRepository =
     repositoryContainer.get<PostRepository>(POST_REPOSITORY);
 
   const seriesAndPosts = await postRepository.getAllSeriesAndPosts("asc");
@@ -16,13 +22,13 @@ export async function getStaticPaths() {
     props: { series: SeriesEntry; posts: PostEntry[] };
   }[] = [];
 
-    for (const seriesAndPost of seriesAndPosts) {
-      paths.push({
-        params: { series: seriesAndPost.series.data.id },
-        props: { series: seriesAndPost.series, posts: seriesAndPost.posts },
-      });
-    }
-    return paths;
+  for (const seriesAndPost of seriesAndPosts) {
+    paths.push({
+      params: { series: seriesAndPost.series.data.id },
+      props: { series: seriesAndPost.series, posts: seriesAndPost.posts },
+    });
+  }
+  return paths;
 }
 const { series, posts } = Astro.props;
 ---

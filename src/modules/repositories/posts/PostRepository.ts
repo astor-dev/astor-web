@@ -2,15 +2,16 @@ import { getCollection } from "astro:content";
 import dayjs from "dayjs";
 import type { GetPostsOptions } from "~modules/repositories/posts/dto/GetPosts/GetPostsOptions";
 import type { SeriesRepository } from "~modules/repositories/series/SeriesRepository";
-import type { Paginated } from "~types/page.type";
+
 import type {
   PostEntry,
   PostTitleAndId,
   SeriesAndCount,
   SeriesAndPosts,
   Tag,
-} from "~types/post.type";
-import { isDefined } from "~utils/types.utils";
+} from "~common/types/post.type";
+import { isDefined } from "~common/utils/types.utils";
+import type { Paginated } from "~common/types/page.type";
 
 export const POST_REPOSITORY = Symbol("POST_REPOSITORY");
 

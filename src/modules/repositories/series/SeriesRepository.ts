@@ -1,10 +1,9 @@
 import { getCollection } from "astro:content";
-import type { GetProjectsOptions } from "~modules/repositories/projects/dto/GetProjects/GetProjectsOptions";
-import type { Paginated } from "~types/page.type";
-import type { ActivityEntry } from "~types/activity.type";
-import { isDefined, isEmptyArray } from "~utils/types.utils";
-import type { GetSeriesOptions } from "./dto/GetSeries/GetSeriesOptions";
-import type { SeriesEntry } from "~types/series.type";
+import type { Paginated } from "~common/types/page.type";
+import type { SeriesEntry } from "~common/types/series.type";
+import { isDefined } from "~common/utils/types.utils";
+import type { GetSeriesOptions } from "~modules/repositories/series/dto/GetSeries/GetSeriesOptions";
+
 export const SERIES_REPOSITORY = Symbol("SERIES_REPOSITORY");
 
 export class SeriesRepository {

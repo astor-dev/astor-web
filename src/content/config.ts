@@ -1,7 +1,8 @@
 import { file, glob } from "astro/loaders";
-import { ProjectRoleEnum, ProjectTypeEnum } from "~types/project.type";
+
 import { z } from "zod";
 import { defineCollection } from "astro:content";
+import { ProjectTypeEnum, ProjectRoleEnum } from "~common/types/project.type";
 
 const projects = defineCollection({
   loader: glob({ base: "./src/content/projects", pattern: "**/*.{md,mdx}" }),

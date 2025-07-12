@@ -1,6 +1,5 @@
 ---
-import Layout from "~layouts/BaseLayout.astro";
-import { ShootingStarHeader } from "~components/Header/ShootingStarHeader";
+import Layout from "~common/layouts/base-layout.astro";
 import { repositoryContainer } from "~modules/repository.module";
 import {
   PROJECT_REPOSITORY,
@@ -10,16 +9,15 @@ import {
   POST_REPOSITORY,
   type PostRepository,
 } from "~modules/repositories/posts/PostRepository";
-import type { PostEntry, SeriesAndCount, Tag } from "~types/post.type";
-import type { ProjectEntry } from "~types/project.type";
-import HomeHero from "~components/Hero/HomeHero";
-import type { Paginated } from "~types/page.type";
-import HomeSeriesCarousel from "~components/Slider/HomeSeriesSlider";
-import HomeProjectSlider from "~components/Slider/HomeProjectSlider";
-import HomePinnedPostsSlider from "~components/Slider/HomePinnedPostsSlider";
-import HistoryTimeline from "~components/HistoryTimeline";
-import HomeTagsSlider from "~components/Slider/HomeTagsSlider";
-import RecentPostsSection from "~components/Section/RecentPostsSection.astro";
+import type { PostEntry, SeriesAndCount, Tag } from "~common/types/post.type";
+import type { ProjectEntry } from "~common/types/project.type";
+import HomeHero from "~features/about/components/hero/home-hero";
+import type { Paginated } from "~common/types/page.type";
+import { ShootingStarHeader } from "~common/components/headers/shooting-star-header";
+import RecentPostsSection from "~features/blog/components/posts/recent-posts-section.astro";
+import HomeProjectSlider from "~features/projects/components/home-project-slider";
+import SeriesSlider from "~features/blog/components/series/series-slider";
+import PinnedPostSlider from "~features/blog/components/posts/pinned-posts-slider";
 
 const projectRepository =
   repositoryContainer.get<ProjectRepository>(PROJECT_REPOSITORY);
@@ -84,12 +82,12 @@ const seriesList: SeriesAndCount[] =
           moreLink="/blog/series"
           client:load
         />
-        <HomeSeriesCarousel seriesList={seriesList} client:idle />
+        <SeriesSlider seriesList={seriesList} client:idle />
       </div>
     </section>
     <section class="mb-16">
       <ShootingStarHeader title="주목할만한 글" moreLink="/blog" client:load />
-      <HomePinnedPostsSlider pinnedPosts={pinnedPosts} client:idle />
+      <PinnedPostSlider pinnedPosts={pinnedPosts} client:idle />
     </section>
     <section class="mb-16">
       <div class="relative">
@@ -115,9 +113,5 @@ const seriesList: SeriesAndCount[] =
       </div>
       <RecentPostsSection recentPosts={recentPosts} />
     </section>
-    <!-- <section class="mb-16">
-      <ShootingStarHeader title="인기 태그" moreLink="/blog" client:load />
-      <HomeTagsSlider tagList={tags} client:load />
-    </section> -->
   </div>
 </Layout>

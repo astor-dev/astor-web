@@ -1,19 +1,14 @@
 ---
 // src/pages/new-project.astro
-import Layout from "~layouts/BaseLayout.astro";
-import ProjectForm from "~components/Form/ProjectForm";
-import AdminOnly from "~components/Wrapper/AdminOnly";
-import Hero from "~components/Hero/Hero.astro";
+import ProjectForm from "~features/admin/projects/components/project-form";
+import AdminOnly from "~common/components/wrappers/admin-only";
 import projectHeader from "~assets/images/project-header.webp";
+import Layout from "~common/layouts/base-layout.astro";
+import CommonHero from "~common/components/heros/common-hero.astro";
 ---
 
 <Layout title="새 프로젝트">
-  <Hero
-    title="새 프로젝트"
-    description="새로운 프로젝트를 등록합니다"
-    imageSrc={projectHeader.src}
-    slot="hero"
-  />
+  <CommonHero title="새 프로젝트" imageSrc={projectHeader.src} slot="hero" />
   <AdminOnly client:load>
     <div class="mx-auto w-full max-w-5xl px-4 py-8 sm:px-6 lg:px-8">
       <ProjectForm client:only="react" />

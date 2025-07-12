@@ -1,4 +1,4 @@
-import type { ProjectRole, ProjectType } from "~types/project.type";
+import type { ProjectType, ProjectRole } from "~common/types/project.type";
 
 export interface GetProjectsOptions {
   paging?: {

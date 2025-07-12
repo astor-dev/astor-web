@@ -1,0 +1,75 @@
+---
+import ImageWithSkeleton from "~common/components/skeletons/image-with-skeleton";
+
+interface Props {
+  title: string;
+  /** 부제목 (선택) */
+  subtitle?: string;
+  imageSrc: string;
+  /** 콜 투 액션 버튼 텍스트 (선택) */
+  buttonText?: string;
+  /** 콜 투 액션 버튼 링크 (선택) */
+  buttonLink?: string;
+  className?: string;
+}
+const { title, subtitle, imageSrc, buttonText, buttonLink, className } =
+  Astro.props;
+---
+
+<section
+  class={`relative w-full h-[150px] md:h-[200px] overflow-hidden ${className ?? ""}`}
+>
+  <!-- 배경 이미지 (맨 뒤) -->
+  <div class="absolute inset-0 z-0">
+    <ImageWithSkeleton
+      src={imageSrc}
+      alt="Hero 배경 이미지"
+      className="h-full w-full object-cover"
+      client:load
+    />
+  </div>
+
+  <!-- 배경 오버레이 (중간) -->
+  <div class="absolute inset-0 z-10 bg-black opacity-80"></div>
+
+  <!-- 중앙 콘텐츠 (맨 위) -->
+  <div
+    id="hero-content"
+    class="relative z-20 flex h-full flex-col items-center justify-center px-4 text-center opacity-0 transition-opacity duration-700"
+  >
+    <!-- Navbar 만큼 공간을 줌 -->
+    <div class="h-[48px] sm:h-[56px]"></div>
+    <h1
+      class="mb-4 font-logo text-4xl font-extrabold text-white-accent sm:text-5xl md:text-6xl"
+    >
+      {title}
+    </h1>
+    {
+      subtitle && (
+        <h2 class="mb-4 text-3xl font-semibold text-white-base">{subtitle}</h2>
+      )
+    }
+    {
+      buttonText && buttonLink && (
+        <a
+          href={buttonLink}
+          class="rounded-full bg-skin-accent px-8 py-3 text-base font-semibold text-white-accent shadow-lg transition hover:bg-skin-accent/90 active:scale-95"
+        >
+          {buttonText}
+        </a>
+      )
+    }
+  </div>
+</section>
+
+<script>
+  if (import.meta.env.SSR === false) {
+    document.addEventListener("DOMContentLoaded", () => {
+      const heroContent = document.getElementById("hero-content");
+      if (heroContent) {
+        // 간단한 fade-in 효과 적용
+        heroContent.style.opacity = "1";
+      }
+    });
+  }
+</script>

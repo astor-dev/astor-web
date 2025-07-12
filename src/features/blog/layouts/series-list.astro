@@ -1,0 +1,15 @@
+---
+import SeriesCard from "~features/blog/components/series/series-card.astro";
+import type { SeriesAndCount } from "~common/types/post.type";
+interface Props {
+  series: SeriesAndCount[];
+}
+
+const { series } = Astro.props;
+---
+
+<div class="mx-auto mb-12 mt-16 w-full">
+  <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+    {series.map(item => <SeriesCard series={item} />)}
+  </div>
+</div>

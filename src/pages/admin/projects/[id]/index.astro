@@ -1,11 +1,11 @@
 ---
-import AdminOnly from "~components/Wrapper/AdminOnly";
-import ProjectDetail from "~layouts/projects/ProjectDetail.astro";
+import AdminOnly from "~common/components/wrappers/admin-only";
 import { repositoryContainer } from "~modules/repository.module";
 import {
   PROJECT_REPOSITORY,
   type ProjectRepository,
 } from "~modules/repositories/projects/ProjectRepository";
+import ProjectDetail from "~features/projects/layouts/project-detail.astro";
 
 export async function getStaticPaths() {
   const projectRepository =

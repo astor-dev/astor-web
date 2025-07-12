@@ -1,8 +1,8 @@
 import { getCollection } from "astro:content";
-import type { Paginated } from "~types/page.type";
-import type { CareerEntry } from "~types/career.type";
-import { isDefined, isEmptyArray } from "~utils/types.utils";
-import type { GetCareersOptions } from "./dto/GetCareers/GetCareersOptions";
+import type { Paginated } from "~common/types/page.type";
+import type { CareerEntry } from "~common/types/career.type";
+import { isDefined } from "~common/utils/types.utils";
+import type { GetCareersOptions } from "~modules/repositories/careers/dto/GetCareers/GetCareersOptions";
 
 export const CAREER_REPOSITORY = Symbol("CAREER_REPOSITORY");
 

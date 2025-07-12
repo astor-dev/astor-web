@@ -1,9 +1,8 @@
 import { getCollection } from "astro:content";
-import type { GetProjectsOptions } from "~modules/repositories/projects/dto/GetProjects/GetProjectsOptions";
-import type { Paginated } from "~types/page.type";
-import type { ActivityEntry } from "~types/activity.type";
-import { isDefined, isEmptyArray } from "~utils/types.utils";
-import type { GetActivitiesOptions } from "./dto/GetActivities/GetActivitiesOptions";
+import type { Paginated } from "~common/types/page.type";
+import type { ActivityEntry } from "~common/types/activity.type";
+import { isDefined } from "~common/utils/types.utils";
+import type { GetActivitiesOptions } from "~modules/repositories/activities/dto/GetActivities/GetActivitiesOptions";
 export const ACTIVITY_REPOSITORY = Symbol("ACTIVITY_REPOSITORY");
 
 export class ActivityRepository {

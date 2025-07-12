@@ -1,13 +1,13 @@
 ---
-import PostDetail from "~layouts/blog/PostDetail.astro";
 import { repositoryContainer } from "~modules/repository.module";
 import {
   POST_REPOSITORY,
   type PostRepository,
 } from "~modules/repositories/posts/PostRepository";
-import type { PostEntry, SeriesAndPosts } from "~types/post.type";
+import type { PostEntry, SeriesAndPosts } from "~common/types/post.type";
 import { remark } from "remark";
 import strip from "strip-markdown";
+import PostDetail from "~features/blog/layouts/post-detail.astro";
 
 // Props 타입을 명시적으로 정의
 interface Props {
@@ -21,14 +21,25 @@ interface Props {
 export async function getStaticPaths() {
   const postRepository =
     repositoryContainer.get<PostRepository>(POST_REPOSITORY);
-  const paginatedPosts = await postRepository.getPosts({ filter: { draft: false }, sort: { by: "createdAt", order: "desc" } });
+  const paginatedPosts = await postRepository.getPosts({
+    filter: { draft: false },
+    sort: { by: "createdAt", order: "desc" },
+  });
   const posts = paginatedPosts.items;
   const latestPosts: PostEntry[] = posts.slice(0, 8);
 
   // 날짜 기준으로 포스트 정렬 (최신순)
 
-
-  const result : {params: {id: string}, props: {post: PostEntry, latestPosts: PostEntry[], series: SeriesAndPosts | undefined, nextPost: PostEntry | null, prevPost: PostEntry | null}}[] = [];
+  const result: {
+    params: { id: string };
+    props: {
+      post: PostEntry;
+      latestPosts: PostEntry[];
+      series: SeriesAndPosts | undefined;
+      nextPost: PostEntry | null;
+      prevPost: PostEntry | null;
+    };
+  }[] = [];
   for (const post of posts) {
     let series: SeriesAndPosts | undefined;
     let currentIndex: number | undefined;
@@ -38,11 +49,15 @@ export async function getStaticPaths() {
       series = await postRepository.getSeriesAndPosts(post.data.seriesId);
       currentIndex = series.posts.findIndex(p => p.id === post.id);
       prevPost = currentIndex > 0 ? series.posts[currentIndex - 1] : null;
-      nextPost = currentIndex < series.posts.length - 1 ? series.posts[currentIndex + 1] : null;
+      nextPost =
+        currentIndex < series.posts.length - 1
+          ? series.posts[currentIndex + 1]
+          : null;
     } else {
       currentIndex = posts.findIndex(p => p.id === post.id);
       nextPost = currentIndex > 0 ? posts[currentIndex - 1] : null;
-      prevPost = currentIndex < posts.length - 1 ? posts[currentIndex + 1] : null;
+      prevPost =
+        currentIndex < posts.length - 1 ? posts[currentIndex + 1] : null;
     }
 
     result.push({
@@ -50,7 +65,7 @@ export async function getStaticPaths() {
       props: { post, latestPosts, series, nextPost, prevPost },
     });
   }
-  
+
   return result;
 }
 

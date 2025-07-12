@@ -1,0 +1,94 @@
+---
+import { render } from "astro:content";
+import StickyButtons from "~common/components/navs/sticky-buttons.astro";
+import StickyTableOfContents from "~common/components/navs/sticky-table-of-contents.astro";
+import Layout from "~common/layouts/base-layout.astro";
+import type { PostEntry, SeriesAndPosts } from "~common/types/post.type";
+import SeriesTable from "~features/admin/blog/components/series-table.astro";
+import BlogFooter from "~features/blog/components/blog-footer.astro";
+import PostHero from "~features/blog/components/posts/post-hero.astro";
+import PostNavigation from "~features/blog/components/posts/post-navigation.astro";
+import GiscusComments from "~features/giscus/components/giscus-comments";
+
+interface Props {
+  post: PostEntry;
+  series?: SeriesAndPosts;
+  nextPost: PostEntry | null;
+  prevPost: PostEntry | null;
+  isAdmin: boolean;
+  latestPosts: PostEntry[];
+  title?: string;
+  description?: string;
+  image?: string;
+  keywords?: string;
+  url?: string;
+  type?: string;
+  author?: string;
+  publishedTime?: string;
+  modifiedTime?: string;
+}
+
+const {
+  post,
+  series,
+  nextPost,
+  prevPost,
+  latestPosts,
+  title,
+  description,
+  image,
+  keywords,
+  url,
+  type,
+  author,
+  publishedTime,
+  modifiedTime,
+} = Astro.props;
+
+if (!post) {
+  return Astro.redirect("/404");
+}
+
+const renderResult = await render(post);
+const Content = renderResult.Content;
+const headings = renderResult.headings;
+---
+
+<Layout
+  title={title || post.data.title}
+  image={image || post.data.ogImage}
+  description={description}
+  keywords={keywords}
+  url={url}
+  type={type}
+  author={author || post.data.author}
+  publishedTime={publishedTime || post.data.createdAt}
+  modifiedTime={modifiedTime || post.data.updatedAt}
+>
+  <PostHero post={post} slot="hero" />
+
+  <article class="relative mx-auto mb-10">
+    <div class="relative">
+      {/* 본문 */}
+      <div class="prose prose-sm md:prose">
+        <!-- <HeadingsTable class="block xl:hidden" headings={headings} /> -->
+        {series && <SeriesTable series={series} />}
+        <StickyTableOfContents class="hidden xl:block" headings={headings} />
+        <StickyButtons class="hidden xl:block" />
+        {/* 마크다운 콘텐츠 */}
+        <div>
+          <Content />
+
+          <PostNavigation
+            prevPost={prevPost}
+            nextPost={nextPost}
+            className="my-8"
+          />
+
+          <GiscusComments client:only="react" />
+        </div>
+      </div>
+    </div>
+  </article>
+  <BlogFooter slot="footer" latestPosts={latestPosts} />
+</Layout>

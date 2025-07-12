@@ -1,14 +1,14 @@
 ---
-import Layout from "~layouts/BaseLayout.astro";
-import ProjectForm from "~components/Form/ProjectForm";
+import ProjectForm from "~features/admin/projects/components/project-form";
 import { repositoryContainer } from "~modules/repository.module";
 import {
   PROJECT_REPOSITORY,
   type ProjectRepository,
 } from "~modules/repositories/projects/ProjectRepository";
-import AdminOnly from "~components/Wrapper/AdminOnly";
-import Hero from "~components/Hero/Hero.astro";
+import AdminOnly from "~common/components/wrappers/admin-only";
 import projectHeader from "~assets/images/project-header.webp";
+import Layout from "~common/layouts/base-layout.astro";
+import CommonHero from "~common/components/heros/common-hero.astro";
 
 export async function getStaticPaths() {
   const projectRepository =
@@ -27,12 +27,7 @@ const { project } = Astro.props;
 ---
 
 <Layout title="프로젝트 수정">
-  <Hero
-    title="프로젝트 수정"
-    description="프로젝트 정보를 수정합니다"
-    imageSrc={projectHeader.src}
-    slot="hero"
-  />
+  <CommonHero title="프로젝트 수정" imageSrc={projectHeader.src} slot="hero" />
   <AdminOnly client:load>
     <div class="mx-auto w-full max-w-5xl px-4 py-8 sm:px-6 lg:px-8">
       <ProjectForm client:only="react" initialData={project} />

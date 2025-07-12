@@ -1,13 +1,13 @@
 ---
-import Layout from "~layouts/BaseLayout.astro";
 import { FaLock } from "react-icons/fa";
 import kakaoLogo from "~/assets/svgs/KakaoTalk_logo.svg";
-import Hero from "~components/Hero/Hero.astro";
 import HeroMilkyway from "~/assets/images/hero-milkyway.webp";
+import Layout from "~common/layouts/base-layout.astro";
+import CommonHero from "~common/components/heros/common-hero.astro";
 ---
 
 <Layout title="로그인">
-  <Hero
+  <CommonHero
     title="Login"
     subtitle="관리자 로그인"
     imageSrc={HeroMilkyway.src}

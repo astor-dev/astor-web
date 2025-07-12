@@ -1,14 +1,14 @@
 ---
-import Layout from "~layouts/BaseLayout.astro";
-import ProjectCard from "~components/Card/ProjectCard";
-import { ProjectTypeEnum, type ProjectEntry } from "~types/project.type";
+import ProjectCard from "~features/projects/components/project-card";
+import { ProjectTypeEnum, type ProjectEntry } from "~common/types/project.type";
 import { repositoryContainer } from "~modules/repository.module";
 import {
   PROJECT_REPOSITORY,
   type ProjectRepository,
 } from "~modules/repositories/projects/ProjectRepository";
-import type { Paginated } from "~types/page.type";
-import ModernBlogHero from "~components/Hero/ModernBlogHero";
+import type { Paginated } from "~common/types/page.type";
+import Layout from "~common/layouts/base-layout.astro";
+import ModernTextHero from "~common/components/heros/modern-text-hero";
 const projectRepository =
   repositoryContainer.get<ProjectRepository>(PROJECT_REPOSITORY);
 const projects: Paginated<ProjectEntry> = await projectRepository.getProjects();
@@ -26,7 +26,7 @@ const toyProjects = projects.items.filter(
 ---
 
 <Layout title="프로젝트">
-  <ModernBlogHero
+  <ModernTextHero
     title="*Projects*"
     content="여태 진행한 프로젝트들을 소개합니다"
     client:load

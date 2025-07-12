@@ -11,7 +11,7 @@ import imageminWebp from "imagemin-webp";
 import imageminPngquant from "imagemin-pngquant";
 import remarkMath from "remark-math";
 import remarkDirective from "remark-directive";
-import rehypeUnwrapList from "./src/utils/rehype.utils";
+import rehypeUnwrapList from "./src/common/utils/rehype.utils";
 import rehypeKatex from "rehype-katex";
 import { visit } from "unist-util-visit";
 

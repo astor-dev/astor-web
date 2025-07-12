@@ -1,16 +1,16 @@
 ---
-import Layout from "~layouts/BaseLayout.astro";
 import { repositoryContainer } from "~modules/repository.module";
-import AdminOnly from "~components/Wrapper/AdminOnly";
+import AdminOnly from "~common/components/wrappers/admin-only";
 import type { PostRepository } from "~modules/repositories/posts/PostRepository";
 import { POST_REPOSITORY } from "~modules/repositories/posts/PostRepository";
-import PostForm from "~components/Form/PostForm";
-import Hero from "~components/Hero/Hero.astro";
+import PostForm from "~features/admin/blog/components/post-form";
 import heroMilkyWay from "~assets/images/hero-milkyway.webp";
 import {
   SERIES_REPOSITORY,
   type SeriesRepository,
 } from "~modules/repositories/series/SeriesRepository";
+import Layout from "~common/layouts/base-layout.astro";
+import CommonHero from "~common/components/heros/common-hero.astro";
 
 export async function getStaticPaths() {
   const postRepository =
@@ -33,7 +33,7 @@ const { post, tags, series } = Astro.props;
 ---
 
 <Layout title="포스트 수정">
-  <Hero title="포스트 수정" imageSrc={heroMilkyWay.src} slot="hero" />
+  <CommonHero title="포스트 수정" imageSrc={heroMilkyWay.src} slot="hero" />
   <AdminOnly client:load>
     <div class="mx-auto w-full max-w-5xl px-4 py-8 sm:px-6 lg:px-8">
       <PostForm

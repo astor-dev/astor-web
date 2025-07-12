@@ -1,17 +1,17 @@
 ---
-import Layout from "~layouts/BaseLayout.astro";
-import ProjectTable from "~components/Table/ProjectTable";
-import IconButton from "~components/Button/IconButton";
-import AdminOnly from "~components/Wrapper/AdminOnly";
+import IconButton from "~common/components/buttons/icon-button";
+import AdminOnly from "~common/components/wrappers/admin-only";
 import { repositoryContainer } from "~modules/repository.module";
 import {
   PROJECT_REPOSITORY,
   type ProjectRepository,
 } from "~modules/repositories/projects/ProjectRepository";
-import type { Paginated } from "~types/page.type";
-import type { ProjectEntry } from "~types/project.type";
+import type { Paginated } from "~common/types/page.type";
+import type { ProjectEntry } from "~common/types/project.type";
 import projectHeader from "~assets/images/project-header.webp";
-import Hero from "~components/Hero/Hero.astro";
+import ProjectTable from "~features/admin/projects/components/project-table";
+import Layout from "~common/layouts/base-layout.astro";
+import CommonHero from "~common/components/heros/common-hero.astro";
 
 const projectRepository =
   repositoryContainer.get<ProjectRepository>(PROJECT_REPOSITORY);
@@ -19,12 +19,7 @@ const projects: Paginated<ProjectEntry> = await projectRepository.getProjects();
 ---
 
 <Layout title="프로젝트 관리">
-  <Hero
-    title="프로젝트 관리"
-    description="프로젝트를 추가, 수정, 삭제할 수 있습니다"
-    imageSrc={projectHeader.src}
-    slot="hero"
-  />
+  <CommonHero title="프로젝트 관리" imageSrc={projectHeader.src} slot="hero" />
   <AdminOnly client:load>
     <div class="mx-auto w-full max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
       <!-- 헤더 -->

@@ -1,0 +1,135 @@
+---
+import "swiper/css";
+import "swiper/css/grid";
+import "swiper/css/pagination";
+import "swiper/css/navigation";
+import "swiper/css/scrollbar";
+import "swiper/css/effect-fade";
+import "swiper/css/autoplay";
+import "~common/styles/global.css";
+import "~common/styles/font.css";
+import NavigationBar from "~common/components/navs/navigation-bar";
+import { SkeletonProvider } from "~common/components/skeletons/skeleton-provider";
+import SeoHead from "~common/components/head/seo-head.astro";
+
+interface Props {
+  title?: string;
+  author?: string;
+  image?: string;
+  description?: string;
+  keywords?: string;
+  url?: string;
+  type?: string;
+  publishedTime?: string;
+  modifiedTime?: string;
+}
+
+const {
+  title,
+  image,
+  description,
+  keywords,
+  url,
+  type,
+  author,
+  publishedTime,
+  modifiedTime,
+} = Astro.props;
+const currentPath = Astro.url.pathname;
+---
+
+<!doctype html>
+<html lang="ko" data-theme="light" class="w-full">
+  <SeoHead
+    title={title}
+    image={image}
+    description={description}
+    keywords={keywords}
+    url={url || Astro.url.href}
+    type={type}
+    author={author}
+    publishedTime={publishedTime}
+    modifiedTime={modifiedTime}
+  />
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-12JS91KD4D"
+  ></script>
+  <script is:inline>
+    window.dataLayer = window.dataLayer || [];
+    function gtag() {
+      window.dataLayer.push(arguments);
+    }
+    gtag("js", new Date());
+    gtag("config", "G-12JS91KD4D");
+  </script>
+  <body class="flex w-full flex-col text-skin-base">
+    <SkeletonProvider>
+      <NavigationBar pathname={currentPath} client:load />
+      <slot name="hero" />
+      <!-- 메인 콘텐츠 영역: 반응형 컨테이너 적용 예시 -->
+      <main
+        class="relative mx-auto mt-16 w-full max-w-[1200px] flex-1 bg-skin-background px-4 md:px-6 print:mt-0"
+      >
+        <!-- Navbar를 보여주는 경우 Navbar+12px 띄워줌 -->
+        <!-- {shouldShowBreadcrumb && <BreadcrumbNavigator pathname={currentPath} client:load />} -->
+        <!-- 페이지별 콘텐츠는 slot을 통해 들어옴 -->
+        <slot />
+      </main>
+      <slot name="footer" />
+    </SkeletonProvider>
+  </body><script is:inline data-astro-rerun>
+    /** Attaches copy buttons to code blocks in the document,
+     * allowing users to copy code easily. */
+    function attachCopyButtons() {
+      const copyButtonLabel = "Copy";
+      const codeBlocks = Array.from(document.querySelectorAll("pre"));
+
+      for (const codeBlock of codeBlocks) {
+        const wrapper = document.createElement("div");
+        wrapper.style.position = "relative";
+        wrapper.classList.add("group");
+
+        const copyButton = document.createElement("button");
+        copyButton.className = `
+  opacity-0 pointer-events-none
+  group-hover:opacity-100 group-hover:pointer-events-auto
+  transition-opacity duration-200
+
+  absolute right-3 top-2
+  flex items-center gap-1
+  rounded-lg px-3 py-1.5 text-sm font-medium
+
+  bg-skin-fill bg-opacity-70 hover:bg-opacity-90
+  text-skin-accent shadow-md backdrop-blur
+`;
+
+        copyButton.innerHTML = copyButtonLabel;
+        codeBlock.setAttribute("tabindex", "0");
+        codeBlock.appendChild(copyButton);
+
+        // wrap codebock with relative parent element
+        codeBlock?.parentNode?.insertBefore(wrapper, codeBlock);
+        wrapper.appendChild(codeBlock);
+
+        copyButton.addEventListener("click", async () => {
+          await copyCode(codeBlock, copyButton);
+        });
+      }
+
+      async function copyCode(block, button) {
+        const code = block.querySelector("code");
+        const text = code?.innerText;
+
+        await navigator.clipboard.writeText(text ?? "");
+
+        // visual feedback that task is completed
+        button.innerText = "Copied";
+
+        setTimeout(() => {
+          button.innerText = copyButtonLabel;
+        }, 1000);
+      }
+    }
+    attachCopyButtons();
+  </script>
+</html>

@@ -1,12 +1,12 @@
 ---
-import AdminOnly from "~components/Wrapper/AdminOnly";
-import PostDetail from "~layouts/blog/PostDetail.astro";
+import AdminOnly from "~common/components/wrappers/admin-only";
 import { repositoryContainer } from "~modules/repository.module";
 import {
   POST_REPOSITORY,
   type PostRepository,
 } from "~modules/repositories/posts/PostRepository";
-import type { PostEntry } from "~types/post.type";
+import type { PostEntry } from "~common/types/post.type";
+import PostDetail from "~features/blog/layouts/post-detail.astro";
 
 export async function getStaticPaths() {
   const postRepository =

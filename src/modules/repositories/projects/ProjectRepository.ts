@@ -1,13 +1,9 @@
 import { getCollection } from "astro:content";
 import dayjs from "dayjs";
+import type { Paginated } from "~common/types/page.type";
+import type { ProjectEntry } from "~common/types/project.type";
+import { isDefined, isEmptyArray } from "~common/utils/types.utils";
 import type { GetProjectsOptions } from "~modules/repositories/projects/dto/GetProjects/GetProjectsOptions";
-import type { Paginated } from "~types/page.type";
-import type {
-  ProjectEntry,
-  ProjectRole,
-  ProjectType,
-} from "~types/project.type";
-import { isDefined, isEmptyArray } from "~utils/types.utils";
 
 export const PROJECT_REPOSITORY = Symbol("PROJECT_REPOSITORY");
 

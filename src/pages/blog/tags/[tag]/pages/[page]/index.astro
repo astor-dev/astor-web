@@ -1,15 +1,15 @@
 ---
-import Layout from "~layouts/BaseLayout.astro";
-import PostList from "~layouts/blog/PostList.astro";
 import { repositoryContainer } from "~modules/repository.module";
 import {
   POST_REPOSITORY,
   type PostRepository,
 } from "~modules/repositories/posts/PostRepository";
-import { POST_PER_PAGE } from "~constants/page";
-import CenterNav from "~components/Nav/CenterNav.astro";
-import { navItems } from "~constants/blog";
-import ModernBlogHero from "~components/Hero/ModernBlogHero";
+import { POST_PER_PAGE } from "~common/constants/page";
+import { navItems } from "~common/constants/blog";
+import ModernBlogHero from "~common/components/heros/modern-text-hero";
+import Layout from "~common/layouts/base-layout.astro";
+import PostList from "~features/blog/layouts/post-list.astro";
+import BlogCenterNav from "~features/blog/components/blog-center-nav.astro";
 export async function getStaticPaths() {
   const postRepository =
     repositoryContainer.get<PostRepository>(POST_REPOSITORY);
@@ -39,6 +39,6 @@ const { page, tag } = Astro.props;
     content="직접 구현하고 검토를 거친 기술적 선택과 설계를 정리해 남깁니다"
     client:load
   />
-  <CenterNav items={navItems} currentPath="/blog" />
+  <BlogCenterNav items={navItems} currentPath="/blog" />
   <PostList page={page} currentTag={tag.tag} />
 </Layout>

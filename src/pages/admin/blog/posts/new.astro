@@ -1,9 +1,7 @@
 ---
 // src/pages/new-project.astro
-import Layout from "~layouts/BaseLayout.astro";
-import PostForm from "~components/Form/PostForm";
-import AdminOnly from "~components/Wrapper/AdminOnly";
-import Hero from "~components/Hero/Hero.astro";
+import PostForm from "~features/admin/blog/components/post-form";
+import AdminOnly from "~common/components/wrappers/admin-only";
 import heroMilkyWay from "~assets/images/hero-milkyway.webp";
 import { repositoryContainer } from "~modules/repository.module";
 import {
@@ -14,6 +12,8 @@ import {
   SERIES_REPOSITORY,
   type SeriesRepository,
 } from "~modules/repositories/series/SeriesRepository";
+import Layout from "~common/layouts/base-layout.astro";
+import CommonHero from "~common/components/heros/common-hero.astro";
 
 const postRepository = repositoryContainer.get<PostRepository>(POST_REPOSITORY);
 const seriesRepository =
@@ -24,7 +24,7 @@ const series = await seriesRepository.getSeries();
 
 <Layout title="새 포스트">
   <!-- 헤더 -->
-  <Hero title="새 포스트" slot="hero" imageSrc={heroMilkyWay.src} />
+  <CommonHero title="새 포스트" slot="hero" imageSrc={heroMilkyWay.src} />
   <AdminOnly client:load>
     <div class="mx-auto w-full max-w-5xl px-4 py-8 sm:px-6 lg:px-8">
       <PostForm client:only="react" tags={tags} series={series.items} />

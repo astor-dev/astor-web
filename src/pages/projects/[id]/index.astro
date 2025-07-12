@@ -1,11 +1,17 @@
 ---
-import ProjectDetail from "~layouts/projects/ProjectDetail.astro";
 import { repositoryContainer } from "~modules/repository.module";
-import { PROJECT_REPOSITORY, type ProjectRepository } from "~modules/repositories/projects/ProjectRepository";
+import {
+  PROJECT_REPOSITORY,
+  type ProjectRepository,
+} from "~modules/repositories/projects/ProjectRepository";
+import ProjectDetail from "~features/projects/layouts/project-detail.astro";
 
 export async function getStaticPaths() {
-  const projectRepository = repositoryContainer.get<ProjectRepository>(PROJECT_REPOSITORY);
-  const projects = await projectRepository.getProjects({sort: {field: "endedAt", order: "desc"}});
+  const projectRepository =
+    repositoryContainer.get<ProjectRepository>(PROJECT_REPOSITORY);
+  const projects = await projectRepository.getProjects({
+    sort: { field: "endedAt", order: "desc" },
+  });
 
   const postResult = projects.items.map(project => ({
     params: { id: project.id },
@@ -18,4 +24,8 @@ export async function getStaticPaths() {
 const { project, latestProjects } = Astro.props;
 ---
 
-<ProjectDetail project={project} isAdmin={false} latestProjects={latestProjects} />
+<ProjectDetail
+  project={project}
+  isAdmin={false}
+  latestProjects={latestProjects}
+/>

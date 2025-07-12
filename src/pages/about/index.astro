@@ -1,10 +1,11 @@
 ---
-import Layout from "~layouts/BaseLayout.astro";
-import { EDUCATIONS, FEATURED_STACK_IDS, ABOUT_ME } from "~constants/about";
+import {
+  EDUCATIONS,
+  FEATURED_STACK_IDS,
+  ABOUT_ME,
+} from "~common/constants/about";
 import profileImage from "~assets/images/profile.webp";
-import ProfileHeader from "~components/Header/ProfileHeader.astro";
-import SectionWithHeader from "~components/Section/SectionWithHeader.astro";
-import type { ProjectEntry } from "~types/project.type";
+import type { ProjectEntry } from "~common/types/project.type";
 import { repositoryContainer } from "~modules/repository.module";
 import {
   PROJECT_REPOSITORY,
@@ -14,12 +15,15 @@ import {
   ACTIVITY_REPOSITORY,
   ActivityRepository,
 } from "~modules/repositories/activities/ActivityRepository";
-import PortfolioListItems from "~components/List/PortfolioListItems.astro";
-import EducationListItems from "~components/List/EducationListItems.astro";
 import {
   CareerRepository,
   CAREER_REPOSITORY,
 } from "~modules/repositories/careers/CareerRepository";
+import Layout from "~common/layouts/base-layout.astro";
+import ProfileHeader from "~features/about/components/profile-header.astro";
+import SlottedHeader from "~common/components/headers/slotted-header.astro";
+import PortfolioList from "~features/about/components/portfolio-list.astro";
+import EducationList from "~features/about/components/education-list.astro";
 
 const projectRepository =
   repositoryContainer.get<ProjectRepository>(PROJECT_REPOSITORY);
@@ -90,51 +94,51 @@ for (const stackId of FEATURED_STACK_IDS) {
       />
 
       <div>
-        <SectionWithHeader title="About Me">
+        <SlottedHeader title="About Me">
           <p
             class="text-sm leading-relaxed text-black-base"
             set:html={ABOUT_ME}
           />
-        </SectionWithHeader>
+        </SlottedHeader>
       </div>
 
-      <SectionWithHeader title="Careers">
+      <SlottedHeader title="Careers">
         <div>
           {
             careers.items.map((career, index) => (
               <>
-                <PortfolioListItems props={career} />
+                <PortfolioList props={career} />
                 {index !== careers.items.length - 1 && <hr class="my-4" />}
               </>
             ))
           }
         </div>
-      </SectionWithHeader>
+      </SlottedHeader>
 
-      <SectionWithHeader title="Activities">
+      <SlottedHeader title="Activities">
         <div>
           {
             activities.items.map((activity, index) => (
               <>
-                <PortfolioListItems props={activity} />
+                <PortfolioList props={activity} />
                 {index !== activities.items.length - 1 && <hr class="my-4" />}
               </>
             ))
           }
         </div>
-      </SectionWithHeader>
-      <SectionWithHeader title="Education">
+      </SlottedHeader>
+      <SlottedHeader title="Education">
         <div>
           {
             EDUCATIONS.map((education, index) => (
               <>
-                <EducationListItems education={education} />
+                <EducationList education={education} />
                 {index !== EDUCATIONS.length - 1 && <hr class="my-4" />}
               </>
             ))
           }
         </div>
-      </SectionWithHeader>
+      </SlottedHeader>
 
       <!-- <SectionWithHeader title="Contact">
         <div
