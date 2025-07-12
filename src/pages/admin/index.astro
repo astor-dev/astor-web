@@ -1,41 +1,9 @@
 ---
 import AdminOnly from "~common/components/wrappers/admin-only";
-import { repositoryContainer } from "~modules/repository.module";
 import heroMilkyWay from "~assets/images/hero-milkyway.webp";
-import {
-  PROJECT_REPOSITORY,
-  type ProjectRepository,
-} from "~modules/repositories/projects/ProjectRepository";
-import {
-  POST_REPOSITORY,
-  type PostRepository,
-} from "~modules/repositories/posts/PostRepository";
-import type { Paginated } from "~common/types/page.type";
-import type { ProjectEntry } from "~common/types/project.type";
-import type { PostEntry } from "~common/types/post.type";
-import dayjs from "dayjs";
 import Layout from "~common/layouts/base-layout.astro";
 import ActionCard, { type ActionCardProps } from "~features/admin/action-card";
 import CommonHero from "~common/components/heros/common-hero.astro";
-
-const projectRepository =
-  repositoryContainer.get<ProjectRepository>(PROJECT_REPOSITORY);
-const projects: Paginated<ProjectEntry> = await projectRepository.getProjects({
-  paging: { limit: 1, page: 1 },
-});
-
-const postRepository = repositoryContainer.get<PostRepository>(POST_REPOSITORY);
-const posts: Paginated<PostEntry> = await postRepository.getPosts({
-  paging: { limit: 1, page: 1 },
-});
-const thisMonthPosts = await postRepository.getPosts({
-  filter: {
-    createdAt: {
-      $gte: dayjs().subtract(1, "month"),
-      $lte: dayjs(),
-    },
-  },
-});
 
 const QUICK_ACTIONS: ActionCardProps[] = [
   {

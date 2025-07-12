@@ -1,6 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
 import type { PostEntry } from "~common/types/post.type";
-import dayjs from "dayjs";
 
 import { remark } from "remark";
 import strip from "strip-markdown";
@@ -49,8 +48,6 @@ const BlogPostCard: React.FC<BlogPostCardProps> = props => {
       return () => clearTimeout(timer);
     }
   }, [isLoading, props.data.title]);
-
-  const formatDate = (date: string) => dayjs(date).format("YYYY.MM.DD");
 
   // 제목 줄 수에 따른 본문 클래스 결정
   const getBodyClasses = () => {

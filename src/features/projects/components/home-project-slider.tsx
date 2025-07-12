@@ -15,15 +15,8 @@ import SliderNavButtons from "~common/components/buttons/slider-nav-buttons";
 const HomeProjectSlider = (props: { projects: ProjectEntry[] }) => {
   const { projects } = props;
   const swiperRef = useRef<SwiperRef>(null);
-  const [isLoading, setIsLoading] = useState(true);
   const [currentSlide, setCurrentSlide] = useState(0);
   const [isMobile, setIsMobile] = useState(false);
-
-  useEffect(() => {
-    if (projects.length > 0) {
-      setIsLoading(false);
-    }
-  }, [projects]);
 
   useEffect(() => {
     const checkMobile = () => {

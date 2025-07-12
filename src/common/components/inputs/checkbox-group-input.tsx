@@ -94,9 +94,6 @@ const CheckboxGroupInput = forwardRef<
 
     // 카테고리 목록 생성 (category가 있는 옵션이 하나라도 있을 때만)
     const hasCategories = options.some(opt => opt.category);
-    const categories = hasCategories
-      ? ["전체", ...new Set(options.map(opt => opt.category || "기타"))]
-      : [];
 
     // 체크박스 변경 핸들러
     const handleCheckboxChange = (e: React.ChangeEvent<HTMLInputElement>) => {

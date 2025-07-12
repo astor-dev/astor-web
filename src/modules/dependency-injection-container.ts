@@ -1,11 +1,10 @@
-// 간단한 DI 컨테이너 구현 (인스턴스 직접 등록 기능 추가)
-type Constructor<T> = new (...args: any[]) => T;
+type Constructor<T> = new (...args: unknown[]) => T;
 
 export class DependencyInjectionContainer {
-  private services = new Map<Symbol, any>();
+  private services = new Map<symbol, unknown>();
 
   // 클래스 생성자를 통해 서비스 등록 (싱글톤 패턴)
-  public register<T>(token: Symbol, ctor: Constructor<T>): void {
+  public register<T>(token: symbol, ctor: Constructor<T>): void {
     if (!this.services.has(token)) {
       this.services.set(token, new ctor());
     }
@@ -19,9 +18,9 @@ export class DependencyInjectionContainer {
    * @param dependencyTokens 생성자에서 필요한 의존성들의 토큰 배열
    */
   public registerWithDependencies<T>(
-    token: Symbol,
+    token: symbol,
     ctor: Constructor<T>,
-    dependencyTokens: Symbol[],
+    dependencyTokens: symbol[],
   ): void {
     if (!this.services.has(token)) {
       const dependencies = dependencyTokens.map(depToken => this.get(depToken));
@@ -30,15 +29,15 @@ export class DependencyInjectionContainer {
   }
 
   // 미리 생성된 인스턴스를 직접 등록
-  public registerInstance<T>(token: Symbol, instance: T): void {
+  public registerInstance<T>(token: symbol, instance: T): void {
     if (!this.services.has(token)) {
       this.services.set(token, instance);
     }
   }
 
   // 서비스 조회
-  public get<T>(token: Symbol): T {
-    const service = this.services.get(token);
+  public get<T>(token: symbol): T {
+    const service = this.services.get(token) as T;
     if (!service) {
       throw new Error(`${String(token)} is not registered in the container`);
     }

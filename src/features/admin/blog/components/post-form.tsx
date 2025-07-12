@@ -18,7 +18,7 @@ import {
 import CheckboxGroupInput, {
   type CheckboxGroupInputMethods,
 } from "~common/components/inputs/checkbox-group-input";
-import type { Tag } from "~common/types/post.type";
+import type { PostEntry, Tag } from "~common/types/post.type";
 import AutoCompleteMultiInput, {
   type AutoCompleteMultiInputMethods,
 } from "~common/components/inputs/auto-complete-multi-input";
@@ -28,24 +28,15 @@ import AutoCompleteInput, {
 import { generateId } from "~common/utils/id.utils";
 import type { SeriesEntry } from "~common/types/series.type";
 
+interface PostInitialData {
+  data: PostEntry["data"];
+  body: string;
+}
+
 interface PostFormProps {
   series: SeriesEntry[];
   tags: Tag[];
-  initialData?: Partial<{
-    data: {
-      id: string;
-      author: string;
-      title: string;
-      pinned: boolean;
-      draft: boolean;
-      tags: string[];
-      ogImage: string;
-      seriesId?: string;
-      createdAt: string; // ← 날짜
-      updatedAt: string; // ← 날짜
-    };
-    body: string;
-  }>;
+  initialData?: PostInitialData;
 }
 
 // 로컬 스토리지 키 접두사
@@ -234,7 +225,7 @@ const PostForm: React.FC<PostFormProps> = ({ initialData, tags, series }) => {
 
   // 특정 값으로 폼 데이터 설정
   const setFormValues = useCallback(
-    (data: any) => {
+    (data: PostEntry["data"]) => {
       if (!data) return;
 
       console.log("폼 데이터 설정:", data);

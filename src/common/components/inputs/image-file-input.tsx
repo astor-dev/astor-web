@@ -17,7 +17,7 @@ import {
   IMAGE_SERVICE,
   type ImageService,
 } from "~modules/services/image.service";
-import type { ImageKey } from "~types/image.type";
+import type { ImageKey } from "~common/types/image.type";
 
 export interface ImageFileInputMethods {
   getValue: () => string;
@@ -45,7 +45,6 @@ const ImageFileInput = forwardRef<ImageFileInputMethods, Props>(
       label,
       type,
       required = false,
-      value: propValue,
       defaultValue: propDefaultValue = "",
       setValue: propSetValue,
     },

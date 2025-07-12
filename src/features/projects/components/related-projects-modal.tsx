@@ -2,21 +2,13 @@ import React, { useEffect, useRef } from "react";
 import { motion } from "framer-motion";
 import dayjs from "dayjs";
 import { createPortal } from "react-dom";
-import {
-  stackTypeEnum,
-  type Stack,
-  type StackType,
-} from "~common/types/stack.type";
+import { type Stack } from "~common/types/stack.type";
 import type { ProjectEntry } from "~common/types/project.type";
 
 interface RelatedProjectsProps {
   stack: Stack;
   projects: ProjectEntry[];
   onClose: () => void;
-}
-function isStackType(value: string): value is StackType {
-  const stackTypeList: string[] = [...stackTypeEnum.options];
-  return stackTypeList.includes(value);
 }
 
 const RelatedProjects: React.FC<RelatedProjectsProps> = ({

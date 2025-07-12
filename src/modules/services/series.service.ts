@@ -1,5 +1,4 @@
 import type { HttpInstance } from "~modules/services/core/http.instance";
-import type { SeriesEntry } from "~types/series.type";
 
 export const SERIES_SERVICE = Symbol("SERIES_SERVICE");
 

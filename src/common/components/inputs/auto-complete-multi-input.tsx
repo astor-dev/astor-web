@@ -1,11 +1,11 @@
-import React, {
+import {
   useState,
   useCallback,
   useRef,
   useImperativeHandle,
   forwardRef,
 } from "react";
-import type { ChangeEvent, KeyboardEvent, MouseEvent, FocusEvent } from "react";
+import type { ChangeEvent, KeyboardEvent, MouseEvent } from "react";
 
 export interface AutoCompleteMultiInputMethods {
   getValues: () => string[];
@@ -254,25 +254,22 @@ const AutoCompleteMultiInput = forwardRef<
     );
 
     // 포커스를 잃었을 때 (blur) 처리
-    const handleBlur = useCallback(
-      (e: FocusEvent<HTMLDivElement>) => {
-        // 클릭 이벤트가 우선 처리되도록 약간의 지연
-        setTimeout(() => {
-          if (
-            containerRef.current &&
-            !containerRef.current.contains(document.activeElement)
-          ) {
-            setShowSuggestions(false);
+    const handleBlur = useCallback(() => {
+      // 클릭 이벤트가 우선 처리되도록 약간의 지연
+      setTimeout(() => {
+        if (
+          containerRef.current &&
+          !containerRef.current.contains(document.activeElement)
+        ) {
+          setShowSuggestions(false);
 
-            // 입력중인 값이 있으면 태그로 추가
-            if (inputValue.trim()) {
-              addTag(inputValue);
-            }
+          // 입력중인 값이 있으면 태그로 추가
+          if (inputValue.trim()) {
+            addTag(inputValue);
           }
-        }, 200);
-      },
-      [inputValue, addTag],
-    );
+        }
+      }, 200);
+    }, [inputValue, addTag]);
 
     return (
       <div ref={containerRef} onBlur={handleBlur} className="w-full">

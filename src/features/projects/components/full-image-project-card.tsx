@@ -4,7 +4,6 @@ import type { ProjectEntry } from "~common/types/project.type";
 import { stackTypeEnum, type Stack } from "~common/types/stack.type";
 
 /** HeroCard 스타일로 완전히 재구성한 컴포넌트 */
-interface ProjectCardProps extends ProjectEntry {}
 
 interface ProjectRolesMiniProps {
   roles: string[];
@@ -120,7 +119,7 @@ const ProjectStacksSection = ({ stackIds, theme }: ProjectStacksMiniProps) => {
   );
 };
 
-const FullImageProjectCard = (props: ProjectCardProps) => {
+const FullImageProjectCard = (props: ProjectEntry) => {
   const { data } = props;
   const {
     imageUrl,

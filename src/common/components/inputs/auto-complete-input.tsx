@@ -1,11 +1,11 @@
-import React, {
+import {
   useState,
   useCallback,
   useRef,
   useImperativeHandle,
   forwardRef,
 } from "react";
-import type { ChangeEvent, KeyboardEvent, FocusEvent } from "react";
+import type { ChangeEvent, KeyboardEvent } from "react";
 
 export interface AutoCompleteInputMethods {
   getValue: () => string;
@@ -140,36 +140,33 @@ const AutoCompleteInput = forwardRef<
     );
 
     // 포커스를 잃었을 때 자동완성 목록 숨김 처리
-    const handleBlur = useCallback(
-      (e: FocusEvent<HTMLDivElement>) => {
-        setTimeout(() => {
-          if (
-            containerRef.current &&
-            !containerRef.current.contains(document.activeElement)
-          ) {
-            setShowSuggestions(false);
+    const handleBlur = useCallback(() => {
+      setTimeout(() => {
+        if (
+          containerRef.current &&
+          !containerRef.current.contains(document.activeElement)
+        ) {
+          setShowSuggestions(false);
 
-            // 선택된 값이 없고 입력값이 있는 경우, 정확히 일치하는 옵션을 찾아 선택
-            if (!selectedValue && inputValue) {
-              const exactMatch = options.find(
-                opt => opt.label.toLowerCase() === inputValue.toLowerCase(),
-              );
-              if (exactMatch) {
-                setSelectedValue(exactMatch.value);
-                if (onValueChange) {
-                  onValueChange(exactMatch.value);
-                }
-                setInputValue(exactMatch.label);
-              } else {
-                // 일치하는 값이 없으면 입력값 초기화
-                setInputValue("");
+          // 선택된 값이 없고 입력값이 있는 경우, 정확히 일치하는 옵션을 찾아 선택
+          if (!selectedValue && inputValue) {
+            const exactMatch = options.find(
+              opt => opt.label.toLowerCase() === inputValue.toLowerCase(),
+            );
+            if (exactMatch) {
+              setSelectedValue(exactMatch.value);
+              if (onValueChange) {
+                onValueChange(exactMatch.value);
               }
+              setInputValue(exactMatch.label);
+            } else {
+              // 일치하는 값이 없으면 입력값 초기화
+              setInputValue("");
             }
           }
-        }, 200);
-      },
-      [inputValue, selectedValue, options, onValueChange],
-    );
+        }
+      }, 200);
+    }, [inputValue, selectedValue, options, onValueChange]);
 
     return (
       <div ref={containerRef} onBlur={handleBlur} className="w-full">

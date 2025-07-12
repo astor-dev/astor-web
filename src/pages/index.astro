@@ -9,7 +9,7 @@ import {
   POST_REPOSITORY,
   type PostRepository,
 } from "~modules/repositories/posts/PostRepository";
-import type { PostEntry, SeriesAndCount, Tag } from "~common/types/post.type";
+import type { PostEntry, SeriesAndCount } from "~common/types/post.type";
 import type { ProjectEntry } from "~common/types/project.type";
 import HomeHero from "~features/about/components/hero/home-hero";
 import type { Paginated } from "~common/types/page.type";
@@ -65,7 +65,6 @@ const recentPosts: PostEntry[] = (
   })
 ).items;
 
-const tags: Tag[] = await postRepository.getAllTags();
 const seriesList: SeriesAndCount[] =
   await postRepository.getAllSeriesAndCount();
 ---

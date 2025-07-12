@@ -1,4 +1,3 @@
-import { z } from "zod";
 import type { HttpInstance } from "~modules/services/core/http.instance";
 
 export const POSTS_SERVICE = Symbol("POSTS_SERVICE");

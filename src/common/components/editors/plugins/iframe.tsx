@@ -17,19 +17,6 @@ import {
 import * as React from "react";
 import { DiHtml5Multimedia } from "react-icons/di";
 // 타입 정의
-type FORMAT = "bold" | "italic" | "strikethrough" | "underline" | "code";
-
-interface MdxJsxAttribute {
-  type: string;
-  name: string;
-  value: any;
-}
-
-interface MdxJsxFlowElement {
-  type: "mdxJsxFlowElement";
-  name: string;
-  attributes: MdxJsxAttribute[];
-}
 
 // YouTube URL에서 비디오 ID 추출하는 함수
 function extractYouTubeVideoId(url: string): string | null {
@@ -122,7 +109,9 @@ interface SerializedIframeNode extends SerializedLexicalNode {
 }
 
 // 2. Markdown -> Lexical 변환기 (Import Visitor)
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const MdastIframeVisitor: any = {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   testNode: (node: any): boolean => {
     if (!node || typeof node !== "object") return false;
     if (node.type !== "mdxJsxFlowElement") return false;
@@ -130,16 +119,19 @@ const MdastIframeVisitor: any = {
     return (
       node.name === "iframe" &&
       Array.isArray(node.attributes) &&
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       node.attributes.some((attr: any) => attr.name === "src")
     );
   },
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   visitNode: (params: any) => {
     const { lexicalParent, mdastNode, actions } = params;
 
     if (!mdastNode || typeof mdastNode !== "object") return;
 
     const srcAttr = mdastNode.attributes.find(
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       (attr: any) => attr.name === "src",
     );
 
@@ -152,11 +144,14 @@ const MdastIframeVisitor: any = {
 };
 
 // 3. Lexical -> Markdown 변환기 (Export Visitor)
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const LexicalIframeVisitor: any = {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   testLexicalNode: (lexicalNode: any): boolean => {
     return lexicalNode instanceof IframeNode;
   },
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   visitLexicalNode: (params: any) => {
     const { lexicalNode, actions } = params;
 
@@ -171,6 +166,7 @@ const LexicalIframeVisitor: any = {
 // 4. Iframe 디렉티브 디스크립터 정의
 export const IframeDirectiveDescriptor: DirectiveDescriptor = {
   name: "iframe",
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   testNode(node: any) {
     return node.name === "iframe";
   },
@@ -201,6 +197,7 @@ export const IframeButton = () => {
               height: "315",
             },
             children: [],
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
           } as any);
         } else {
           alert("유효한 URL을 입력해주세요");
@@ -213,6 +210,7 @@ export const IframeButton = () => {
 // 6. Plugin 정의
 export const iframePlugin = realmPlugin({
   init(realm) {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     realm.pub(addLexicalNode$, IframeNode as any);
     realm.pub(addImportVisitor$, MdastIframeVisitor);
     realm.pub(addExportVisitor$, LexicalIframeVisitor);

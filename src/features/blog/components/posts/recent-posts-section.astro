@@ -40,7 +40,7 @@ const postsWithCleanContent = await Promise.all(
           </div>
         ) : (
           <div class="grid grid-cols-1 gap-2 md:grid-cols-2 md:gap-4 lg:grid-cols-3">
-            {postsWithCleanContent.slice(0, 6).map((post, index) => (
+            {postsWithCleanContent.slice(0, 6).map(post => (
               <a href={`/blog/posts/${post.id}`} class="group relative block">
                 <article class="h-full bg-white transition-all duration-300 md:hover:bg-gray-50 dark:bg-gray-900 md:dark:hover:bg-gray-800">
                   <div class="h-px w-full bg-violet-500/40" />

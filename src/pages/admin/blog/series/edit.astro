@@ -1,5 +1,4 @@
 ---
-// src/pages/new-project.astro
 import Layout from "~common/layouts/base-layout.astro";
 import AdminOnly from "~common/components/wrappers/admin-only";
 import CommonHero from "~common/components/heros/common-hero.astro";
@@ -11,16 +10,9 @@ import {
 } from "~modules/repositories/series/SeriesRepository";
 import SeriesForm from "~features/admin/blog/components/series-form";
 
-// URL 쿼리 파라미터에서 시리즈 ID 가져오기
-const params = Astro.url.searchParams;
-const id = params.get("id");
-
 const seriesRepository =
   repositoryContainer.get<SeriesRepository>(SERIES_REPOSITORY);
 const series = await seriesRepository.getSeries();
-
-// 초기 선택 시리즈 ID 설정
-const initialSelectedId = id || "";
 ---
 
 <Layout title="시리즈 관리">

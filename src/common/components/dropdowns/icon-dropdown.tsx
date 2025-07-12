@@ -65,7 +65,7 @@ const IconDropdown: React.FC<IconDropdownProps> = ({
     setOpen(prev => !prev);
   };
 
-  const handleClick = (e: React.MouseEvent<HTMLButtonElement>) => {
+  const handleClick = () => {
     if (touchTriggeredRef.current) {
       touchTriggeredRef.current = false;
       return;
@@ -73,7 +73,7 @@ const IconDropdown: React.FC<IconDropdownProps> = ({
     handleToggle();
   };
 
-  const handleTouchStart = (e: React.TouchEvent<HTMLButtonElement>) => {
+  const handleTouchStart = () => {
     touchTriggeredRef.current = true;
     handleToggle();
   };

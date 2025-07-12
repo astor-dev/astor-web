@@ -60,7 +60,7 @@ const formatMarkdown = (markdownText: string) => {
 };
 
 const Editor = forwardRef<EditorRefMethods, EditorProps>(
-  ({ markdown, onChange, placeholder }, ref) => {
+  ({ markdown, placeholder }, ref) => {
     const mdxEditorRef = useRef<MDXEditorMethods>(null);
     const latestMarkdownRef = useRef(markdown); // 최신 마크다운 내용을 ref로 관리
     const imageService = serviceContainer.get<ImageService>(IMAGE_SERVICE);

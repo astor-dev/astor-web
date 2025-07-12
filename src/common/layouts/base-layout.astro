@@ -56,9 +56,9 @@ const currentPath = Astro.url.pathname;
   ></script>
   <script is:inline>
     window.dataLayer = window.dataLayer || [];
-    function gtag() {
-      window.dataLayer.push(arguments);
-    }
+    const gtag = (...args) => {
+      window.dataLayer.push(args);
+    };
     gtag("js", new Date());
     gtag("config", "G-12JS91KD4D");
   </script>
