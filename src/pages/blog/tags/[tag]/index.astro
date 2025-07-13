@@ -5,10 +5,6 @@ import {
   POST_REPOSITORY,
   type PostRepository,
 } from "~modules/repositories/posts/PostRepository";
-import { navItems } from "~common/constants/blog";
-import ModernTextHero from "~common/components/heros/modern-text-hero";
-import Layout from "~common/layouts/base-layout.astro";
-import BlogCenterNav from "~features/blog/components/blog-center-nav.astro";
 
 export async function getStaticPaths() {
   const postRepository =
@@ -22,12 +18,4 @@ export async function getStaticPaths() {
 const { tag } = Astro.props;
 ---
 
-<Layout title="블로그">
-  <ModernTextHero
-    title="*Tech* Blog"
-    content="직접 구현하고 검토를 거친 기술적 선택과 설계를 정리해 남깁니다"
-    client:load
-  />
-  <BlogCenterNav items={navItems} currentPath="/blog" />
-  <PostList page={1} currentTag={tag.tag} />
-</Layout>
+<PostList page={1} currentTag={tag.tag} />

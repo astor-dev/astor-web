@@ -6,7 +6,8 @@ import {
 import { repositoryContainer } from "~modules/repository.module";
 import type { PostEntry } from "~common/types/post.type";
 import type { SeriesEntry } from "~common/types/series.type";
-import SeriesDetail from "~features/blog/layouts/series-detail.astro";
+import BlogDefault from "~features/blog/layouts/blog-default.astro";
+import SeriesPostItem from "~features/blog/components/series/series-post-item.astro";
 
 export async function getStaticPaths() {
   const postRepository =
@@ -29,4 +30,28 @@ export async function getStaticPaths() {
 const { series, posts } = Astro.props;
 ---
 
-<SeriesDetail series={series} posts={posts} />
+<BlogDefault
+  title={series.data.name}
+  image={series.data.ogImage}
+  currentPath="/blog/series"
+>
+  <div class="mb-8">
+    <h2 class="text-2xl font-bold text-black-accent">
+      {series.data.name}
+      <span class="text-sm text-black-muted">({posts.length})</span>
+    </h2>
+  </div>
+  {
+    posts.length > 0 ? (
+      <>
+        <ol id="post-list" class="flex flex-col">
+          {posts.map((post, index) => (
+            <SeriesPostItem post={post} index={index} />
+          ))}
+        </ol>
+      </>
+    ) : (
+      <p>아직 등록된 포스트가 없습니다.</p>
+    )
+  }
+</BlogDefault>

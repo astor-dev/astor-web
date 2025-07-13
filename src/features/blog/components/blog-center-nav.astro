@@ -15,7 +15,7 @@ interface Props {
 const { items, currentPath } = Astro.props;
 ---
 
-<nav class="md:mb-16">
+<nav>
   <div class="mx-auto flex w-full max-w-2xl gap-2">
     {
       items.map(({ href, label, icon: Icon }) => (

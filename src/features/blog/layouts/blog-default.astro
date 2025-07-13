@@ -1,0 +1,28 @@
+---
+import ModernTextHero from "~common/components/heros/modern-text-hero";
+import { navItems } from "~common/constants/blog";
+import BlogCenterNav from "~features/blog/components/blog-center-nav.astro";
+import Layout from "~common/layouts/base-layout.astro";
+
+interface Props {
+  title: string;
+  image?: string;
+  currentPath: string;
+}
+const { title, image, currentPath } = Astro.props;
+---
+
+<Layout title={title} image={image}>
+  <ModernTextHero
+    title="*Tech* Blog"
+    content="직접 구현하고 검토를 거친 기술적 선택과 설계를 정리해 남깁니다"
+    client:load
+  />
+  <BlogCenterNav items={navItems} currentPath={currentPath} />
+  <article class="mx-auto mb-11 max-w-[1200px]">
+    <div class="h-11">
+      <slot name="mobile-section" />
+    </div>
+    <slot />
+  </article>
+</Layout>

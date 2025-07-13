@@ -18,10 +18,10 @@ const processedBody = await remark()
   .catch(() => "");
 ---
 
-<li class="my-3" data-created-at={post.data.createdAt}>
+<li class="my-4" data-created-at={post.data.createdAt}>
   <a href={`/blog/posts/${post.id}`} class="group block">
     <h2
-      class="text-base font-bold text-black-base group-hover:underline md:text-lg"
+      class="text-base font-bold text-black-base md:text-lg md:group-hover:underline"
     >
       <span class="mr-2 text-lg font-medium text-black-muted md:text-xl">
         {index + 1}.
@@ -36,12 +36,14 @@ const processedBody = await remark()
         <img
           src={post.data.ogImage}
           alt={post.data.title}
-          class="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
+          class="h-full w-full object-cover transition-transform duration-300 md:group-hover:scale-105"
         />
       </div>
 
       <div class="flex h-20 min-w-0 flex-1 flex-col md:h-28">
-        <p class="line-clamp-4 text-xs text-black-base md:text-sm">
+        <p
+          class="line-clamp-4 text-xs text-black-base md:line-clamp-3 md:text-base"
+        >
           {processedBody}
         </p>
         <span class="mt-auto self-end text-xs text-black-muted md:text-sm">
