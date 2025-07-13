@@ -16,7 +16,7 @@ import rehypeKatex from "rehype-katex";
 import { visit } from "unist-util-visit";
 
 // YouTube URL에서 비디오 ID 추출
-// @ts-ignore
+// @ts-expect-error: `url` has an implicit `any` type
 function extractYouTubeVideoId(url) {
   if (!url) return null;
 
@@ -38,7 +38,7 @@ function extractYouTubeVideoId(url) {
 }
 
 // YouTube 임베드 URL 생성
-// @ts-ignore
+// @ts-expect-error: `url` has an implicit `any` type
 function getYouTubeEmbedUrl(url) {
   const videoId = extractYouTubeVideoId(url);
   if (videoId) {
@@ -49,7 +49,7 @@ function getYouTubeEmbedUrl(url) {
 
 // 커스텀 iframe 디렉티브 처리 플러그인
 function remarkIframeDirective() {
-  // @ts-ignore
+  // @ts-expect-error: `tree` has an implicit `any` type
   return tree => {
     visit(tree, node => {
       // 디렉티브 노드 확인

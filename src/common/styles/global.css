@@ -30,6 +30,8 @@
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     font-smooth: never;
+
+    scrollbar-gutter: stable overlay;
   }
 
   /* ===== Global Base 스타일 ===== */
@@ -60,6 +62,16 @@
   .editor-container,
   .editor-container * {
     contain: none !important;
+  }
+
+  ::-webkit-scrollbar {
+    width: 0px;
+    height: 0px;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background-color: rgba(0, 0, 0, 0.2);
+    border-radius: 10px;
   }
 
   /* ===== 코드 블럭 & Syntax Highlight ===== */
@@ -125,7 +137,6 @@
     @apply overflow-hidden rounded-lg;
   }
 
-  /* 스크롤바 숨기기 */
   .hide-scrollbar {
     -ms-overflow-style: none; /* IE and Edge */
     scrollbar-width: none; /* Firefox */

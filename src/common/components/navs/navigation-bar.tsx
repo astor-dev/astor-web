@@ -8,9 +8,7 @@ const HERO_HEIGHT_MOBILE = 450;
 const HERO_HEIGHT_DESKTOP = 500;
 const BLOG_MAIN_HEIGHT = 1;
 const isBlogNoHeroPage = (pathname: string): boolean => {
-  return (
-    pathname.match(/^\/blog(?!\/posts(?:\/|$))(?!\/series\/.+).*/) !== null
-  );
+  return pathname.match(/^\/blog(?!\/posts(?:\/|$)).*/) !== null;
 };
 
 const isProjectNoHeroPage = (pathname: string): boolean => {
@@ -18,7 +16,7 @@ const isProjectNoHeroPage = (pathname: string): boolean => {
 };
 
 const isNoHeroPage = (pathname: string): boolean => {
-  // blog/posts/* || blog/series/* 제외한 모든 블로그 페이지 + project 메인 페이지 (/projects)3
+  // blog/posts/* 제외한 모든 블로그 페이지 + project 메인 페이지 (/projects)3
   return isBlogNoHeroPage(pathname) || isProjectNoHeroPage(pathname);
 };
 

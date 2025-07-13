@@ -1,7 +1,9 @@
-type Constructor<T> = new (...args: unknown[]) => T;
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+type Constructor<T> = new (...args: any[]) => T;
 
 export class DependencyInjectionContainer {
-  private services = new Map<symbol, unknown>();
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  private services = new Map<symbol, any>();
 
   // 클래스 생성자를 통해 서비스 등록 (싱글톤 패턴)
   public register<T>(token: symbol, ctor: Constructor<T>): void {
