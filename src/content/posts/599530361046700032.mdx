@@ -1,23 +1,21 @@
 ---
 id: "599530361046700032"
 author: "Astor"
-title: "static 키워드의 메커니즘 해부: Java·Kotlin·Python·TypeScript의 차이와 핵심 원리"
+title: "static 키워드의 메커니즘 해부 - Java / Kotlin 편"
 pinned: true
-draft: true
+draft: false
 tags:
   - OOP
   - Java
   - Kotlin
-  - Python
-  - Typescript
   - 프로그래밍 언어
 ogImage: "https://d2r0pavv0lsiqc.cloudfront.net/posts/images/aecb0bcf-bea6-481e-afd2-dc45c9fcf36f.webp"
 seriesId: "560288573652209699"
 createdAt: "2025-07-13 18:19:36"
-updatedAt: "2025-07-13 18:19:36"
+updatedAt: "2025-07-16 15:47:00"
 ---
 
-## 시작하며: 시리즈 집필의 계기
+## 시리즈 집필의 계기
 
 AI를 활용한 코딩이 일상화되면서, 더 이상 **특정 언어의 API나 문법에 대한 ‘암기’가 개발자의 핵심 역량이 되진 않는 시대**가 되었습니다. 이제는 “어떤 자료구조를 쓰겠다”, “이런 방식으로 구성하겠다”는 정도의 아이디어만 정리하면, AI가 문법과 구현은 대부분 완성해줍니다.
 
@@ -27,7 +25,7 @@ AI를 활용한 코딩이 일상화되면서, 더 이상 **특정 언어의 API�
 
 ***
 
-## 도입: static이란?
+## static이란?
 
 `static`은 객체지향 언어를 배울 때 가장 먼저 마주치는 키워드 중 하나입니다. 클래스 수준에서 정의되지만, 클래스의 인스턴스와는 별개로 동작하며, 상태를 공유하거나 유틸리티 메서드를 구현할 때 자주 사용됩니다.
 
@@ -37,44 +35,104 @@ AI를 활용한 코딩이 일상화되면서, 더 이상 **특정 언어의 API�
 
 이 글에서는 Java, Kotlin, Python, TypeScript 네 언어를 기준으로 `static` 키워드가 어떤 방식으로 표현되고 구현되는지, 그리고 그 배경에 깔린 언어 설계 철학은 무엇인지를 깊이 있게 분석해보겠습니다.
 
-### Java의 static 키워드: 메커니즘과 예외적 활용
+***
+
+## Java의 static 키워드
 
 Java에서 `static` 키워드는 클래스 로딩 시점에 JVM의 메서드 영역(Method Area)에 정적으로 할당되는 **클래스 수준 멤버**를 선언할 때 사용됩니다.
 하지만 표면적인 “클래스 멤버”라는 정의만으로 static의 실제 동작을 설명하긴 부족합니다.
 실제로는 상속, shadowing(은닉), 정적 초기화, 동적 로딩, 접근 제한 등 다양한 메커니즘이 얽혀 있습니다.
 
-### 1. 메모리 구조와 static
+### 메모리 구조와 static
 
-- **메서드 영역(Method Area)**
-  static 필드는 클래스 로딩 시 JVM 메서드 영역에 단 한 번 할당되며, 이후 모든 인스턴스가 동일한 메모리 주소의 값을 공유합니다. 이는 곧 static 필드에 상태가 축적될 경우, **멀티스레드 환경에서 동기화 이슈**가 발생할 수 있음을 의미합니다.
-- **클래스 로딩 시점**
-  static 멤버는 클래스를 최초로 참조하는 순간(예: 인스턴스 생성, static 필드 접근, Class.forName) JVM에 의해 할당됩니다. 즉, **반드시 인스턴스가 생성된 시점과 일치하지 않음**에 주의해야 합니다.
+<img height="365" width="376" alt="메모리] JVM의 메모리 사용 방식 : JVM의 Static Area와 Heap Area를 중심으로 Kotlin/JVM의 메모리  사용방식을 이해하기 — 조세영의 Kotlin World" src="https://blog.kakaocdn.net/dna/bIO6Ne/btqWn2vhjds/AAAAAAAAAAAAAAAAAAAAALzb6FJ5i_vozrQcdsOplrwyqh-Prj52iEisPljvPuHq/img.png?credential=yqXZFxpELC7KVnFOS48ylbz2pIh7yKj8&expires=1753973999&allow_ip=&allow_referer=&signature=Il9US7pwKpbWjLEN9aYVYN%2FeG%2Bk%3D" />
 
-***
+`static`으로 선언된 필드는 JVM의 **Runtime Data Area** 중 **Method Area**에 저장됩니다. 이는 모든 인스턴스가 **동일한 메모리 공간**을 공유함을 의미합니다.
 
-### 2. static 초기화 블록과 순서
+- 클래스가 로딩될 때 단 한 번 할당됨
+- 인스턴스가 아닌 클래스 단위로 존재함
+- 공용 상태를 가지므로 멀티스레드 환경에서 **동기화 주의** 필요
 
-```java
-class Foo {
-    static int a = initA();
-    static int b;
 
-    static {
-        b = 20;
-    }
-
-    static int initA() {
-        return 10;
-    }
-}
-
-```
+### static 초기화 블록과 순서
 
 static 필드 및 static 블록은 **클래스 로딩 시점에, 선언 순서대로** 실행됩니다.
 
 만약 static 블록 내에서 예외가 발생하면, 해당 클래스는 **로딩 자체가 실패**하여 **NoClassDefFoundError**가 발생할 수 있습니다.
 
-### 3. static의 상속과 shadowing(은닉)
+관련해서 여러 예시를 알아보겠습니다.
+
+```java
+public class StaticOrderEdge {
+    static int x = printX(); // (1)
+    static int y = 20;       // (2)
+
+    static int printX() {
+        System.out.println("x = " + x); // x는 아직 초기화 전 (기본값 0)
+        System.out.println("y = " + y); // y는 아직 초기화 전 (기본값 0)
+        return 10;
+    }
+
+    public static void main(String[] args) {
+        System.out.println("Final x = " + x); // 10
+        System.out.println("Final y = " + y); // 20
+    }
+}
+
+```
+
+```bash
+x = 0
+y = 0
+Final x = 10
+Final y = 20
+```
+
+- `x`가 초기화되기 위해 `printX()` 호출
+- 이 시점에 `y`는 아직 선언되지 않았으므로 `0` (원시타입 기본값)
+- JVM의 static 초기화는 **선언 순서**대로 진행되며, 다른 static 멤버를 참조해도 그 시점에 초기화되지 않았을 수 있음
+
+```ts
+public class LoaderTest {
+    static class Inner {
+        static int x = 100;
+        static {
+            System.out.println("Inner static block");
+        }
+    }
+
+    public static void main(String[] args) {
+        System.out.println("Before accessing Inner");
+
+        Class<?> clazz = Inner.class; // 클래스는 "로딩"되지만 "초기화"는 아님
+
+        System.out.println("After loading Inner class");
+
+        System.out.println(Inner.x); // 이 시점에 "정적 필드 접근" → 클래스 초기화 발생
+    }
+}
+
+```
+
+```ts
+Before accessing Inner
+After loading Inner class
+Inner static block
+100
+```
+
+클래스 로딩시점에, 선언순서대로 실행된다는 말의 의미를 보여주는 예시코드 입니다.
+
+`System.out.println("Inner static block");` 이 초기화 코드 블럭에 있는 코드가 `Inner.class`라인에선 실행되지 않다가 정적필드에 접근했을 때 비로소 실행되는 모습을 볼 수 있습니다.
+
+1. `static` 필드가 첫 접근을 받을 때 (단, `final`이 아닌 경우)
+2. `static` 메서드 호출 시
+3. `Class.forName("...")` 사용 시
+4. `new` 연산자로 인스턴스를 생성할 때
+
+단순히 `Inner.class`로 로딩하는 것은 **초기화 요건에 해당되지 않으니 주의가 필요합니다.**
+
+### static의 상속과 shadowing(은닉)
 
 Java에서 static 멤버는 인스턴스가 아닌 클래스에 종속됩니다.
 하지만 **상속 관계**에서 static 필드/메서드가 어떻게 동작하는지는 오해의 소지가 많습니다.
@@ -98,47 +156,33 @@ Child.hello();                 // child
 
 ```
 
-#### 여기서의 트릭:
+**static 필드/메서드는 ‘참조 변수의 타입’에 따라 바인딩**됩니다.
+실제 인스턴스 타입이 아닌 **정적 타입**(컴파일 타임에 결정) 기준입니다.
 
-- **static 필드/메서드는 ‘참조 변수의 타입’에 따라 바인딩**됩니다.
-  실제 인스턴스 타입이 아닌 **정적 타입**(컴파일 타임에 결정) 기준입니다.
-  → 이를 **static shadowing(정적 은닉)**&#xB77C;고 부릅니다.
-- **오버라이딩(override)이 아니라, 은닉(hide)일 뿐**이며,
-  인스턴스 메서드와 다르게 동적 바인딩이 전혀 일어나지 않습니다.
+이를 **static shadowing**이라고 부릅니다.
 
-***
+**오버라이딩(override)이 아니라, 은닉(hide)일 뿐**이며,
+인스턴스 메서드와 다르게 동적 바인딩이 전혀 일어나지 않습니다.
 
-### 4. 정적 import와 네임스페이스 오염
+### 정적 import와 네임스페이스 오염
 
 Java 5부터는 `import static` 구문으로 static 멤버를 직접 import할 수 있습니다.
 
 ```java
 import static java.lang.Math.*;
-
-double r = sqrt(9); // Math.sqrt 생략 가능
-
-```
-
-하지만 static import를 남용하면 이름 충돌(Name Collision)의 위험이 커집니다.
-
-```java
-import static java.lang.Math.*;
 import static java.lang.Integer.*;
 
-public class Test {
-    public static void main(String[] args) {
+
+double r = sqrt(9); // Math.sqrt 생략 가능
         System.out.println(MAX_VALUE); // Integer.MAX_VALUE
-        // 만약 동일 이름의 static 멤버가 여럿 있으면 컴파일 에러
-    }
-}
 
 ```
 
-***
+하지만 static import를 남용하면 이름 충돌(Name Collision)의 위험이 커집니다. 가급적 사용하지 않는걸 권장 드립니다.
 
-### 5. static 내부 클래스(정적 중첩 클래스)와 외부 참조
+### static 내부 클래스(정적 중첩 클래스)와 외부 참조
 
-static 내부 클래스는 외부 클래스의 인스턴스 없이도 생성이 가능합니다.
+Java에서 클래스 안에 선언된 내부 클래스(nested class) 중 `static` 키워드가 붙은 클래스는 **정적 중첩 클래스**라고 부릅니다.
 
 ```java
 class Outer {
@@ -152,289 +196,248 @@ System.out.println(Outer.Inner.x); // 42
 
 ```
 
-- 정적 중첩 클래스는 **외부 인스턴스 참조를 가질 수 없으며**, 일반 중첩 클래스(Inner Class)와 달리 **메모리 누수 위험이 낮음**
-  → **JVM은 static 내부 클래스와 외부 클래스의 메모리를 완전히 분리해서 관리**합니다.
+일반 내부 클래스는 암묵적으로 **외부 클래스의 인스턴스를 참조**하고 있습니다. 컴파일 시 외부 클래스의 인스턴스 참조(outerRef)를 **자동으로 생성자에 포함**시킵니다.
 
-***
+이 경우 GC가 외부 객체를 수거하지 못하는 메모리 누수 위험이 생길 수 있습니다.&#x20;
 
-### 6. static과 동적 로딩의 교차
+반면 static 내부 클래스는 외부 클래스와 **완전히 분리된 독립 클래스**이므로, **외부 클래스의 인스턴스를 암묵적으로 참조하지 않습니다.** 즉, **GC의 수거 대상에서 자유롭고, 메모리 해제가 명확**하게 관리됩니다.
 
-클래스가 명시적으로 로딩되는 경우,
-static 블록이 언제 실행되는지에 따라 예측 불가한 버그가 발생할 수 있습니다.
+주로
 
-```
-Class.forName("com.example.SomeClass");
+- **유틸리티성 도우미 클래스**가 외부 클래스의 상태와 무관한 경우&#x20;
+  - `ResponseDto.Success response = ResponseUtil.success(data)`
+- **Enum, Builder 패턴, DSL 구조 등**에서 캡슐화된 논리적 구성 단위로 활용
+  - `User user = new User.Builder().name("Astor").build();`
+- VO, DTO 등을 **하나의 클래스로 응집**하고 싶을 때
+  - `AuthInfo.Simple initialize(AuthCommand.Initialize request)`
 
-```
+같은 케이스에서 활용할 수 있습니다.
 
-- 위 코드에서 `SomeClass`의 static 블록이 실행되어 부수효과(side-effect)가 발생할 수 있음.
-- **Reflection 기반 프레임워크에서 의도치 않은 static 초기화 버그**가 자주 발생함.
-
-***
-
-### 7. 예외적 활용 사례와 트릭
-
-- **싱글톤 구현**
-  static 필드를 사용해 private 생성자 + static 인스턴스 방식으로 싱글톤을 구현할 수 있음.
-- **상수 정의**
-  static final 필드는 자바에서 상수(constant)로 활용.
-  단, 불변 객체에 대한 reference라도 reference 자체만 final임을 주의해야 함.
-- **유틸리티 클래스**
-  모든 메서드가 static이고, 생성자를 private으로 막아 인스턴스 생성을 방지.
-- **ThreadLocal**
-  static ThreadLocal 필드를 사용하면, 스레드별 격리된 값을 유지할 수 있으나, static 필드와 ThreadLocal의 생명주기 및 메모리 누수에 주의 필요.
-
-***
-
-### 8. static 동시성 이슈
-
-static 필드는 모든 인스턴스에서 공유되므로,
-멀티스레드 환경에서는 **synchronized** 키워드나 **Atomic 클래스** 등 동시성 제어가 반드시 필요합니다.
-
-```java
-class Counter {
-    static int count = 0;
-    static synchronized void inc() { count++; }
-}
-
-```
-
-\[이미지: static 필드에 여러 스레드가 접근하는 다이어그램]
-
-### 결론
-
-Java의 static은 단순한 ‘클래스 멤버’를 넘어서,
-클래스 로딩, 메모리 모델, 상속/은닉, 네임스페이스, 초기화 타이밍, 동시성 등 **언어의 깊은 메커니즘**과 직결됩니다.
-실제로 면접이나 시험에서는 static의 상속/은닉, 초기화 순서, ThreadLocal 등 엣지케이스가 자주 트릭 문제로 등장합니다.
-
-이러한 관점에서 static을 해부적으로 접근하는 것은
-Java의 내부 구조를 근본적으로 이해하는 출발점이 될 수 있습니다.
-
-네, 알겠습니다.
-이번에는 \*\*Kotlin의 static 대체 메커니즘(Companion Object 및 정적 관련 구조)\*\*를
-메커니즘적, 예외적 사례 위주로 Java 챕터와 동일한 깊이와 논조로 해설합니다.
-
-***
-
-## Kotlin의 static: Companion Object와 객체지향적 대체
+### Kotlin의 static: Companion Object와 객체지향적 대체
 
 Kotlin은 **static 키워드를 제거한 대표적인 JVM 언어**입니다.
-그렇다면 Kotlin에서 ‘클래스 단위의 멤버’, 즉 Java의 static은 어떻게 구현되는가?
+그렇다면 Kotlin에서 ‘클래스 단위의 멤버’, 즉 Java의 static은 어떻게 구현될까요?
 Kotlin이 택한 방식은 단순한 문법적 대체가 아니라, JVM 메커니즘 위에 객체지향 설계 철학을 얹은 형태입니다.
 
 ### Companion Object의 메커니즘
 
-Kotlin에서 static 멤버가 필요한 상황에서는 **companion object**(동반 객체)라는 특수한 싱글톤 객체가 클래스 내부에 선언됩니다.
+Kotlin에서 `companion object`는 클래스 당 하나만 존재하는 **싱글톤 객체**입니다. Java의 `static`처럼 클래스명으로 접근할 수 있지만, 실제로는 클래스 로딩 시 생성된 **진짜 객체**입니다. Kotlin 컴파일러는 `클래스명.필드` 또는 `클래스명.메서드` 형식의 호출을 내부적으로 `클래스명.Companion.필드` 형태로 변환합니다.
+
+예를 들어 다음 Kotlin 코드를 보겠습니다:
 
 ```kotlin
 class Counter {
     companion object {
         var count = 0
-        fun reset() { count = 0 }
-    }
-
-    init {
-        count++
+        fun increment() = ++count
     }
 }
-
 ```
 
-**companion object의 진짜 의미는 다음과 같습니다.**
-
-- 클래스가 로딩될 때마다, 클래스 당 단 하나의 인스턴스(companion object)가 생성된다.
-- 이 companion object는 클래스의 정적 멤버처럼 사용되지만, 사실은 런타임에 생성된 실제 객체다.
-- 클래스명.필드, 클래스명.메서드 형태로 접근할 수 있지만, 내부적으로는 `Counter.Companion.count` 식의 싱글톤 객체 참조로 변환된다.
-
-**\[이미지: JVM 바이트코드 상에서 Counter$Companion 클래스가 생성되는 구조]**
-
-### Java Interop, @JvmStatic, 그리고 진짜 static
-
-Kotlin의 companion object는 자바로 컴파일될 때 `Counter$Companion` 내부 클래스로 바이트코드가 생성됩니다.
-이 구조는 Java 코드에서 직접적으로 static 멤버처럼 호출할 수 없습니다.
-이를 보완하기 위해 Kotlin은 `@JvmStatic` 어노테이션을 제공합니다.
+Kotlin에서는 `Counter.count`와 `Counter.increment()`로 접근하지만, 이 코드는 컴파일 후 JVM에서는 다음과 같이 변환됩니다:
 
 ```kotlin
-companion object {
-    @JvmStatic fun reset() { count = 0 }
-}
+public final class Counter {
+    public static final Counter.Companion Companion = new Counter.Companion();
 
-```
+    public static final class Companion {
+        private int count;
 
-이 어노테이션이 붙은 함수만 자바에서 `Counter.reset()`처럼 바로 호출할 수 있습니다. 정리하자면, **Kotlin은 static 키워드를 지원하지 않지만**, **JVM 호환성을 위해 `@JvmStatic`으로 실제 static 바이트코드를 생성**합니다. 그 외의 멤버는 항상 Companion 싱글톤 객체를 통해서만 접근 가능하다.
+        public final int increment() {
+            return ++count;
+        }
 
-### object 선언과 Top-level 함수의 정적화
+        public final int getCount() {
+            return count;
+        }
 
-Kotlin의 객체지향적 static의 또 다른 특징은 **object 선언**입니다.
-클래스 외부에 `object` 키워드로 선언하면 그 자체가 애플리케이션 전체에서 하나만 존재하는 싱글톤이 됩니다.
-
-```java
-object MathUtils {
-    fun add(a: Int, b: Int) = a + b
-}
-
-```
-
-`MathUtils.add(1,2)`처럼 호출합니다.
-이 object 선언은 실제로 JVM에서 static 영역에 올라가는 싱글톤 객체로 취급됩니다.
-
-또한, Kotlin의 top-level 함수(패키지 레벨에 직접 선언된 함수와 프로퍼티)는 컴파일 시 자동으로 static 멤버로 변환됩니다. 즉, 파일명Kt라는 클래스로 컴파일되어, 자바에서 static 메서드처럼 호출할 수 있습니다.
-
-### Companion Object의 상속, 다형성, Shadowing
-
-companion object도 내부적으로는 일반 객체이기 때문에, 인터페이스 구현 및 상속, 다형성 활용이 가능합니다. 하지만 한 클래스 당 companion object는 하나만 선언할 수 있고, 상속 자체는 불가합니다.
-
-예외적 활용 및 트릭:
-
-- companion object 내부에 인터페이스를 구현시켜 팩토리 패턴 등을 적용할 수 있다.
-- companion object도 이름을 명시적으로 줄 수 있다.
-- companion object와 object 선언을 동시에 사용할 때, 네임스페이스 충돌을 주의해야 한다.
-
-```kotlin
-interface Factory<T> {
-    fun create(): T
-}
-class Product {
-    companion object : Factory<Product> {
-        override fun create() = Product()
-    }
-}
-
-```
-
-위 코드는 Product.Companion.create()로 팩토리 역할을 수행합니다.
-
-***
-
-### 정적 초기화와 부작용
-
-companion object의 초기화 블록은 클래스가 처음 참조되는 시점에 한 번만 실행됩니다.
-초기화 블록에서 예외가 발생할 경우, Java static 블록과 동일하게 클래스 로딩 자체가 실패할 수 있습니다.
-
-```kotlin
-class Example {
-    companion object {
-        init {
-            if (System.currentTimeMillis() < 0) {
-                throw IllegalStateException("Impossible")
-            }
+        public final void setCount(int value) {
+            this.count = value;
         }
     }
 }
 
 ```
 
-***
+즉 `Counter.count`는 내부적으로 `Counter.Companion.getCount()` 호출로 바뀌며, 이는 클래스에 소속된 **정적 필드가 아니라 Companion 객체의 멤버에 접근하는 것**입니다. 코틀린 파일을 아래처럼 자바에서 직접 호출해보시면 쉽게 이해할 수 있습니다.
 
-### 멀티스레드와 동시성
+![](https://d2r0pavv0lsiqc.cloudfront.net/projects/images/d4917c99-85f0-43b8-993f-84539ae0b62b.webp)
 
-companion object의 멤버도 JVM에서 단일 인스턴스로 동작하므로, 멀티스레드 환경에서
-동시성 문제가 발생할 수 있습니다.
-동기화가 필요한 경우, Java와 동일하게 synchronized 키워드를 씁니다.
+### Java Interop, @JvmStatic, 그리고 진짜 static
 
-### 요약 및 해석
+Kotlin은 `static` 키워드를 제거한 대신, `companion object`라는 객체 기반 구조를 통해 Java의 정적 멤버 역할을 대체합니다. 이 방식은 Kotlin 내부에선 매우 일관된 객체지향 구조를 유지해주지만, **Java와의 상호 운용성**에서는 다소 불편함을 유발할 수 있습니다. 이를 보완하기 위해 Kotlin은 `@JvmStatic` 어노테이션을 제공합니다. 이 어노테이션은 **해당 메서드 또는 프로퍼티를 진짜 static으로 만들어줍니다.**
 
-Kotlin의 static 대체 구조는 단순한 문법 대체가 아닙니다.
-런타임 객체(싱글톤)와 JVM 바이트코드 레벨의 호환성, 그리고 객체지향적 다형성을 절충합니다.
+다음과 같이 선언하면:
 
-static 멤버와는 달리 객체로 취급되기 때문에, 리플렉션, 인터페이스 구현, 이름 지정 등에서 유연함을 가집니다.
-
-반면, static 바이트코드 호환성을 위해 `@JvmStatic` 어노테이션과 top-level 함수/프로퍼티의 정적화 트릭이 존재합니다.
-
-결국, Kotlin의 companion object는,
-
-객체지향적 설계와 JVM의 유산을 동시에 포용하기 위한, 메커니즘적 타협이자, 타입 시스템과 런타임 철학이 맞닿은 핵심 구조라 할 수 있습니다.
-
-
-
-### 3. Python의 static: Decorator
-
-Python은 전통적인 static 키워드를 사용하지 않고 데코레이터를 사용해 비슷한 효과를 얻습니다.
-
-```python
-class Counter:
-    count = 0
-
-    @staticmethod
-    def reset():
-        Counter.count = 0
-
-    def __init__(self):
-        Counter.count += 1
-
-c1 = Counter()
-c2 = Counter()
-print(Counter.count) # 2
-Counter.reset()
-print(Counter.count) # 0
-
-```
-
-Python의 staticmethod는 다음과 같은 특성이 있습니다:
-
-- **단순함**: 인스턴스(self)나 클래스(cls)에 대한 레퍼런스를 자동으로 전달하지 않으므로, 단순히 클래스 내의 독립적인 함수를 표현할 때 쓰입니다.
-- **클래스 메서드(@classmethod)와의 차이**
-  - `@staticmethod`: 클래스 상태에 직접 접근 시 클래스명을 직접 명시해야 함
-  - `@classmethod`: 첫 번째 인자로 `cls`를 받아 클래스 상태를 변경할 수 있어, 상속 상황에서도 활용 가능
-
-```python
-@classmethod
-def reset(cls):
-    cls.count = 0
-
-```
-
-Python은 언어의 특성상 클래스가 느슨한 네임스페이스에 가까워, 메모리 관리나 바인딩 같은 하부 메커니즘이 상대적으로 투명한 편입니다.
-
-### 4. TypeScript의 static 키워드
-
-TypeScript의 static은 ECMAScript의 클래스 문법을 그대로 따릅니다.
-
-```ts
+```kotlin
 class Counter {
-    static count = 0;
-
-    constructor() {
-        Counter.count++;
+    companion object {
+        @JvmStatic
+        fun reset() {
+            println("Counter reset")
+        }
     }
+}
+```
 
-    static reset() {
-        Counter.count = 0;
+Java에서는 이렇게 바로 사용할 수 있게 됩니다:
+
+![](https://d2r0pavv0lsiqc.cloudfront.net/projects/images/3d9e7403-87e5-4f12-9d9c-257049c4b3dc.webp)
+
+Companion 역시 여전히 사용가능한걸 볼 수 있는데, `@JvmStatic`을 붙이면 `Counter.Companion.reset()`과 `Counter.reset()` **둘 다 호출 가능**해지며, Java 코드 입장에서는 훨씬 깔끔한 API가 됩니다.
+
+### 상속: 객체이므로 상속과 구현 가능
+
+Kotlin의 `companion object`는 **실제 객체**이기 때문에, 클래스처럼 **상속**하거나 **인터페이스를 구현**할 수 있습니다. 이는 Java의 static 멤버와는 근본적으로 다른 특징입니다.
+
+```kotlin
+interface Factory<T> {
+    fun create(): T
+}
+
+class Product {
+    companion object : Factory<Product> {
+        override fun create(): Product = Product()
+    }
+}
+```
+
+여기서 `companion object`는 `Factory` 인터페이스를 구현하며, 외부에서 다음과 같이 사용할 수 있습니다:
+
+```kotlin
+val factory: Factory<Product> = Product
+val instance = factory.create()
+```
+
+이처럼 `Product` 클래스 자체가 `Factory`로 사용될 수 있는 이유는 `companion object`가 인터페이스를 구현한 **싱글톤 객체**이기 때문입니다. 이 구조는 팩토리, 전략, 서비스 로케이터 등 다양한 객체지향 패턴에 응용될 수 있습니다.
+
+### 다형성: 정적 멤버처럼 보이지만 동적 디스패치 불가
+
+`companion object`는 객체이긴 하지만, 클래스 간 상속 관계 내에서 **다형성(polymorphism)은 지원하지 않습**니다. Kotlin은 companion object를 자동으로 상속하지 않기 때문입니다.
+
+```kotlin
+open class Base {
+    companion object {
+        fun hello() = "Hello from Base"
     }
 }
 
-let c1 = new Counter();
-let c2 = new Counter();
-console.log(Counter.count); // 2
-Counter.reset();
-console.log(Counter.count); // 0
+class Derived : Base() {
+    companion object {
+        fun hello() = "Hello from Derived"
+    }
+}
+
+class Derived2 : Base() {
+}
+```
+
+이 구조에서 각각 hello를 호출해보면
+
+![](https://d2r0pavv0lsiqc.cloudfront.net/projects/images/346cc805-8379-4be1-92bb-c2c31307853a.webp)
+
+위와 같은 결과를 알 수 있습니다. 서로 상속 관계지만, 클래스의 `companion object`는 **완전히 독립된 객체**입니다. 따라서 `Derived`의 companion은 `Base`의 companion을 상속하거나 오버라이딩하지 않으며, 다형적 호출도 불가능합니다.
+
+### Shadowing: 컴파일 타임 기준의 정적 참조
+
+Kotlin의 `companion object` 내부 멤버는 **정적 바인딩(static binding)** 됩니다. 즉, 어떤 클래스명을 통해 호출하느냐에 따라 어떤 메서드가 호출될지가 **컴파일 타임에 결정**됩니다. 이 때문에 Shadowing(은닉)이 발생합니다.
+
+```kotlin
+open class Animal {
+    companion object {
+        fun sound() = "generic sound"
+    }
+}
+
+class Dog : Animal() {
+    companion object {
+        fun sound() = "woof"
+    }
+}
+```
+
+```kotlin
+fun main() {
+    println(Animal.sound()) // generic sound
+    println(Dog.sound())    // woof
+
+    // 컴파일 타임 타입이 Animal이므로, Animal의 sound() 호출
+    val animalClass: KClass<out Animal> = Dog::class
+    println("By KClass: ${Animal.sound()}")        // generic sound
+    println("By KClass name: ${animalClass.simpleName}") // Dog
+
+    // 직접 companion 접근
+    val companion = Dog.Companion
+    println(companion.sound()) // woof
+
+    // 아래처럼 companion을 Animal.Companion 타입으로 캐스팅하는 건 불가능
+    // val c: Animal.Companion = Dog.Companion // ❌ error
+}
+```
+
+위의 예시를 통해 코틀린에서 생길 수 있는 companion object의 은닉 케이스들을 모두 확인하실 수 있습니다.
+
+### object 키워드
+
+Kotlin은 `static` 키워드를 제거하면서도, 정적 멤버 또는 전역 객체처럼 사용 가능한 구조를 제공하기 위해 `object` **키워드**를 도입했습니다.
+
+`object`는 **"단 하나만 존재하는 객체(Singleton)"를 선언하는 구문**입니다. 클래스의 인스턴스를 생성하지 않고도, 상태와 동작을 담은 객체를 바로 정의하고 사용할 수 있습니다.
+
+```kotlin
+object Logger {
+    var level = "INFO"
+
+    fun log(message: String) {
+        println("[$level] $message")
+    }
+}
 
 ```
 
-특징은 다음과 같습니다.
-
-**JS 컴파일 결과**: static 멤버는 프로토타입(prototype)이 아닌, 클래스 생성자 함수 자체에 직접 붙습니다.
+이 객체는 다음과 같이 바로 사용할 수 있습니다:
 
 ```ts
-function Counter() { Counter.count++; }
-Counter.count = 0;
-Counter.reset = function () { Counter.count = 0; };
-
+Logger.log("App started")   // [INFO] App started
+Logger.level = "DEBUG"
+Logger.log("Debugging...")  // [DEBUG] Debugging...
 ```
 
-**런타임 특성**: JS 런타임 엔진(V8 등)이 Counter를 로딩할 때 Counter 객체에 직접 속성으로 할당됩니다. 메모리는 힙(heap) 영역에 위치합니다.
-\[이미지: JS 엔진이 클래스의 static 멤버를 메모리에 저장하는 구조]
+Java에서 `static` 메서드로 구성되던 유틸리티 클래스를 Kotlin에서는 `object`로 선언 등 활용할 수 있습니다.
 
-## 마무리: static의 메커니즘 비교 정리
+### &#x20;Top-level 함수의 정적화
 
-| 특성           | Java            | Kotlin           | Python                   | TypeScript(JS) |
-| ------------ | --------------- | ---------------- | ------------------------ | -------------- |
-| 메모리 위치       | JVM Method Area | JVM Method Area  | 힙(Heap)                  | 힙(Heap)        |
-| 바인딩 방식       | 정적 바인딩          | 런타임 싱글톤 객체       | 런타임 데코레이터                | 런타임 객체 프로퍼티    |
-| 키워드 형태       | static          | companion object | @staticmethod            | static         |
-| 상속/다형성 지원 여부 | 불가 (정적 바인딩)     | 부분적 지원 가능        | 제한적 지원(@classmethod로 가능) | 제한적 지원         |
-| 철학/패러다임      | 클래스 중심의 상태 관리   | 객체지향적 싱글톤 접근     | 네임스페이스 중심의 유연성           | ES6 클래스 구조 준수  |
+코틀린은 **파일 수준(최상위)의 함수 및 변수**를 통해 **정적 멤버처럼 사용할 수 있는 또 다른 구조**를 제공합니다. 이것이 바로 **Top-level 함수와 프로퍼티**입니다.
 
-static은 각 언어가 클래스의 상태를 다루는 방식과 메모리 관리 전략을 보여주는 훌륭한 지표입니다. 이 비교를 통해 각 언어의 설계 철학과 내부 메커니즘을 이해하는 데 한 걸음 더 가까워졌길 바랍니다.
+클래스나 객체 내부가 아닌, **파일 자체의 루트 레벨에 선언된 함수**를 Kotlin에서는 Top-level 함수라고 부릅니다.
 
-이 글이 이후 클래스 구조와 상속, 다형성 등의 주제를 탐구하는 데도 좋은 출발점이 되길 기대합니다.
+```kotlin
+// File: MathUtils.kt
+fun square(x: Int): Int = x * x
+```
+
+이 함수는 Kotlin에서는 별다른 클래스나 객체 없이 이렇게 호출됩니다:
+
+```kotlin
+val result = square(4) // 16
+```
+
+Kotlin 내부에서는 매우 자연스럽고 간결한 표현 방식입니다. 하지만 이 함수는 실제로 JVM에선 어떻게 표현될까요?
+
+### JVM에서의 정적 함수 변환 방식
+
+Top-level 함수는 Kotlin 컴파일러에 의해 **JVM의 정적(static) 메서드로 변환**됩니다.
+
+위의 `MathUtils.kt` 파일을 Java로 디컴파일하면 다음과 같은 클래스가 자동 생성됩니다:
+
+```kotlin
+public final class MathUtilsKt {
+    public static final int square(int x) {
+        return x * x;
+    }
+}
+```
+
+즉, Kotlin의 Top-level 함수는 **실제로는 정적 메서드이며, 클래스명은 \[파일명 + Kt] 형식으로 자동 생성**됩니다.
+
+Top-level 함수는 Kotlin의 파일 지향 문법 구조 덕분에 가능한 방식입니다.
+Kotlin은 파일 단위로 컴파일 단위를 만들고, 파일 내 정의된 함수들을 자동으로 정적 메서드로 컴파일합니다.
