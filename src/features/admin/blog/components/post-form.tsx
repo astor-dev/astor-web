@@ -30,6 +30,7 @@ import type { SeriesEntry } from "~common/types/series.type";
 
 interface PostInitialData {
   data: PostEntry["data"];
+  markdownContent: string;
 }
 
 interface PostFormProps {
@@ -75,7 +76,9 @@ const PostForm: React.FC<PostFormProps> = ({ initialData, tags, series }) => {
   >([]);
 
   // 현재 마크다운 내용 상태
-  const [markdownContent, setMarkdownContent] = useState<string>("");
+  const [markdownContent, setMarkdownContent] = useState<string>(
+    initialData?.markdownContent ?? "",
+  );
 
   // 기본 날짜 문자열(YYYY-MM-DD HH:mm:ss)
   const defaultDate = dayjs().format("YYYY-MM-DD HH:mm:ss");

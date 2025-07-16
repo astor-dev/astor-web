@@ -47,7 +47,7 @@ const postsWithCleanContent = await Promise.all(
 
                   <div class="p-3 md:p-6">
                     <div class="mb-2 flex items-start justify-between md:mb-4">
-                      <h3 class="dark:text-white line-clamp-2 min-h-[3rem] text-lg font-bold text-black-accent transition-colors duration-200 md:group-hover:text-violet-600 md:dark:group-hover:text-violet-400">
+                      <h3 class="dark:text-white line-clamp-2 min-h-[3rem] break-all text-lg font-bold text-black-accent transition-colors duration-200 md:group-hover:text-violet-600 md:dark:group-hover:text-violet-400">
                         {post.data.title}
                       </h3>
                       {dayjs(post.data.createdAt).isAfter(

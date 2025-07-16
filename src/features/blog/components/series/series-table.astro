@@ -32,8 +32,8 @@ const nextPostId =
   <div class="relative p-4">
     <div class="series-corner-bookmark mr-6">
       <svg
-        width="32"
-        height="48"
+        width="21.33"
+        height="32"
         fill="currentColor"
         viewBox="0 0 32 48"
         class="series-corner-image text-skin-accent"
@@ -44,7 +44,7 @@ const nextPostId =
 
     <div class="series-header mb-2 p-4">
       <div class="flex items-center justify-between">
-        <h3 class="text-xl font-bold text-black-accent">
+        <h3 class="text-lg font-bold text-black-accent md:text-xl">
           {series.series.data.name}
         </h3>
       </div>
@@ -56,15 +56,16 @@ const nextPostId =
           series.posts.map((post, index) => (
             <li class="series-item">
               <span class="inline-flex items-center gap-3">
-                <span class="mr-1 text-black-base">{index + 1}.</span>
                 <a
                   href={`/blog/posts/${post.data.id}`}
-                  class={`line-clamp-1 transition-colors hover:underline ${
+                  class={`line-clamp-2 transition-colors hover:underline ${
                     Astro.url.pathname.includes(post.data.id)
                       ? "font-extrabold text-skin-accent"
                       : "text-black-base"
                   }`}
                 >
+                  <span class="mr-1 text-black-base">{index + 1}.</span>
+
                   {post.data.title}
                 </a>
               </span>

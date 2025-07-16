@@ -16,13 +16,16 @@ const BlogPostCard: React.FC<BlogPostCardProps> = props => {
   const [body, setBody] = useState("");
   const [isLoading, setIsLoading] = useState(true);
   const [titleLines, setTitleLines] = useState<1 | 2>(2); // 제목 줄 수 상태
-
+  // If you want to "cut" (truncate) the body to about 500 characters after stripping markdown:
   useEffect(() => {
     remark()
       .use(strip)
       .process(props.body)
       .then(result => {
-        setBody(result.toString());
+        const plainText = result.toString();
+        const truncated =
+          plainText.length > 500 ? plainText.slice(0, 500) + "..." : plainText;
+        setBody(truncated);
         setIsLoading(false);
       });
   }, [props.body]);
@@ -80,7 +83,7 @@ const BlogPostCard: React.FC<BlogPostCardProps> = props => {
           <div>
             <h3
               ref={titleRef}
-              className="line-clamp-2 text-lg font-bold text-black-accent md:text-xl"
+              className="line-clamp-2 break-all text-lg font-bold text-black-accent md:text-xl"
             >
               {isLoading ? <Skeleton className="w-full" /> : props.data.title}
             </h3>
