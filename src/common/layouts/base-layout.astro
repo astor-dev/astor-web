@@ -53,17 +53,7 @@ const currentPath = Astro.url.pathname;
     publishedTime={publishedTime}
     modifiedTime={modifiedTime}
   />
-  <!-- Google tag (gtag.js) -->
-  <script async src="https://www.googletagmanager.com/gtag/js?id=G-12JS91KD4D"
-  ></script>
-  <script is:inline>
-    window.dataLayer = window.dataLayer || [];
-    const gtag = (...args) => {
-      window.dataLayer.push(args);
-    };
-    gtag("js", new Date());
-    gtag("config", "G-12JS91KD4D");
-  </script>
+
   <body class={`flex w-full flex-col text-skin-base`}>
     <SkeletonProvider>
       <NavigationBar pathname={currentPath} client:load />
