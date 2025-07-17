@@ -30,6 +30,7 @@ export default [
   {
     rules: {
       "@typescript-eslint/no-unused-expressions": "off",
+      "prefer-rest-params": "off",
     },
   },
   {
