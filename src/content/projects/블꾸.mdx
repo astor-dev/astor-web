@@ -11,23 +11,22 @@ roles:
   - Infra
   - Plan
 shortDescription: "이젠 블로그도 블꾸하자! 다꾸형 커스텀 극대화 블로그"
-stackIds:
-  - 1101
-  - 1102
-  - 1201
-  - 1202
-  - 2201
-  - 2302
-  - 2305
-  - 2501
-  - 3501
-  - 3503
-  - 4601
-  - 4603
-  - 2204
-  - 2401
-  - 2503
-  - 4602
+stack:
+  - { type: "Frontend", id: 1101 }
+  - { type: "Frontend", id: 1201 }
+  - { type: "Frontend", id: 1202 }
+  - { type: "Backend", id: 2201 }
+  - { type: "Backend", id: 2302 }
+  - { type: "Backend", id: 2305 }
+  - { type: "Backend", id: 2501 }
+  - { type: "DevOps", id: 3501 }
+  - { type: "DevOps", id: 3503 }
+  - { type: "ETC", id: 4601 }
+  - { type: "ETC", id: 4603 }
+  - { type: "Backend", id: 2204 }
+  - { type: "Backend", id: 2401 }
+  - { type: "Backend", id: 2503 }
+  - { type: "ETC", id: 4602 }
 primaryColor: "#000000"
 backgroundColor: "#f9f9f9"
 ---
@@ -57,7 +56,7 @@ backgroundColor: "#f9f9f9"
 
 블로그 간 댓글, 팔로우, 좋아요 시스템을 갖추었고 웹에 접속 시 SSE를 통해 실시간으로 알림을 받을 수 있습니다.
 
-***
+---
 
 ### **기술적 도전**
 

@@ -3,6 +3,7 @@ import { file, glob } from "astro/loaders";
 import { z } from "zod";
 import { defineCollection } from "astro:content";
 import { ProjectTypeEnum, ProjectRoleEnum } from "~common/types/project.type";
+import { stackTypeEnum } from "~common/types/stack.type";
 
 const projects = defineCollection({
   loader: glob({ base: "./src/content/projects", pattern: "**/*.{md,mdx}" }),
@@ -16,7 +17,12 @@ const projects = defineCollection({
     shortDescription: z.string(),
     startedAt: z.string(),
     endedAt: z.string(), // ""의 경우 현재 진행중인 프로젝트
-    stackIds: z.array(z.number()),
+    stack: z.array(
+      z.object({
+        type: stackTypeEnum,
+        id: z.number(),
+      }),
+    ),
     primaryColor: z.string().nullable(),
     backgroundColor: z.string().nullable(),
   }),

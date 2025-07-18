@@ -46,7 +46,7 @@ export class ProjectRepository {
       if (isDefined(filter.stackIds)) {
         projects = projects.filter(project =>
           filter.stackIds!.every(stackId =>
-            project.data.stackIds.includes(stackId),
+            project.data.stack.some(s => s.id === stackId),
           ),
         );
       }

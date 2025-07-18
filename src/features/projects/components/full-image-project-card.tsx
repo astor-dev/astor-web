@@ -1,7 +1,7 @@
 import ImageWithSkeleton from "~common/components/skeletons/image-with-skeleton";
-import { stacks } from "~common/constants/stacks";
 import type { ProjectEntry } from "~common/types/project.type";
 import { stackTypeEnum, type Stack } from "~common/types/stack.type";
+import { convertToRichStacksArray } from "~common/utils/stack.utils";
 
 /** HeroCard 스타일로 완전히 재구성한 컴포넌트 */
 
@@ -11,7 +11,7 @@ interface ProjectRolesMiniProps {
 }
 
 interface ProjectStacksMiniProps {
-  stackIds: number[];
+  stacks: Stack[];
   theme: ColorTheme;
 }
 
@@ -49,15 +49,10 @@ const ProjectRolesSection = ({ roles, theme }: ProjectRolesMiniProps) => {
   );
 };
 
-const ProjectStacksSection = ({ stackIds, theme }: ProjectStacksMiniProps) => {
-  const getStacksForProject = (stackIds: number[]): Stack[] => {
-    const projectStacks = stackIds
-      .map(id => stacks.find(stack => stack.id === id))
-      .filter(Boolean)
-      .filter(stack => stack !== undefined);
-
+const ProjectStacksSection = ({ stacks, theme }: ProjectStacksMiniProps) => {
+  const getSortedStacks = (stacks: Stack[]): Stack[] => {
     // 우선순위 정렬: superFeatured > featured > Backend > DevOps > 나머지
-    const sortedStacks = projectStacks.sort((a, b) => {
+    const sortedStacks = stacks.sort((a, b) => {
       if (a.superFeatured && !b.superFeatured) return -1;
       if (!a.superFeatured && b.superFeatured) return 1;
       if (a.featured && !b.featured) return -1;
@@ -79,7 +74,7 @@ const ProjectStacksSection = ({ stackIds, theme }: ProjectStacksMiniProps) => {
     return sortedStacks;
   };
 
-  const sortedStacks = getStacksForProject(stackIds);
+  const sortedStacks = getSortedStacks(stacks);
   const displayStacks = sortedStacks.slice(0, 6);
   const remainingCount = sortedStacks.length - 6;
 
@@ -127,7 +122,7 @@ const FullImageProjectCard = (props: ProjectEntry) => {
     companyName,
     shortDescription,
     roles,
-    stackIds,
+    stack,
     primaryColor,
     backgroundColor,
   } = data;
@@ -196,7 +191,10 @@ const FullImageProjectCard = (props: ProjectEntry) => {
             </div>
 
             <ProjectRolesSection roles={roles} theme={theme} />
-            <ProjectStacksSection stackIds={stackIds} theme={theme} />
+            <ProjectStacksSection
+              stacks={convertToRichStacksArray(stack, true)}
+              theme={theme}
+            />
 
             {/* 클릭 유도 힌트 */}
             <div className="flex items-center justify-end">

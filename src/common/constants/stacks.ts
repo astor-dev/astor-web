@@ -76,6 +76,7 @@ export const stacks: Stack[] = [
     description: "웹 브라우저에서 동작하는 동적 프로그래밍 언어",
     color: "#F7DF1E",
     featured: true,
+    superFeatured: false,
   },
   {
     id: 1102,
@@ -97,6 +98,7 @@ export const stacks: Stack[] = [
     description: "컴포넌트 기반의 UI 라이브러리로 동적인 웹 애플리케이션 구축",
     color: "#61DAFB",
     featured: false,
+    superFeatured: false,
   },
   {
     id: 1202,
@@ -106,6 +108,7 @@ export const stacks: Stack[] = [
     description: "React 기반 프레임워크로 SSR 및 정적 사이트 생성",
     color: "#0070F3",
     featured: false,
+    superFeatured: false,
   },
   {
     id: 1203,
@@ -115,6 +118,7 @@ export const stacks: Stack[] = [
     description: "콘텐츠 중심의 고성능 웹사이트를 위한 최신 프레임워크",
     color: "#FF5A00",
     featured: true,
+    superFeatured: false,
   },
   {
     id: 1204,
@@ -124,6 +128,7 @@ export const stacks: Stack[] = [
     description: "유틸리티 우선 CSS 프레임워크로 빠른 UI 스타일링",
     color: "#06B6D4",
     featured: false,
+    superFeatured: false,
   },
   {
     id: 1205,
@@ -133,6 +138,7 @@ export const stacks: Stack[] = [
     description: "빠르고 편리한 UI 컴포넌트 라이브러리",
     color: "#000000",
     featured: false,
+    superFeatured: false,
   },
   {
     id: 1206,
@@ -142,6 +148,7 @@ export const stacks: Stack[] = [
     description: "React Router를 기반으로 구축된 오픈소스 react 프레임워크",
     color: "#000000",
     featured: false,
+    superFeatured: false,
   },
   {
     id: 1207,
@@ -151,6 +158,7 @@ export const stacks: Stack[] = [
     description: "React를 사용하여 모바일 앱을 개발하기 위한 프레임워크",
     color: "#61DAFB",
     featured: false,
+    superFeatured: false,
   },
 
   // Backend (2xxx) - 언어 (21xx)
@@ -183,6 +191,7 @@ export const stacks: Stack[] = [
     description: "범용 프로그래밍 언어로 데이터 처리 및 백엔드 개발",
     color: "#306998",
     featured: false,
+    superFeatured: false,
   },
 
   // Backend (2xxx) - 프레임워크 (22xx)
@@ -214,6 +223,7 @@ export const stacks: Stack[] = [
     description: "빠르고 효율적인 Python 웹 프레임워크로 최적화된 API 개발",
     color: "#009688",
     featured: false,
+    superFeatured: false,
   },
   {
     id: 2204,
@@ -223,6 +233,7 @@ export const stacks: Stack[] = [
     description: "확장 가능한 서버 사이드 JavaScript 런타임 환경",
     color: "#339933",
     featured: false,
+    superFeatured: false,
   },
   {
     id: 2205,
@@ -233,6 +244,7 @@ export const stacks: Stack[] = [
       "대규모 언어 모델(LLM)을 기반으로 애플리케이션을 구축하기 위한 오픈 소스 프레임워크",
     color: "#000000",
     featured: false,
+    superFeatured: false,
   },
   {
     id: 2206,
@@ -242,6 +254,7 @@ export const stacks: Stack[] = [
     description: "Spring 기반의 AI 프레임워크",
     color: "#6DB33D",
     featured: false,
+    superFeatured: false,
   },
 
   // Backend (2xxx) - 데이터베이스 (23xx)
@@ -253,6 +266,7 @@ export const stacks: Stack[] = [
     description: "강력한 관계형 데이터베이스로 복잡한 쿼리 처리",
     color: "#4169E1",
     featured: false,
+    superFeatured: false,
   },
   {
     id: 2302,
@@ -262,6 +276,7 @@ export const stacks: Stack[] = [
     description: "신뢰성 높은 오픈소스 관계형 데이터베이스 시스템",
     color: "#4479A1",
     featured: true,
+    superFeatured: false,
   },
   {
     id: 2303,
@@ -271,6 +286,7 @@ export const stacks: Stack[] = [
     description: "MySQL과 호환되는 오픈소스 관계형 데이터베이스 관리 시스템",
     color: "#003545",
     featured: true,
+    superFeatured: false,
   },
   {
     id: 2304,
@@ -280,6 +296,7 @@ export const stacks: Stack[] = [
     description: "유연한 스키마의 NoSQL 데이터베이스",
     color: "#4DB33D",
     featured: false,
+    superFeatured: false,
   },
   {
     id: 2305,
@@ -289,6 +306,7 @@ export const stacks: Stack[] = [
     description: "인메모리 데이터 스토어로 고성능 캐싱 구현",
     color: "#DD0031",
     featured: false,
+    superFeatured: false,
   },
   {
     id: 2306,
@@ -299,6 +317,7 @@ export const stacks: Stack[] = [
       "벡터 데이터베이스로 AI 기반 의미론적 검색 및 추천 시스템 구축",
     color: "#005571",
     featured: false,
+    superFeatured: false,
   },
   // Backend (2xxx) - 클라우드 (24xx)
   {
@@ -309,6 +328,7 @@ export const stacks: Stack[] = [
     description: "클라우드 컴퓨팅 서비스로 확장 가능한 인프라 구축",
     color: "#FF9900",
     featured: true,
+    superFeatured: false,
   },
   {
     id: 2402,
@@ -318,6 +338,7 @@ export const stacks: Stack[] = [
     description: "구글 클라우드 플랫폼으로 현대적인 클라우드 인프라 운영",
     color: "#4285F4",
     featured: false,
+    superFeatured: false,
   },
   {
     id: 2403,
@@ -328,6 +349,7 @@ export const stacks: Stack[] = [
       "실시간 데이터베이스와 클라우드 서비스로 빠른 애플리케이션 개발",
     color: "#FFCA28",
     featured: false,
+    superFeatured: false,
   },
   {
     id: 2404,
@@ -337,6 +359,7 @@ export const stacks: Stack[] = [
     description: "네이버 클라우드가 제공하는 기업용 클라우드 서비스",
     color: "#00C853",
     featured: false,
+    superFeatured: false,
   },
 
   // Backend (2xxx) - 툴 (25xx)
@@ -348,6 +371,7 @@ export const stacks: Stack[] = [
     description: "컨테이너 기반 가상화로 일관된 개발 및 배포 환경 구성",
     color: "#2496ED",
     featured: true,
+    superFeatured: false,
   },
   {
     id: 2502,
@@ -357,6 +381,7 @@ export const stacks: Stack[] = [
     description: "컨테이너 오케스트레이션으로 자동화된 배포 및 스케일링",
     color: "#326CE5",
     featured: false,
+    superFeatured: false,
   },
   {
     id: 2503,
@@ -366,6 +391,7 @@ export const stacks: Stack[] = [
     description: "고성능 웹 서버 및 리버스 프록시로 트래픽 관리",
     color: "#009639",
     featured: false,
+    superFeatured: false,
   },
   {
     id: 2504,
@@ -375,6 +401,7 @@ export const stacks: Stack[] = [
     description: "효율적인 API 쿼리 언어로 최적화된 데이터 요청",
     color: "#E10098",
     featured: false,
+    superFeatured: false,
   },
   {
     id: 2505,
@@ -384,6 +411,7 @@ export const stacks: Stack[] = [
     description: "타입 안전한 데이터베이스 ORM으로 효율적인 데이터 접근",
     color: "#3987C8",
     featured: false,
+    superFeatured: false,
   },
   {
     id: 2506,
@@ -393,6 +421,7 @@ export const stacks: Stack[] = [
     description: "빠르고 확장 가능한 메시지 브로커로 데이터 스트리밍 처리",
     color: "#231F20",
     featured: false,
+    superFeatured: false,
   },
   {
     id: 2507,
@@ -403,6 +432,7 @@ export const stacks: Stack[] = [
       "구조화된 데이터 표현을 위한 이진 프로토콜로 데이터 표현 최적화",
     color: "#244C5A",
     featured: true,
+    superFeatured: false,
   },
   {
     id: 2508,
@@ -412,6 +442,7 @@ export const stacks: Stack[] = [
     description: "메시지 브로커로 데이터 스트리밍 처리",
     color: "#FF6600",
     featured: false,
+    superFeatured: false,
   },
   {
     id: 2509,
@@ -421,6 +452,7 @@ export const stacks: Stack[] = [
     description: "데이터 검색 및 분석을 위한 오픈소스 검색 엔진",
     color: "#005571",
     featured: false,
+    superFeatured: false,
   },
   {
     id: 2510,
@@ -431,6 +463,7 @@ export const stacks: Stack[] = [
       "GPT, DALL-E, Whisper 등 다양한 AI 모델을 제공하는 OpenAI의 API 플랫폼",
     color: "#000000",
     featured: false,
+    superFeatured: false,
   },
 
   // DevOps (3xxx) - 툴 (35xx)
@@ -442,6 +475,7 @@ export const stacks: Stack[] = [
     description: "분산 버전 관리 시스템으로 효율적인 협업과 코드 관리",
     color: "#F05032",
     featured: false,
+    superFeatured: false,
   },
   {
     id: 3502,
@@ -451,6 +485,7 @@ export const stacks: Stack[] = [
     description: "자동화된 CI/CD 파이프라인 구축 및 관리",
     color: "#DCDCDC",
     featured: false,
+    superFeatured: false,
   },
   {
     id: 3503,
@@ -460,6 +495,7 @@ export const stacks: Stack[] = [
     description: "GitHub 기반 워크플로우 자동화 및 CI/CD",
     color: "#2088FF",
     featured: false,
+    superFeatured: false,
   },
   {
     id: 3504,
@@ -469,6 +505,7 @@ export const stacks: Stack[] = [
     description: "실시간 커뮤니케이션과 협업을 위한 메시징 플랫폼",
     color: "#4A154B",
     featured: false,
+    superFeatured: false,
   },
 
   // ETC (4xxx) - 기타 (46xx)
@@ -480,6 +517,7 @@ export const stacks: Stack[] = [
     description: "문서 작성과 지식 관리를 위한 올인원 워크스페이스",
     color: "#9B59B6",
     featured: false,
+    superFeatured: false,
   },
   {
     id: 4602,
@@ -490,6 +528,7 @@ export const stacks: Stack[] = [
       "음성, 채팅, 화면 공유 등 다양한 기능을 제공하는 커뮤니티 플랫폼",
     color: "#5865F2",
     featured: false,
+    superFeatured: false,
   },
   {
     id: 4603,
@@ -499,5 +538,6 @@ export const stacks: Stack[] = [
     description: "디자인 툴로 웹 및 모바일 앱 디자인 및 협업",
     color: "#F24E1E",
     featured: false,
+    superFeatured: false,
   },
 ];

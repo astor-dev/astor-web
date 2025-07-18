@@ -1,25 +1,21 @@
 import React, { useState, useEffect, useRef } from "react";
 import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
-import { stacks } from "~common/constants/stacks";
 import type { ProjectEntry } from "~common/types/project.type";
 import { stackTypeEnum, type StackType } from "~common/types/stack.type";
 import StackItem from "~features/projects/components/stacks/stack-item";
+import {
+  convertToRichStacksRecord,
+  getAvailableTypes,
+  getFilteredStacks,
+} from "~common/utils/stack.utils";
 
 interface StackSliderProps {
-  stackIds?: number[];
+  stacks: { type: StackType; id: number }[];
   defaultType?: StackType | "all";
   enableFeatured?: boolean;
   relatedProjects?: Record<number, ProjectEntry[]>;
 }
-
-// 스택 타입 순서 정의
-const stackTypeOrder: Record<StackType, number> = {
-  [stackTypeEnum.Enum.Frontend]: 1,
-  [stackTypeEnum.Enum.Backend]: 2,
-  [stackTypeEnum.Enum.DevOps]: 3,
-  [stackTypeEnum.Enum.ETC]: 4,
-};
 
 const parseType = (type: StackType | "all") => {
   switch (type) {
@@ -37,7 +33,7 @@ const parseType = (type: StackType | "all") => {
 };
 
 const StackTable: React.FC<StackSliderProps> = ({
-  stackIds,
+  stacks,
   defaultType = "all",
   enableFeatured = false,
   relatedProjects = {},
@@ -49,6 +45,11 @@ const StackTable: React.FC<StackSliderProps> = ({
   const [itemsPerPage, setItemsPerPage] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
   const containerRef = useRef<HTMLDivElement>(null);
+
+  // 유틸 함수를 사용하여 풍부한 스택 객체 생성
+  const richStacks = convertToRichStacksRecord(stacks, enableFeatured);
+  const availableTypes = getAvailableTypes(richStacks);
+  const filteredStacks = getFilteredStacks(richStacks, selectedType);
 
   // 반응형에 따른 페이지당 아이템 수 설정
   useEffect(() => {
@@ -68,48 +69,6 @@ const StackTable: React.FC<StackSliderProps> = ({
 
     return () => window.removeEventListener("resize", updateItemsPerPage);
   }, []);
-
-  const availableStacks = stacks
-    .filter(stack => (stackIds ? stackIds.includes(stack.id) : true))
-    .sort((a, b) => {
-      if (enableFeatured) {
-        if (a.superFeatured !== b.superFeatured) {
-          return b.superFeatured ? 1 : -1;
-        }
-        if (a.featured !== b.featured) {
-          return b.featured ? 1 : -1;
-        }
-      }
-      if (a.stackType !== b.stackType) {
-        return (
-          (stackTypeOrder[a.stackType[0]] ?? Infinity) -
-          (stackTypeOrder[b.stackType[0]] ?? Infinity)
-        );
-      }
-      return a.name.localeCompare(b.name);
-    });
-
-  // 사용 가능한 스택 타입도 정의된 순서대로 정렬
-  const allStackTypes = Array.from(
-    new Set(
-      availableStacks.flatMap(stack =>
-        Array.isArray(stack.stackType) ? stack.stackType : [stack.stackType],
-      ),
-    ),
-  ).sort(
-    (a, b) => (stackTypeOrder[a] ?? Infinity) - (stackTypeOrder[b] ?? Infinity),
-  );
-
-  const availableTypes: (StackType | "all")[] = ["all", ...allStackTypes];
-
-  const filteredStacks = availableStacks.filter(stack => {
-    if (selectedType === "all") return true;
-
-    const stackTypes = Array.isArray(stack.stackType)
-      ? stack.stackType
-      : [stack.stackType];
-    return stackTypes.includes(selectedType as StackType);
-  });
 
   // 페이징 계산
   const totalPages = Math.ceil(filteredStacks.length / itemsPerPage);

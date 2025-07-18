@@ -12,7 +12,7 @@ export const stackSchema = z.object({
   description: z.string(),
   color: z.string(),
   featured: z.boolean(),
-  superFeatured: z.boolean().optional(),
+  superFeatured: z.boolean(),
 });
 export type Stack = z.infer<typeof stackSchema>;
 
