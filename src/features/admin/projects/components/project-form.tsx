@@ -301,7 +301,6 @@ const ProjectForm: React.FC<ProjectFormProps> = ({ initialData }) => {
             name="primaryColor"
             label="기본 색상"
             type="text"
-            required
             defaultValue={initialData?.data?.primaryColor ?? ""}
           />
 
@@ -311,7 +310,6 @@ const ProjectForm: React.FC<ProjectFormProps> = ({ initialData }) => {
             name="backgroundColor"
             label="배경 색상"
             type="text"
-            required
             defaultValue={initialData?.data?.backgroundColor ?? ""}
           />
 
@@ -324,7 +322,10 @@ const ProjectForm: React.FC<ProjectFormProps> = ({ initialData }) => {
               options={stacks.flatMap(stack =>
                 stack.stackType.map(type => ({
                   value: JSON.stringify({ type, id: stack.id }),
-                  label: `${stack.name}(${type === "Frontend" ? "FE" : type === "Backend" ? "BE" : type === "DevOps" ? "DevOps" : "ETC"})`,
+                  label:
+                    stack.stackType.length > 1
+                      ? `${stack.name}(${type === "Frontend" ? "FE" : type === "Backend" ? "BE" : type === "DevOps" ? "DevOps" : "ETC"})`
+                      : stack.name,
                   icon: {
                     Icon: stack.icon,
                     color: stack.color,
