@@ -42,6 +42,8 @@ import {
   SiRemix,
   SiLangchain,
   SiNaver,
+  SiFlask,
+  SiDjango,
 } from "react-icons/si";
 import { TbBrandReactNative } from "react-icons/tb";
 import { stackTypeEnum, type Stack } from "~common/types/stack.type";
@@ -253,6 +255,26 @@ export const stacks: Stack[] = [
     icon: FaBrain,
     description: "Spring 기반의 AI 프레임워크",
     color: "#6DB33D",
+    featured: false,
+    superFeatured: false,
+  },
+  {
+    id: 2207,
+    stackType: [stackTypeEnum.Enum.Backend],
+    name: "Flask",
+    icon: SiFlask,
+    description: "Python 기반의 웹 프레임워크",
+    color: "#000000",
+    featured: false,
+    superFeatured: false,
+  },
+  {
+    id: 2208,
+    stackType: [stackTypeEnum.Enum.Backend],
+    name: "Django",
+    icon: SiDjango,
+    description: "Python 기반의 웹 프레임워크",
+    color: "#02392b",
     featured: false,
     superFeatured: false,
   },
