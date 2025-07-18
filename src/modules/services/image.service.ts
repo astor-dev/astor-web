@@ -1,6 +1,6 @@
 import { z } from "zod";
+import type { ImageKey, ImageExtension } from "~common/types/image.type";
 import type { HttpInstance } from "~modules/services/core/http.instance";
-import type { ImageKey, ImageExtension } from "~types/image.type";
 
 export const IMAGE_SERVICE = Symbol("IMAGE_SERVICE");
 

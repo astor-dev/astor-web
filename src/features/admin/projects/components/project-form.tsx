@@ -54,7 +54,7 @@ const ProjectForm: React.FC<ProjectFormProps> = ({ initialData }) => {
   const endedAtRef = useRef<InputMethods>(null);
   const rolesRef = useRef<CheckboxGroupInputMethods>(null);
   const shortDescriptionRef = useRef<TextareaInputMethods>(null);
-  const stackIdsRef = useRef<CheckboxGroupInputMethods>(null);
+  const stacksRef = useRef<CheckboxGroupInputMethods>(null);
   const primaryColorRef = useRef<InputMethods>(null);
   const backgroundColorRef = useRef<InputMethods>(null);
   // 종료일 무기한 체크박스 상태만 관리 (UI 업데이트 필요)
@@ -99,7 +99,10 @@ const ProjectForm: React.FC<ProjectFormProps> = ({ initialData }) => {
         : endedAtRef.current?.getValue() || getInitialDate(),
       roles: (rolesRef.current?.getValues() as ProjectRole[]) || [],
       shortDescription: shortDescriptionRef.current?.getValue() || "",
-      stackIds: (stackIdsRef.current?.getValues() || []).map(id => Number(id)),
+      stack: (stacksRef.current?.getValues() || []).map(value => {
+        const parsed = JSON.parse(value);
+        return { type: parsed.type, id: parsed.id };
+      }),
       primaryColor: primaryColorRef.current?.getValue() || null,
       backgroundColor: backgroundColorRef.current?.getValue() || null,
     };
@@ -314,22 +317,24 @@ const ProjectForm: React.FC<ProjectFormProps> = ({ initialData }) => {
 
           <div className="md:col-span-2">
             <CheckboxGroupInput
-              ref={stackIdsRef}
-              name="stackIds"
-              id="stackIds"
+              ref={stacksRef}
+              name="stacks"
+              id="stacks"
               label="사용 기술"
-              options={stacks.map(stack => ({
-                value: stack.id.toString(),
-                label: stack.name,
-                icon: {
-                  Icon: stack.icon,
-                  color: stack.color,
-                },
-                category: stack.stackType,
-              }))}
+              options={stacks.flatMap(stack =>
+                stack.stackType.map(type => ({
+                  value: JSON.stringify({ type, id: stack.id }),
+                  label: `${stack.name}(${type === "Frontend" ? "FE" : type === "Backend" ? "BE" : type === "DevOps" ? "DevOps" : "ETC"})`,
+                  icon: {
+                    Icon: stack.icon,
+                    color: stack.color,
+                  },
+                  category: [type],
+                })),
+              )}
               required
-              defaultValues={(initialData?.data?.stackIds ?? []).map(id =>
-                id.toString(),
+              defaultValues={(initialData?.data?.stack ?? []).map(item =>
+                JSON.stringify({ type: item.type, id: item.id }),
               )}
               enableSearch={true}
               itemsPerPage={9}

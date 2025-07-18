@@ -1,5 +1,6 @@
+import type { ProjectType, ProjectRole } from "~common/types/project.type";
+import type { StackType } from "~common/types/stack.type";
 import type { HttpInstance } from "~modules/services/core/http.instance";
-import type { ProjectRole, ProjectType } from "~types/project.type";
 
 export const PROJECTS_SERVICE = Symbol("PROJECTS_SERVICE");
 
@@ -15,7 +16,7 @@ interface CreateProjectRequest {
     shortDescription: string;
     startedAt: string;
     endedAt?: string;
-    stackIds: number[];
+    stack: { type: StackType; id: number }[];
     primaryColor: string | null;
     backgroundColor: string | null;
   };
