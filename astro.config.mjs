@@ -102,7 +102,7 @@ export default defineConfig({
       },
     }),
     sitemap({
-      filter: page => !page.includes("/admin") && !page.includes("/login"),
+      filter: page => !page.includes("admin") && !page.includes("login"),
     }),
     react(),
     tailwind(),
