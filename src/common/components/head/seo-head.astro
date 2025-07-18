@@ -29,18 +29,24 @@ const isArticle = type === "article";
 
 <head>
   <!-- Google Analytics -->
-<!-- Google tag (gtag.js) -->
-  <script async src="https://www.googletagmanager.com/gtag/js?id=G-T0PHGYSRNR"></script>
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-T0PHGYSRNR"
+  ></script>
   <script is:inline>
     window.dataLayer = window.dataLayer || [];
-    function gtag(){dataLayer.push(arguments);}
-    gtag('js', new Date());
+    function gtag() {
+      dataLayer.push(arguments);
+    }
+    gtag("js", new Date());
 
-    gtag('config', 'G-T0PHGYSRNR');
+    gtag("config", "G-T0PHGYSRNR");
   </script>
   <!-- End Google Analytics -->
   <!-- Naver Search Advisor -->
-  <meta name="naver-site-verification" content="eba7e6b4e218f61b3743bd03ed5bdbb151c0dd4b" />
+  <meta
+    name="naver-site-verification"
+    content="eba7e6b4e218f61b3743bd03ed5bdbb151c0dd4b"
+  />
   <!-- End of Naver Search Advisor -->
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -51,6 +57,9 @@ const isArticle = type === "article";
   <meta name="description" content={description} />
   <meta name="keywords" content={keywords} />
   <link rel="canonical" href={siteUrl} />
+
+  <!-- sitemap -->
+  <link rel="sitemap" href="/sitemap-index.xml" />
 
   <!-- Favicon -->
   <link rel="icon" type="image/svg+xml" href={favicon} />
