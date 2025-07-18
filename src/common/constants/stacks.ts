@@ -1,4 +1,5 @@
-import { FaBrain, FaJava } from "react-icons/fa";
+import { FaBrain, FaDatabase, FaJava } from "react-icons/fa";
+import { PiAtom } from "react-icons/pi";
 import {
   SiDocker,
   SiGit,
@@ -44,6 +45,8 @@ import {
   SiNaver,
   SiFlask,
   SiDjango,
+  SiSpringboot,
+  SiSpringsecurity,
 } from "react-icons/si";
 import { TbBrandReactNative } from "react-icons/tb";
 import { stackTypeEnum, type Stack } from "~common/types/stack.type";
@@ -249,16 +252,6 @@ export const stacks: Stack[] = [
     superFeatured: false,
   },
   {
-    id: 2206,
-    stackType: [stackTypeEnum.Enum.Backend],
-    name: "SpringAI",
-    icon: FaBrain,
-    description: "Spring 기반의 AI 프레임워크",
-    color: "#6DB33D",
-    featured: false,
-    superFeatured: false,
-  },
-  {
     id: 2207,
     stackType: [stackTypeEnum.Enum.Backend],
     name: "Flask",
@@ -278,7 +271,72 @@ export const stacks: Stack[] = [
     featured: false,
     superFeatured: false,
   },
-
+  {
+    id: 2230,
+    stackType: [stackTypeEnum.Enum.Backend],
+    name: "SpringBoot",
+    icon: SiSpringboot,
+    description:
+      "Spring 기반의 자동 설정과 내장 서버를 제공하는 빠른 애플리케이션 개발 프레임워크",
+    color: "#6DB33D",
+    featured: false,
+    superFeatured: false,
+  },
+  {
+    id: 2231,
+    stackType: [stackTypeEnum.Enum.Backend],
+    name: "SpringMVC",
+    icon: SiSpring,
+    description:
+      "Spring의 웹 애플리케이션 개발을 위한 MVC 패턴 기반 프레임워크",
+    color: "#6DB33D",
+    featured: false,
+    superFeatured: false,
+  },
+  {
+    id: 2232,
+    stackType: [stackTypeEnum.Enum.Backend],
+    name: "SpringWebFlux",
+    icon: PiAtom,
+    description:
+      "Spring의 반응형 웹 애플리케이션 개발을 위한 비동기 논블로킹 프레임워크",
+    color: "#6DB33D",
+    featured: false,
+    superFeatured: false,
+  },
+  {
+    id: 2233,
+    stackType: [stackTypeEnum.Enum.Backend],
+    name: "SpringSecurity",
+    icon: SiSpringsecurity,
+    description:
+      "Spring 기반 애플리케이션의 인증, 권한 부여 및 보안 기능을 제공하는 프레임워크",
+    color: "#6DB33D",
+    featured: false,
+    superFeatured: false,
+  },
+  {
+    id: 2234,
+    stackType: [stackTypeEnum.Enum.Backend],
+    name: "SpringAI",
+    icon: FaBrain,
+    description:
+      "Spring 생태계에서 AI/ML 모델과의 통합 및 추상화를 제공하는 프레임워크",
+    color: "#6DB33D",
+    featured: false,
+    superFeatured: false,
+  },
+  {
+    id: 2235,
+    stackType: [stackTypeEnum.Enum.Backend],
+    name: "SpringDataJPA",
+    icon: FaDatabase,
+    description:
+      "Java Persistence API로 객체 관계 매핑을 통한 데이터베이스 접근 추상화",
+    color: "#6DB33D",
+    featured: false,
+    superFeatured: false,
+  },
   // Backend (2xxx) - 데이터베이스 (23xx)
   {
     id: 2301,
