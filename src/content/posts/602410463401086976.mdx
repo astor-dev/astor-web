@@ -1,0 +1,310 @@
+---
+id: "602410463401086976"
+author: "Astor"
+title: "static 키워드의 메커니즘 해부 - TypeScript / Python 편"
+pinned: true
+draft: false
+tags:
+  - OOP
+  - TypeScript
+  - Python
+  - 프로그래밍 언어
+ogImage: "https://d2r0pavv0lsiqc.cloudfront.net/posts/images/29ed3179-29f1-4cf3-b3d8-9894250f8643.webp"
+seriesId: "560288573652209699"
+createdAt: "2025-07-21 17:04:06"
+updatedAt: "2025-07-21 17:04:06"
+---
+
+## 시작하며
+
+지난 글에서는 Java와 Kotlin에서의 `static` 키워드를 깊이 있게 분석해봤습니다. JVM 기반 언어들이 공유하는 메모리 구조와 클래스 로딩이라는 메커니즘 위에서, 각 언어의 설계 철학이 어떻게 다르게 표현되는지 확인할 수 있었습니다. 이번 글에서는 그 관점을 넓혀, TypeScript와 Python이라는 두 언어에서의 **정적 멤버 처리 방식**을 살펴보겠습니다.
+
+TypeScript와 Python은 JVM과 완전히 다른 런타임 환경과 언어 설계를 갖추고 있습니다. JavaScript를 기반으로 하는 TypeScript는 클래스라는 개념을 비교적 최근에야 명확히 도입했고, 여전히 객체지향과 함수형, 그리고 프로토타입 기반의 유연한 구조가 공존합니다. Python 역시 클래스가 '실행 가능한 객체'라는 점에서 JVM 언어들과는 근본적으로 다른 접근을 취합니다. 이로 인해 두 언어 모두 Java나 Kotlin과 같은 정적인 클래스 구조를 그대로 적용하지 않고, 나름의 철학을 담아 독특한 방식으로 정적 멤버를 처리합니다.
+
+이번 글에서도 역시 **단순히 문법을 나열하는 것에서 그치지 않고**, TypeScript와 Python의 내부 메커니즘을 들여다보며 **각 언어가 가진 설계 철학을 깊이 있게 분석**하고자 합니다. 이 과정을 통해 독자 여러분이 서로 다른 언어 간의 유사성과 차이점을 명확히 이해하고, 실제 프로젝트에서 보다 명확한 기준을 가지고 설계할 수 있게 되기를 바랍니다.
+
+***
+
+## TypeScript의 static 키워드와 메커니즘
+
+TypeScript는 JavaScript에 정적 타입과 클래스를 도입한 언어입니다. ES6(ECMAScript 2015)부터 클래스 문법을 공식적으로 지원하게 되면서, JavaScript와 그 슈퍼셋인 TypeScript에도 비로소 클래스 기반의 객체지향 프로그래밍이 일반화되었습니다. 하지만 TypeScript가 제공하는 클래스는 Java나 Kotlin의 클래스와는 상당히 다릅니다. JVM의 클래스 로딩이나 메모리 구조와 같은 개념이 전혀 없기 때문이죠.
+
+그렇다면, TypeScript의 `static` 키워드는 어떻게 동작할까요? 먼저, 아주 기본적인 예제를 통해 TypeScript에서의 `static` 키워드를 이해해 보겠습니다.
+
+### 기본 문법과 메커니즘
+
+다음과 같은 TypeScript 클래스가 있다고 가정해 봅시다.
+
+```ts
+class MathUtils {
+  static PI = 3.141592;
+
+  static circumference(radius: number): number {
+    return 2 * MathUtils.PI * radius;
+  }
+}
+
+console.log(MathUtils.circumference(10)); // 62.83184
+
+```
+
+여기서 사용된 `static` 멤버는 클래스의 인스턴스가 아니라, 클래스 자체에 소속됩니다. 인스턴스 생성 없이 `MathUtils.PI`와 같은 형식으로 접근이 가능하죠.
+
+그런데 중요한 점은 이 코드가 실제로 어떻게 동작하느냐입니다. TypeScript는 컴파일 시 JavaScript 코드로 변환됩니다. 위의 TypeScript 코드는 컴파일 후 다음과 같은 JavaScript 코드로 변환됩니다.
+
+```js
+"use strict";
+class MathUtils {
+}
+MathUtils.PI = 3.141592;
+MathUtils.circumference = function (radius) {
+    return 2 * MathUtils.PI * radius;
+};
+console.log(MathUtils.circumference(10)); // 62.83184
+
+```
+
+TypeScript는 클래스 내부에 선언된 `static` 필드와 메서드를 **클래스의 프로토타입이 아닌 클래스 생성자 함수 자체의 프로퍼티로 추가**합니다. 즉, JavaScript에서는 클래스도 결국 **함수 객체**이기 때문에, 클래스 자체가 하나의 객체이며 그 객체의 프로퍼티로서 `static` 멤버가 관리되는 것입니다.
+
+### JavaScript와 프로토타입 체인의 한계
+
+Java나 Kotlin에서는 클래스의 메서드나 필드가 클래스 로딩 단계에서 정적인 메모리 영역에 할당됩니다. 하지만 JavaScript(그리고 TypeScript)는 그런 고정된 메모리 영역 개념이 없습니다. 대신 **프로토타입 체인(prototype chain)**&#xACFC; **함수 객체**를 통해 메서드와 속성 접근이 이루어집니니다.
+
+TypeScript에서 클래스의 인스턴스 메서드는 프로토타입 객체(`Class.prototype`)에 추가되어 인스턴스 간에 공유됩니다. 반면 `static` 멤버는 **클래스 함수 자체에 직접 추가**됩니다. 프로토타입 체인에서 상속되는 게 아니라 **클래스 함수 객체의 프로퍼티**로 존재하므로, JavaScript와 TypeScript에서 `static` 멤버는 **상속을 지원하지 않고**, 정확히는 부모 클래스의 정적 멤버를 자식 클래스에서 '복사'하거나 직접 다시 정의해줘야 합니다.
+
+다음 예시를 보겠습니다:
+
+```ts
+class Parent {
+  static greet() {
+    console.log("Hello from Parent");
+  }
+}
+
+class Child extends Parent {}
+
+Parent.greet(); // "Hello from Parent"
+Child.greet();  // "Hello from Parent"
+
+```
+
+이 코드가 작동하는 이유는 JavaScript 클래스 문법이 내부적으로 정적 멤버를 프로토타입이 아닌 **클래스 객체 자체에 할당하기 때문입니다.** 즉, 자식 클래스의 생성자 함수가 부모 클래스의 생성자 함수를 상속하는 형태이기 때문에, 자식 클래스는 정적 멤버를 부모로부터 복사하지 않고 **상위 클래스의 메서드를 그대로 참조**합니다.
+
+하지만 만약 자식 클래스에서 동일한 이름의 정적 메서드를 재정의하면 어떻게 될까요?
+
+```ts
+class Parent {
+  static greet() {
+    console.log("Hello from Parent");
+  }
+}
+
+class Child extends Parent {
+  static greet() {
+    console.log("Hello from Child");
+  }
+}
+
+Parent.greet(); // "Hello from Parent"
+Child.greet();  // "Hello from Child"
+
+```
+
+이때 Child는 Parent의 메서드를 **덮어쓰는 형태(shadowing)**&#xB85C; 자신의 메서드를 정의합니다. Java에서 봤던 static의 shadowing 개념과 매우 유사하죠. 하지만 JVM처럼 정적 바인딩이 명시적으로 일어나기보다는, **프로토타입 기반의 JavaScript 언어 특성 때문에 발생**하는 현상입니다.
+
+### Generic과 Static의 복잡한 관계
+
+마지막으로, TypeScript에서 제네릭 클래스와 static 멤버의 관계를 보겠습니다.
+
+```ts
+class Box<T> {
+  static count = 0;
+
+  constructor(public value: T) {
+    Box.count++;
+  }
+}
+
+const box1 = new Box<string>("hello");
+const box2 = new Box<number>(123);
+console.log(Box.count); // 2
+
+```
+
+여기서 흥미로운 점은 제네릭 타입 파라미터 `<T>`가 있더라도, static 멤버는 **모든 제네릭 인스턴스가 공유하는 단 하나의 값**을 가진다는 점입니다. Java나 Kotlin의 제네릭과 달리, JavaScript 런타임에서는 제네릭 타입 파라미터가 지워지므로 **static 멤버 역시 제네릭 인자와 전혀 상관없이 동작**합니다. 이는 언어의 런타임 설계가 JVM과 완전히 다른 점을 명확히 보여줍니다.
+
+***
+
+## Python의 static: 런타임 객체로서의 클래스
+
+지금까지 Java와 Kotlin에서 JVM의 메모리 구조와 클래스 로딩을 중심으로 한 `static`의 메커니즘, 그리고 TypeScript가 JavaScript의 함수 객체와 프로토타입 기반 구조 위에서 어떻게 정적 멤버를 다루는지에 대해 깊게 알아봤습니다. 이제 Python이라는 완전히 다른 언어 환경 속에서, 클래스와 정적 멤버가 어떤 방식으로 작동하는지 면밀히 살펴볼 차례입니다.
+
+Python은 기본적으로 객체지향 언어입니다. 하지만 Python의 클래스는 Java나 Kotlin의 그것과는 근본적으로 다릅니다. 클래스 자체가 하나의 **런타임 객체**로서 존재하며, 클래스의 정의가 **코드 실행 시점에 동적으로 처리**됩니다. 그렇다면, Python에서 정적인 멤버는 어떻게 표현되고, 내부적으로는 어떤 메커니즘이 사용될까요?
+
+하나씩 살펴봅시다.
+
+### 클래스 변수와 객체의 경계
+
+Python에서는 클래스 수준에서 직접 변수를 선언할 수 있습니다. 이를 **클래스 변수(Class variable)** 라고 부르며, Java나 TypeScript의 static 필드와 개념적으로 매우 유사합니다.
+
+아래의 예시를 통해 클래스 변수의 기본 동작을 확인해 보겠습니다.
+
+```python
+class MathUtils:
+    PI = 3.141592
+
+    @staticmethod
+    def circumference(radius):
+        return 2 * MathUtils.PI * radius
+
+print(MathUtils.circumference(10)) # 62.83184
+
+```
+
+이 코드에서 클래스 변수인 `PI`는 인스턴스 생성과 관계없이 `MathUtils.PI` 형태로 접근할 수 있습니다. 하지만 Python에서 클래스 변수는 어떻게 관리될까요? Java나 Kotlin처럼 클래스 로딩 시점에 정적 메모리 영역에 할당되는 개념이 존재하지 않기 때문에, Python 클래스 변수는 실제로 클래스라는 객체의 속성(attribute)으로 관리됩니다.
+
+Python에서는 클래스 자체가 런타임 객체입니다. 아래 코드를 보면 명확히 이해할 수 있습니다.
+
+```python
+class MathUtils:
+    PI = 3.141592
+
+print(MathUtils.__dict__)
+
+```
+
+위의 코드 실행 결과는 다음과 같습니다:
+
+```python
+{
+    '__module__': '__main__',
+    'PI': 3.141592,
+    '__dict__': <attribute '__dict__' of 'MathUtils' objects>,
+    '__weakref__': <attribute '__weakref__' of 'MathUtils' objects>,
+    '__doc__': None
+}
+
+```
+
+여기서 볼 수 있듯이, `PI`는 클래스 객체의 `__dict__` 속성에 저장된 하나의 키-값 쌍(key-value pair)입니다. 클래스 변수는 런타임에 이 딕셔너리 형태로 저장되기 때문에, 클래스 정의 후에도 동적으로 추가하거나 변경할 수 있습니다.
+
+### @staticmethod의 내부 메커니즘
+
+Python에서 클래스 내에서 인스턴스 상태에 접근할 필요가 없는 메서드를 만들 때, `@staticmethod` 데코레이터를 사용합니다. Java나 TypeScript의 static 메서드와 유사한 기능입니다. 하지만 Python의 `@staticmethod`는 단순한 문법적 장식이 아닙니다. 내부적으로 데코레이터라는 독특한 메커니즘을 사용하여 메서드를 클래스의 속성으로 등록합니다.
+
+다음과 같은 코드가 있다고 해봅시다.
+
+```python
+class StringUtils:
+    @staticmethod
+    def is_blank(text):
+        return not text or text.isspace()
+
+print(StringUtils.is_blank(" "))   # True
+
+```
+
+여기서 `@staticmethod`는 메서드를 클래스의 **일반 함수 형태로 등록**하고, 호출 시 자동으로 클래스나 인스턴스 참조(`self`, `cls`)를 넘겨주지 않습니다. 이것이 인스턴스나 클래스의 상태와 전혀 무관한 메서드를 명확히 표현하는 Python 특유의 방식입니다.
+
+내부적으로 `@staticmethod` 데코레이터는 다음과 같은 작업을 수행합니다:
+
+```python
+class StringUtils:
+    def is_blank(text):
+        return not text or text.isspace()
+
+    is_blank = staticmethod(is_blank)
+
+```
+
+즉, 클래스 정의 시점에 `staticmethod()`라는 내장 함수가 메서드를 감싸서, 그 반환값을 클래스 객체의 속성으로 등록하는 방식으로 동작합니다.
+
+### @classmethod와 cls의 정체
+
+Python에는 `@staticmethod` 외에도 유사한 또 다른 데코레이터가 존재합니다. 바로 `@classmethod`입니다. `@classmethod`는 메서드의 첫 번째 인수로 자동으로 클래스 자신(`cls`)을 넘겨줍니다. 일반적으로 Factory 메서드 패턴이나 클래스 자체의 상태를 변경하는 용도로 쓰입니다.
+
+다음 예시를 보겠습니다:
+
+```python
+class Product:
+    version = "1.0"
+
+    @classmethod
+    def create(cls, name):
+        instance = cls()
+        instance.name = f"{name} v{cls.version}"
+        return instance
+
+p = Product.create("Gadget")
+print(p.name)  # "Gadget v1.0"
+
+```
+
+위 코드에서 `@classmethod`가 하는 일은 다음과 같습니다:
+
+```python
+class Product:
+    version = "1.0"
+
+    def create(cls, name):
+        instance = cls()
+        instance.name = f"{name} v{cls.version}"
+        return instance
+
+    create = classmethod(create)
+
+```
+
+즉, `@classmethod` 역시 내부적으로 메서드를 감싸 클래스의 속성으로 추가하지만, 호출 시 클래스 참조를 자동으로 넘겨주는 점이 `@staticmethod`와 다릅니다.
+
+### 인스턴스 변수와 클래스 변수의 충돌
+
+Python에서 클래스 변수는 때로 인스턴스 변수와 혼동될 수 있습니다. 다음 예시를 보겠습니다:
+
+```python
+class Config:
+    DEBUG = False
+
+config1 = Config()
+config2 = Config()
+
+config1.DEBUG = True
+
+print(Config.DEBUG)  # False
+print(config1.DEBUG) # True (인스턴스 변수로 재정의됨)
+print(config2.DEBUG) # False (클래스 변수 그대로 참조)
+
+```
+
+이 코드에서, `config1.DEBUG`에 값을 할당하면 인스턴스 변수로 별도의 값이 생성됩니다. 클래스 변수는 그대로 유지되며, 다른 인스턴스(`config2`)는 여전히 클래스 변수를 참조합니다. 인스턴스가 클래스 변수의 값을 변경하지 않고, 새로운 인스턴스 변수를 만들어 클래스 변수를 가려버리는(shadowing) 형태가 되는 것입니다.
+
+### 상속과 다형성의 한계
+
+Python의 클래스 변수와 정적 메서드는 상속됩니다. 그러나 오버라이딩(overriding)의 동작은 조금 다릅니다. Python은 동적 타입 언어이며 클래스가 런타임 객체이기 때문에 Java나 Kotlin과 같은 정적 타입 언어의 정적 바인딩 개념은 적용되지 않습니다.
+
+```python
+class Base:
+    name = "base"
+
+    @staticmethod
+    def hello():
+        print("Hello from base")
+
+class Child(Base):
+    name = "child"
+
+    @staticmethod
+    def hello():
+        print("Hello from child")
+
+obj = Child()
+print(obj.name) # child
+obj.hello()     # Hello from child
+
+base_ref: Base = Child()
+print(base_ref.name) # child (런타임 다형성 발생)
+base_ref.hello()     # Hello from child
+
+```
+
+Python은 모든 것이 동적으로 바인딩되기 때문에, 정적 멤버와 메서드도 Java와 달리 런타임에 다형성을 지원합니다. 이는 Python의 런타임 객체로서의 클래스 특성을 명확히 보여주는 사례입니다.
