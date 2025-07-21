@@ -92,7 +92,7 @@ const SeriesSlider = (props: {
           <Swiper
             ref={swiperRef}
             modules={[Navigation, Autoplay, EffectFade, FreeMode, Mousewheel]}
-            autoplay={{ delay: 3000, disableOnInteraction: true }}
+            autoplay={{ delay: 3000, disableOnInteraction: false }}
             loop={true}
             effect={currentOptions.effect}
             spaceBetween={currentOptions.spaceBetween}
@@ -103,6 +103,8 @@ const SeriesSlider = (props: {
             mousewheel={{
               enabled: true,
               forceToAxis: true,
+              sensitivity: 0.4,
+              thresholdDelta: 10,
             }}
             fadeEffect={
               currentOptions.effect === "fade"

@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { Autoplay, Mousewheel, Navigation } from "swiper/modules";
+import { Mousewheel, Navigation } from "swiper/modules";
 import { Swiper, SwiperSlide, type SwiperRef } from "swiper/react";
 import SliderNavButtons from "~common/components/buttons/slider-nav-buttons";
 import type { PostEntry } from "~common/types/post.type";
@@ -38,7 +38,7 @@ const PinnedPostSlider = (
         <div className="swiper-container-wrapper group relative">
           <Swiper
             ref={swiperRef}
-            modules={[Navigation, Autoplay, Mousewheel]}
+            modules={[Navigation, Mousewheel]}
             loop={true}
             spaceBetween={30}
             slidesPerGroup={1}
@@ -47,6 +47,8 @@ const PinnedPostSlider = (
             mousewheel={{
               enabled: true,
               forceToAxis: true,
+              sensitivity: 0.4,
+              thresholdDelta: 10,
             }}
             pagination={{ clickable: true }}
             className="h-full w-full overflow-hidden"
