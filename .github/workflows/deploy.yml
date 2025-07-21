@@ -22,7 +22,7 @@ jobs:
       - name: Checkout your repository using git
         uses: actions/checkout@v4
       - name: Install, build, and upload your site
-        uses: withastro/action@v3
+        uses: withastro/action@v4
         env:
           PUBLIC_BASE_URL: ${{ secrets.PUBLIC_BASE_URL }}
         with:
