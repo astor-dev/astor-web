@@ -9,10 +9,10 @@ tags:
   - Java
   - Kotlin
   - 프로그래밍 언어
-ogImage: "https://d2r0pavv0lsiqc.cloudfront.net/posts/images/aecb0bcf-bea6-481e-afd2-dc45c9fcf36f.webp"
+ogImage: "https://d2r0pavv0lsiqc.cloudfront.net/posts/images/78666adc-b648-46c4-baec-19baa6b7dd21.webp"
 seriesId: "560288573652209699"
 createdAt: "2025-07-13 18:19:36"
-updatedAt: "2025-07-16 15:47:00"
+updatedAt: "2025-07-21 17:16:02"
 ---
 
 ## 시리즈 집필의 계기
@@ -23,7 +23,7 @@ AI를 활용한 코딩이 일상화되면서, 더 이상 **특정 언어의 API�
 
 이런 맥락에서 이제 중요한 것은 개별 언어의 경험적 숙련이 아니라, **언어를 관통하는 핵심 메커니즘에 대한 깊은 이해**입니다. 이 시리즈는 각 언어에서 동일한 개념이 어떻게 구현되고, 어떤 철학을 기반으로 설계되었는지를 분석해보려 합니다.
 
----
+***
 
 ## static이란?
 
@@ -35,7 +35,7 @@ AI를 활용한 코딩이 일상화되면서, 더 이상 **특정 언어의 API�
 
 이 글에서는 Java, Kotlin, Python, TypeScript 네 언어를 기준으로 `static` 키워드가 어떤 방식으로 표현되고 구현되는지, 그리고 그 배경에 깔린 언어 설계 철학은 무엇인지를 깊이 있게 분석해보겠습니다.
 
----
+***
 
 ## Java의 static 키워드
 
@@ -45,12 +45,7 @@ Java에서 `static` 키워드는 클래스 로딩 시점에 JVM의 메서드 영
 
 ### 메모리 구조와 static
 
-<img
-  height="365"
-  width="376"
-  alt="메모리] JVM의 메모리 사용 방식 : JVM의 Static Area와 Heap Area를 중심으로 Kotlin/JVM의 메모리  사용방식을 이해하기 — 조세영의 Kotlin World"
-  src="https://blog.kakaocdn.net/dna/bIO6Ne/btqWn2vhjds/AAAAAAAAAAAAAAAAAAAAALzb6FJ5i_vozrQcdsOplrwyqh-Prj52iEisPljvPuHq/img.png?credential=yqXZFxpELC7KVnFOS48ylbz2pIh7yKj8&expires=1753973999&allow_ip=&allow_referer=&signature=Il9US7pwKpbWjLEN9aYVYN%2FeG%2Bk%3D"
-/>
+<img height="365" width="376" alt="메모리] JVM의 메모리 사용 방식 : JVM의 Static Area와 Heap Area를 중심으로 Kotlin/JVM의 메모리  사용방식을 이해하기 — 조세영의 Kotlin World" src="https://blog.kakaocdn.net/dna/bIO6Ne/btqWn2vhjds/AAAAAAAAAAAAAAAAAAAAALzb6FJ5i_vozrQcdsOplrwyqh-Prj52iEisPljvPuHq/img.png?credential=yqXZFxpELC7KVnFOS48ylbz2pIh7yKj8&expires=1753973999&allow_ip=&allow_referer=&signature=Il9US7pwKpbWjLEN9aYVYN%2FeG%2Bk%3D" />
 
 `static`으로 선언된 필드는 JVM의 **Runtime Data Area** 중 **Method Area**에 저장됩니다. 이는 모든 인스턴스가 **동일한 메모리 공간**을 공유함을 의미합니다.
 
@@ -217,7 +212,7 @@ System.out.println(Outer.Inner.x); // 42
 
 같은 케이스에서 활용할 수 있습니다.
 
----
+***
 
 ## Kotlin의 static: Companion Object와 객체지향적 대체
 
