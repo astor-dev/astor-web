@@ -1,20 +1,13 @@
 // ProjectCard.tsx
-import React, { useState, useRef } from "react";
+import React, { useState } from "react";
 import Skeleton from "react-loading-skeleton";
 import type { ProjectEntry } from "~common/types/project.type";
 import dayjs from "dayjs";
 import ImageWithSkeleton from "~common/components/skeletons/image-with-skeleton";
-import { useIntersectionObserver } from "~common/hooks/use-intersection-observer";
 
-interface ProjectCardProps extends ProjectEntry {
-  showInitialAnimation?: boolean;
-}
-
-const ProjectCard = (props: ProjectCardProps) => {
+const ProjectCard = (props: ProjectEntry) => {
   const [isLoading, setIsLoading] = useState(true);
   const [isTouched, setIsTouched] = useState(false);
-  const cardRef = useRef<HTMLDivElement>(null);
-  const isVisible = useIntersectionObserver(cardRef);
 
   const handleImageLoad = () => {
     setIsLoading(false);
@@ -57,14 +50,7 @@ const ProjectCard = (props: ProjectCardProps) => {
       className="group block"
       onClick={handleClick}
     >
-      <article
-        ref={cardRef}
-        className={`relative h-full overflow-hidden bg-transparent ${
-          props.showInitialAnimation
-            ? "transition-all duration-700 ease-out"
-            : ""
-        } ${isVisible ? "translate-y-0 opacity-100" : "translate-y-10 opacity-0"} `}
-      >
+      <article className="relative h-full overflow-hidden bg-transparent">
         <div className="relative overflow-hidden">
           <div className="aspect-[4/3] h-full w-full overflow-hidden">
             <ImageWithSkeleton
