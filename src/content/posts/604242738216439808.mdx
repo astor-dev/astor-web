@@ -5,7 +5,10 @@ title: "NestJS API 응답, 지네릭으로 일원화하고 Swagger 문서도 한
 pinned: true
 draft: false
 tags:
-
+  - NestJS
+  - Swagger
+  - TypeScript
+  - 데코레이터
 ogImage: "https://d2r0pavv0lsiqc.cloudfront.net/posts/images/1cb8fb48-4071-4086-828a-feb2df8a27df.webp"
 seriesId: "549808096239681536"
 createdAt: "2025-07-26 18:24:55"
@@ -17,19 +20,42 @@ updatedAt: "2025-07-26 18:24:55"
 NestJS + Swagger로 controller 레이어 만들다보면 한번쯤 아래와 같은 코드를 본 적 있을 겁니다.
 
 ```ts
-  @UseGuards(AuthGuard('jwt'))
+@Controller("users")
+export class UserController {
+  constructor(private readonly userService: UserService) {}
+
+  @Get(":id")
+  @UseGuards(AuthGuard("jwt"))
   @ApiBearerAuth()
-  @ApiOperation({ summary: '유저 조회' })
-  @ApiOkResponse({ description: '성공적으로 유저 정보를 반환합니다.', type: UserResponse })
-  @ApiUnauthorizedResponse({ description: 'JWT 토큰이 없거나 유효하지 않습니다.', type: ErrorResponse })
-  @ApiForbiddenResponse({ description: '접근 권한이 없습니다.', type: ErrorResponse })
-  @ApiNotFoundResponse({ description: '해당 ID의 유저가 존재하지 않습니다.', type: ErrorResponse })
-  @ApiInternalServerErrorResponse({ description: '서버 내부 오류', type: ErrorResponse })
-  @Get(':id')
-  async getUser(@Param('id') id: string): Promise<UserResponse> {
+  @UseGuards(AuthGuard("jwt"))
+  @ApiBearerAuth()
+  @ApiOperation({ summary: "유저 조회" })
+  @ApiOkResponse({
+    description: "성공적으로 유저 정보를 반환합니다.",
+    type: UserResponse,
+  })
+  @ApiUnauthorizedResponse({
+    description: "JWT 토큰이 없거나 유효하지 않습니다.",
+    type: ErrorResponse,
+  })
+  @ApiForbiddenResponse({
+    description: "접근 권한이 없습니다.",
+    type: ErrorResponse,
+  })
+  @ApiNotFoundResponse({
+    description: "해당 ID의 유저가 존재하지 않습니다.",
+    type: ErrorResponse,
+  })
+  @ApiInternalServerErrorResponse({
+    description: "서버 내부 오류",
+    type: ErrorResponse,
+  })
+  @Get(":id")
+  async getUser(@Param("id") id: string): Promise<UserResponse> {
     // 유저 서비스 호출 및 응답 래핑 생략
     return await this.userService.findById(id);
   }
+}
 ```
 
 저 주렁주렁 달린 데코레이터 때문에 마음이 불편하신 분들이 한 둘이 아니실 텐데요.
@@ -53,6 +79,13 @@ NestJS + Swagger로 controller 레이어 만들다보면 한번쯤 아래와 같
 ### 응답 타입 만들기
 
 ```ts
+export class BlogController {
+  constructor(private readonly blogFacade: BlogFacade) {}
+
+  @Get(":id")
+  @ApiDoc({
+    summary: "게시글 조회",
+    successType: PostResponseModel,
   async getPost(
     @Param("id") id: string,
     @Ip() clientIp: string
@@ -60,12 +93,12 @@ NestJS + Swagger로 controller 레이어 만들다보면 한번쯤 아래와 같
     const postInfo = await this.blogFacade.viewPost(new PostId(id), clientIp);
     return ControllerResponse.success(PostResponseModel.fromPostInfo(postInfo));
   }
+}
 ```
 
 `ControllerResponse<PostResponseModel>` 요렇게 사용할 수 있는 지네릭 기반 공통 응답 타입 코드를 공유합니다.
 
 ```ts
-
 export class ControllerResponse<T> {
   constructor(data: T, message: string, status: HttpStatus) {
     this.data = data;
@@ -102,7 +135,6 @@ export class ControllerResponse<T> {
     return new ControllerResponse(data, message, status);
   }
 }
-
 ```
 
 상세 타입은 커스텀 하실 수 있습니다. static 팩토리 메서드로 생성 & 에러를 보조합니다.
@@ -110,7 +142,6 @@ export class ControllerResponse<T> {
 ### 필터에서 에러 처리
 
 ```ts
-
 @Catch(HttpException)
 export class HttpExceptionFilter implements ExceptionFilter {
   private logger = new Logger("Exception");
@@ -137,14 +168,11 @@ export class HttpExceptionFilter implements ExceptionFilter {
     response.status(status).json(errorResponse);
   }
 }
-
 ```
 
 되게 심플한 필터인데 커스텀 하시면 됩니다.
 
 위에서 생성한 에러 메서드 활용해서 던져진 에러들 필터단에서 일원화해서 처리합니다.
-
-
 
 ## Swagger 커스텀 데코레이터
 
@@ -200,7 +228,7 @@ const isPrimitive = (type: any): type is SwaggerPrimitive => {
 };
 
 export const ApiDoc = <TModel extends ApiDocSuccessType>(
-  options: ApiDocOptions<TModel>
+  options: ApiDocOptions<TModel>,
 ) => {
   const { summary, description, successType, errorResponses = [] } = options;
 
@@ -253,13 +281,13 @@ export const ApiDoc = <TModel extends ApiDocSuccessType>(
     decorators.push(
       ApiExtraModels(
         ControllerResponse,
-        ...(isVoid || isItemPrimitive ? [] : [itemType as Type<any>])
+        ...(isVoid || isItemPrimitive ? [] : [itemType as Type<any>]),
       ),
       ApiOkResponse({
         schema: successSchema,
         description: "성공 응답",
       }),
-      HttpCode(HttpStatus.OK)
+      HttpCode(HttpStatus.OK),
     );
   }
 
@@ -277,7 +305,7 @@ export const ApiDoc = <TModel extends ApiDocSuccessType>(
             status: { type: "number", example: status },
           },
         },
-      })
+      }),
     );
   });
 
@@ -285,9 +313,9 @@ export const ApiDoc = <TModel extends ApiDocSuccessType>(
 };
 
 export const ApiResponseType = <
-  TModel extends Type<any> | SwaggerPrimitive | void
+  TModel extends Type<any> | SwaggerPrimitive | void,
 >(
-  model: TModel
+  model: TModel,
 ) => {
   const isVoid = model === undefined || model === (void 0 as any);
   const isPrimitive = model === String || model === Number || model === Boolean;
@@ -309,14 +337,14 @@ export const ApiResponseType = <
   return applyDecorators(
     ApiExtraModels(
       ControllerResponse,
-      ...(isVoid || isPrimitive ? [] : [model as Type<any>])
+      ...(isVoid || isPrimitive ? [] : [model as Type<any>]),
     ),
-    ApiOkResponse({ schema })
+    ApiOkResponse({ schema }),
   );
 };
 
 function primitiveToSwaggerType(
-  type: SwaggerPrimitive
+  type: SwaggerPrimitive,
 ): "string" | "number" | "boolean" {
   switch (type) {
     case String:
@@ -327,9 +355,143 @@ function primitiveToSwaggerType(
       return "boolean";
     default:
       throw new InternalServerErrorException(
-        `Unsupported primitive type: ${type}`
+        `Unsupported primitive type: ${type}`,
       );
   }
 }
-
 ```
+
+## 코드 해설
+
+위 데코레이터가 어떻게 동작하는지 핵심 부분들을 하나씩 해부해보겠습니다.
+
+### ApiExtraModels의 역할
+
+```ts
+ApiExtraModels(
+  ControllerResponse,
+  ...(isVoid || isItemPrimitive ? [] : [itemType as Type<any>]),
+);
+```
+
+`ApiExtraModels`는 Swagger 스키마 생성 시 **참조할 모델들을 미리 등록**하는 역할을 합니다.
+
+- `ControllerResponse`: 공통 응답 래퍼 클래스를 스키마에 등록
+- `itemType`: 지네릭으로 전달된 실제 데이터 타입도 함께 등록
+- 만약 void나 primitive 타입이면 추가 모델 등록 없이 빈 배열 반환
+
+**왜 필요한가?**
+Swagger는 런타임에 TypeScript의 타입 정보를 잃어버리기 때문에, 사용할 모델들을 명시적으로 알려줘야 `$ref`로 참조할 수 있습니다.
+
+### 지네릭 타입 해석 과정
+
+```ts
+const isArray = isArrayType(successType);
+const itemType = isArray ? successType[0] : successType;
+const isItemPrimitive = isPrimitive(itemType);
+```
+
+데코레이터는 전달받은 지네릭 타입을 다음과 같이 분석합니다:
+
+1. **배열 타입인가?** `[UserModel]` 형태로 배열 표현
+2. **원시 타입인가?** `String`, `Number`, `Boolean` 등
+3. **클래스 타입인가?** `UserModel` 같은 커스텀 클래스
+
+### 3. 스키마 생성 로직
+
+핵심은 `allOf`를 활용한 스키마 조합입니다.
+
+```ts
+const successSchema: any = {
+  allOf: [{ $ref: getSchemaPath(ControllerResponse) }],
+};
+
+// 데이터 타입이 있으면 data 프로퍼티 오버라이드
+successSchema.allOf.push({
+  properties: {
+    data: dataSchema,
+  },
+});
+```
+
+먼저 `ControllerResponse`의 기본 구조 (`message`, `status`) 상속하고 `data` 필드 부분은 직접 오버라이드하는 식으로 스키마를 생성합니다. 원래라면 지네릭이라 유실되는데, 해당부분만 명시적으로 데코레이터에서 타입을 받아 덮어쓰기에 결과적으로 `ControllerResponse<T>`의 완전한 타입 표현이 됩니다.
+
+### 4. 배열 vs 단일 타입 처리
+
+```ts
+if (isArray) {
+  // 배열: [UserModel] → { type: "array", items: { $ref: "#/components/schemas/UserModel" }}
+  dataSchema = {
+    type: "array",
+    items: isItemPrimitive
+      ? { type: primitiveToSwaggerType(itemType as SwaggerPrimitive) }
+      : { $ref: getSchemaPath(itemType as Type<any>) },
+  };
+} else {
+  // 단일: UserModel → { $ref: "#/components/schemas/UserModel" }
+  dataSchema = isItemPrimitive
+    ? { type: primitiveToSwaggerType(itemType as SwaggerPrimitive) }
+    : { $ref: getSchemaPath(itemType as Type<any>) };
+}
+```
+
+**배열 타입**: OpenAPI의 `array` 스키마로 변환  
+**단일 타입**: 직접 참조 또는 primitive 타입으로 변환
+
+### 5. 원시 타입 변환
+
+```ts
+function primitiveToSwaggerType(
+  type: SwaggerPrimitive,
+): "string" | "number" | "boolean" {
+  switch (type) {
+    case String:
+      return "string";
+    case Number:
+      return "number";
+    case Boolean:
+      return "boolean";
+    default:
+      throw new InternalServerErrorException(
+        `Unsupported primitive type: ${type}`,
+      );
+  }
+}
+```
+
+TypeScript의 생성자 함수(`String`, `Number`, `Boolean`)를 OpenAPI 스키마 타입 문자열로 변환합니다.
+
+## 사용법 예시
+
+```ts
+// 기본 사용
+@ApiDoc({
+  summary: '유저 조회',
+  successType: UserModel,
+})
+
+// 배열 응답
+@ApiDoc({
+  summary: '유저 목록',
+  successType: [UserModel],
+})
+
+// 원시 타입
+@ApiDoc({
+  summary: '개수 조회',
+  successType: Number,
+})
+
+// 커스텀 에러 응답 추가
+@ApiDoc({
+  summary: '유저 조회',
+  successType: UserModel,
+  errorResponses: [
+    { status: HttpStatus.NOT_FOUND, description: '유저를 찾을 수 없음' }
+  ]
+})
+```
+
+위와 같이 사용하면 `ControllerResponse<T>` 타입의 응답을 쉽게 문서화 할 수 있습니다.
+
+기본적으로 모든 응답은 200 OK로 처리되는데 혹여 성공 응답을 다른 코드로 처리하고 싶으시다면 직접 데코레이터에 인자를 추가하셔야 합니다.
