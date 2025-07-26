@@ -397,7 +397,7 @@ const isItemPrimitive = isPrimitive(itemType);
 2. **원시 타입인가?** `String`, `Number`, `Boolean` 등
 3. **클래스 타입인가?** `UserModel` 같은 커스텀 클래스
 
-### 3. 스키마 생성 로직
+### 스키마 생성 로직
 
 핵심은 `allOf`를 활용한 스키마 조합입니다.
 
@@ -416,7 +416,7 @@ successSchema.allOf.push({
 
 먼저 `ControllerResponse`의 기본 구조 (`message`, `status`) 상속하고 `data` 필드 부분은 직접 오버라이드하는 식으로 스키마를 생성합니다. 원래라면 지네릭이라 유실되는데, 해당부분만 명시적으로 데코레이터에서 타입을 받아 덮어쓰기에 결과적으로 `ControllerResponse<T>`의 완전한 타입 표현이 됩니다.
 
-### 4. 배열 vs 단일 타입 처리
+### 배열 vs 단일 타입 처리
 
 ```ts
 if (isArray) {
@@ -438,7 +438,7 @@ if (isArray) {
 **배열 타입**: OpenAPI의 `array` 스키마로 변환  
 **단일 타입**: 직접 참조 또는 primitive 타입으로 변환
 
-### 5. 원시 타입 변환
+### 원시 타입 변환
 
 ```ts
 function primitiveToSwaggerType(

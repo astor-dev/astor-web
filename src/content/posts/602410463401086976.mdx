@@ -23,7 +23,7 @@ TypeScript와 Python은 JVM과 완전히 다른 런타임 환경과 언어 설�
 
 이번 글에서도 역시 **단순히 문법을 나열하는 것에서 그치지 않고**, TypeScript와 Python의 내부 메커니즘을 들여다보며 **각 언어가 가진 설계 철학을 깊이 있게 분석**하고자 합니다. 이 과정을 통해 독자 여러분이 서로 다른 언어 간의 유사성과 차이점을 명확히 이해하고, 실제 프로젝트에서 보다 명확한 기준을 가지고 설계할 수 있게 되기를 바랍니다.
 
-***
+---
 
 ## TypeScript의 static 키워드와 메커니즘
 
@@ -45,7 +45,6 @@ class MathUtils {
 }
 
 console.log(MathUtils.circumference(10)); // 62.83184
-
 ```
 
 여기서 사용된 `static` 멤버는 클래스의 인스턴스가 아니라, 클래스 자체에 소속됩니다. 인스턴스 생성 없이 `MathUtils.PI`와 같은 형식으로 접근이 가능하죠.
@@ -54,14 +53,12 @@ console.log(MathUtils.circumference(10)); // 62.83184
 
 ```js
 "use strict";
-class MathUtils {
-}
+class MathUtils {}
 MathUtils.PI = 3.141592;
 MathUtils.circumference = function (radius) {
-    return 2 * MathUtils.PI * radius;
+  return 2 * MathUtils.PI * radius;
 };
 console.log(MathUtils.circumference(10)); // 62.83184
-
 ```
 
 TypeScript는 클래스 내부에 선언된 `static` 필드와 메서드를 **클래스의 프로토타입이 아닌 클래스 생성자 함수 자체의 프로퍼티로 추가**합니다. 즉, JavaScript에서는 클래스도 결국 **함수 객체**이기 때문에, 클래스 자체가 하나의 객체이며 그 객체의 프로퍼티로서 `static` 멤버가 관리되는 것입니다.
@@ -84,8 +81,7 @@ class Parent {
 class Child extends Parent {}
 
 Parent.greet(); // "Hello from Parent"
-Child.greet();  // "Hello from Parent"
-
+Child.greet(); // "Hello from Parent"
 ```
 
 이 코드가 작동하는 이유는 JavaScript 클래스 문법이 내부적으로 정적 멤버를 프로토타입이 아닌 **클래스 객체 자체에 할당하기 때문입니다.** 즉, 자식 클래스의 생성자 함수가 부모 클래스의 생성자 함수를 상속하는 형태이기 때문에, 자식 클래스는 정적 멤버를 부모로부터 복사하지 않고 **상위 클래스의 메서드를 그대로 참조**합니다.
@@ -106,8 +102,7 @@ class Child extends Parent {
 }
 
 Parent.greet(); // "Hello from Parent"
-Child.greet();  // "Hello from Child"
-
+Child.greet(); // "Hello from Child"
 ```
 
 이때 Child는 Parent의 메서드를 **덮어쓰는 형태(shadowing)**&#xB85C; 자신의 메서드를 정의합니다. Java에서 봤던 static의 shadowing 개념과 매우 유사하죠. 하지만 JVM처럼 정적 바인딩이 명시적으로 일어나기보다는, **프로토타입 기반의 JavaScript 언어 특성 때문에 발생**하는 현상입니다.
@@ -128,12 +123,11 @@ class Box<T> {
 const box1 = new Box<string>("hello");
 const box2 = new Box<number>(123);
 console.log(Box.count); // 2
-
 ```
 
 여기서 흥미로운 점은 제네릭 타입 파라미터 `<T>`가 있더라도, static 멤버는 **모든 제네릭 인스턴스가 공유하는 단 하나의 값**을 가진다는 점입니다. Java나 Kotlin의 제네릭과 달리, JavaScript 런타임에서는 제네릭 타입 파라미터가 지워지므로 **static 멤버 역시 제네릭 인자와 전혀 상관없이 동작**합니다. 이는 언어의 런타임 설계가 JVM과 완전히 다른 점을 명확히 보여줍니다.
 
-***
+---
 
 ## Python의 static: 런타임 객체로서의 클래스
 
