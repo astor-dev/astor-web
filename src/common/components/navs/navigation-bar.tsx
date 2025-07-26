@@ -62,6 +62,8 @@ const NavigationBar = ({ pathname }: NavBarProps) => {
   const [showAdmin, setShowAdmin] = useState(false);
   const [showLogin, setShowLogin] = useState(false);
   const [isTextWhite, setIsTextWhite] = useState(true);
+  const [isInHero, setIsInHero] = useState(true);
+  const [shouldHideNavBar, setShouldHideNavBar] = useState(true);
   const navBarRef = useRef<HTMLDivElement>(null);
 
   // 현재 경로 체크 헬퍼 함수
@@ -75,9 +77,14 @@ const NavigationBar = ({ pathname }: NavBarProps) => {
     return pathname === route || pathname === `${route}/`;
   };
 
+  // 기본 스타일 계산
+  const baseHoverClass = isTextWhite
+    ? "hover:text-skin-base"
+    : "hover:text-skin-accent/80";
+
   // 활성화 메뉴 스타일 생성 함수
   const getMenuItemClassName = (route: string): string => {
-    const baseClass = "text-sm font-medium hover:text-skin-accent";
+    const baseClass = `text-sm font-medium ${baseHoverClass}`;
     const activeClass = "text-skin-accent font-semibold";
     return isActiveRoute(route) ? `${baseClass} ${activeClass}` : baseClass;
   };
@@ -102,9 +109,6 @@ const NavigationBar = ({ pathname }: NavBarProps) => {
     }
   }, []);
 
-  const [isInHero, setIsInHero] = useState(true);
-  const [shouldHideNavBar, setShouldHideNavBar] = useState(true);
-
   // 스크롤 위치와 URL에 따른 네브바 상태 관리
   useEffect(() => {
     let ticking = false;
@@ -114,6 +118,7 @@ const NavigationBar = ({ pathname }: NavBarProps) => {
         requestAnimationFrame(() => {
           const newIsInHero = calculateIsInHero(pathname, window.scrollY);
           setIsInHero(newIsInHero);
+          setIsTextWhite(!isNoHeroPage(pathname) && newIsInHero);
           ticking = false;
         });
         ticking = true;
