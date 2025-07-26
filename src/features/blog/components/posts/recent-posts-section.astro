@@ -20,7 +20,7 @@ const stripMarkdown = async (content: string): Promise<string> => {
 const postsWithCleanContent = await Promise.all(
   recentPosts.map(async post => ({
     ...post,
-    cleanBody: post.body ? await stripMarkdown(post.body) : "",
+    cleanBody: post.body ? (await stripMarkdown(post.body)).slice(0, 300) : "",
   })),
 );
 ---

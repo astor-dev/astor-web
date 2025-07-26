@@ -22,7 +22,7 @@ const formatDate = (date: string) => {
 const processedBody = await remark()
   .use(strip)
   .process(body)
-  .then(result => result.toString())
+  .then(result => result.toString().slice(0, 300))
   .catch(() => "");
 
 // 태그 개수 제한 설정

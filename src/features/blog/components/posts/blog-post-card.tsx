@@ -24,7 +24,7 @@ const BlogPostCard: React.FC<BlogPostCardProps> = props => {
       .then(result => {
         const plainText = result.toString();
         const truncated =
-          plainText.length > 500 ? plainText.slice(0, 500) + "..." : plainText;
+          plainText.length > 300 ? plainText.slice(0, 300) + "..." : plainText;
         setBody(truncated);
         setIsLoading(false);
       });
