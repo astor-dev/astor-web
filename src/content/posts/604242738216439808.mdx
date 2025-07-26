@@ -1,0 +1,335 @@
+---
+id: "604242738216439808"
+author: "Astor"
+title: "NestJS API 응답, 지네릭으로 일원화하고 Swagger 문서도 한 줄로 정리하기"
+pinned: true
+draft: false
+tags:
+
+ogImage: "https://d2r0pavv0lsiqc.cloudfront.net/posts/images/1cb8fb48-4071-4086-828a-feb2df8a27df.webp"
+seriesId: "549808096239681536"
+createdAt: "2025-07-26 18:24:55"
+updatedAt: "2025-07-26 18:24:55"
+---
+
+## 시작하며
+
+NestJS + Swagger로 controller 레이어 만들다보면 한번쯤 아래와 같은 코드를 본 적 있을 겁니다.
+
+```ts
+  @UseGuards(AuthGuard('jwt'))
+  @ApiBearerAuth()
+  @ApiOperation({ summary: '유저 조회' })
+  @ApiOkResponse({ description: '성공적으로 유저 정보를 반환합니다.', type: UserResponse })
+  @ApiUnauthorizedResponse({ description: 'JWT 토큰이 없거나 유효하지 않습니다.', type: ErrorResponse })
+  @ApiForbiddenResponse({ description: '접근 권한이 없습니다.', type: ErrorResponse })
+  @ApiNotFoundResponse({ description: '해당 ID의 유저가 존재하지 않습니다.', type: ErrorResponse })
+  @ApiInternalServerErrorResponse({ description: '서버 내부 오류', type: ErrorResponse })
+  @Get(':id')
+  async getUser(@Param('id') id: string): Promise<UserResponse> {
+    // 유저 서비스 호출 및 응답 래핑 생략
+    return await this.userService.findById(id);
+  }
+```
+
+저 주렁주렁 달린 데코레이터 때문에 마음이 불편하신 분들이 한 둘이 아니실 텐데요.
+
+거기에 심지어 API 응답 타입을 일원화 하려고 하니 swagger 문서화 시점엔 지네릭이 사라져서 아래처럼 지네릭에 넣은 응답 타입에 대한 내용이 유실되는 걸 많이 보셨을 겁니다.
+
+![](https://d2r0pavv0lsiqc.cloudfront.net/projects/images/0e8b07b9-e5c5-4445-a714-5e8a0032077a.webp)
+
+대부분 그냥 모든 응답타입 class를 CommonResponse를 extends하는 식으로 처리하거나 하실텐데, 이를 지네릭 기반으로 깔끔하게 처리하면서 문서화까지 가독성 좋게 만들어주는 코드를 하나 짜서 공유드립니다.
+
+![](https://d2r0pavv0lsiqc.cloudfront.net/projects/images/89d47ef6-3ae9-4e43-972d-a42a13d5ef91.webp)
+
+먼저 미리보는 컨트롤러단 최종 예시입니다. 코드가 굉장히 심플하죠?
+
+![](https://d2r0pavv0lsiqc.cloudfront.net/projects/images/a1e0454b-27d1-409b-9568-e6099a4fbcdf.webp)
+
+스웨거에서 타입도 깔끔하게 추론되는 모습입니다.
+
+## 공통 응답 타입
+
+### 응답 타입 만들기
+
+```ts
+  async getPost(
+    @Param("id") id: string,
+    @Ip() clientIp: string
+  ): Promise<ControllerResponse<PostResponseModel>> {
+    const postInfo = await this.blogFacade.viewPost(new PostId(id), clientIp);
+    return ControllerResponse.success(PostResponseModel.fromPostInfo(postInfo));
+  }
+```
+
+`ControllerResponse<PostResponseModel>` 요렇게 사용할 수 있는 지네릭 기반 공통 응답 타입 코드를 공유합니다.
+
+```ts
+
+export class ControllerResponse<T> {
+  constructor(data: T, message: string, status: HttpStatus) {
+    this.data = data;
+    this.message = message;
+    this.status = status;
+  }
+
+  @ApiProperty({
+    description: "데이터",
+  })
+  public readonly data: T;
+
+  @ApiProperty({
+    description: "메시지",
+    example: "success",
+  })
+  public readonly message: string;
+
+  @ApiProperty({
+    description: "상태 코드",
+    example: HttpStatus.OK,
+  })
+  public readonly status: HttpStatus;
+
+  static success<T>(data: T, message = "success"): ControllerResponse<T> {
+    return new ControllerResponse(data, message, HttpStatus.OK);
+  }
+
+  static error<T>(
+    data: T,
+    message = "error",
+    status: HttpStatus = HttpStatus.INTERNAL_SERVER_ERROR,
+  ): ControllerResponse<T> {
+    return new ControllerResponse(data, message, status);
+  }
+}
+
+```
+
+상세 타입은 커스텀 하실 수 있습니다. static 팩토리 메서드로 생성 & 에러를 보조합니다.
+
+### 필터에서 에러 처리
+
+```ts
+
+@Catch(HttpException)
+export class HttpExceptionFilter implements ExceptionFilter {
+  private logger = new Logger("Exception");
+
+  catch(exception: HttpException, host: ArgumentsHost) {
+    const ctx = host.switchToHttp();
+    const response = ctx.getResponse<Response>();
+
+    const status = exception.getStatus();
+    const message = exception.message;
+    const name = exception.name;
+
+    const errorResponse = ControllerResponse.error(
+      {
+        name,
+        details: exception.getResponse(),
+      },
+      message,
+      status,
+    );
+
+    this.logger.error(`[${status}] ${name} - ${message}`, exception.stack);
+
+    response.status(status).json(errorResponse);
+  }
+}
+
+```
+
+되게 심플한 필터인데 커스텀 하시면 됩니다.
+
+위에서 생성한 에러 메서드 활용해서 던져진 에러들 필터단에서 일원화해서 처리합니다.
+
+
+
+## Swagger 커스텀 데코레이터
+
+우선 바로 복사해서 쓰실 수 있게 전체 코드 공유드립니다.
+
+```ts
+import { ControllerResponse } from "@common/shared/response/controller.response";
+import {
+  HttpCode,
+  HttpStatus,
+  InternalServerErrorException,
+  Type,
+  applyDecorators,
+} from "@nestjs/common";
+import {
+  ApiExtraModels,
+  ApiOkResponse,
+  ApiOperation,
+  ApiResponse,
+  getSchemaPath,
+} from "@nestjs/swagger";
+
+type SwaggerPrimitive =
+  | StringConstructor
+  | NumberConstructor
+  | BooleanConstructor;
+
+interface ErrorResponseSpec {
+  status: HttpStatus;
+  description: string;
+}
+
+type ApiDocSuccessType<T = any> =
+  | Type<T>
+  | SwaggerPrimitive
+  | void
+  | [Type<T>]
+  | [SwaggerPrimitive];
+
+interface ApiDocOptions<TModel extends ApiDocSuccessType> {
+  summary: string;
+  description?: string;
+  successType?: TModel;
+  errorResponses?: ErrorResponseSpec[];
+}
+
+const isArrayType = (type: any): type is [Type<any>] | [SwaggerPrimitive] => {
+  return Array.isArray(type) && type.length === 1;
+};
+
+const isPrimitive = (type: any): type is SwaggerPrimitive => {
+  return type === String || type === Number || type === Boolean;
+};
+
+export const ApiDoc = <TModel extends ApiDocSuccessType>(
+  options: ApiDocOptions<TModel>
+) => {
+  const { summary, description, successType, errorResponses = [] } = options;
+
+  // 기본 에러 응답들 추가
+  const defaultErrorResponses: ErrorResponseSpec[] = [
+    { status: HttpStatus.BAD_REQUEST, description: "잘못된 요청" },
+    { status: HttpStatus.INTERNAL_SERVER_ERROR, description: "서버 에러" },
+  ];
+
+  const allErrorResponses = [...defaultErrorResponses, ...errorResponses];
+
+  const decorators = [ApiOperation({ summary, description })];
+
+  // 성공 응답 처리
+  if (successType !== undefined) {
+    const isVoid = successType === undefined || successType === (void 0 as any);
+    const isArray = isArrayType(successType);
+    const itemType = isArray ? successType[0] : successType;
+    const isItemPrimitive = isPrimitive(itemType);
+
+    const successSchema: any = {
+      allOf: [{ $ref: getSchemaPath(ControllerResponse) }],
+    };
+
+    if (!isVoid) {
+      let dataSchema: any;
+
+      if (isArray) {
+        // 배열 타입 처리
+        dataSchema = {
+          type: "array",
+          items: isItemPrimitive
+            ? { type: primitiveToSwaggerType(itemType as SwaggerPrimitive) }
+            : { $ref: getSchemaPath(itemType as Type<any>) },
+        };
+      } else {
+        // 단일 타입 처리
+        dataSchema = isItemPrimitive
+          ? { type: primitiveToSwaggerType(itemType as SwaggerPrimitive) }
+          : { $ref: getSchemaPath(itemType as Type<any>) };
+      }
+
+      successSchema.allOf.push({
+        properties: {
+          data: dataSchema,
+        },
+      });
+    }
+
+    decorators.push(
+      ApiExtraModels(
+        ControllerResponse,
+        ...(isVoid || isItemPrimitive ? [] : [itemType as Type<any>])
+      ),
+      ApiOkResponse({
+        schema: successSchema,
+        description: "성공 응답",
+      }),
+      HttpCode(HttpStatus.OK)
+    );
+  }
+
+  // 에러 응답들 처리
+  allErrorResponses.forEach(({ status, description: errorDescription }) => {
+    decorators.push(
+      ApiResponse({
+        status,
+        description: errorDescription,
+        schema: {
+          allOf: [{ $ref: getSchemaPath(ControllerResponse) }],
+          properties: {
+            data: { type: "object", nullable: false },
+            message: { type: "string", example: errorDescription },
+            status: { type: "number", example: status },
+          },
+        },
+      })
+    );
+  });
+
+  return applyDecorators(...decorators);
+};
+
+export const ApiResponseType = <
+  TModel extends Type<any> | SwaggerPrimitive | void
+>(
+  model: TModel
+) => {
+  const isVoid = model === undefined || model === (void 0 as any);
+  const isPrimitive = model === String || model === Number || model === Boolean;
+
+  const schema: any = {
+    allOf: [{ $ref: getSchemaPath(ControllerResponse) }],
+  };
+
+  if (!isVoid) {
+    schema.allOf.push({
+      properties: {
+        data: isPrimitive
+          ? { type: primitiveToSwaggerType(model as SwaggerPrimitive) }
+          : { $ref: getSchemaPath(model as Type<any>) },
+      },
+    });
+  }
+
+  return applyDecorators(
+    ApiExtraModels(
+      ControllerResponse,
+      ...(isVoid || isPrimitive ? [] : [model as Type<any>])
+    ),
+    ApiOkResponse({ schema })
+  );
+};
+
+function primitiveToSwaggerType(
+  type: SwaggerPrimitive
+): "string" | "number" | "boolean" {
+  switch (type) {
+    case String:
+      return "string";
+    case Number:
+      return "number";
+    case Boolean:
+      return "boolean";
+    default:
+      throw new InternalServerErrorException(
+        `Unsupported primitive type: ${type}`
+      );
+  }
+}
+
+```
