@@ -18,6 +18,11 @@ interface SliderOptions {
     slidesPerView: number;
     spaceBetween: number;
   };
+  sm: {
+    effect: "slide" | "fade";
+    slidesPerView: number;
+    spaceBetween: number;
+  };
   desktop: {
     effect: "slide" | "fade";
     slidesPerView: number;
@@ -33,6 +38,7 @@ const SeriesSlider = (props: {
   const swiperRef = useRef<SwiperRef>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isMobile, setIsMobile] = useState(false);
+  const [isSm, setIsSm] = useState(false);
 
   // 기본 옵션 설정
   const defaultOptions: SliderOptions = {
@@ -40,6 +46,11 @@ const SeriesSlider = (props: {
       effect: "fade",
       slidesPerView: 1,
       spaceBetween: 0,
+    },
+    sm: {
+      effect: "slide",
+      slidesPerView: 2.2,
+      spaceBetween: 30,
     },
     desktop: {
       effect: "slide",
@@ -58,13 +69,20 @@ const SeriesSlider = (props: {
 
   useEffect(() => {
     const checkMobile = () => {
-      setIsMobile(window.innerWidth < 768);
+      setIsMobile(window.innerWidth < 640);
+    };
+
+    const checkSm = () => {
+      setIsSm(window.innerWidth < 1024);
     };
 
     checkMobile();
     window.addEventListener("resize", checkMobile);
-
-    return () => window.removeEventListener("resize", checkMobile);
+    window.addEventListener("resize", checkSm);
+    return () => {
+      window.removeEventListener("resize", checkMobile);
+      window.removeEventListener("resize", checkSm);
+    };
   }, []);
 
   const handlePrev = () => {
@@ -81,7 +99,9 @@ const SeriesSlider = (props: {
 
   const currentOptions = isMobile
     ? sliderOptions.mobile
-    : sliderOptions.desktop;
+    : isSm
+      ? sliderOptions.sm
+      : sliderOptions.desktop;
 
   return (
     <div className="relative -mx-4 md:mx-0">

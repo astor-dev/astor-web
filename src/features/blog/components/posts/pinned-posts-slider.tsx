@@ -58,11 +58,9 @@ const PinnedPostSlider = (
                 slidesOffsetBefore: 16,
               },
               640: {
-                //sm
                 slidesPerView: 2,
               },
-              768: {
-                //md
+              1024: {
                 slidesPerView: 3,
                 navigation: {
                   nextEl: null,

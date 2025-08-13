@@ -193,7 +193,7 @@ export default {
             "margin-left": "auto",
             "margin-right": "auto",
             img: {
-              width: "100%",
+              width: "initial",
               margin: "0 auto",
             },
             code: {
@@ -207,7 +207,7 @@ export default {
             "margin-left": "auto",
             "margin-right": "auto",
             img: {
-              width: "100%",
+              width: "initial",
               margin: "0 auto",
             },
             blockquote: {
