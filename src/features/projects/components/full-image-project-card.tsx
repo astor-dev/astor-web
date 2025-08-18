@@ -75,11 +75,11 @@ const ProjectStacksSection = ({ stacks, theme }: ProjectStacksMiniProps) => {
   };
 
   const sortedStacks = getSortedStacks(stacks);
-  const displayStacks = sortedStacks.slice(0, 6);
-  const remainingCount = sortedStacks.length - 6;
+  const displayStacks = sortedStacks.slice(0, 10);
+  const remainingCount = sortedStacks.length - 10;
 
   return (
-    <section className="mb-4 flex-1">
+    <section className="flex-1">
       <h2 className="mb-2 text-base font-bold" style={{ color: theme.primary }}>
         사용 기술
       </h2>
@@ -99,16 +99,18 @@ const ProjectStacksSection = ({ stacks, theme }: ProjectStacksMiniProps) => {
             </span>
           </div>
         ))}
-        {remainingCount > 0 && (
-          <div
-            className="col-span-2 flex items-center justify-center rounded-md p-1.5 text-xs"
-            style={{ backgroundColor: theme.background }}
-          >
+        <div
+          className="col-span-2 flex items-center justify-center rounded-md p-1.5 text-xs"
+          style={{ backgroundColor: theme.background }}
+        >
+          {remainingCount > 0 ? (
             <span style={{ color: theme.primary }}>
               <span className="w-5 text-xs">+{remainingCount}</span> More...
             </span>
-          </div>
-        )}
+          ) : (
+            <span style={{ color: "transparent" }}>&nbsp;</span>
+          )}
+        </div>
       </div>
     </section>
   );

@@ -41,7 +41,7 @@ const HomeProjectSlider = (props: { projects: ProjectEntry[] }) => {
     }
   };
   return (
-    <div className="swiper-container-wrapper group relative -mx-4 flex h-[300px] w-[calc(100%+32px)] md:mx-0 md:h-[400px] md:w-full">
+    <div className="swiper-container-wrapper group relative -mx-4 flex h-[300px] w-[calc(100%+32px)] md:mx-0 md:h-[470px] md:w-full">
       {/* 숫자 페이지네이션 (md 이상에서만) - 좌측 하단 */}
       <div className="absolute bottom-4 left-4 z-10 hidden md:block">
         <div className="rounded-lg border border-white/20 bg-black/60 px-3 py-1.5 backdrop-blur-sm">
