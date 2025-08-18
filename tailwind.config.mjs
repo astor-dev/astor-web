@@ -193,8 +193,10 @@ export default {
             "margin-left": "auto",
             "margin-right": "auto",
             img: {
-              width: "initial",
+              width: "auto",
+              height: "auto",
               margin: "0 auto",
+              display: "inline-block",
             },
             code: {
               letterSpacing: "0.05em",
@@ -207,8 +209,10 @@ export default {
             "margin-left": "auto",
             "margin-right": "auto",
             img: {
-              width: "initial",
+              width: "auto",
+              height: "auto",
               margin: "0 auto",
+              display: "inline-block",
             },
             blockquote: {
               quotes: "none",

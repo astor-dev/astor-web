@@ -165,6 +165,14 @@
   .prose {
     @apply font-body;
   }
+
+  .prose img[width] {
+    width: attr(width px) !important;
+  }
+
+  .prose img[height] {
+    height: attr(height px) !important;
+  }
 }
 
 @layer components {
