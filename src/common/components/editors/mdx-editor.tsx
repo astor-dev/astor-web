@@ -32,6 +32,7 @@ import {
   directivesPlugin,
   linkPlugin,
   linkDialogPlugin,
+  CreateLink,
 } from "@mdxeditor/editor";
 import "~common/styles/editor.css";
 import { IMAGE_SERVICE, ImageService } from "~modules/services/image.service";
@@ -134,6 +135,7 @@ const Editor = forwardRef<EditorRefMethods, EditorProps>(
           <InsertImage />
           <InsertTable />
           <IframeButton />
+          <CreateLink />
           <ConditionalContents
             options={[
               {

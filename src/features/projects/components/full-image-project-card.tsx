@@ -135,7 +135,7 @@ const FullImageProjectCard = (props: ProjectEntry) => {
 
   return (
     <a
-      href={`/projects/${projectName}`}
+      href={`/projects/${props.id}`}
       className="group relative block h-full w-full cursor-pointer overflow-hidden transition-all duration-300"
     >
       <div className="grid h-full grid-cols-1 md:grid-cols-5">
