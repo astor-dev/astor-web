@@ -25,7 +25,6 @@ const postRepository = repositoryContainer.get<PostRepository>(POST_REPOSITORY);
 
 const projects: Paginated<ProjectEntry> = await projectRepository
   .getProjects({
-    paging: { page: 0, limit: 5 },
     sort: { field: "endedAt", order: "desc" },
     filter: {
       projectTypes: ["Company-project", "Side-project"],

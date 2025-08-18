@@ -9,6 +9,10 @@ interface MobileTagScrollProps {
   className?: string;
 }
 
+const TagScrollSpacer = () => {
+  return <div className="min-h-[2rem] w-3 flex-shrink-0" />;
+};
+
 /**
  * MobileTagScroll 컴포넌트
  *
@@ -42,7 +46,7 @@ const MobileTagScroll: React.FC<MobileTagScrollProps> = ({
         dragConstraints={{ right: 0, left: -scrollWidth }}
         className="flex cursor-grab space-x-1 active:cursor-grabbing"
       >
-        <div className="h-full w-[10dvw]" />
+        <TagScrollSpacer />
         <Tag tag="전체보기" href="/blog" count={totalPosts} size="sm" />
         {tags.map((tag, index) => (
           <Tag
@@ -53,6 +57,7 @@ const MobileTagScroll: React.FC<MobileTagScrollProps> = ({
             size="sm"
           />
         ))}
+        <TagScrollSpacer />
       </motion.div>
     </div>
   );

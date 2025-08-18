@@ -11,7 +11,9 @@ import Layout from "~common/layouts/base-layout.astro";
 import ModernTextHero from "~common/components/heros/modern-text-hero";
 const projectRepository =
   repositoryContainer.get<ProjectRepository>(PROJECT_REPOSITORY);
-const projects: Paginated<ProjectEntry> = await projectRepository.getProjects();
+const projects: Paginated<ProjectEntry> = await projectRepository.getProjects({
+  sort: { field: "endedAt", order: "desc" },
+});
 
 // 프로젝트 타입별로 분류
 const companyProjects = projects.items.filter(
@@ -44,13 +46,9 @@ const toyProjects = projects.items.filter(
               실무에서 진행한 프로젝트들입니다
             </p>
           </div>
-          <div class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+          <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 md:gap-6 lg:grid-cols-3">
             {companyProjects.map(project => (
-              <ProjectCard
-                {...project}
-                client:load
-                showInitialAnimation={true}
-              />
+              <ProjectCard {...project} client:load />
             ))}
           </div>
         </section>
@@ -69,13 +67,9 @@ const toyProjects = projects.items.filter(
               개인적으로 진행한 프로젝트들입니다
             </p>
           </div>
-          <div class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+          <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 md:gap-6 lg:grid-cols-3">
             {sideProjects.map(project => (
-              <ProjectCard
-                {...project}
-                client:load
-                showInitialAnimation={true}
-              />
+              <ProjectCard {...project} client:load />
             ))}
           </div>
         </section>
@@ -94,13 +88,9 @@ const toyProjects = projects.items.filter(
               학습과 실험을 위한 작은 프로젝트들입니다
             </p>
           </div>
-          <div class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+          <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 md:gap-6 lg:grid-cols-3">
             {toyProjects.map(project => (
-              <ProjectCard
-                {...project}
-                client:load
-                showInitialAnimation={true}
-              />
+              <ProjectCard {...project} client:load />
             ))}
           </div>
         </section>
