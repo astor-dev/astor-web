@@ -7,27 +7,21 @@
     "endedAt": "2025-08",
     "body": [
       {
-        "heading": "학회 통합 배포 환경 구축 및 예산 관리 시스템 운영",
-        "description": "서버 비용 청구 정책 수립 및 프로젝트 성과 기반 학회 지원 체계 구축",
+        "heading": "학회 인프라 총괄 및 기술 리더십",
+        "description": "학회 서비스 통합 배포 환경 구축, 인프라 예산 관리, 기술 세미나 및 AWS 인프라 설계 가이드 제공 등 학회 운영과 기술 역량 강화를 주도",
         "lists": [
-          "학회 내 서비스 통합 배포 환경 구축 및 운영, 예산 관리",
-          "프로젝트 운영 성과에 따른 서버 비용 청구 및 학회 지원 정책 수립"
-        ]
-      },
-      {
-        "heading": "DDD 기술 세미나 진행 및 AWS 인프라 가이드라인 제공",
-        "description": "1시간 분량 도메인 주도 설계 세미나 및 초기 프로젝트 팀 AWS 인프라 지원",
-        "lists": [
-          "도메인 주도 설계(DDD) 관련 1시간 분량의 기술 세미나 진행",
-          "초기 프로젝트 팀을 위한 AWS 인프라 가이드라인 제공 및 지원"
+          "학회 내 서비스 통합 배포 환경 구축 및 인프라 예산 관리",
+          "프로젝트 성과 기반 서버 비용 청구 및 지원 정책 수립",
+          "도메인 주도 설계(DDD) 세미나 및 AWS 인프라 설계 가이드라인 제공",
+          "학회 사이트 리크루팅 및 블로그 API 개발"
         ]
       },
       {
         "heading": "블꾸 프로젝트 NestJS 백엔드 개발 및 AWS 인프라 운영",
-        "description": "Redis SSE 실시간 알림 시스템 및 Grafana + Prometheus 모니터링 구축",
+        "description": "Redis SSE 실시간 알림 시스템 및 다중 인스턴스 확장 서버 구축",
         "lists": [
           "NestJS 기반 백엔드 아키텍처 설계 및 JWT/OAuth 인증 시스템 구축",
-          "Redis 기반 SSE 실시간 알림 시스템 개발",
+          "AWS Elasticache Redis 기반 SSE 실시간 알림 시스템 개발",
           "AWS ELB + 다중 EC2 확장 인프라 설계",
           "Grafana & Prometheus 기반 API 모니터링 시스템 구축"
         ]
@@ -43,21 +37,22 @@
     "endedAt": null,
     "body": [
       {
-        "heading": "gRPC + Kafka 기반 MSA 백엔드 아키텍처 설계",
-        "description": "protobuf 마이크로서비스 통신 체계 및 GCP Docker/GKE 배포 환경 구축",
+        "heading": "gRPC + Kafka 기반 MSA 백엔드 아키텍처 설계 및 구축",
+        "description": "protobuf 마이크로서비스 통신 체계 및 GCP 배포 환경 구축",
         "lists": [
-          "protobuf + gRPC 기반 마이크로서비스 통신 체계 설계 및 구현",
-          "Kafka - KRaft 기반 비동기 메시징 시스템 구축",
-          "GCP 플랫폼에서 Docker 이용한 모놀리스 개발 서버 및 GKE 배포 환경 구축"
+          "여러 기술스택 간 공통 데이터 스키마 정의를 위해 protobuf IDL 기반 데이터 모델 설계 및 활용",
+          "protobuf IDL을 활용한 gRPC 기반 마이크로서비스 통신 체계 설계 및 구현",
+          "Kafka - KRaft 기반 비동기 메시징 시스템에서 protobuf 스키마를 통한 메시지 직렬화 및 통신",
+          "GCP 플랫폼에서 Docker를 이용한 모놀리스 개발 환경 구축"
         ]
       },
       {
-        "heading": "Spring API Gateway 및 LangChain AI 채팅 서비스 개발",
-        "description": "HTTP-gRPC 라우팅 Gateway 서버 구축 및 NestJS 기반 인증/AI 서비스 개발",
+        "heading": "Spring API Gateway 서버 및 LangChain AI 채팅 서비스 개발",
+        "description": "HTTP-gRPC 라우팅 Gateway 서버 구축 및 NestJS 기반 유저/상담 서비스 개발",
         "lists": [
           "HTTP-gRPC 라우팅 및 트래픽 관리, 인증처리 Gateway 서버 구축 (Java + Spring)",
           "사용자 인증/인가 및 관리 서비스 개발 (NestJS)",
-          "LangChain 기반 AI 채팅 서비스 설계 및 구현 (NestJS)"
+          "LangChain 기반 AI 심리 상담 채팅 서비스 설계 및 구현 (NestJS)"
         ]
       }
     ],
@@ -76,7 +71,7 @@
         "lists": [
           "SNS·커뮤니티·공공데이터 크롤링을 통한 종합적 데이터 파이프라인 상위 설계",
           "Kotlin + Spring 기반 모듈화 및 확장성을 고려한 백엔드 아키텍처 설계",
-          "Reactive Streams 기반 비동기 데이터 파이프라인, SSE 스트리밍 구축"
+          "Reactive Streams 기반으로 concurrent하게 동작하는 데이터 파이프라인과 SSE 스트리밍 환경 구축"
         ]
       },
       {
@@ -84,8 +79,8 @@
         "description": "Weaviate Vector DB + Multi-Agent Router Pattern 기반 하이브리드 검색 및 다단계 추론 처리",
         "lists": [
           "Spring AI를 활용한 다단계 맥락 유지 Tool Selection Chaining, Function Calling 파이프라인 구축",
-          "Weaviate Vector DB + RDBMS + MCP 기반의 하이브리드 검색",
-          "Multi-Agent Router Pattern으로 Query 유형별 최적 Agent 라우팅",
+          "Weaviate Vector DB + RDBMS + MCP 기반의 하이브리드 Retriever 구현",
+          "Multi-Agent Router Pattern으로 Query 유형별 최적 Retriever Agent 라우팅",
           "Context-Aware Planning Agent와 Execution Agent 분리를 통한 복잡한 다단계 추론 작업 처리"
         ]
       }
