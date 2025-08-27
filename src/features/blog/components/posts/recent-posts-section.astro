@@ -1,7 +1,6 @@
 ---
 import { remark } from "remark";
 import strip from "strip-markdown";
-import dayjs from "dayjs";
 import type { PostEntry } from "~common/types/post.type";
 
 interface Props {
@@ -50,13 +49,12 @@ const postsWithCleanContent = await Promise.all(
                       <h3 class="dark:text-white line-clamp-2 min-h-[3rem] break-all text-lg font-bold text-black-accent transition-colors duration-200 md:group-hover:text-violet-600 md:dark:group-hover:text-violet-400">
                         {post.data.title}
                       </h3>
-                      {dayjs(post.data.createdAt).isAfter(
-                        dayjs().subtract(2, "month"),
-                      ) && (
-                        <span class="ml-3 shrink-0 bg-violet-100 px-2 py-1 text-xs font-medium text-violet-700 dark:bg-violet-900/50 dark:text-violet-300">
-                          NEW
-                        </span>
-                      )}
+                      <span
+                        class="new-badge ml-3 hidden shrink-0 bg-violet-100 px-2 py-1 text-xs font-medium text-violet-700 dark:bg-violet-900/50 dark:text-violet-300"
+                        data-created-at={post.data.createdAt}
+                      >
+                        NEW
+                      </span>
                     </div>
 
                     <p class="mb-1 line-clamp-2 text-sm leading-relaxed text-gray-600 md:mb-2 dark:text-gray-400">
@@ -100,3 +98,29 @@ const postsWithCleanContent = await Promise.all(
     </div>
   </div>
 </section>
+
+<script>
+  const checkNewPosts = () => {
+    const newBadgeList = document.querySelectorAll(".new-badge");
+    const currentTime = new Date();
+    const oneMonthAgo = new Date(
+      currentTime.getTime() - 30 * 24 * 60 * 60 * 1000,
+    );
+
+    newBadgeList.forEach(badge => {
+      const createdAt = badge.getAttribute("data-created-at");
+      if (createdAt) {
+        const postDate = new Date(createdAt);
+        if (postDate > oneMonthAgo) {
+          badge.classList.remove("hidden");
+        }
+      }
+    });
+  };
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", checkNewPosts);
+  } else {
+    checkNewPosts();
+  }
+</script>
