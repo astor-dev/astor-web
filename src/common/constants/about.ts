@@ -39,7 +39,7 @@ export const EDUCATIONS = [
     startedAt: "2020.03",
     endedAt: "2026.02",
     gpa: {
-      score: 3.8,
+      score: 3.74,
       maxScore: 4.5,
     },
     description: `
