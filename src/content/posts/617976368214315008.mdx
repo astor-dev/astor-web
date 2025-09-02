@@ -3,7 +3,7 @@ id: "617976368214315008"
 author: "Astor"
 title: "WAS에서 Kafka 다루기: ACKS 옵션과 ISR, 메시지 전송 신뢰도"
 pinned: true
-draft: true
+draft: false
 tags:
   - Kafka
 ogImage: "https://d2r0pavv0lsiqc.cloudfront.net/posts/images/7b52434b-7b32-44e7-a459-eada436d74ba.webp"
@@ -18,7 +18,7 @@ updatedAt: "2025-09-02 15:57:27"
 
 바로 이 신뢰도의 수준을 애플리케이션의 요구사항에 맞게 정밀하게 제어하는 핵심 장치가 바로 **프로듀서의** `acks` **옵션**입니다. 이번 글에서는 acks 옵션과 이를 뒷받침하는 **ISR(In-Sync Replicas)** 개념을 통해 카프카가 어떻게 메시지 전송의 신뢰도를 보장하는지, 그리고 개발자로서 우리는 어떤 트레이드오프를 고려해야 하는지 알아보겠습니다.
 
-## **acks 옵션**
+## acks 옵션
 
 ![](https://d2r0pavv0lsiqc.cloudfront.net/projects/images/a57c2988-2f2c-47f9-aac5-81a4015ecbc7.webp)
 
@@ -28,7 +28,7 @@ acks는 **"acknowledgments"**&#xC758; 약자로, 프로듀서가 보낸 메시�
 
 [(이미지 및 정보 출처 - confluent)](https://developer.confluent.io/courses/architecture/guarantees/)
 
-### **acks=0: Fire-and-Forget**
+### acks=0
 
 ![producer-acks-0](https://images.ctfassets.net/gt6dp23g0g38/6pfzwjpx5YWvwFENsCLMC4/b82981d84c69f595d7a0c444a3b0113a/Kafka_Internals_088.png)
 
@@ -43,7 +43,7 @@ acks는 **"acknowledgments"**&#xC758; 약자로, 프로듀서가 보낸 메시�
 - **데이터 유실:** 브로커가 메시지를 받기 전에 프로듀서에 장애가 발생하거나, 네트워크 문제, 브로커가 다운되는 경우&#x20;
 - **메시지 중복:** <u>발생 X</u>
 
-### **acks=1 리더 브로커의 확인만 받는다**
+### acks=1
 
 ![producer-acks-1](https://images.ctfassets.net/gt6dp23g0g38/3p6EMq0jqOYJbabjyCPqWO/c5e82fd9772f82fc2ad4e75f7edc1889/Kafka_Internals_089.png)
 
@@ -59,7 +59,7 @@ acks는 **"acknowledgments"**&#xC758; 약자로, 프로듀서가 보낸 메시�
 - **메시지 중복**: 프로듀서가 리더로부터 응답을 받지 못해 메시지를 재전송할 경우
   - ex) 리더가 메시지를 받았지만 ack 응답을 보내기 전에 장애가 나, 프로듀서가 메시지가 전송되지 않았다고 판단하고 재시도한 경우
 
-### **acks=all (OR -1): 모든 복제본의 확인을 받는다**
+### acks=all (OR -1)
 
 ![producer-acks-all](https://images.ctfassets.net/gt6dp23g0g38/2PE3eY4NoxDiz5zBCrideK/413838ed6666f45f89ee396d714dda49/Kafka_Internals_090.png)
 
@@ -71,7 +71,7 @@ ISR(In-Sync Replicas)은 **리더 파티션을 포함하여** 거의 실시간�
 
 리더와 팔로워들의 응답을 모두 기다려야 하기 때문에, **지연시간이 가장 깁**니다.&#x20;
 
-- **데이터 유실**:  `min.insync.replicas` 설정보다 적은 수의 레플리카가 동기화되어 있을 때, 프로듀서의 요청이 실패하는 경우 혹은 모든 레플리카가 동시에 다운되는 경우
+- **데이터 유실**: `min.insync.replicas` 설정보다 적은 수의 레플리카가 동기화되어 있을 때, 프로듀서의 요청이 실패하는 경우 혹은 모든 레플리카가 동시에 다운되는 경우
 - **메시지 중복**: 모든 ISR에 복제가 완료되었지만, 리더 브로커의 최종 응답을 받지 못하고 프로듀서가 재시도하는 경우
 
 #### 프로듀서 멱등성(Idempotence)
@@ -98,40 +98,68 @@ ISR(In-Sync Replicas)은 **리더 파티션을 포함하여** 거의 실시간�
 
 이러한 문제를 해결하기 위해 카프카의 **트랜잭션(Transactions)** 기능이 필요합니다. 이는 추후 알아보겠습니다.
 
-### **ISR (In-Sync Replicas)**
+## ISR(In-Sync Replicas)
 
-acks 설정과 연관있는 ISR에 대해 좀 더 자세히 알아보겠습니다.
+앞에서 본 `acks`의 의미는 결국 “어떤 지점까지 쓰기가 도달하면 성공으로 볼 것인가?”에 대한 합의입니다. 이 합의를 안전하게 이행하려면 리더 단독이 아니라, 리더와 거의 실시간으로 보조하는 복제본 집합이 필요합니다. 그 집합이 **ISR(In-Sync Replicas)** 입니다. ISR에는 항상 리더가 포함되며, 일정 기준 이상 뒤처지지 않는 팔로워들만 포함됩니다.
 
-카프카 클러스터는 안정성을 위해 각 파티션의 데이터를 여러 브로커에 복제해 둡니다. 이때, **리더의 최신 데이터와 거의 차이가 없이 동기화가 잘 유지되고 있는 팔로워 복제본들의 집합**을 `ISR`이라고 부릅니다.
+### LEO, HW
 
-만약 어떤 팔로워가 네트워크 문제나 과도한 부하로 인해 리더의 데이터를 제때 복제하지 못하고 뒤처지게 되면, 카프카는 이 팔로워를 '동기화되지 않은(out-of-sync)' 것으로 판단하고 ISR 그룹에서 **임시로 제외**시킵니다.
+ISR의 동작 원리를 살펴보기 위해 일부 용어를 정의하겠습니다.
 
-#### **최소 복제본 개수: `min.insync.replicas`**
+![ISR](https://us1.discourse-cdn.com/flex019/uploads/confluentcommunity/optimized/2X/4/41f05595a1109b7e6fcd7e59cb937711edf3ca7e_2_690x470.jpeg)
 
-`acks=all`을 사용할 때 반드시 함께 고려해야 할 브로커 설정이 바로 `min.insync.replicas` 입니다. 이 설정은 프로듀서의 쓰기 요청을 처리하기 위해 **반드시 필요한 최소 ISR의 개수**를 지정합니다.
+**LEO(Log End Offset)**
 
-예를 들어, 토픽의 복제 계수(Replication Factor)가 3이고 `min.insync.replicas`를 2로 설정했다고 가정해 봅시다.
+각 브로커(리더/팔로워)가 가진 로그의 “마지막” 위치입니다. 새 레코드가 추가되면 해당 브로커의 LEO가 증가합니다.
 
-- **정상 상황:** 리더 1대, 팔로워 2대. 총 3개의 복제본이 모두 ISR에 속해 있습니다. `acks=all` 요청은 3대의 브로커가 모두 확인 응답을 보내면 성공합니다.
-- **팔로워 1대 장애:** 리더 1대, 팔로워 1대. 총 2개의 복제본이 ISR에 남아 있습니다. `min.insync.replicas=2` 조건을 만족하므로 `acks=all` 요청은 여전히 2대의 확인을 받고 성공적으로 처리됩니다.
-- **팔로워 2대 장애:** 리더 1대만 ISR에 남아 있습니다. 이 경우, 최소 요구 조건인 2를 만족하지 못하므로, 프로듀서가 `acks=all`로 보낸 요청은 **성공이 아닌 에러(`NotEnoughReplicas` 또는 `TimeoutException`)를 반환**합니다.
+**HW(High Watermark)**
 
-이것은 매우 중요한 정책적 선택입니다. 카프카는 `min.insync.replicas` 설정을 통해, 데이터의 내구성을 보장할 수 없는 위험한 상황이라면 차라리 \*\*쓰기 요청을 실패시켜 데이터의 정합성을 지키는 쪽(일관성)\*\*을 택합니다. 가용성을 약간 희생하더라도 데이터 무결성을 최우선으로 하는 설계 철학이 담겨있는 것이죠.
+파티션의 모든 ISR 구성원이 “공통적으로 도달한” 오프셋입니다. **컨슈머는 기본적으로 HW를 넘어서 읽지 않습**니다. 즉, HW를 기준으로 “커밋된 데이터”가 정의됩니다.
 
-### **그래서, 우리 서비스엔 뭘 써야 할까?**
+프로듀서 쓰기 흐름은 대략 다음과 같습니다.
 
-지금까지 배운 개념을 바탕으로, 각 서비스의 특성에 맞는 `acks` 옵션을 선택하는 기준을 정리해 보겠습니다.
+1. 리더가 레코드를 자신의 로그에 append하여 리더 LEO 증가
+2. 팔로워들이 Fetch 요청으로 리더로부터 레코드를 복제하여 각자 LEO 증가
+3. ISR 모든 구성원의 LEO가 특정 오프셋 이상으로 정렬되면, 리더가 그 오프셋까지의 HW를 전진
 
-| acks 옵션  | 추천 사용 사례                                         | 장점 (우선순위)          | 단점 (감수할 점)    |
-| -------- | ------------------------------------------------ | ------------------ | ------------- |
-| acks=0   | 😫 일부 유실돼도 괜찮은 대규모 데이터 수집\<br/>(로그, 메트릭, 클릭 스트림) | 1. 처리량\<br/>2. 속도  | 신뢰도 (메시지 유실)  |
-| acks=1   | 🙂 일반적인 대부분의 서비스\<br/>(알림 발송, 데이터 동기화, 이벤트 처리)   | 1. 균형\<br/>2. 속도   | 낮은 확률의 데이터 유실 |
-| acks=all | 😎 데이터 유실이 절대 안 되는 핵심 서비스\<br/>(주문, 결제, 금융 트랜잭션) | 1. 신뢰도\<br/>2. 정합성 | 속도 (지연 시간 증가) |
+자세한 내용은 [위 링크](https://developer.confluent.io/courses/architecture/data-replication/)에서 확인할 수 있습니다.
 
-**한 가지 더!** 신뢰도를 높이기 위해 `acks=all`을 선택했다면, **멱등성 프로듀서(`enable.idempotence=true`)** 옵션을 함께 활성화하는 것이 거의 필수적입니다. `acks=all` 설정에서는 네트워크 오류 등으로 브로커의 응답을 받지 못한 프로듀서가 메시지를 재전송할 수 있는데, 이때 멱등성 옵션이 켜져 있어야 브로커가 중복된 메시지를 알아서 단 한 번만 저장하도록 처리해 줍니다. 이 주제는 추후 'Exactly-Once Semantics'를 다룰 때 더 자세히 이야기해 보겠습니다.
+### replica.lag.time.max.ms
 
-### **마치며: 트레이드오프에 대한 이해**
+팔로워가 리더를 일정 시간 이상 따라가지 못하면 ISR에서 제외됩니다. 반대로 충분히 따라잡으면 다시 포함됩니다.
 
-카프카의 메시지 전송 신뢰도는 단순히 "보장된다" 또는 "안된다"의 이분법적인 개념이 아닙니다. **`acks`와 `min.insync.replicas`** 같은 옵션들을 통해 개발자가 서비스의 요구사항에 맞춰 **지연 시간, 처리량, 내구성 사이의 관계를 능동적으로 조절**할 수 있는 '튜너블(Tunable)' 시스템에 가깝습니다.
+`replica.lag.time.max.ms` 설정을 통해 관리됩니다. 팔로워가 이 시간 이상 리더 데이터를 가져가지 못하면 ISR에서 제외됩니다.
 
-우리가 만드는 서비스의 데이터가 얼마나 중요한지, 약간의 유실이 치명적인지, 아니면 속도가 더 중요한지를 명확히 이해하고 그에 맞는 최적의 옵션을 선택하는 것이야말로 카프카를 제대로 활용하는 개발자의 핵심 역량일 것입니다.
+과거에는 `replica.lag.max.messages`라는 메시지 개수 기준이 있었지만, 버전에 따라 비권장/제거 추세입니다.
+
+이 메커니즘 덕분에 ISR은 “지금 이 순간 리더와 의미 있게 동기화된 집합”이라는 성질을 유지합니다. 즉, `acks=all`이 기대하는 복제 보장은 **ISR의 질**에 달려 있습니다.
+
+### min.insync.replicas
+
+`acks=all`의 의미를 보장하기 위해, ISR의 최소 크기를 강제해야 합니다. `min.insync.replicas` 설정을 통해 관리됩니다.
+
+`acks=all`, `replication factor=3`, `min.insync.replicas=2`라면,
+
+![minisr](https://d2r0pavv0lsiqc.cloudfront.net/projects/images/b027c4be-de3f-4dfb-b2b6-3dc8a1c82cb3.webp)
+
+프로듀서가 메시지를 보내면, 리더가 메시지를 기록하고 팔로워에게 복제합니다. ISR이 3이기에 ack를 받을 수 있습니다.
+
+![minisr2](https://d2r0pavv0lsiqc.cloudfront.net/projects/images/44c6d240-b273-438b-94aa-6bc7592811f9.webp)
+
+팔로워 하나가 장애가 난 상황입니다. ISR이 2이지만, min.insync.replicas가 2이기에 리더는 ack를 보내게 됩니다.
+
+만약 min.insync.replicas가 3이였다면, ISR이 존재해서 대응은 여전히 가능한 상황이지만, 리더가 쓰기를 거절해 클러스터가 마비될 수 있겠죠?
+
+따라서 주로 repication factor=3이면, min.insync.replicas=2로 설정이 권장됩니다.
+
+### unclean.leader.election.enable
+
+`unclean.leader.election.enable=true`면, ISR에 없는 노드도 리더로 승격될 수 있습니다.
+
+가용성은 올라가지만, 새 리더의 로그가 뒤쳐져 있으면 **데이터 손실**이 발생합니다. 강한 내구성이 요구되는 환경에서는 반드시 `false`로 두어야 합니다.
+
+## **마치며**
+
+카프카가 제공하는 신뢰도는 리더의 디스크 기록 여부가 아니라, **ISR 전원 복제와 HW 전진**이라는 집합적 상태 위에 성립합니다. `acks`, `min.insync.replicas`, `unclean.leader.election`은 이 집합의 안전 한계를 어디에 둘지 정하는 스위치입니다. 내 서비스가 허용하는 손실/지연의 예산을 먼저 규정하고, 그 예산을 **구성·운영 지표·재시도 정책**까지 일관되게 번역하는 것이 핵심입니다.
+
+다음 글에서는 컨슈머 쪽에서의 순서 보장, 재처리, 오프셋 커밋 전략을 통해 엔드투엔드 신뢰도를 완성하는 방법을 살펴보겠습니다.

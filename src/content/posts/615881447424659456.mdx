@@ -2,7 +2,7 @@
 id: "615881447424659456"
 author: "Astor"
 title: "아파치 카프카란? 기본 개념 및 철학"
-pinned: true
+pinned: false
 draft: false
 tags:
   - Kafka
@@ -12,7 +12,7 @@ createdAt: "2025-08-27 19:27:14"
 updatedAt: "2025-09-01 10:49:52"
 ---
 
-*\*본 시리즈는 필자가 **Confluent의 문서**들과 강의* [***한번에 끝내는 Kafka Ecosystem***](https://fastcampus.co.kr/dev_online_newkafka)*, 이외의 여러 자료들을 통해 학습한 내용을 기반으로, **응용 서비스 개발자들이 카프카를 사용하는데 필요한 개념과 코드**들을 컴팩트하게 모아 정리하는 것을 취지로 합니다. 따라 인프라적인 내용이나 DevOps 관점에서의 깊이 있는 탐구는 다루지 않습니다.*
+_\*본 시리즈는 필자가 **Confluent의 문서**들과 강의_ [**_한번에 끝내는 Kafka Ecosystem_**](https://fastcampus.co.kr/dev_online_newkafka)_, 이외의 여러 자료들을 통해 학습한 내용을 기반으로, **응용 서비스 개발자들이 카프카를 사용하는데 필요한 개념과 코드**들을 컴팩트하게 모아 정리하는 것을 취지로 합니다. 따라 인프라적인 내용이나 DevOps 관점에서의 깊이 있는 탐구는 다루지 않습니다._
 
 ## **시작하며: 왜 Kafka인가?**
 
@@ -22,7 +22,7 @@ updatedAt: "2025-09-01 10:49:52"
 
 이러한 복잡성을 제어하기 위해 아키텍처 설계 역사에서는 오래전부터 시스템 간의 의존성을 끊어내 **느슨한 결합(Loose Coupling)** 을 만들려는 노력이 계속되어 왔고, 그 중심에는 **메시지 큐(Message Queue)** 를 활용한 디자인 패턴이 있었습니다. 메시지 큐는 중간에서 메시지를 보관했다가 전달하는 버퍼 역할을 함으로써, 생산자(Producer)와 소비자(Consumer) 패턴으로 시스템을 분리하여 시스템 전체의 안정성을 높이는 효과적인 해법이었습니다.
 
-![Java\] Producer - Consumer 패턴 구조](https://blog.kakaocdn.net/dna/s0iaP/btqDTGhQctP/AAAAAAAAAAAAAAAAAAAAALGdG-cSF2daVdHxH-80h42WePZjuSJjU_mTnKHEVeKN/img.png?credential=yqXZFxpELC7KVnFOS48ylbz2pIh7yKj8\&expires=1756652399\&allow_ip=\&allow_referer=\&signature=zM2GbKJopSH1XTLxJrjNgBEqbpk%3D)
+![Java Producer - Consumer 패턴 구조](https://d2r0pavv0lsiqc.cloudfront.net/projects/images/02d3fb67-5eae-4ce3-98c1-555c4f336041.webp)
 
 하지만 데이터가 폭발적으로 많아지는 오늘날, 기존 메시지 큐만으로는 한계가 명확해졌습니다.
 
@@ -39,7 +39,7 @@ updatedAt: "2025-09-01 10:49:52"
 
 ## **카프카 핵심 개념과 아키텍처**
 
-### **Kafka의 핵심 철학: 분산 커밋 로그**
+### **분산 커밋 로그**
 
 카프카를 이해하는 가장 중요한 키워드는 **분산 커밋 로그(Distributed Commit Log)** 입니다. 말이 좀 어려운데, 사실 여러분이 자주 쓰는 **데이터베이스의 트랜잭션 로그**와 똑같은 개념이라고 생각하면 쉽습니다.
 
@@ -91,9 +91,9 @@ updatedAt: "2025-09-01 10:49:52"
 
 그럼 이 토픽과 파티션이라는 데이터 저장소는 실제로 어디에 위치할까요? 바로 **브로커(Broker)** 입니다.
 
-![](https://substackcdn.com/image/fetch/$s_!4B_d!,w_1456,c_limit,f_auto,q_auto\:good,fl_progressive\:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F1cfe42f7-6e7f-4e1b-9103-0816dd537b67_2101x1315.png)
+![](https://substackcdn.com/image/fetch/$s_!4B_d!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F1cfe42f7-6e7f-4e1b-9103-0816dd537b67_2101x1315.png)
 
-> *출처 (*[*https://newsletter.systemdesigncodex.com/p/introduction-to-kafka*](https://newsletter.systemdesigncodex.com/p/introduction-to-kafka)*)*
+> _출처 (_[_https://newsletter.systemdesigncodex.com/p/introduction-to-kafka_](https://newsletter.systemdesigncodex.com/p/introduction-to-kafka)_)_
 
 **브로커**는 카프카 클러스터를 구성하는 **서버 한 대 한 대**를 의미합니다. 반대로 **클러스터는 브로커의 집합**입니다. 우리가 만든 `order-events` 토픽을 3개의 파티션으로 쪼갰다고 상상해 보세요. 카프카는 부하를 분산하고 안정성을 높이기 위해 이 파티션들을 여러 브로커에 나눠서 저장합니다.
 
@@ -128,10 +128,10 @@ updatedAt: "2025-09-01 10:49:52"
 
 예를 들어, 아래와 같이 역할이 정해질 수 있습니다.
 
-|       | 파티션 0          | 파티션 1          |
-| ----- | -------------- | -------------- |
-| 브로커 1 | 리더 (Leader)    | 팔로워 (Follower) |
-| 브로커 2 | 팔로워 (Follower) | 리더 (Leader)    |
+|          | 파티션 0          | 파티션 1          |
+| -------- | ----------------- | ----------------- |
+| 브로커 1 | 리더 (Leader)     | 팔로워 (Follower) |
+| 브로커 2 | 팔로워 (Follower) | 리더 (Leader)     |
 | 브로커 3 | 팔로워 (Follower) | 팔로워 (Follower) |
 
 이렇게 되면
@@ -150,10 +150,10 @@ updatedAt: "2025-09-01 10:49:52"
 2. 지휘자는 `파티션 1`의 팔로워였던 `브로커 1`과 `브로커 3` 중에서 새로운 리더를 선출합니다. (여기서는 `브로커 3`이 새로운 리더가 되었다고 가정해 봅시다.)
 3. 클러스터의 상태는 아래와 같이 실시간으로 변경됩니다.
 
-|       | 파티션 0          | 파티션 1               |
-| ----- | -------------- | ------------------- |
-| 브로커 1 | 리더 (Leader)    | 팔로워 (Follower)      |
-| 브로커 2 | (서버 다운)        | (서버 다운)             |
+|          | 파티션 0          | 파티션 1                 |
+| -------- | ----------------- | ------------------------ |
+| 브로커 1 | 리더 (Leader)     | 팔로워 (Follower)        |
+| 브로커 2 | (서버 다운)       | (서버 다운)              |
 | 브로커 3 | 팔로워 (Follower) | 새로운 리더 (New Leader) |
 
 이제부터 `파티션 1`에 데이터를 보내려던 프로듀서와 데이터를 읽으려던 컨슈머는 자동으로 새로운 리더인 `브로커 3`으로 접속하게 됩니다. 이 모든 과정이 수 초 내에 자동으로 이루어지기 때문에, **서비스 중단 없이** 안정적으로 데이터를 계속 처리할 수 있는 것입니다.
