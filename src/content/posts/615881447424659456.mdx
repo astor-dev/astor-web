@@ -6,13 +6,15 @@ pinned: false
 draft: false
 tags:
   - Kafka
+  - 메시지큐
+  - 디자인 패턴
 ogImage: "https://d2r0pavv0lsiqc.cloudfront.net/posts/images/8052811b-0e24-4ef6-aa45-661367496c1c.webp"
 seriesId: "560288274048880643"
 createdAt: "2025-08-27 19:27:14"
-updatedAt: "2025-09-01 10:49:52"
+updatedAt: "2025-09-02 22:02:32"
 ---
 
-_\*본 시리즈는 필자가 **Confluent의 문서**들과 강의_ [**_한번에 끝내는 Kafka Ecosystem_**](https://fastcampus.co.kr/dev_online_newkafka)_, 이외의 여러 자료들을 통해 학습한 내용을 기반으로, **응용 서비스 개발자들이 카프카를 사용하는데 필요한 개념과 코드**들을 컴팩트하게 모아 정리하는 것을 취지로 합니다. 따라 인프라적인 내용이나 DevOps 관점에서의 깊이 있는 탐구는 다루지 않습니다._
+*\*본 시리즈는 필자가 **Confluent의 문서**들과 강의* [***한번에 끝내는 Kafka Ecosystem***](https://fastcampus.co.kr/dev_online_newkafka)*, 이외의 여러 자료들을 통해 학습한 내용을 기반으로, **응용 서비스 개발자들이 카프카를 사용하는데 필요한 개념과 코드**들을 컴팩트하게 모아 정리하는 것을 취지로 합니다. 따라 인프라적인 내용이나 DevOps 관점에서의 깊이 있는 탐구는 다루지 않습니다.*
 
 ## **시작하며: 왜 Kafka인가?**
 
@@ -29,7 +31,7 @@ _\*본 시리즈는 필자가 **Confluent의 문서**들과 강의_ [**_한번�
 1. **데이터 유실 문제:** 장애가 발생했을 때 중요한 메시지가 그대로 사라져 버릴 위험이 있었습니다.
 2. **어려운 병렬 처리:** 처리할 메시지가 많아져서 컨슈머 서버를 여러 대 늘리면, 같은 메시지를 여러 서버가 중복으로 처리하는 문제가 생겼습니다. 기존 메시지 큐에는 **'컨슈머 그룹' 같은 개념이 없어** 누가 어떤 메시지를 처리할지 똑똑하게 관리해주지 못했기 때문입니다.
 
-**바로 이 지점에서 아파치 카프카(Apache Kafka)가 등장합니다.** 카프카 공식 문서는 스스로를 이렇게 소개합니다.
+이럴 때 주요하게 사용되는 기술이 **아파치 카프카(Apache Kafka)** 입니다. 카프카 공식 문서는 스스로를 이렇게 소개합니다.
 
 ![](https://d2r0pavv0lsiqc.cloudfront.net/projects/images/606e3f40-faa3-4ffa-a05b-9db4a68341cc.webp)
 
@@ -91,9 +93,9 @@ _\*본 시리즈는 필자가 **Confluent의 문서**들과 강의_ [**_한번�
 
 그럼 이 토픽과 파티션이라는 데이터 저장소는 실제로 어디에 위치할까요? 바로 **브로커(Broker)** 입니다.
 
-![](https://substackcdn.com/image/fetch/$s_!4B_d!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F1cfe42f7-6e7f-4e1b-9103-0816dd537b67_2101x1315.png)
+![](https://substackcdn.com/image/fetch/$s_!4B_d!,w_1456,c_limit,f_auto,q_auto\:good,fl_progressive\:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F1cfe42f7-6e7f-4e1b-9103-0816dd537b67_2101x1315.png)
 
-> _출처 (_[_https://newsletter.systemdesigncodex.com/p/introduction-to-kafka_](https://newsletter.systemdesigncodex.com/p/introduction-to-kafka)_)_
+> *출처 (*[*https://newsletter.systemdesigncodex.com/p/introduction-to-kafka*](https://newsletter.systemdesigncodex.com/p/introduction-to-kafka)*)*
 
 **브로커**는 카프카 클러스터를 구성하는 **서버 한 대 한 대**를 의미합니다. 반대로 **클러스터는 브로커의 집합**입니다. 우리가 만든 `order-events` 토픽을 3개의 파티션으로 쪼갰다고 상상해 보세요. 카프카는 부하를 분산하고 안정성을 높이기 위해 이 파티션들을 여러 브로커에 나눠서 저장합니다.
 
@@ -128,10 +130,10 @@ _\*본 시리즈는 필자가 **Confluent의 문서**들과 강의_ [**_한번�
 
 예를 들어, 아래와 같이 역할이 정해질 수 있습니다.
 
-|          | 파티션 0          | 파티션 1          |
-| -------- | ----------------- | ----------------- |
-| 브로커 1 | 리더 (Leader)     | 팔로워 (Follower) |
-| 브로커 2 | 팔로워 (Follower) | 리더 (Leader)     |
+|       | 파티션 0          | 파티션 1          |
+| ----- | -------------- | -------------- |
+| 브로커 1 | 리더 (Leader)    | 팔로워 (Follower) |
+| 브로커 2 | 팔로워 (Follower) | 리더 (Leader)    |
 | 브로커 3 | 팔로워 (Follower) | 팔로워 (Follower) |
 
 이렇게 되면
@@ -150,10 +152,10 @@ _\*본 시리즈는 필자가 **Confluent의 문서**들과 강의_ [**_한번�
 2. 지휘자는 `파티션 1`의 팔로워였던 `브로커 1`과 `브로커 3` 중에서 새로운 리더를 선출합니다. (여기서는 `브로커 3`이 새로운 리더가 되었다고 가정해 봅시다.)
 3. 클러스터의 상태는 아래와 같이 실시간으로 변경됩니다.
 
-|          | 파티션 0          | 파티션 1                 |
-| -------- | ----------------- | ------------------------ |
-| 브로커 1 | 리더 (Leader)     | 팔로워 (Follower)        |
-| 브로커 2 | (서버 다운)       | (서버 다운)              |
+|       | 파티션 0          | 파티션 1               |
+| ----- | -------------- | ------------------- |
+| 브로커 1 | 리더 (Leader)    | 팔로워 (Follower)      |
+| 브로커 2 | (서버 다운)        | (서버 다운)             |
 | 브로커 3 | 팔로워 (Follower) | 새로운 리더 (New Leader) |
 
 이제부터 `파티션 1`에 데이터를 보내려던 프로듀서와 데이터를 읽으려던 컨슈머는 자동으로 새로운 리더인 `브로커 3`으로 접속하게 됩니다. 이 모든 과정이 수 초 내에 자동으로 이루어지기 때문에, **서비스 중단 없이** 안정적으로 데이터를 계속 처리할 수 있는 것입니다.
