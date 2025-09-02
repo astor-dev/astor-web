@@ -1,15 +1,16 @@
 ---
 id: "617976368214315008"
 author: "Astor"
-title: "WAS에서 Kafka 다루기: ACKS 옵션과 ISR, 메시지 전송 신뢰도"
+title: "Kafka Producer - ACKS 옵션과 ISR, 메시지 전송 신뢰도"
 pinned: true
 draft: false
 tags:
   - Kafka
+  - 메시지큐
 ogImage: "https://d2r0pavv0lsiqc.cloudfront.net/posts/images/7b52434b-7b32-44e7-a459-eada436d74ba.webp"
 seriesId: "560288274048880643"
 createdAt: "2025-09-02 15:04:20"
-updatedAt: "2025-09-02 15:57:27"
+updatedAt: "2025-09-02 22:01:05"
 ---
 
 지난 글에서는 프로듀서, 컨슈머, 브로커, 토픽, 파티션 등 카프카의 핵심 개념과 아키텍처에 대해 알아보았습니다. 프로듀서가 `producer.send()`를 통해 메시지를 발행하면, 해당 메시지는 토픽의 파티션으로 전송되고 컨슈머가 이를 가져가 처리하는 흐름을 이해했습니다.
