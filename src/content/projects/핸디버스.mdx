@@ -118,6 +118,14 @@ OAuth를 활용하여 각종 약관동의 및 기본값을 원터치로 제공 �
 
 JMeter를 통한 부하 테스트를 통해 트래픽이 폭주할 때 결국 WAS의 CPU 작업보단 **데이터베이스에서 가장 먼저 문제가 발생한다는 점**을 파악했습니다. 그래서 다른 장비보다 DB 서버의 사양을 높게 유지하여 시스템이 멈추지 않도록 균형을 맞춰 설계했습니다.
 
+![](https://d2r0pavv0lsiqc.cloudfront.net/projects/images/dcba2e09-f5ff-4e74-a3ec-516af519162b.webp)
+
+핸디버스는 ‘공연, 모빌리티, 수요응답형’ 서비스가 결합된 복합 도메인입니다. 이로 인해 정규화된 데이터베이스에서 단일 조회 시에도 수많은 `JOIN`이 발생하는 문제가 있었습니다. 특히 쓰기 정합성을 위해 도입했던 DDD(도메인 주도 설계)의 Aggregate 패턴은, 역설적으로 조회 성능에 불필요한 객체 로딩 오버헤드를 유발했습니다.
+
+이를 해결하기 위해 CQRS, NoSQL, CDC 등 여러 아키텍처를 검토했으나, 회사 규모와 리소스 한계를 고려해 **CQRS 패턴의 핵심 사상(읽기/쓰기 분리)만을 차용**하는 실용적인 접근을 택했습니다.
+
+기존의 DDD 모델은 데이터 변경의 일관성을 책임지는 **쓰기 전용 모델**로 역할을 한정했습니다. 그리고 **조회는 비정규화된 뷰 테이블(View Table) 기반의 독립적인 파이프라인**으로 구축하여, 불필요한 객체 오버헤드를 제거하고 SQL 튜닝 효과를 극대화했습니다.
+
 ### 수요 기반 노선 설계 자동화 기술 개발
 
 ![](https://d2r0pavv0lsiqc.cloudfront.net/projects/images/6d1ea1a9-1f3a-4f51-b347-d7086af9fd02.webp)![](https://d2r0pavv0lsiqc.cloudfront.net/projects/images/bdd4e31c-2dd7-407c-b331-a21171dde0f3.webp)![](https://d2r0pavv0lsiqc.cloudfront.net/projects/images/8d89ef72-70bd-4f09-b4d6-b7ba190ad8e1.webp)![](https://d2r0pavv0lsiqc.cloudfront.net/projects/images/1afebb0e-0045-40c0-b870-b155b4c38ea5.webp)
