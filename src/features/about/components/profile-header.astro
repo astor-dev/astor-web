@@ -53,7 +53,7 @@ const { name, realName, role, imageSrc, info } = Astro.props;
         <div>
           <!-- 이름 섹션 -->
           <h1 class="text-2xl font-bold text-black-accent">{name}</h1>
-          <p class="text-base font-medium text-black-muted">{realName}</p>
+          <p class="text-base font-medium text-black-base/60">{realName}</p>
         </div>
       </div>
 
@@ -141,7 +141,7 @@ const { name, realName, role, imageSrc, info } = Astro.props;
               <FaUniversity />
               <div class="flex flex-col">
                 <span>{info.education.school}</span>
-                <span class="text-xs text-black-muted">
+                <span class="text-xs text-black-base/60">
                   {info.education.majors.join(" · ")}
                   {info.education.year && ` (${info.education.year})`}
                 </span>

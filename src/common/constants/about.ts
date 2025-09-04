@@ -66,7 +66,7 @@ export const CERTIFICATIONS: CertificationDetail[] = [
     issuedAt: "2025.09",
   },
   {
-    name: "SW역량테스트 Professional",
+    name: "SW Certi Professional",
     issuer: "삼성SDS",
     issuedAt: "2025.08",
   },
