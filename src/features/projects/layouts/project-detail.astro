@@ -57,7 +57,17 @@ for (const stack of project.data.stack) {
 }
 ---
 
-<Layout title={project.data.projectName} image={project.data.imageUrl}>
+<Layout
+  title={project.data.projectName + " | 프로젝트"}
+  description={project.data.shortDescription}
+  keywords={project.data.projectName +
+    ", " +
+    project.data.stack
+      .slice(0, 10)
+      .map(stack => stack.type)
+      .join(", ")}
+  image={project.data.imageUrl}
+>
   <!-- Hero 섹션: 전체 화면을 채우면서 프로젝트 요약 정보를 보여줌 -->
   <section
     slot="hero"

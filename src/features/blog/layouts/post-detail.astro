@@ -17,33 +17,9 @@ interface Props {
   prevPost: PostEntry | null;
   isAdmin: boolean;
   latestPosts: PostEntry[];
-  title?: string;
-  description?: string;
-  image?: string;
-  keywords?: string;
-  url?: string;
-  type?: string;
-  author?: string;
-  publishedTime?: string;
-  modifiedTime?: string;
 }
 
-const {
-  post,
-  series,
-  nextPost,
-  prevPost,
-  latestPosts,
-  title,
-  description,
-  image,
-  keywords,
-  url,
-  type,
-  author,
-  publishedTime,
-  modifiedTime,
-} = Astro.props;
+const { post, series, nextPost, prevPost, latestPosts } = Astro.props;
 
 if (!post) {
   return Astro.redirect("/404");
@@ -52,18 +28,29 @@ if (!post) {
 const renderResult = await render(post);
 const Content = renderResult.Content;
 const headings = renderResult.headings;
+
+const postTitle = post.data.title + " | 블로그";
+const postImage = post.data.ogImage;
+const postKeywords =
+  postTitle.split(" ").slice(0, 10).join(", ") +
+  ", " +
+  post.data.tags.join(", ");
+const postUrl = new URL(Astro.request.url).href;
+const postAuthor = post.data.author;
+const postPublishedTime = post.data.createdAt;
+const postModifiedTime = post.data.updatedAt;
 ---
 
 <Layout
-  title={title || post.data.title}
-  image={image || post.data.ogImage}
-  description={description}
-  keywords={keywords}
-  url={url}
-  type={type}
-  author={author || post.data.author}
-  publishedTime={publishedTime || post.data.createdAt}
-  modifiedTime={modifiedTime || post.data.updatedAt}
+  title={postTitle}
+  image={postImage}
+  description={post.body?.slice(0, 157) || postTitle + " | 블로그 글"}
+  keywords={postKeywords}
+  url={postUrl}
+  type="article"
+  author={postAuthor}
+  publishedTime={postPublishedTime}
+  modifiedTime={postModifiedTime}
 >
   <PostHero post={post} slot="hero" />
 
