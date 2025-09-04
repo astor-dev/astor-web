@@ -3,6 +3,7 @@ import {
   EDUCATIONS,
   FEATURED_STACK_IDS,
   ABOUT_ME,
+  CERTIFICATIONS,
 } from "~common/constants/about";
 import profileImage from "~assets/images/profile.webp";
 import type { ProjectEntry } from "~common/types/project.type";
@@ -24,6 +25,7 @@ import ProfileHeader from "~features/about/components/profile-header.astro";
 import SlottedHeader from "~common/components/headers/slotted-header.astro";
 import PortfolioList from "~features/about/components/portfolio-list.astro";
 import EducationList from "~features/about/components/education-list.astro";
+import CertificationList from "~features/about/components/certification-list.astro";
 
 const projectRepository =
   repositoryContainer.get<ProjectRepository>(PROJECT_REPOSITORY);
@@ -61,17 +63,6 @@ for (const stackId of FEATURED_STACK_IDS) {
 
 <Layout title="About Me">
   <article class="mx-auto w-full">
-    <!-- 헤더 영역
-      <div class="flex-row justify-between items-center w-full max-w-6xl mx-auto px-4 pb-12 hidden sm:flex print:hidden">
-        <h1 class="text-2xl font-bold text-black-accent">About Me</h1>
-        <button 
-          id="exportPdfBtn"
-          class="flex items-center gap-2 px-4 py-2 text-sm font-medium text-white-base bg-skin-accent rounded-lg hover:bg-skin-accent-hover transition-colors"
-        >
-          <FaFilePdf />
-          <span>PDF로 저장</span>
-        </button>
-      </div> -->
     <div class="mx-auto w-full max-w-6xl px-4 pb-4">
       <ProfileHeader
         name="Astor"
@@ -139,6 +130,15 @@ for (const stackId of FEATURED_STACK_IDS) {
           }
         </div>
       </SlottedHeader>
+      <SlottedHeader title="Certifications">
+        <div class="grid grid-cols-1 gap-4 sm:grid-cols-3">
+          {
+            CERTIFICATIONS.map(certification => (
+              <CertificationList certification={certification} />
+            ))
+          }
+        </div>
+      </SlottedHeader>
 
       <!-- <SectionWithHeader title="Contact">
         <div
@@ -161,13 +161,4 @@ for (const stackId of FEATURED_STACK_IDS) {
       </SectionWithHeader> -->
     </div>
   </article>
-
-  <script>
-    const exportBtn = document.getElementById("exportPdfBtn");
-    if (exportBtn) {
-      exportBtn.addEventListener("click", () => {
-        window.print();
-      });
-    }
-  </script>
 </Layout>

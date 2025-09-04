@@ -15,8 +15,8 @@ const periodText = `${props.data.startedAt} - ${props.data.endedAt ?? "Present"}
     <!-- 좌측: 기본 정보 (회사, 역할, 기간, 기술스택) -->
     <div class="space-y-4 sm:col-span-1">
       <div>
-        <h4 class="text-xs text-black-base/60">
-          <span class="text-skin-accent">{props.data.organizationName}</span>
+        <h4 class="text-xs text-black-base">
+          {props.data.organizationName}
         </h4>
         <h3 class="text-sm font-bold text-black-accent">
           {props.data.role}
