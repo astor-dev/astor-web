@@ -1,4 +1,6 @@
-export const FEATURED_STACK_IDS = [
+import type { EducationDetail } from "~features/about/components/education-list.astro";
+
+export const FEATURED_STACK_IDS: number[] = [
   1, // React
   2, // NestJS
   3, // Docker
@@ -31,7 +33,7 @@ export const FEATURED_STACK_IDS = [
   32, // Spring
 ];
 
-export const EDUCATIONS = [
+export const EDUCATIONS: EducationDetail[] = [
   {
     school: "고려대학교 서울캠퍼스",
     majors: ["영어영문", "소프트웨어기술벤처"],
@@ -47,11 +49,11 @@ export const EDUCATIONS = [
 이러한 '추상화' 개념이 단지 <strong>자연어</strong>에 국한되지 않고 <strong>더 낮은 수준의 언어 체계에도 동일하다는 생각</strong>에 보다 근본적 추상화인 <strong>기계어</strong>를 공부했습니다.
 특히, <strong>소프트웨어</strong>가 이러한 추상화의 정점에서 실제적이고 구체적인 가치를 창출하는 점에 매료돼 전공하게 되었습니다.
 `,
-    achievements: [
-      "데이터통신, 운영체제, 정보보호 등 CS 과목 다수 수강",
-      "소프트웨어 개발 학회 DevKor 운영진",
+    activitiesAndAchievements: [
+      "자료구조, 운영체제, 데이터베이스, 클라우드 컴퓨팅 등 CS 과목 42학점 수강",
+      "창업 경진대회 STARTUP EXPRESS 츄츄기업가상 수상(핸디버스)",
       "산학 캡스톤 디자인 프로젝트 우수상 수상",
-      "영문학 소모임 LIT 부회장",
+      "영어영문학과 학생회 국원 및 영문학 소모임 LIT 부회장",
     ],
   },
 ];

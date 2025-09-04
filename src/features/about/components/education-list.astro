@@ -1,12 +1,12 @@
 ---
-interface EducationDetail {
+export interface EducationDetail {
   school: string;
   majors: string[];
   degree?: string;
   startedAt: string;
   endedAt?: string;
   description?: string;
-  achievements?: string[];
+  activitiesAndAchievements?: string[];
   gpa?: {
     score: number;
     maxScore: number;
@@ -67,23 +67,24 @@ const periodText = `${education.startedAt} - ${education.endedAt ?? "Present"}`;
       }
 
       {
-        education.achievements && education.achievements.length > 0 && (
-          <div>
-            <h4 class="mb-1.5 text-xs font-bold text-black-accent">
-              주요 성과
-            </h4>
-            <ul class="space-y-1">
-              {education.achievements.map(item => (
-                <li class="flex items-start">
-                  <span class="mr-1.5 text-xs">•</span>
-                  <span class="text-xs leading-tight text-black-base">
-                    {item}
-                  </span>
-                </li>
-              ))}
-            </ul>
-          </div>
-        )
+        education.activitiesAndAchievements &&
+          education.activitiesAndAchievements.length > 0 && (
+            <div>
+              <h4 class="mb-1.5 text-xs font-bold text-black-accent">
+                주요 활동 및 성과
+              </h4>
+              <ul class="space-y-1">
+                {education.activitiesAndAchievements.map(item => (
+                  <li class="flex items-start">
+                    <span class="mr-1.5 text-xs">•</span>
+                    <span class="text-xs leading-tight text-black-base">
+                      {item}
+                    </span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )
       }
     </div>
   </div>
