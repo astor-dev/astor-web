@@ -39,8 +39,8 @@ export const EDUCATIONS: EducationDetail[] = [
     school: "고려대학교 서울캠퍼스",
     majors: ["영어영문", "소프트웨어기술벤처"],
     degree: "학사",
-    startedAt: "2020.03",
-    endedAt: "2026.02",
+    startedAt: "2020-03",
+    endedAt: "2026-02",
     gpa: {
       score: 3.74,
       maxScore: 4.5,
@@ -63,12 +63,12 @@ export const CERTIFICATIONS: CertificationDetail[] = [
   {
     name: "정보처리기사",
     issuer: "한국산업인력공단",
-    issuedAt: "2025.09",
+    issuedAt: "2025-09",
   },
   {
     name: "SW Certi Professional",
     issuer: "삼성SDS",
-    issuedAt: "2025.08",
+    issuedAt: "2025-08",
   },
   // {
   //   name: "군 장병 AI·SW 역량강화 교육",

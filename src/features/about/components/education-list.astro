@@ -1,13 +1,15 @@
 ---
+import { formatDate } from "~common/utils/date.utils";
+
 export interface EducationDetail {
   school: string;
   majors: string[];
   degree?: string;
   startedAt: string;
-  endedAt?: string;
-  description?: string;
+  endedAt: string;
+  description: string;
   activitiesAndAchievements?: string[];
-  gpa?: {
+  gpa: {
     score: number;
     maxScore: number;
   };
@@ -18,7 +20,7 @@ interface Props {
 }
 
 const { education } = Astro.props;
-const periodText = `${education.startedAt} - ${education.endedAt ?? "Present"}`;
+const periodText = `${formatDate(education.startedAt)} - ${formatDate(education.endedAt ?? "Present")}`;
 ---
 
 <div>

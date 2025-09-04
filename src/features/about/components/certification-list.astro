@@ -1,4 +1,6 @@
 ---
+import { formatDate } from "~common/utils/date.utils";
+
 export interface CertificationDetail {
   name: string;
   issuer: string;
@@ -15,9 +17,10 @@ interface Props {
 }
 
 const { certification } = Astro.props;
+
 const periodText = certification.expiresAt
-  ? `${certification.issuedAt} - ${certification.expiresAt}`
-  : certification.issuedAt;
+  ? `${formatDate(certification.issuedAt)} - ${formatDate(certification.expiresAt)}`
+  : formatDate(certification.issuedAt);
 ---
 
 <div>
@@ -30,7 +33,7 @@ const periodText = certification.expiresAt
         <h3 class="text-sm font-bold text-black-accent">
           {certification.name}
         </h3>
-        <p class="text-xs text-black-base/60">Issued at {periodText}</p>
+        <p class="text-xs text-black-base/60">Issued {periodText}</p>
       </div>
     </div>
   </div>

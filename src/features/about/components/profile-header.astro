@@ -8,11 +8,13 @@ import {
   FaEnvelope,
   FaUniversity,
 } from "react-icons/fa";
+import { formatDate } from "~common/utils/date.utils";
 
 interface EducationInfo {
   school: string;
   majors: string[];
-  year?: string;
+  startedAt: string;
+  endedAt: string;
 }
 
 interface InfoProps {
@@ -53,7 +55,7 @@ const { name, realName, role, imageSrc, info } = Astro.props;
         <div>
           <!-- 이름 섹션 -->
           <h1 class="text-2xl font-bold text-black-accent">{name}</h1>
-          <p class="text-base font-medium text-black-base/60">{realName}</p>
+          <p class="text-base font-medium text-black-base">{realName}</p>
         </div>
       </div>
 
@@ -143,7 +145,7 @@ const { name, realName, role, imageSrc, info } = Astro.props;
                 <span>{info.education.school}</span>
                 <span class="text-xs text-black-base/60">
                   {info.education.majors.join(" · ")}
-                  {info.education.year && ` (${info.education.year})`}
+                  {`(${formatDate(info.education.startedAt)} - ${formatDate(info.education.endedAt)})`}
                 </span>
               </div>
             </div>

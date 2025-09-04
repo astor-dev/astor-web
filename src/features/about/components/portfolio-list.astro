@@ -1,13 +1,14 @@
 ---
 import type { ActivityEntry } from "~common/types/activity.type";
 import type { CareerEntry } from "~common/types/career.type";
+import { formatDate } from "~common/utils/date.utils";
 
 interface Props {
   props: CareerEntry | ActivityEntry;
 }
 
 const { props } = Astro.props;
-const periodText = `${props.data.startedAt} - ${props.data.endedAt ?? "Present"}`;
+const periodText = `${formatDate(props.data.startedAt)} - ${props.data.endedAt ? formatDate(props.data.endedAt) : "Present"}`;
 ---
 
 <div class="bg-white-base">
