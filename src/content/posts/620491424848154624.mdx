@@ -1,17 +1,17 @@
 ---
 id: "620491424848154624"
 author: "Astor"
-title: "스타트업 결제 도메인 구축기 - 결제·환불의 동시성 제어 전략"
+title: "결제 도메인 거래·환불의 동시성 제어 전략"
 pinned: true
 draft: false
 tags:
   - 결제
   - 환불
   - 동시성 제어
-ogImage: "https://d2r0pavv0lsiqc.cloudfront.net/posts/images/351845b2-e956-436b-98df-d2b267626d86.webp"
-seriesId: ""
+ogImage: "https://d2r0pavv0lsiqc.cloudfront.net/posts/images/87faf76e-1fc9-48e7-8aeb-1605e314f508.webp"
+seriesId: "620508969839890435"
 createdAt: "2025-09-09 13:45:11"
-updatedAt: "2025-09-09 15:08:06"
+updatedAt: "2025-09-09 15:44:01"
 ---
 
 서비스에서 수익 창출을 이루려면 결국 결제 도메인을 구축해야합니다. 필자가 극초기 스타트업에서 결제 도메인을 처음부터 구축하고, 25년 9월까지 6억 매출을 처리한 시스템을 개발한 경험을 토대로 결제 도메인에 대해 분석 및 발생할 수 있는 문제상황과 처리 전략에 대해 소개하겠습니다.
@@ -42,7 +42,7 @@ updatedAt: "2025-09-09 15:08:06"
 
 이 유효성 검사를 **거래 생성 시**에도 할 수 있고, **승인(실제로 돈이 빠져나가는 시점) 시**에도 할 수 있는데 코레일톡 처럼 **실제 결제 처리 전 특정 시간만큼 자원을 선점**해주는 경우 **결제 생성 시점에 재고에 대한 검증 및 차감 처리**를 해야합니다.
 
-![PlantUML diagram](https://cdn-0.plantuml.com/plantuml/png/bLHHIzjG67s_l-B3fpRCF-23oF1b_s1lezQmbTLMclHXRr6laDaCtLXPMX8NcNCAZjtMMXJq3-L--G_xajpSagOC5cYXkUUSd7E-hzcox4RFxk-rcTsosoR4Ku5H07WK8fy03eB4SV3a4choS1JF78mEG8RFTTReszrEVs_7x36sJmgjPck_qR5X3GzlSNo3vsThqB2WRn6WTAuUGCeacnm76Mo_yM7FxDXBIaS7oHSNa0VoaHCuH_Qwk_tcClByDhwBWFp9grlOVfaXBRlRVFzcTsVruwS-GQlQJTEokXGfzGthcuMn3L1c2lhuAqv_Gos_-shx1Q3ho-yVwumf1f4BhvgCqL3UpG0lH3Bsc3fT1PHJZX67P3J4yA5I_OAeCsv0Ne6oePbjEeRNTLRWOBtqj1972ZyP-GjrdRuIG8hJrLmTliGDecHyJTj4vJcq7L3BkSeahLBRBkJatC6B2GEwj1HffTFOA6CmU98N0UXjkaoyQy3minpSCxDjcThW_4REULbnKq-QLEE9aEU-MdWrs1nUOCf56qQXBAvZSPQMKSmBlntBJmB3MNBoO1YP26NJf-Jar5kQfd9UPw2kygIqpP9s4RUcbENSnV097tqjis2MvqZMrUOdGqvPLMEQLfsV2gnOL3d-Ee0Q_SJGeqaaN6IYWq2UyhfXQALErpQXrthxZXJIlzYLAmTk-Y91_rB-z6FX00uvtPD_759TY6GAsGHLkZnQfJS-YU_k_wytHVftINeZOX7YTAONOyJb3qzJgzkfDb5wJlmWLAzKbE_Yy5cnSxTcPvUbdotwelVkNm00)
+![](https://d2r0pavv0lsiqc.cloudfront.net/projects/images/bc8b90dd-2c85-430c-8619-ece08afba776.webp)
 
 처리 방식은 간단한데, 결제 생성 시 상품 객체를 읽으며 **낙관적 쓰기 락**을 걸면 됩니다. 상품 객체의 경우 대부분 접근이 잦기에 비관적 쓰기 락을 쓰기엔 부하가 큽니다. 낙관적 쓰기 락을 쓴 경우 (상품 조회 -> 거래 생성 -> 상품 재고 차감) 트랜잭션이 경합되어 로직 중 다른 트랜잭션이 상품에 대해 커밋한 경우 트랜잭션이 실패하고 롤백되게 됩니다. 다만 중요한 건, 이렇게 롤백된 케이스는 비즈니스 상황 상의 에러는 아니기에 처음부터 **재처리**를 해주셔야합니다.
 
@@ -50,7 +50,7 @@ updatedAt: "2025-09-09 15:08:06"
 
 거래가 생성 된 이후 PG 통신 부분에서 거래가 이루어지지 않으면 해당 거래는 불발처리 되어야 합니다. 이때 보통 특정 시간이 지난 거래를 불발 시킬 텐데, **불발 로직 처리 중에 유저가 결제를 처리해버리면 동시성 문제**가 발생합니다.
 
-![PlantUML diagram](https://cdn-0.plantuml.com/plantuml/png/jPLHJzfG5CVV-obEV06QcBtxi9Z5PDdRli5IjPjaM4mfI_Q6iHe6DSue4qbncE5WYSkkW0j6_K8zfzzXvrwefHtHlUm50ZtdtD__VywvNIuvXksKDmkQatSA9hn-2U7UDTKxGFLkwFKXk19urWJyNKNX0msQ-FsId_bXfKArhcQKdQ9LtbmrRKtRuahvjVoMOJcm40m4TNmPoM7Xhhy0HWcsZ8-RfkKa8_avtLMew-BNosSe1DqqLN1fRSDSBnTCEna-1LfveO8Ssx1AnfgJBrflrbUJaVZZM1xVgm2EFJptwRQhSbRjuljqLMfMgN4FvFfuup8HP5adVwDRpQaasooPzWT37LJ8bnpJaf8pC4iVY0g4jHlgDAJkGBWG3Ew3uLra8fsBiELf3y9WyNbAm19WpyDl7dxs7qcAV5nAjwLrJ8EVa9ralbh9IS1q8wYTxgQqfhUj8iuEjMdjUMowdc0250V0TWMZ2dKu_qW4Om7OleUmjOz7RLtNhA9ZWfr_jo5Pwrsy6C_mu84Br7FfR1T8zB7UrpIZu3petjaETtnfQIQ9otzXxIAZ0K2A41PdlOb156XKjjF0uOZ_QOQdJLKZ5Xpd9XZmuYvYoB1NWCCAzrNbFcrML0JeP1Vt1RL7OMsiwv2LUEHtU3npgbJyaPcWDqRiqzEdnB5A9WyvYhgkFsLFWWV8lGg6r-d39eiIIudcXfDmq9Lv_2lyycbwsaopun1f7jyeJ3Wn8hAF6-66dfSualdYhVzhk4zTNWmkV8ZrwrcpOXgwxLEjYltnD4S5J4ImdBahF4CgYR2kakQ4Fbf2NHufVT5MLPliq8JNB9JCEUCTROGIoCq_kegaynT7_8z9Jy_Hp1HbKtqwsQEsb_ldHaKlZgmqzjTOoafSQBbuLWhcMqb_S2gl7fTLNuuPGAxOD5SveqoAgp0JjOHcMklQCd_mg-iF)
+![](https://d2r0pavv0lsiqc.cloudfront.net/projects/images/aeb85a9d-6538-4028-8eb4-b2a82febbed3.webp)
 
 **불발 처리할 거래를 읽는 시점에 비관적 쓰기 락**을 사용합니다. 불발될 거래에 대해 결제 승인 등의 로직에서 접근하는 것을 원천적으로 차단합니다. 다만 이 때 반드시 주의하셔야 할 점은, 비관적 락을 쓰기 때문에 **여러 테이블에 동시 접근하면 데드락**이 생길 수 있습니다. 가령 거래와 예약 테이블을 동시에 비관적 쓰기 락으로 읽으면 거래 락 취득 - 예약 락 취득 사이에 다른 어딘가에서 예약 락을 얻고 거래 락을 얻으려 하면 데드락이 발생합니다.
 
@@ -84,7 +84,7 @@ updatedAt: "2025-09-09 15:08:06"
 
 하나의 거래에 대해 환불은 여럿 요청되고 동시에 처리될 수 있기에 주의해서 처리할 필요가 있습니다. 이때 **하나의 결제 거래에 대한 여러 환불 처리 요청을 순차적으로 처리하는 방식**이 필요합니다. 이를 위해 환불 처리 시 해당 **거래 객체에 대한 락을 획득하는 방법**을 고려할 수 있습니다. 이미 다른 환불 처리가 진행 중이라면 락을 획득하지 못해 대기하게 되므로, 여러 환불 요청이 동시다발적으로 처리되는 것을 막고 순차적으로 처리할 수 있습니다.
 
-![PlantUML diagram](https://cdn-0.plantuml.com/plantuml/png/ZLJTJlfO4B_lKqp-Dt_ewWjmOSp6nEoTRq2gTjbceH1QJBohYXiMSDKeAv9gIXPtQy8cHpu86-CBTKxVOOVJ2lsGg1UD2VER-NsScMt3LAfchLIKJCqigk3VTt7M03xgujz3u2tRjopU7406_wjx4uix9u0FR_03y8S9ZWP-SmxUd27hPYMbPfRrMcbVhKfIXPfg1rf5qKtuna-7lFVC7w--WM90pQ22sE_lCtktVFGlyBfDisYcgAwgFzVqmxnIqU8OxuNXOnTsVXHLPbNH3UN0rCfw_d0_NedFjoI3_sC1pjlOj_bhq7c_MluroMHlTpKUCjw8SSS6R5l-dx-JYAp0LGe9TOz3R-m0cKEE9TXh-f6gc-NgSPv47sa7QWBgTFWfMxXC0F_S5XX3DIc84k7onh5XgYL9MbW6criHCt8GDoqJ-F7JpWR5qU2TVbPQ5HCquL0EP3bqaFUPtsi3iajOHSnl6AKgalPx5tZp8CkINZPLg6g5NymSO6k0J_C41yvSRBaRm1is_Hi-8KbIYcQa4Hdquesd4W0aEC5cGk4xGQU3umaHxD8uo8GpFMPXyoaK2_xbqE-uMT4rfZlMK9P3S8ZYjkFtN284tiYYV6LPD12V1UiFH_7PCyxgeYOzhLB8mTukjOfRiwok558gWyBG5jggQsnDb_MfCP-5UNRYdzcBCDUGlpl72qQhItiRg1L_qMWJ5Z7NOrUYyFF4Okq3HH4fQL7VWtVHcT2MVLdf2Y9aqZOZQqMqV8zS9cGsRUwQri7-Hru5lw_ZN-qKV9rFVtGNbNqRRsn-TxNqRVJ6xNhu89V0O5RAhs10AliKMyA9ivdS-ZXmYVpG2_xgycO3tNcucEAYu-KzxNasnNChVRboqLvE7Ll3TrIwTbs3u5BYUEfDXm6DLPCqX_GbNCyXNRkkGN1omsTQPx4t6oUZ5WtrupN2cSNxBrzyil4t_kLeMmE_xORHGYOsECXBrGybGJ5wN0DK9hZFOI_I9chuRsrkEy07rvyTIcnRz2oanOHj-jHAnVy1)
+![](https://d2r0pavv0lsiqc.cloudfront.net/projects/images/a55389c3-9f81-4d8a-b25e-77cee7b6e59a.webp)
 
 이 때 **거래 객체에 환불 가능한 금액을 칼럼으로 등록**해두고, 활용한다면 **환불 처리 시점에서 다른 환불의 데이터를 조회하면서 생기는 동시성 문제를 해결**할 수 있습니다.
 
