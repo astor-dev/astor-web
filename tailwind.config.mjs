@@ -228,6 +228,18 @@ export default {
             },
             "code::before": { content: "none" },
             "code::after": { content: "none" },
+            table: {
+              display: "block",
+              "overflow-x": "auto",
+              // "white-space": "nowrap",
+              width: "max-content",
+              "max-width": "100%",
+            },
+            "table th, table td": {
+              "min-width": "4rem",
+              "padding-left": "0.5rem !important",
+              "padding-right": "0.5rem !important",
+            },
             h1: { fontFamily: "Pretendard" },
             h2: { fontFamily: "Pretendard" },
             h3: { fontFamily: "Pretendard" },
