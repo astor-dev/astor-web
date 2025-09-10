@@ -82,16 +82,20 @@ const PostPagination: React.FC<PaginationProps> = ({
         {visiblePages.map((page, index) => (
           <li key={index}>
             {page === "..." ? (
-              <span className="rounded-2xl px-2 py-1 text-sm text-black-accent/50 md:px-3 md:text-base">
+              <span className="px-2 py-1 text-sm text-black-accent/50 md:px-3 md:text-base">
                 ...
               </span>
             ) : (
               <a
-                href={createLink(page as number)}
-                className={`rounded-2xl px-2 py-1 text-sm text-black-accent transition-all duration-300 hover:-translate-y-1 md:px-3 md:text-base ${
+                href={
+                  page === currentPage ? undefined : createLink(page as number)
+                }
+                tabIndex={page === currentPage ? -1 : 0}
+                aria-current={page === currentPage ? "page" : undefined}
+                className={`px-1 py-0 text-sm text-black-accent md:text-base ${
                   page === currentPage
-                    ? "bg-skin-accent text-white-accent"
-                    : "bg-skin-fill/5 hover:bg-skin-fill/10"
+                    ? "pointer-events-none cursor-not-allowed font-semibold text-skin-accent"
+                    : "hover:border-b hover:border-black"
                 }`}
               >
                 {page}
@@ -103,13 +107,13 @@ const PostPagination: React.FC<PaginationProps> = ({
           {currentPage < totalPages ? (
             <a
               href={createLink(currentPage + 1)}
-              className="rounded-2xl bg-skin-fill/5 px-2 py-1 text-sm text-black-accent transition-all duration-300 hover:-translate-y-1 hover:bg-skin-fill/10 md:px-3 md:text-base"
+              className="bg-skin-fill/5 px-2 py-1 text-sm text-black-accent transition-all duration-300 hover:-translate-y-1 hover:bg-skin-fill/10 md:px-3 md:text-base"
             >
               <span className="hidden md:inline">다음 &raquo;</span>
               <span className="md:hidden">›</span>
             </a>
           ) : (
-            <span className="cursor-not-allowed rounded-2xl bg-skin-fill/5 px-2 py-1 text-sm text-black-accent/30 md:px-3 md:text-base">
+            <span className="cursor-not-allowed bg-skin-fill/5 px-2 py-1 text-sm text-black-accent/30 md:px-3 md:text-base">
               <span className="hidden md:inline">다음 &raquo;</span>
               <span className="md:hidden">›</span>
             </span>
