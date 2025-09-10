@@ -8,7 +8,7 @@ interface ProjectTableProps {
 
 const ProjectTable: React.FC<ProjectTableProps> = ({ projects }) => {
   const handleRowClick = (projectId: string) => {
-    window.location.href = `/admin/projects/${projectId}`;
+    window.location.href = `/projects/${projectId}`;
   };
 
   return (

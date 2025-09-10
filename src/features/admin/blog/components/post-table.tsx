@@ -8,7 +8,7 @@ interface PostTableProps {
 
 const PostTable: React.FC<PostTableProps> = ({ posts }) => {
   const handleRowClick = (postId: string) => {
-    window.location.href = `/admin/blog/posts/${postId}`;
+    window.location.href = `/blog/posts/${postId}`;
   };
 
   return (
