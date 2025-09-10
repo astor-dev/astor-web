@@ -39,6 +39,7 @@ const postUrl = new URL(Astro.request.url).href;
 const postAuthor = post.data.author;
 const postPublishedTime = post.data.createdAt;
 const postModifiedTime = post.data.updatedAt;
+const remainingCount = latestPosts.length - 1;
 ---
 
 <Layout
@@ -77,5 +78,9 @@ const postModifiedTime = post.data.updatedAt;
       </div>
     </div>
   </article>
-  <BlogFooter slot="footer" latestPosts={latestPosts} />
+  <BlogFooter
+    slot="footer"
+    latestPosts={latestPosts}
+    remainingCount={remainingCount}
+  />
 </Layout>
