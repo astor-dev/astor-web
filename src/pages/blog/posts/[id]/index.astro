@@ -5,17 +5,15 @@ import {
   type PostRepository,
 } from "~modules/repositories/posts/PostRepository";
 import type { PostEntry, SeriesAndPosts } from "~common/types/post.type";
-import { remark } from "remark";
-import strip from "strip-markdown";
 import PostDetail from "~features/blog/layouts/post-detail.astro";
 
-// Props 타입을 명시적으로 정의
 interface Props {
   post: PostEntry;
   latestPosts: PostEntry[];
   series?: SeriesAndPosts;
   nextPost: PostEntry | null;
   prevPost: PostEntry | null;
+  remainingPostCount: number;
 }
 
 export async function getStaticPaths() {
@@ -27,6 +25,7 @@ export async function getStaticPaths() {
   });
   const posts = paginatedPosts.items;
   const latestPosts: PostEntry[] = posts.slice(0, 12);
+  const remainingPostCount = posts.length - latestPosts.length;
 
   // 날짜 기준으로 포스트 정렬 (최신순)
 
@@ -38,6 +37,7 @@ export async function getStaticPaths() {
       series: SeriesAndPosts | undefined;
       nextPost: PostEntry | null;
       prevPost: PostEntry | null;
+      remainingPostCount: number;
     };
   }[] = [];
   for (const post of posts) {
@@ -62,7 +62,14 @@ export async function getStaticPaths() {
 
     result.push({
       params: { id: post.id },
-      props: { post, latestPosts, series, nextPost, prevPost },
+      props: {
+        post,
+        latestPosts,
+        series,
+        nextPost,
+        prevPost,
+        remainingPostCount,
+      },
     });
   }
 
@@ -70,7 +77,8 @@ export async function getStaticPaths() {
 }
 
 // props 타입을 명시적으로 지정
-const { post, latestPosts, series, nextPost, prevPost } = Astro.props as Props;
+const { post, latestPosts, series, nextPost, prevPost, remainingPostCount } =
+  Astro.props;
 ---
 
 <PostDetail
@@ -80,4 +88,5 @@ const { post, latestPosts, series, nextPost, prevPost } = Astro.props as Props;
   nextPost={nextPost}
   prevPost={prevPost}
   series={series}
+  remainingPostCount={remainingPostCount}
 />

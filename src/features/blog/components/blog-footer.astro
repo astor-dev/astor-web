@@ -6,10 +6,10 @@ import { FaChevronDown } from "react-icons/fa";
 
 interface Props {
   latestPosts?: PostEntry[];
-  remainingCount?: number;
+  remainingPostCount?: number;
 }
 
-const { latestPosts = [], remainingCount = 0 } = Astro.props;
+const { latestPosts = [], remainingPostCount = 0 } = Astro.props;
 ---
 
 <footer class="relative overflow-hidden bg-skin-fill">
@@ -63,13 +63,13 @@ const { latestPosts = [], remainingCount = 0 } = Astro.props;
             ))}
           </div>
 
-          {remainingCount > 0 && (
+          {remainingPostCount > 0 && (
             <div class="mt-8 text-center">
               <a
                 href="/blog"
                 class="inline-flex items-center gap-2 text-sm text-black-base/70 transition-colors hover:text-black-accent"
               >
-                <span>더 많은 포스트 보기 ({remainingCount})</span>
+                <span>더 많은 포스트 보기 ({remainingPostCount})</span>
                 <FaChevronDown className="h-3 w-3" />
               </a>
             </div>

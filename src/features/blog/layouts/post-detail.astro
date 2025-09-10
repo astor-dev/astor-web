@@ -17,9 +17,11 @@ interface Props {
   prevPost: PostEntry | null;
   isAdmin: boolean;
   latestPosts: PostEntry[];
+  remainingPostCount: number;
 }
 
-const { post, series, nextPost, prevPost, latestPosts } = Astro.props;
+const { post, series, nextPost, prevPost, latestPosts, remainingPostCount } =
+  Astro.props;
 
 if (!post) {
   return Astro.redirect("/404");
@@ -39,7 +41,6 @@ const postUrl = new URL(Astro.request.url).href;
 const postAuthor = post.data.author;
 const postPublishedTime = post.data.createdAt;
 const postModifiedTime = post.data.updatedAt;
-const remainingCount = latestPosts.length - 1;
 ---
 
 <Layout
@@ -81,6 +82,6 @@ const remainingCount = latestPosts.length - 1;
   <BlogFooter
     slot="footer"
     latestPosts={latestPosts}
-    remainingCount={remainingCount}
+    remainingPostCount={remainingPostCount}
   />
 </Layout>
