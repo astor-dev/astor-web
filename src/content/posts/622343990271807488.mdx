@@ -1,0 +1,131 @@
+---
+id: "622343990271807488"
+author: "Astor"
+title: "protobuf 관리 전략 – submodule, Buf, Schema Registry"
+pinned: true
+draft: false
+tags:
+  - protobuf
+  - Buf
+  - git
+  - gRPC
+  - Kafka
+ogImage: "https://d2r0pavv0lsiqc.cloudfront.net/posts/images/ac3916a7-9fe2-4b6b-898e-229e7cd6ee85.webp"
+seriesId: "621199407852818435"
+createdAt: "2025-09-14 17:12:49"
+updatedAt: "2025-09-14 17:12:49"
+---
+
+IDL로 protobuf를 도입했을 때 필연적으로 따라오는 것은 protobuf에 대한 관리 문제입니다. IDL은 통신에서 사용되는 **공유 계약**으로 이용되어 서비스가 **동일한 IDL 스펙을 반드시 따라야**하게 만듭니다.
+
+특히 protobuf 같은 경우엔 각 값의 key 값이 따로 존재하지 않고 **field number**만 이진화되어 전송되기 때문에, 해석하는 측에서 직렬/역직렬화 과정에서 이를 올바르게 해석하려면 **양쪽 서비스가 동일한 proto 정의를 공유**하고 있어야 합니다.
+
+따라 protobuf를 올바르게 사용하고 관리하기 위해서는 **스키마 버전 관리와 호환성**, **공유 스키마 배포 방식**, **품질 규약** 등을 신경써야 합니다. 이를 돕고 실현시키는 방법들을 알아보겠습니다.
+
+## git submodule
+
+`git submodule` 기능을 활용하면, 하나의 repository 안에 특정 repository를 커밋 해시 단위로 고정해 둘 수 있습니다. Protobuf를 여러 서비스에서 공유할 때는 보통 **공용 proto repository**를 따로 만들고, 각 서비스 repository에서 이를 submodule로 불러오는 방식을 쓸 수 있습니다.
+
+- 공용 `proto-repo`를 따로 운영
+- 서비스 repo에서 `git submodule add <proto-repo-url> proto` 와 같이 연결
+- 특정 시점의 commit hash로 고정 → 서비스는 해당 시점의 proto 정의를 기준으로 동작
+- proto 변경 시: 공용 repo에 수정 → 각 서비스 repo에서 submodule update → 코드 재생성
+
+실제 예시를 보겠습니다.
+
+![](https://d2r0pavv0lsiqc.cloudfront.net/projects/images/c66bacde-1eae-42fc-b216-94a4d6f205e4.webp)
+
+proto 파일만 저장된 공용 repo를 하나 만들어 둡니다.
+
+<img height="413" width="441" src="https://d2r0pavv0lsiqc.cloudfront.net/projects/images/2b84fd2e-b6b7-4835-92a5-160ce0054dff.webp" />
+
+protobuf를 사용하는 서비스 측에서 사진과 같이 내부 모듈로 proto repository를 등록합니다.<img height="452" width="344" src="https://d2r0pavv0lsiqc.cloudfront.net/projects/images/c81d3442-7e7a-4e5b-95cd-e76f5f96428d.webp" /><img height="455" width="346" src="https://d2r0pavv0lsiqc.cloudfront.net/projects/images/d9396636-00e7-473e-9542-e6f7ec1114e9.webp" />
+
+각 언어에 맞는 언어로 코드를 생성 / 빌드하여 사용합니다.
+
+### 장점
+
+우선 Git만 있으면 동작하기 때문에 **초기 도입 장벽이 낮습**니다. Buf Schema Registry나 Confluent 같은 레지스트리를 추가로 도입하지 않아도 됩니다.
+
+proto 정의가 repo 자체에 포함되므로, 빌드/배포 파이프라인에서 별도 fetch 작업 없이 바로 `protoc`이나 `buf generate`로 코드 생성이 가능합니다.
+
+### 한계
+
+공용 proto repo가 업데이트되면, 이를 사용하는 모든 서비스 repo에서 수동으로 submodule update를 하고, 이에 맞는 코드를 생성해주어야 합니다.
+
+새로운 **field 추가나 breaking change를 막는 장치가 없기 때문**에, 규약 변경에 따른 오류 등을 감지하거나 대응하기 힘듭니다.
+
+## buf (buf.build)
+
+Git submodule만으로도 Protobuf를 공유할 수 있지만, **규모가 커지거나 여러 팀이 동시에 proto를 수정**하는 환경에서는 관리와 호환성 문제가 빠르게 복잡해집니다. 이때 Buf를 활용하면 **Proto 관리, 코드 생성, 품질 검증**을 통합적으로 처리할 수 있습니다.
+
+
+
+### Buf 란?
+
+Buf는 **Protobuf 생태계의 종합 관리 도구**입니다. CLI를 통해 다음과 같은 기능을 수행할 수 있습니다.
+
+- `buf lint` : proto 파일의 스타일과 규약을 검사
+- `buf breaking` : 변경으로 인해 호환성이 깨지는 부분을 자동 감지
+- `buf generate` : 여러 언어용 코드 생성 자동화
+- `buf push/pull` : Buf Schema Registry와 연동해 proto 모듈 배포 및 의존성 관리
+
+즉, Git Submodule로 proto를 공유하면서 생기는 **수동 update, breaking change 위험, 스타일 불일치** 문제를 어느 정도 해결해 줍니다.
+
+추가적으로, Gradle/Bazel 과의 통합을 제공해주어 java 생태계에선 위의 기능들을 CLI 호출 대신 빌드 시점에 함께 처리할 수 있습니다.
+
+### 활용 예시
+
+<img height="302" width="400" src="https://d2r0pavv0lsiqc.cloudfront.net/projects/images/b8cb8a7e-a762-4463-a123-78d27310785a.webp" />
+
+> buf.yaml
+
+린트나 breaking 등에 대한 설정을 통합적으로 할 수 있습니다.![](https://d2r0pavv0lsiqc.cloudfront.net/projects/images/ac98d41f-708d-44cd-9230-dc6befb30e76.webp)
+
+> buf.gen.yaml
+
+코드 생성에 활용할 의존성을 관리할 수 있습니다.
+
+![](https://d2r0pavv0lsiqc.cloudfront.net/projects/images/fce05eaa-de0b-4483-a180-f2ce9e6f9256.webp)
+
+> build.gradle.kts
+
+gradle과 통합하여 빌드시점에 코드 생성 및 린팅 등을 처리할 수 있습니다.
+
+### 한계 및 고려사항
+
+**Registry 기반 의존성 관리**는 별도 infra가 필요합니다. 따라 사용하지 않을 경우 proto 파일에 대한 버전 관리가 필요합니다.
+
+submodule과 혼합하여 사용할 경우, **Buf lint/Breaking + Submodule update**를 같이 관리하는 절차를 설계해야 합니다.
+
+## Schema Registry
+
+조직에서 Proto를 공유하고 관리할 때, **Submodule + Buf 조합**은 소규모 팀이나 초기 단계에서 충분히 유용합니다. 하지만 팀 수가 늘어나고 서비스 간 의존성이 복잡해지면, submodule 기반 방식은 **동기화와 버전 관리 부담**이 커집니다. 이때 Schema Registry를 도입하면 **중앙 집중식 관리**와 **자동화된 버전 관리**가 가능해집니다.
+
+### **Buf Schema Registry (BSR)**
+
+Buf Schema Registry는 Buf에서 호스팅하는 SaaS 플랫폼으로 클라우드에 proto 명세를 등록하고, 의존성을 관리, CI/CD 등을 도와주는 등 여러 기능을 제공합니다.
+
+![](https://d2r0pavv0lsiqc.cloudfront.net/projects/images/9ef533ba-4360-49e7-99ae-85106402e75b.webp)
+
+이런 식으로 repository를 생성하면, 원격 repository를 소스로 buf에서 코드를 build할 수 있습니다.
+
+다만, Protobuf 전용이기 때문에 Avro/JSON 혼합 환경엔 부적합합니다.
+
+실 서비스에 중요한 일부 주요 기능들 (인증 처리나 호스팅 등등)은 유료이기 때문에 비용 부담이 존재합니다.
+
+### Confluent Schema Registry
+
+Confluent Schema Registry는 Kafka 생태계에서 가장 널리 사용되는 Schema Registry입니다. Avro, Protobuf, JSON Schema를 지원하며, Kafka 메시지와 자연스럽게 연동되는 것이 큰 장점입니다. 만약 protobuf를 Kafka 용도로만 사용한다면 더 표준적인 선택이 될 수 있습니다.
+
+![../../../\_images/serdes-protobuf-c3-schema.png](https://docs.confluent.io/platform/current/_images/serdes-protobuf-c3-schema.png)
+
+다만, **Kafka 메시지 스키마 관리**를 목적으로 설계되었기에 **gRPC**를 목적으로 활용한다면 직접 적용이 불가능합니다. (둘다 사용한다면 Buf enterprise 활용 시 [BSR에 CSR을 통합](https://buf.build/docs/bsr/csr/)할 수 있습니다)
+
+## 규모에 따른 선택 ?
+
+protobuf를 처음 사용해볼 경우 일반적인 규약이나 코드 컨벤션 등을 잘 모르는 경우가 많습니다. 따라 린팅만을 위해서라도 Buf는 일단 사용하는 것을 추천드립니다.
+
+**소규모 팀 / 사이드 프로젝트**의 경우 Git submodule + Buf 조합과 함께 문서화만 잘 해둔다면 충분히 관리할 수 있습니다.
+
+**엔터프라이즈 급**에서는 Kafka만 사용한다면 Confluent Schema Registry를 Avro와 함께 사용하는게 더 표준적입니다. 다만 gRPC를 함께 사용하거나 사용을 고려하고 있는 단계라면 IDL은 하나인게 관리 부담이 적으니 CSR + protobuf 조합에 gRPC 활용시 BSR까지 도입을 고려하는게 좋아보입니다.
