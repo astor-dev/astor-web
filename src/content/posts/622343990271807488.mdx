@@ -13,7 +13,7 @@ tags:
 ogImage: "https://d2r0pavv0lsiqc.cloudfront.net/posts/images/ac3916a7-9fe2-4b6b-898e-229e7cd6ee85.webp"
 seriesId: "621199407852818435"
 createdAt: "2025-09-14 17:12:49"
-updatedAt: "2025-09-14 17:12:49"
+updatedAt: "2025-09-14 18:25:05"
 ---
 
 IDL로 protobuf를 도입했을 때 필연적으로 따라오는 것은 protobuf에 대한 관리 문제입니다. IDL은 통신에서 사용되는 **공유 계약**으로 이용되어 서비스가 **동일한 IDL 스펙을 반드시 따라야**하게 만듭니다.
@@ -58,8 +58,6 @@ proto 정의가 repo 자체에 포함되므로, 빌드/배포 파이프라인에
 ## buf (buf.build)
 
 Git submodule만으로도 Protobuf를 공유할 수 있지만, **규모가 커지거나 여러 팀이 동시에 proto를 수정**하는 환경에서는 관리와 호환성 문제가 빠르게 복잡해집니다. 이때 Buf를 활용하면 **Proto 관리, 코드 생성, 품질 검증**을 통합적으로 처리할 수 있습니다.
-
-
 
 ### Buf 란?
 
@@ -122,7 +120,7 @@ Confluent Schema Registry는 Kafka 생태계에서 가장 널리 사용되는 Sc
 
 다만, **Kafka 메시지 스키마 관리**를 목적으로 설계되었기에 **gRPC**를 목적으로 활용한다면 직접 적용이 불가능합니다. (둘다 사용한다면 Buf enterprise 활용 시 [BSR에 CSR을 통합](https://buf.build/docs/bsr/csr/)할 수 있습니다)
 
-## 규모에 따른 선택 ?
+## 규모에 따른 선택
 
 protobuf를 처음 사용해볼 경우 일반적인 규약이나 코드 컨벤션 등을 잘 모르는 경우가 많습니다. 따라 린팅만을 위해서라도 Buf는 일단 사용하는 것을 추천드립니다.
 
