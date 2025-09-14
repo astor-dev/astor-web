@@ -61,7 +61,7 @@ const PostPagination: React.FC<PaginationProps> = ({
   );
 
   return (
-    <nav className="mb-8 mt-8 flex justify-center">
+    <nav className="flex justify-center">
       <ul className="flex flex-wrap gap-1 md:gap-2">
         <li>
           {currentPage > 1 ? (

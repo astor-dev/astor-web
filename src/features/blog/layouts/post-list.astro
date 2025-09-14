@@ -69,8 +69,7 @@ const tags = await postRepository.getAllTags();
       </aside>
     </div>
   </div>
-  <!-- 페이지네이션을 화면 중앙에 배치 -->
-  <div class="mt-8 flex justify-center">
+  <div class="flex justify-center">
     <PostPagination
       currentPage={page}
       totalPages={Math.ceil(posts.total / POST_PER_PAGE)}

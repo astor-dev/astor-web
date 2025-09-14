@@ -19,7 +19,7 @@ const { title, image, currentPath } = Astro.props;
     client:load
   />
   <BlogCenterNav items={navItems} currentPath={currentPath} />
-  <article class="mx-auto mb-11 max-w-[1200px]">
+  <article class="mx-auto mb-12 max-w-[1200px] md:mb-20">
     <div class="h-11">
       <slot name="mobile-section" />
     </div>
