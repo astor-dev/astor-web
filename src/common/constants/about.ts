@@ -46,8 +46,8 @@ export const EDUCATIONS: EducationDetail[] = [
       maxScore: 4.5,
     },
     description: `
-영어학 전공자로서 촘스키의 '보편 문법'을 통해 <strong>인간 언어가 사고를 표현하는 추상화의 과정</strong>임을 배웠습니다.
-이러한 '추상화' 개념이 단지 <strong>자연어</strong>에 국한되지 않고 <strong>더 낮은 수준의 언어 체계에도 동일하다는 생각</strong>에 보다 근본적 추상화인 <strong>기계어</strong>를 공부했습니다.
+영어학 전공자로서 <strong>인간 언어가 사고를 표현하는 상징적 추상화의 과정</strong>임을 배웠습니다.
+이러한 '추상화' 개념이 단지 <strong>자연어</strong>에 국한되지 않고 <strong>더 기초적인 형식 언어 체계에도 이어진다</strong>고 보고 <strong>기계어</strong>를 공부했습니다.
 특히, <strong>소프트웨어</strong>가 이러한 추상화의 정점에서 실제적이고 구체적인 가치를 창출하는 점에 매료돼 전공하게 되었습니다.
 `,
     activitiesAndAchievements: [
