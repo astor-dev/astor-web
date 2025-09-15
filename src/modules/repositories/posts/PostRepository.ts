@@ -137,7 +137,14 @@ export class PostRepository {
           .total,
       })),
     );
-    return seriesAndCount.sort((a, b) => b.count - a.count);
+
+    return seriesAndCount.sort((a, b) => {
+      if (b.count !== a.count) {
+        return b.count - a.count;
+      }
+
+      return b.series.data.id.localeCompare(a.series.data.id);
+    });
   }
 
   public async getSeriesAndPosts(
