@@ -111,3 +111,31 @@ MSA 도입을 결정하고 학회에서 직접 뜻이 맞는 팀원들을 모집
 단순히 기술을 정하는 것을 넘어, 리크루팅 기간 동안 **이 기술들을 직접 코드로 구현하며 기술적 검증을 마치는 데 많은 시간을 쏟았습니다.** 나아가 팀원들이 합류하자마자 방황 없이 바로 개발에 집중할 수 있는 환경을 만드는 것이 최우선이라 생각했습니다. 이를 위해 **가이드 코드가 담긴 레포지토리를 만들고, 협업이 가능한 초기 인프라 환경을 구축했으며, 이 모든 과정을 상세한 온보딩 문서로 꼼꼼하게 정리**하는 등 모든 길을 미리 닦아두었습니다.
 
 이러한 노력의 결과물들을 통해 팀원들의 온보딩을 성공적으로 이끌었고, 시스템을 게이트웨이, 유저, 채팅 서비스 도메인으로 나누어 각자의 역할과 책임(R\&R)을 명확히 부여하며 백엔드 팀이 잘 협업할 수 있게 리딩하였습니다.
+
+### protobuf IDL - gRPC / Kafka 협업 구조 하위 레벨 설계
+
+API Gateway, User Service, Counseling Service 각각의 서비스에서 protobuf를 관리하고, 각 언어에 맞게 생성할 수 있도록 하였습니다.
+
+**Git Submodule**을 통해 버전 관리를, **Buf**를 통해 린팅, 포매팅, 의존성 관리를 수행하였습니다.
+
+![](https://d2r0pavv0lsiqc.cloudfront.net/projects/images/6d009e62-9497-4435-bb09-4b8f535ba017.webp)
+
+> Gradle 빌드와 통합된 Proto 코드 생성 및 모듈화
+
+API Gateway 서버는 **Gradle 멀티 모듈** 프로젝트 기능과 **Buf의 빌드 도구 통합**을 활용하여 Gradle 빌드 시점에 코드를 Java/Kotlin으로 생성하고 이를 하나의 모듈로 구성해 다른 adapter, api 단에서 사용하도록 하였습니다.
+
+![](https://d2r0pavv0lsiqc.cloudfront.net/projects/images/c4fcba55-22b8-4b58-8ad9-b497688afb95.webp)
+
+> 모듈러 모놀리틱 gRPC 서비스
+
+User Service, Counseling Service는 하나의 nest.js repository에서 **환경변수에 따라 모놀리틱 모드 혹은 각각의 서비스 모드로 부팅 방식을 정할** 수 있게 하였습니다.
+
+모놀리틱 모드로 부팅하여도 각각의 서비스 모듈은 **개별 컨슈머 그룹**으로 카프카에 조인되며 서로의 코드를 사용할 수 없도록 린팅을 응용하여 import 제한을 하였습니다.
+
+![](https://d2r0pavv0lsiqc.cloudfront.net/projects/images/e2a2d0bf-c746-4632-a5f5-b4a5541bbee7.webp)
+
+![](https://d2r0pavv0lsiqc.cloudfront.net/projects/images/49214c9c-2617-4d40-9f6b-6824594c0ca7.webp)
+
+> 바이너리로 직렬, 역직렬화된 kafka 메시지
+
+protobuf의 바이너리 직렬화 기능을 활용하여 카프카 메시지 페이로드를 바이너리 형태로 전송하고, 역직렬화하여 사용하도록 개발하였습니다.
