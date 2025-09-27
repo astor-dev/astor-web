@@ -1,0 +1,91 @@
+---
+id: "627067576173727744"
+author: "Astor"
+title: "커널부터 Socket.java까지 소켓 추상화 스택 분석"
+pinned: true
+draft: true
+tags:
+  - Java
+  - CS
+  - 네트워크
+  - Socket
+  - 프로그래밍 언어
+ogImage: "https://d2r0pavv0lsiqc.cloudfront.net/posts/images/266b54d1-be50-44fb-8f02-6fe8924dae28.webp"
+seriesId: "627035484337475587"
+createdAt: "2025-09-27 16:08:41"
+updatedAt: "2025-09-27 18:02:40"
+---
+
+서버 개발자의 본질은 네트워크를 통해 클라이언트의 요청을 수신하고 이에 대한 응답을 제공하는 애플리케이션을 만드는 데 있습니다. 오늘날에는 수많은 추상화 덕분에 개발자가 네트워크 설정을 직접 다루지 않아도, 단순히 Controller라는 개념을 사용해 직관적인 코드만으로 HTTP 서버를 띄울 수 있게 되었습니다.
+
+그러나 **추상화는 본질적으로 동작을 은닉하고 이를 고수준의 언어로 포장**합니다. 이 과정이 겹겹이 쌓이다 보니 서버, 통신, HTTP, 서블릿, 톰캣, 스프링, 스프링부트 등을 설명하는 글들은 오히려 **불필요한 첨언과 혼란스러운 용어**만 늘어나는 경우가 많습니다. 추상화 위에서 실질적 동작을 억지로 설명하려다보니 무슨 말을 하는 지 모르겠는 글들을 참 많이 봤습니다.
+
+이번 시리즈에서는 Socket API에서 출발해 Spring Web MVC의 Controller까지 단계를 차근차근 밟아 올라가며, 실제 동작 원리와 엄밀한 개념을 바텀업 방식으로 살펴보고자 합니다.
+
+## Socket API
+
+![](https://d2r0pavv0lsiqc.cloudfront.net/projects/images/843768f9-ff26-4c44-bfbc-9d389d57a83d.webp)소켓은 **프로세스간 통신**에서 사용되는 프로그래밍 인터페이스입니다.
+
+<img height="279" width="489" alt="TCP/IP, OSI 7 계층 구조 비교" src="https://velog.velcdn.com/images/moonblue/post/0ca8f354-9b9f-41fc-80cd-ec5730cd9e2d/image.png" />
+
+네트워크 공부하며 보셨을 계층형 네트워크 모델입니다. 4계층 아래의 로직은 OS 커널과 네트워크 인터페이스 카드(NIC) 단에서 이루어지죠.
+
+서버 개발자는 결국 서버 프로그램을 만듭니다. 이는 OS 입장에서는 프로세스죠. 서버에서 클라이언트와 통신을 하는 건 결국 **OS 입장에서는 프로세스간 통신**이 되겠습니다.
+
+이 통신을 제어하기 위해서는 유저 애플리케이션에서 네트워크 통신을 제어할 수 있어야 하고, 커널에서 처리하는 전송 계층 및 네트워크 스택을 유저 모드에서 사용할 수 있도록 **시스템 콜을 제공**합니다.
+
+다만 유저가 저수준에서 4계층 프로토콜을 제어하는 것은 과한 복잡성을 가져옵니다. 이를 쉽고 표준화된 인터페이스로 사용할 수 있도록, 버클리 대학교에서 1983년 4.2BSD(Berkeley Software Distribution) UNIX 운영체제에 **Socket API를 도입**합니다.
+
+![](https://d2r0pavv0lsiqc.cloudfront.net/projects/images/2422203f-a799-4bbc-abe0-495104728e50.webp)
+
+위와 같은 함수들로 유저는 C언어를 통해 4계층 통신을 제어할 수 있게 됩니다.
+
+### socket()
+
+![](https://d2r0pavv0lsiqc.cloudfront.net/projects/images/e667f4e5-97b1-4b16-8b30-b4306f6abcfc.webp)
+
+`int socket(int domain, int type, int protocol);` 을 호출하면 해당 엔드포인트에 대한 파일 디스크립터를 return 합니다. 소켓 API의 가장 특이한 점은 `프로세스간 통신 == 소켓` 을 파일 디스크립터로 추상화한 것입니다. 파일을 다룰 때 사용하던 `open` , `read`, `write`, `close` 등을 소켓 통신에서도 그대로 활용할 수 있게하여 애플리케이션 입장에서는 단지 **디스크립터에 바이트 스트림을 쓰는 동작만 수행**하면 됩니다.
+
+domain을 통해 3계층 주소 패밀리를 무엇을 쓸 건 지(IPv4 / IPv6), type으로 무엇을 주고 받을건지 (바이트 스트림, 데이터그램, raw), protocol을 통해 프로토콜 (TCP/UDP/RawIP)을 설정할 수 있습니다.
+
+### bind()
+
+![](https://d2r0pavv0lsiqc.cloudfront.net/projects/images/8161b2aa-fc67-4d23-8864-04052e0ce4c9.webp)
+
+bind는 소켓에 주소, **즉 IP주소와 포트를 바인딩**합니다. 소켓이 **어떤 로컬 IP와 포트를 사용할지를 운영체제에 알려주는 것**이라 볼 수 있습니다. 여기서 IP주소는 소유한 NIC의 IP입니다.
+
+**주로 서버 애플리케이션에서 사용**합니다.
+
+포트는 소켓에 바인딩됩니다. 따라 말하면 **모든 프로세스가 갖는 것은 아니다** 라는 것을 알 수 있습니다. 또한 **한 프로세스가 여러 소켓을 열어 여러 포트를 바인딩** 할 수도 있겠죠.
+
+### connect()
+
+![](https://d2r0pavv0lsiqc.cloudfront.net/projects/images/b2efa62b-dc71-47e2-b528-ced5834b6b96.webp)
+
+connect는 연결지향적인 통신을 할 때 커넥션을 만들어 주는 것으로, 즉 TCP 클라이언트에서 사용하는 함수로 3-way handshaking을 담당합니다. 연결을 맺지 않는 UDP 소켓에선 쓰지 않습니다.
+
+인자의 주소는 **연결을 맺을 대상의 주소**입니다. 로컬 주소는 제공하지 않습니다. 즉 OS가 알아서 부여합니다.
+
+![](https://d2r0pavv0lsiqc.cloudfront.net/projects/images/d404d6c3-d24a-4689-8bf0-79ad7be733c2.webp)
+
+TCP 통신 과정의 패킷을 까보면 클라이언트 측 주소는 54714과 같은 남는 포트 값을 OS가 채워주는 것을 확인할 수 있습니다.
+
+### listen()
+
+![](https://d2r0pavv0lsiqc.cloudfront.net/projects/images/caa2020b-d461-41d0-ad5a-647752a99c30.webp)listen은 클라이언트로 부터 소켓을 받을 준비를 합니다. 이때부터 클라이언트의 connect 요청을 받을 수 있게 되며 핸드셰이킹이 완료된 통신들은 Accept Queue에서 대기하며 accept 함수를 호출할 때 까지 대기합니다. backlog 값을 통해 이 큐의 값을 지정할 수 있습니다.
+
+### accept()
+
+![](https://d2r0pavv0lsiqc.cloudfront.net/projects/images/3f43e004-4838-455a-91d3-10869aace8db.webp)
+
+accept()는 **Accept Queue에서 대기 중인, 완전히 연결이 수립된 클라이언트를 꺼내오는 함수**입니다. 큐에서 연결을 성공적으로 꺼내오면, accept()는 통신을 위한 새로운 소켓을 생성하여 반환합니다.
+
+연결을 위해 대기하던 소켓과는 다른 소켓으로 같은 포트를 지니나 클라이언트 측 src\_ip, src\_port를 추가로 지니며 **특정 클라이언트와의 1:1 통신 채널**이라고 생각하시면 되겠습니다.
+
+### send / recv![](https://d2r0pavv0lsiqc.cloudfront.net/projects/images/ba988a72-6b84-45d0-8e49-2a96ae30e916.webp)
+
+데이터를 주고 받는 함수입니다.
+
+앞서 본 연결과 관련된 함수들과는 독립적입니다. send와 sendTo 혹은 recv와 recvFrom이 있는데 차이는 **주소 구조체를 받냐 안받냐** 입니다. 연결을 맺어 놓은 상태(TCP) 면 목적지 명시 없이 send/recv 호출을 통해 연결해둔 목적지로 통신이 가능합니다.
+
+UDP처럼 비연결성 소켓은 앞선 메서드 호출 없이 sendTo로 그냥 대상을 명시하고 데이터를 바로 보내고 받습니다.
