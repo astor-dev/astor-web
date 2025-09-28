@@ -13,7 +13,7 @@ tags:
 ogImage: "https://d2r0pavv0lsiqc.cloudfront.net/posts/images/84ad3d09-ff3b-4d7a-875c-2b4f5cd87a70.webp"
 seriesId: "627035484337475587"
 createdAt: "2025-09-27 16:08:41"
-updatedAt: "2025-09-29 01:34:32"
+updatedAt: "2025-09-29 01:48:18"
 ---
 
 서버 개발자의 본질은 네트워크를 통해 클라이언트의 요청을 수신하고 이에 대한 응답을 제공하는 애플리케이션을 만드는 데 있습니다. 오늘날에는 수많은 추상화 덕분에 개발자가 네트워크 설정을 직접 다루지 않아도, 단순히 Controller라는 개념을 사용해 직관적인 코드만으로 HTTP 서버를 띄울 수 있게 되었습니다.
@@ -141,7 +141,11 @@ TCP측 구현체로는 java.base 모듈 java.net 패키지에  `Socket` 클래�
 
 최종적으로 JNI를 통해 C++로 실제 SocketAPI의 `bind()`를 호출합니다. 로컬 포트가 없다면 여기서 시스템콜로 받아옵니다.
 
-JNI가 무엇인지나 Java에서 어떻게 시스템콜까지 닿는 지는 [Java의 new Thread()는 어떻게 OS 커널 스레드가 될까?](https://github.com/search?q=repo%3Aopenjdk%2Fjdk%20bind0\&type=code) 이 글에서 한번 자세히 다뤄서 생략하겠습니다.
+JNI가 무엇인지나 Java에서 어떻게 시스템콜까지 닿는 지는&#x20;
+
+[Java의 new Thread()는 어떻게 OS 커널 스레드가 될까?](https://astor-dev.com/blog/posts/625937597172027392/)
+
+이 글에서 한번 자세히 다뤄서 생략하겠습니다.
 
 <img height="665" width="593" src="https://d2r0pavv0lsiqc.cloudfront.net/projects/images/dd84015b-b44d-4b64-9ca1-3527a6ecb115.webp" />
 
