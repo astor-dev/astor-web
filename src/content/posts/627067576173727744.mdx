@@ -13,7 +13,7 @@ tags:
 ogImage: "https://d2r0pavv0lsiqc.cloudfront.net/posts/images/84ad3d09-ff3b-4d7a-875c-2b4f5cd87a70.webp"
 seriesId: "627035484337475587"
 createdAt: "2025-09-27 16:08:41"
-updatedAt: "2025-09-29 00:36:37"
+updatedAt: "2025-09-29 01:34:32"
 ---
 
 서버 개발자의 본질은 네트워크를 통해 클라이언트의 요청을 수신하고 이에 대한 응답을 제공하는 애플리케이션을 만드는 데 있습니다. 오늘날에는 수많은 추상화 덕분에 개발자가 네트워크 설정을 직접 다루지 않아도, 단순히 Controller라는 개념을 사용해 직관적인 코드만으로 HTTP 서버를 띄울 수 있게 되었습니다.
@@ -107,7 +107,7 @@ TCP측 구현체로는 java.base 모듈 java.net 패키지에  `Socket` 클래�
 
 자바 프로그래머가 실제로 사용하는 클래스에 해당되는 Socket class 입니다. 앞서 살펴보았던 Socket API 에서 서버 측에서만 사용하는 특수한 기능(`bind()`, `listen()`) 등의 기능이 차치된 클래스라고 보시면 좋겠습니다.
 
-주석을 보면 Impl class에서 실질적 동작을 처리하고 있다고 하는데, 이것은 Socket 클래스가 SocketImpl 인터페이스를 implements 한 것이 아니고 **브릿지(Bridge) 디자인 패턴**의 한 형태로 구현된 것입니다.
+주석을 보면 Impl class에서 실질적 동작을 처리하고 있다고 하는데, SocketImpl이 특정 인터페이스를 implements 해서 Impl이라고 네이밍 한 것은 아니고 **브릿지(Bridge) 디자인 패턴**의 한 형태로 구현된 것입니다.
 
 **Socket 클래스는 개발자에게 일관된 고수준 API를 제공하는 역할**만 하도록 깔끔하게 남습니다. **Impl 클래스에서 네이티브 소켓 기능과 직접 통신하는 저수준의 실제 작업** 맡아 처리합니다.&#x20;
 
