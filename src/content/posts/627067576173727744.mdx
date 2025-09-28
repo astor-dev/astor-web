@@ -13,7 +13,7 @@ tags:
 ogImage: "https://d2r0pavv0lsiqc.cloudfront.net/posts/images/84ad3d09-ff3b-4d7a-875c-2b4f5cd87a70.webp"
 seriesId: "627035484337475587"
 createdAt: "2025-09-27 16:08:41"
-updatedAt: "2025-09-29 00:33:56"
+updatedAt: "2025-09-29 00:36:37"
 ---
 
 서버 개발자의 본질은 네트워크를 통해 클라이언트의 요청을 수신하고 이에 대한 응답을 제공하는 애플리케이션을 만드는 데 있습니다. 오늘날에는 수많은 추상화 덕분에 개발자가 네트워크 설정을 직접 다루지 않아도, 단순히 Controller라는 개념을 사용해 직관적인 코드만으로 HTTP 서버를 띄울 수 있게 되었습니다.
@@ -159,7 +159,7 @@ JNI가 무엇인지나 Java에서 어떻게 시스템콜까지 닿는 지는 [Ja
 
 구현은 실제 fd 객체를 활용합니다. 스트림에서는 은닉된 쓰레드 파킹 관련 로직도 수행합니다.
 
-### TCP 사이드 Socket API의 클래스화
+### TCP 사이드 Socket API의 객체화
 
 이 소켓 클래스를 클라이언트 측 소켓이라고 설명하시기도 하던데 주로 클라이언트 측 소켓 통신 구현에 직접적으로 사용할 뿐이지 **클라이언트용 소켓은 엄밀히는 아닙**니다.
 
@@ -203,7 +203,7 @@ SocketAPI 명세와 동일하게 `accept()`호출 시 클라이언트와 새로�
 
 ![](https://d2r0pavv0lsiqc.cloudfront.net/projects/images/32240dbb-eb52-4165-b34c-d4c767b82643.webp)
 
-타고타고 가면 나오는 native accept의 Unix 쪽 구현체입니다. Socket API accept함수를 호출하고 있고, 앞서 살펴 봤듯 native socket api의 accept 함수 블로킹 함수여서 결국 자바에서 accept를 호출하면 현재 스레드를 블로킹합니다.
+타고타고 가면 나오는 native accept의 Unix 쪽 구현체입니다. Socket API accept함수를 호출하고 있고, 앞서 살펴 봤듯 **native socket api의 accept 함수가 블로킹 함수**여서 결국 **자바에서 accept를 호출하면 현재 스레드를 블로킹**합니다.
 
 ```java
 try (ServerSocket server = new ServerSocket(8080)) {
