@@ -265,7 +265,7 @@ export default function HomeHero() {
                 문제의 복잡함을 꿰뚫어보고,{" "}
                 <span className="font-bold">간결하고 명확한 구조</span>로
                 <br />
-                현실에 녹아들 수 있는 솔루션을 만듭니다.
+                현실에 녹아들 수 있는 서비스를 만듭니다.
               </p>
 
               <div className="animate-fadeIn mt-6 opacity-90 md:mt-2">
