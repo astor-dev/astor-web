@@ -12,7 +12,7 @@ tags:
 ogImage: "https://d2r0pavv0lsiqc.cloudfront.net/posts/images/6ff6ec96-30b7-4b0d-a983-ab40271f14d9.webp"
 seriesId: "627035484337475587"
 createdAt: "2025-09-29 19:15:13"
-updatedAt: "2025-09-30 17:21:15"
+updatedAt: "2025-09-30 17:23:47"
 ---
 
 시리즈의 지난 글에서 Socket API의 개념 및 명세, Java 언어에서 어떻게 객체화가 되었는 지, **실제 JDK 코드 내에서 어떻게 OS 별 시스템 콜을 호출**하는 지 까지 직접 소스코드를 분석해 보았습니다.
@@ -141,23 +141,39 @@ TCP 소켓 클라이언트는 **입력한 수에 해당하는 KB를 write**합�
 
 **10KB**를 전송해보겠습니다.
 
-![](https://d2r0pavv0lsiqc.cloudfront.net/projects/images/074d61db-6aef-4143-847f-96cff63f6976.webp)![](https://d2r0pavv0lsiqc.cloudfront.net/projects/images/e5acd1fe-3029-4227-9622-367ef69b1bb7.webp)
+![](https://d2r0pavv0lsiqc.cloudfront.net/projects/images/074d61db-6aef-4143-847f-96cff63f6976.webp)
+
+> 서버 측 로그
+
+![](https://d2r0pavv0lsiqc.cloudfront.net/projects/images/e5acd1fe-3029-4227-9622-367ef69b1bb7.webp)
+
+> 클라이언트 측 로그
 
 한번의 read로 클라이언트가 보낸 10240B를 잘 처리하고 있습니다. 제 OS의 버퍼 사이즈는 128KB라서 이를 넘지 않는 데이터는 한번에 읽는 모습입니다.
 
 **1000KB** 전송해보겠습니다.
 
-![](https://d2r0pavv0lsiqc.cloudfront.net/projects/images/7676fcae-784d-4653-a2b0-97cfa2350bad.webp)![](https://d2r0pavv0lsiqc.cloudfront.net/projects/images/cb93ac3c-c2f9-45eb-934c-bd1b57468a4c.webp)
+![](https://d2r0pavv0lsiqc.cloudfront.net/projects/images/7676fcae-784d-4653-a2b0-97cfa2350bad.webp)
+
+> 서버 측 로그
+
+![](https://d2r0pavv0lsiqc.cloudfront.net/projects/images/cb93ac3c-c2f9-45eb-934c-bd1b57468a4c.webp)
+
+> 클라이언트 측 로그
 
 클라이언트에서 1000KB에 해당하는 버퍼를 쓰려 하면 송신 버퍼 사이즈만큼 일단 소켓이 들어갑니다. 들어간 값은 커널에서 다시 MSS 사이즈만큼 세그먼트로 쪼개서 TCP 패킷을 보냅니다. 이게 반복되어서 송신이 이루어집니다.
 
 ![](https://d2r0pavv0lsiqc.cloudfront.net/projects/images/88c66ca1-9392-4008-9886-6b07e36d8a92.webp)
+
+> 클라이언트(59776) -> 서버(8080) 송신 패킷
 
 서버는 측은 MSS 단위로 들어온 패킷을 수신 버퍼에 적재합니다. `in.read(buffer)`가 호출 될 때 호출 시점의 버퍼 값을 읽습니다. 읽기 전에 버퍼 가득 차면 `Window = 0`이여서 클라이언트는 더이상 보내지 않고 서버의 ACK를 기다리며 유량조절을 합니다. TCP가 transmission control protocol인 이유죠.
 
 이후 코드 로직 상 `Hello, World!` 를 다시 write합니다. 그 후 다시 버퍼를 읽으며 비우겠죠?
 
 <img height="73" width="705" src="https://d2r0pavv0lsiqc.cloudfront.net/projects/images/4ef3ccf5-083f-474d-b352-7857cbe3acea.webp" />
+
+> 서버(8080) -> 클라이언트(59776) 응답 및 윈도우 업데이트
 
 그렇게 동작하는 모습입니다. Hello, World를 보낸 후 버퍼를 다시 읽으니 Win이 늘어난 모습입니다. 다시 클라이언트가 송신 패킷을 보내며 이 과정이 반복됩니다.
 
