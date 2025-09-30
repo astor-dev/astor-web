@@ -1,9 +1,9 @@
 ---
 id: "627810608397422592"
 author: "Astor"
-title: "Java TCP Server Socket으로 HTTP 프로토콜 서버 구현"
+title: "Java TCP Socket 구현 - 세그먼트, 송수신 버퍼, 바이트 스트림과 소켓 핸들링"
 pinned: false
-draft: true
+draft: false
 tags:
   - Java
   - Socket
@@ -12,13 +12,159 @@ tags:
 ogImage: "https://d2r0pavv0lsiqc.cloudfront.net/posts/images/470e866c-bb8a-48ee-883b-2d404bb56b98.webp"
 seriesId: "627035484337475587"
 createdAt: "2025-09-29 19:15:13"
-updatedAt: "2025-09-29 19:15:13"
+updatedAt: "2025-09-30 17:11:44"
 ---
 
 시리즈의 지난 글에서 Socket API의 개념 및 명세, Java 언어에서 어떻게 객체화가 되었는 지, **실제 JDK 코드 내에서 어떻게 OS 별 시스템 콜을 호출**하는 지 까지 직접 소스코드를 분석해 보았습니다.
 
-앞으로 **Spring MVC의 통신 단을 구성하고 있는 컴포넌트를 Socket.java 부터 BottomUp**으로 쫒아가보겠습니다.
+이번 글을 통해 **Socket API를 직접 사용하고, Java Application에서 TCP 통신을 구현**해보도록 하겠습니다. 소켓 자체에 대한 개념은 다루지 않으니 지난 글 먼저 보고 오시길 바랍니다.
 
-이번 글을 **Socket API를 통해 Java Application에서 HTTP 통신을 구현**해보도록 하겠습니다.
+포스팅에 활용된 전체 소스코드는 [astor-dev/bottom-up-java-web](https://github.com/astor-dev/bottom-up-java-web/tree/main/1-java-http-socket)의 1번 모듈에서 보실 수 있습니다.
 
-## Socket to HTTP
+## TCP Segment와 소켓 버퍼
+
+4계층 통신을 하면 우리가 직접 다루게 될 TCP의 데이터 형태를 살펴보겠습니다.
+
+TCP는 기본적으로 연결지향 통신입니다. 서버사이드에서 `accept` 로 커넥션을 맺으면 이후 양쪽이 자유롭게 바이트를 주고 받을 수 있습니다.
+
+Socket 클래스는 TCP 프로토콜 상위에서의 제어를 목적으로 합니다.
+
+실제 네트워크 계층의 전송 단위는 TCP **세그먼트**이지만, 애플리케이션은 이를 직접 다루지 않습니다. 커널 내부의 TCP 스택이 세그먼트를 수신하고 재조립한 뒤, **파일 디스크립터**로 식별되는 커널 소켓 구조의 **송수신 버퍼에 바이트 단위로 저장**합니다.
+
+Java 애플리케이션에서는 이 버퍼를 **InputStream/OutputStream 형태의 바이트 스트림**으로 접근하므로, 프로그래머는 세그먼트 단위가 아니라 버퍼에 올라간 연속된 바이트 스트림 단위로 데이터를 처리하게 됩니다.
+
+![](https://d2r0pavv0lsiqc.cloudfront.net/projects/images/d3762e0e-be69-4989-8ca0-077cfe973393.webp)![](https://d2r0pavv0lsiqc.cloudfront.net/projects/images/6e456a75-3d98-48ba-ad58-c74a56ff70b7.webp)
+
+수신/송신 버퍼 사이즈는 OS에 정의되어 있습니다. [BSD 명세](https://man.freebsd.org/cgi/man.cgi?query=tcp\&sektion=4)의 구현체는 버퍼 사이즈 오토 스케일링을 지원해서 recvspace보다 더 큰 버퍼를 동적으로 할당 할 수 있습니다.
+
+### 패킷 송수신 사례
+
+TCP 클라이언트에서 커넥션을 맺고 **9000KB의 바이트를 한번에 보냈을 때**를 살펴보며 전체 파이프라인을 보겠습니다.
+
+![](https://d2r0pavv0lsiqc.cloudfront.net/projects/images/450029db-1eea-41cb-862e-f05df387b544.webp)
+
+핸드쉐이크를 맺고 TCP 통신을 주고 받는 패킷입니다.
+
+![](https://d2r0pavv0lsiqc.cloudfront.net/projects/images/40e6f8f0-59d6-4151-9542-5addc6d80c3b.webp)
+
+MSS는 16344 바이트입니다. 이를 넘는 데이터를 송신하는 경우 쪼개서 보냅니다.
+
+![](https://d2r0pavv0lsiqc.cloudfront.net/projects/images/6fd6febd-0e29-4d3a-afc6-609a337e0171.webp)
+
+클라이언트에선 한번에 보낸 요청이지만 4계층 TCP 단에선 그런 개념이나 **식별 단위가 존재하지 않습**니다. 그저 여러 세그먼트로 분할되어 전송될 뿐이고, 이를 하나의 데이터셋이라고 정의하기 위해선 상위 계층의 프로토콜(HTTP)가 필요하겠습니다.
+
+혹은 순수 TCP로 통신을 하려면 **전문통신** 이라는 방식을 사용하기도 합니다. 마치 프로토콜 헤더 다루듯 데이터의 길이와 포맷을 고정시켜 의미를 부여합니다.
+
+![](https://d2r0pavv0lsiqc.cloudfront.net/projects/images/bcc1686f-c26e-4d73-bf4b-79cd12d62dd5.webp)
+
+세그먼트와 송수신 버퍼를 대강 도식화해보았습니다.
+
+세그먼트 패킷으 수신되면 데이터가 버퍼에 차곡차곡 적히고, 애플리케이션에서 읽을 때 비워지며 남은 버퍼의 크기를 을 window라는 값으로 광고합니다.
+
+![](https://d2r0pavv0lsiqc.cloudfront.net/projects/images/2a293731-49e7-41d4-a6b8-b98f63cde5e4.webp)
+
+자바 프로그램 서버 측에서 소켓을 읽으며 로그를 찍어보았습니다. `recv`로 한번에 읽을 사이즈는 애플리케이션 단에서 정할 수 있는데, 무한히 올릴 순 없고 수신버퍼가 cap입니다.
+
+## 구현
+
+아래와 같은 TCP 서버 애플리케이션을 구현해보겠습니다.
+
+1. 리스너 소켓을 열고 요청을 대기
+2. `accept()` 시 클라이언트와의 소켓을 처리할 스레드 제공
+3. 클라이언트의 패킷이 오면 이를 읽고 `Hello, World!` 패킷 전송
+
+### 리스너 소켓
+
+```java
+public class TcpServer implements Server {
+  @Override
+    public void start() throws IOException {
+        try {
+            serverSocket = new ServerSocket(port);
+            System.out.println("TCP Server started on port " + port);
+            while (!Thread.currentThread().isInterrupted()) {
+                Socket clientSocket = serverSocket.accept();
+                clientSockets.add(clientSocket);
+                executorService.submit(() -> handleClient(clientSocket));
+            }
+        } finally {
+            executorService.shutdown();
+        }
+    }
+}
+```
+
+ExecutorService로 스레드 풀을 관리하고, while 루프를 돌며 클라이언트 소켓을 `accept` 합니다. 지난 글에서 다뤘듯 `accept` 내부에서 호출하는 시스템콜이 **blocking** 입니다. 따라서 while을 돌려도 요청이 들어올 때 까지 `serverSocket.accept()` 에서 스레드는 block되겠죠?
+
+클라이언트로 부터 오는 모든 요청에 대한 처리는 결국 이 소켓을 탑니다. 단일 장애점이 될 수 있어서 이 소켓이 실행되는 스레드는 최대한 얇게 유지해야합니다.
+
+동시에 여러 커넥션이 들어왔을 때 아직 accept() 할 준비가 안되면 OS의 Accept Queue에서 대기합니다.
+
+### 소켓 핸들러
+
+```java
+public class HelloWorldTcpServiceHandler implements ServiceHandler {
+  public void handle(Socket socket) throws IOException {
+
+    @Override
+    public void handle(Socket socket) throws IOException {
+        try {
+            InputStream in = socket.getInputStream();
+            OutputStream out = socket.getOutputStream();
+
+            out.write("Hello, World!".getBytes());
+            byte[] buffer = new byte[1024 * 128];
+            int bytesRead;
+            while ((bytesRead = in.read(buffer)) != -1) {
+                String content = new String(buffer, 0, bytesRead);
+                System.out.println("[" + socket.getInetAddress().getHostAddress() +
+                        "(" + socket.getPort() + ")] " +
+                        content + " (" + bytesRead + " bytes)");
+                out.write("Hello, World!".getBytes());
+
+            }
+            socket.close();
+        }
+    }
+  }
+```
+
+`accept()`된 클라이언트와의 통신부 클래스입니다. Java에선 소켓의 파일 디스크립터 -> In/OutStream으로 연결 흐름을 추상화했었습니다. 따라 실제 통신은 스트림을 읽고 쓰는 과정으로 이루어집니다.
+
+코드를 보면 `bytesRead = in.read(buffer)` 로 바이트를 읽습니다. 여기서 읽어지는 단위는 읽는 시점에서 <u>**소켓 수신 버퍼에 들어있는 값**</u>입니다. `socket.setReceiveBufferSize()` 로 값을 직접 설정할 수 있으나 어차피 JVM에서 추가로 OS의 버퍼 사이즈 기반으로 cap을 하고 있습니다.
+
+이제 이 서버와 실제 통신을 해보겠습니다.
+
+### 실제 과정 통신 살펴보기
+
+TCP 소켓 클라이언트는 **입력한 수에 해당하는 KB를 write**합니다.
+
+**10KB**를 전송해보겠습니다.
+
+![](https://d2r0pavv0lsiqc.cloudfront.net/projects/images/074d61db-6aef-4143-847f-96cff63f6976.webp)![](https://d2r0pavv0lsiqc.cloudfront.net/projects/images/e5acd1fe-3029-4227-9622-367ef69b1bb7.webp)
+
+한번의 read로 클라이언트가 보낸 10240B를 잘 처리하고 있습니다. 제 OS의 버퍼 사이즈는 128KB라서 이를 넘지 않는 데이터는 한번에 읽는 모습입니다.
+
+**1000KB** 전송해보겠습니다.
+
+![](https://d2r0pavv0lsiqc.cloudfront.net/projects/images/7676fcae-784d-4653-a2b0-97cfa2350bad.webp)![](https://d2r0pavv0lsiqc.cloudfront.net/projects/images/cb93ac3c-c2f9-45eb-934c-bd1b57468a4c.webp)
+
+클라이언트에서 1000KB에 해당하는 버퍼를 쓰려 하면 송신 버퍼 사이즈만큼 일단 소켓이 들어갑니다. 들어간 값은 커널에서 다시 MSS 사이즈만큼 세그먼트로 쪼개서 TCP 패킷을 보냅니다. 이게 반복되어서 송신이 이루어집니다.
+
+![](https://d2r0pavv0lsiqc.cloudfront.net/projects/images/88c66ca1-9392-4008-9886-6b07e36d8a92.webp)
+
+서버는 측은 MSS 단위로 들어온 패킷을 수신 버퍼에 적재합니다. `in.read(buffer)`가 호출 될 때 호출 시점의 버퍼 값을 읽습니다. 읽기 전에 버퍼 가득 차면 `Window = 0`이여서 클라이언트는 더이상 보내지 않고 서버의 ACK를 기다리며 유량조절을 합니다. TCP가 transmission control protocol인 이유죠.
+
+이후 코드 로직 상 `Hello, World!` 를 다시 write합니다. 그 후 다시 버퍼를 읽으며 비우겠죠?
+
+<img height="73" width="705" src="https://d2r0pavv0lsiqc.cloudfront.net/projects/images/4ef3ccf5-083f-474d-b352-7857cbe3acea.webp" />
+
+그렇게 동작하는 모습입니다. Hello, World를 보낸 후 버퍼를 다시 읽으니 Win이 늘어난 모습입니다. 다시 클라이언트가 송신 패킷을 보내며 이 과정이 반복됩니다.
+
+***
+
+이번 글에서 TCP 소켓을 직접 구현하고 통신을 해보면, **TCP와 Socket만으로는 애플리케이션이 필요로 하는 의미 있는 데이터 단위를 직접 규정하기 어렵다**는 사실을 확인할 수 있습니다. Socket을 사용하면 단순히 버퍼 단위로 바이트를 전달하기 때문에, **애플리케이션 간 통신에서 요구되는 논리적 메시지 단위와는 맞지 않습**니다. 따라서 상위 레벨에서 규격화된 PDU를 정의하고 처리할 수 있는 프로토콜, 예를 들어 **HTTP와 같은 애플리케이션 계층 프로토콜**이 필요합니다.
+
+HTTP는 특별한 OS나 커널 기능을 요구하는 것이 아니라, **소켓으로 전달되는 데이터 위에 규격화된 형식과 의미를 부여하는 방식**으로 구현됩니다.
+
+다음 글에서는 HTTP 프로토콜 규격에 맞게 직접 Java 애플리케이션과 소켓 API 위에 구현해보겠습니다.
