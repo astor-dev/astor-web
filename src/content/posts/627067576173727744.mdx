@@ -13,7 +13,7 @@ tags:
 ogImage: "https://d2r0pavv0lsiqc.cloudfront.net/posts/images/84ad3d09-ff3b-4d7a-875c-2b4f5cd87a70.webp"
 seriesId: "627035484337475587"
 createdAt: "2025-09-27 16:08:41"
-updatedAt: "2025-09-29 01:48:18"
+updatedAt: "2025-09-30 17:22:59"
 ---
 
 서버 개발자의 본질은 네트워크를 통해 클라이언트의 요청을 수신하고 이에 대한 응답을 제공하는 애플리케이션을 만드는 데 있습니다. 오늘날에는 수많은 추상화 덕분에 개발자가 네트워크 설정을 직접 다루지 않아도, 단순히 Controller라는 개념을 사용해 직관적인 코드만으로 HTTP 서버를 띄울 수 있게 되었습니다.
@@ -121,23 +121,11 @@ TCP측 구현체로는 java.base 모듈 java.net 패키지에  `Socket` 클래�
 
 생성자를 통해 Remote 프로세스와 연결을 맺습니다. `connect()` 호출까지 생성 시 수행합니다.
 
-![](https://d2r0pavv0lsiqc.cloudfront.net/projects/images/1f4f681d-19cb-476b-ae1e-bbf72ea4f12c.webp)
-
-![](https://d2r0pavv0lsiqc.cloudfront.net/projects/images/9854e05c-5456-4c3d-98df-a4e701d0ce43.webp)
-
-![](https://d2r0pavv0lsiqc.cloudfront.net/projects/images/910ad0e3-6d4c-4e81-97ba-58984407e111.webp)
+![](https://d2r0pavv0lsiqc.cloudfront.net/projects/images/1f4f681d-19cb-476b-ae1e-bbf72ea4f12c.webp)![](https://d2r0pavv0lsiqc.cloudfront.net/projects/images/9854e05c-5456-4c3d-98df-a4e701d0ce43.webp)![](https://d2r0pavv0lsiqc.cloudfront.net/projects/images/910ad0e3-6d4c-4e81-97ba-58984407e111.webp)
 
 노출된 public 생성자를 보면 로컬 주소 바인드 로직도 보입니다. 여기서 주소에 해당하는 건 로컬 IP로 보통 NIC까지 세밀하게 제어를 하지 않으니 빈 값을 줍니다.
 
-![](https://d2r0pavv0lsiqc.cloudfront.net/projects/images/19bd1d2b-a1eb-4dfe-8e35-4b3df301ff4f.webp)
-
-![](https://d2r0pavv0lsiqc.cloudfront.net/projects/images/48f01cab-bc5b-4056-92d5-bf0c97018413.webp)
-
-![](https://d2r0pavv0lsiqc.cloudfront.net/projects/images/c9b34350-6779-4092-9f5f-cc2ee223ea44.webp)
-
-![](https://d2r0pavv0lsiqc.cloudfront.net/projects/images/c873c5e7-7d62-40cf-b0a5-579206b48216.webp)
-
-![](https://d2r0pavv0lsiqc.cloudfront.net/projects/images/cff253e9-cca1-41a3-90f9-16bb49d95a77.webp)
+![](https://d2r0pavv0lsiqc.cloudfront.net/projects/images/19bd1d2b-a1eb-4dfe-8e35-4b3df301ff4f.webp)![](https://d2r0pavv0lsiqc.cloudfront.net/projects/images/48f01cab-bc5b-4056-92d5-bf0c97018413.webp)![](https://d2r0pavv0lsiqc.cloudfront.net/projects/images/c9b34350-6779-4092-9f5f-cc2ee223ea44.webp)![](https://d2r0pavv0lsiqc.cloudfront.net/projects/images/c873c5e7-7d62-40cf-b0a5-579206b48216.webp)![](https://d2r0pavv0lsiqc.cloudfront.net/projects/images/cff253e9-cca1-41a3-90f9-16bb49d95a77.webp)
 
 최종적으로 JNI를 통해 C++로 실제 SocketAPI의 `bind()`를 호출합니다. 로컬 포트가 없다면 여기서 시스템콜로 받아옵니다.
 
@@ -157,9 +145,7 @@ JNI가 무엇인지나 Java에서 어떻게 시스템콜까지 닿는 지는&#x2
 
 대신 자바는 이 네트워크 연결을 **InputStream**과 **OutputStream**이라는 친숙한 객체로 감싸서 제공합니다.
 
-<img height="347" width="376" src="https://d2r0pavv0lsiqc.cloudfront.net/projects/images/a5f39ab8-cc03-405b-b4de-a2b0bcaa28dd.webp" />
-
-<img height="349" width="323" src="https://d2r0pavv0lsiqc.cloudfront.net/projects/images/48e15ea5-6288-458a-9605-efb256fc0cad.webp" />
+<img height="347" width="376" src="https://d2r0pavv0lsiqc.cloudfront.net/projects/images/a5f39ab8-cc03-405b-b4de-a2b0bcaa28dd.webp" /><img height="349" width="323" src="https://d2r0pavv0lsiqc.cloudfront.net/projects/images/48e15ea5-6288-458a-9605-efb256fc0cad.webp" />
 
 구현은 실제 fd 객체를 활용합니다. 스트림에서는 은닉된 쓰레드 파킹 관련 로직도 수행합니다.
 
