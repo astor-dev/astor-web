@@ -41,21 +41,7 @@ try {
 
     // 파비콘 추출 함수
     const extractFavicon = (html: string, baseUrl: string): string => {
-      const appleTouchIcon = html.match(
-        /<link[^>]*rel=["']apple-touch-icon["'][^>]*href=["']([^"']*)["']/i
-      );
-      if (appleTouchIcon && appleTouchIcon[1]) {
-        return new URL(appleTouchIcon[1], baseUrl).href;
-      }
-
-      const faviconMatch = html.match(
-        /<link[^>]*rel=["'](?:icon|shortcut icon)["'][^>]*href=["']([^"']*)["']/i
-      );
-      if (faviconMatch && faviconMatch[1]) {
-        return new URL(faviconMatch[1], baseUrl).href;
-      }
-
-      return `${new URL(baseUrl).origin}/favicon.ico`;
+        return `${new URL(baseUrl).origin}/favicon.ico`;
     };
 
     // URL을 절대 URL로 변환하는 함수
