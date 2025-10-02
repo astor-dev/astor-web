@@ -38,6 +38,7 @@ export const linkPreviewComponentDescriptors: JsxComponentDescriptor[] = [
     ],
     hasChildren: false, // 자식 요소 없음
     Editor: LinkPreviewEditor, // 커스텀 에디터 컴포넌트
+    defaultExport: true,
   },
 ];
 
