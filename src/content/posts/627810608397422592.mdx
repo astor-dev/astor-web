@@ -15,11 +15,18 @@ createdAt: "2025-09-29 19:15:13"
 updatedAt: "2025-09-30 17:23:47"
 ---
 
+import LinkPreview from "~common/components/card/link-preview.astro";
+
+
+
 시리즈의 지난 글에서 Socket API의 개념 및 명세, Java 언어에서 어떻게 객체화가 되었는 지, **실제 JDK 코드 내에서 어떻게 OS 별 시스템 콜을 호출**하는 지 까지 직접 소스코드를 분석해 보았습니다.
 
 이번 글을 통해 **Socket API를 직접 사용하고, Java Application에서 TCP 통신을 구현**해보도록 하겠습니다. 소켓 자체에 대한 개념은 다루지 않으니 지난 글 먼저 보고 오시길 바랍니다.
 
-포스팅에 활용된 전체 소스코드는 [astor-dev/bottom-up-java-web](https://github.com/astor-dev/bottom-up-java-web/tree/main/1-java-http-socket)의 1번 모듈에서 보실 수 있습니다.
+포스팅에 활용된 전체 소스코드는 아래 링크의 1번 모듈에서 보실 수 있습니다.
+
+<LinkPreview url = "https://github.com/astor-dev/bottom-up-java-web/tree/main/1-java-http-socket" />
+
 
 ## TCP Segment와 소켓 버퍼
 

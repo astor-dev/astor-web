@@ -33,6 +33,7 @@ import {
   linkPlugin,
   linkDialogPlugin,
   CreateLink,
+  jsxPlugin
 } from "@mdxeditor/editor";
 import "~common/styles/editor.css";
 import { IMAGE_SERVICE, ImageService } from "~modules/services/image.service";
@@ -42,6 +43,7 @@ import {
   IframeDirectiveDescriptor,
   iframePlugin,
 } from "~common/components/editors/plugins/iframe";
+import { LinkPreviewButton, linkPreviewComponentDescriptors } from "~common/components/editors/plugins/link-preview";
 
 interface EditorProps {
   markdown: string;
@@ -136,6 +138,7 @@ const Editor = forwardRef<EditorRefMethods, EditorProps>(
           <InsertTable />
           <IframeButton />
           <CreateLink />
+          <LinkPreviewButton />
           <ConditionalContents
             options={[
               {
@@ -201,6 +204,9 @@ const Editor = forwardRef<EditorRefMethods, EditorProps>(
           toolbarClassName:
             "mdx-editor-toolbar sticky top-0 z-50 bg-white border-b border-gray-200 backdrop-blur-sm shadow-sm",
           toolbarContents: renderToolbarContents,
+        }),
+        jsxPlugin({
+          jsxComponentDescriptors: linkPreviewComponentDescriptors,
         }),
       ],
       [imageUploadHandler, renderToolbarContents, markdown],
