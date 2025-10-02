@@ -12,9 +12,7 @@
   border-radius: 0.5rem;
   background: white;
   position: relative;
-  height: auto;
-  min-height: 800px;
-  max-height: 90vh;
+  height: 90vh;
   overflow: hidden;
   display: flex;
   flex-direction: column;
@@ -33,7 +31,6 @@
 }
 
 .mdxeditor .content-editable {
-  min-height: 500px;
   padding: 1rem;
   overflow-y: auto;
   flex: 1;
@@ -41,7 +38,7 @@
 
 .mdxeditor-root-contenteditable {
   overflow-y: auto !important;
-  max-height: calc(70vh - 60px);
+  max-height: calc(90vh - 60px);
 }
 
 .mdxeditor-image-upload-dialog {
