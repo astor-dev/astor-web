@@ -9,6 +9,7 @@ import PostHero from "~features/blog/components/posts/post-hero.astro";
 import PostNavigation from "~features/blog/components/posts/post-navigation.astro";
 import SeriesTable from "~features/blog/components/series/series-table.astro";
 import GiscusComments from "~features/giscus/components/giscus-comments";
+import { stripMdx } from "~common/utils/markdown.utils";
 
 interface Props {
   post: PostEntry;
@@ -41,12 +42,13 @@ const postUrl = new URL(Astro.request.url).href;
 const postAuthor = post.data.author;
 const postPublishedTime = post.data.createdAt;
 const postModifiedTime = post.data.updatedAt;
+const postDescription = (await stripMdx(post.body || "")).slice(0, 157)
 ---
 
 <Layout
   title={postTitle}
   image={postImage}
-  description={post.body?.slice(0, 157) || postTitle + " | 블로그 글"}
+  description={postDescription || postTitle + " | 블로그 글"}
   keywords={postKeywords}
   url={postUrl}
   type="article"
