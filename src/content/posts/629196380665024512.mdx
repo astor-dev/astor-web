@@ -1,7 +1,7 @@
 ---
 id: "629196380665024512"
 author: "Astor"
-title: "Java Socket 기반 HTTP 서버 구현, 서블릿(Servlet) API의 필요성과 개념"
+title: "Java TCP 소켓 HTTP 서버 구현, 서블릿(Servlet) API의 등장과 개념"
 pinned: true
 draft: false
 tags:
@@ -13,7 +13,7 @@ tags:
 ogImage: "https://d2r0pavv0lsiqc.cloudfront.net/posts/images/2286d8ae-befa-4c36-a73d-16216399c348.webp"
 seriesId: "627035484337475587"
 createdAt: "2025-10-03 13:42:09"
-updatedAt: "2025-10-03 15:28:50"
+updatedAt: "2025-10-03 15:35:10"
 ---
 
 import LinkPreview from '~common/components/card/link-preview.astro'
@@ -157,8 +157,9 @@ KeepAlive이면 서버측 헤더도 keep-alive를 붙여줍니다. flushBuffer�
 
 ## 한계 및 규격화된 명세의 필요성
 
-직접 원시적인 HTTP를 구현해보니 정말 너무나도 자유롭습니다.
-TCP 소켓 위에 데이터를 얹고, 응용 프로그램에서 그것을 해석하고 의미를 부여하면 그게 곧 HTTP가 됩니다. JDK 자체는 `Socket` 클래스까지만 지원하지, 그 위의 HTTP 같은 응용 프로토콜은 제공하지 않습니다.
+직접 원시적인 HTTP를 구현해보니, 지나치게 자유롭다는 생각이 듭니다.
+
+TCP 소켓 위에 데이터를 얹고, 응용 프로그램에서 그것을 해석하고 의미를 부여하는 식으로 HTTP 통신이 이루어 지게 됩니다.
 
 즉, **HTTP라는 프로토콜의 모든 규칙을 준수하고 처리하는 책임이 전적으로 애플리케이션 개발자가 지게**됩니다.
 
@@ -166,9 +167,9 @@ TCP 소켓 위에 데이터를 얹고, 응용 프로그램에서 그것을 해�
 - 헤더 파싱을 정확히 수행하는 사람도,
 - Content-Length나 Keep-Alive를 제대로 처리하는 사람도,
 
-순수한 Java 사이드에는 아무것도 없습니다. 직접 구현한 코드가 곧 사실상의 “규칙”이 되어버립니다. 작성한 코드가 **HTTP/1.1의 표준 명세를 엄밀하게 지킨다**고 보장할 수가 없습니다.
+순수한 Java JDK에는 아무것도 없습니다. 작성한 Java 코드가 **HTTP/1.1의 표준 명세를 엄밀하게 지킨다**고 보장할 수가 없습니다.
 
-그러면 **Java 애플리케이션에서 무언가가 이 응용 프로토콜을 올바르게 준수하도록 보장해야** 하지 않을까요? 바로 **규격화된 명세**가 필요해집니다.
+그러면 **Java 애플리케이션에서 무언가가 이 응용 프로토콜을 올바르게 준수하도록 보장해야** 하지 않을까요? 즉 **규격화된 명세**가 필요해집니다.
 
 가장 대표적인 것이 Eclipse 재단에서 관리하는 **Servlet API**입니다.
 
