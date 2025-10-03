@@ -13,7 +13,7 @@ tags:
 ogImage: "https://d2r0pavv0lsiqc.cloudfront.net/posts/images/2286d8ae-befa-4c36-a73d-16216399c348.webp"
 seriesId: "627035484337475587"
 createdAt: "2025-10-03 13:42:09"
-updatedAt: "2025-10-03 15:39:05"
+updatedAt: "2025-10-03 16:26:20"
 ---
 
 import LinkPreview from '~common/components/card/link-preview.astro'
@@ -163,11 +163,11 @@ TCP 소켓 위에 데이터를 얹고, 응용 프로그램에서 그것을 해�
 
 즉, **HTTP라는 프로토콜의 모든 규칙을 준수하고 처리하는 책임이 전적으로 애플리케이션 개발자가 지게**됩니다.
 
-- 요청 라인의 문법을 보장하는 사람도,
-- 헤더 파싱을 정확히 수행하는 사람도,
-- Content-Length나 Keep-Alive를 제대로 처리하는 사람도,
+- 요청 라인의 문법을 보장
+- 헤더 파싱을 정확히 수행
+- Content-Length나 Keep-Alive 등 규격에 맞는 헤더 처리
 
-순수한 Java JDK에는 아무것도 없습니다. 작성한 Java 코드가 **HTTP/1.1의 표준 명세를 엄밀하게 지킨다**고 보장할 수가 없습니다.
+위와 같은 동작은 순수한 Java JDK에는 없습니다. 따라서 바닐라 Java 만으로는 작성한 Java 코드가 **HTTP/1.1의 표준 명세를 엄밀하게 지킨다**고 보장할 수가 없습니다.
 
 그러면 **Java 애플리케이션에서 무언가가 이 응용 프로토콜을 올바르게 준수하도록 보장해야** 하지 않을까요? 즉 **규격화된 명세**가 필요해집니다.
 
