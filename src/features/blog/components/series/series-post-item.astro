@@ -1,8 +1,7 @@
 ---
 import type { PostEntry } from "~common/types/post.type";
 import dayjs from "dayjs";
-import { remark } from "remark";
-import strip from "strip-markdown";
+import { stripMdx } from "~common/utils/markdown.utils";
 
 interface Props {
   post: PostEntry;
@@ -11,11 +10,7 @@ interface Props {
 
 const { post, index } = Astro.props;
 
-const processedBody = await remark()
-  .use(strip)
-  .process(post.body)
-  .then(result => result.toString())
-  .catch(() => "");
+const processedBody = (await stripMdx(post.body || "")).slice(0, 300)
 ---
 
 <li class="my-4" data-created-at={post.data.createdAt}>

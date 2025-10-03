@@ -1,10 +1,9 @@
 import React, { useEffect, useRef, useState } from "react";
 import type { PostEntry } from "~common/types/post.type";
 
-import { remark } from "remark";
-import strip from "strip-markdown";
 import Skeleton from "react-loading-skeleton";
 import ImageWithSkeleton from "~common/components/skeletons/image-with-skeleton";
+import { stripMdx } from "~common/utils/markdown.utils";
 
 interface BlogPostCardProps extends PostEntry {
   className?: string;
@@ -18,16 +17,12 @@ const BlogPostCard: React.FC<BlogPostCardProps> = props => {
   const [titleLines, setTitleLines] = useState<1 | 2>(2); // 제목 줄 수 상태
   // If you want to "cut" (truncate) the body to about 500 characters after stripping markdown:
   useEffect(() => {
-    remark()
-      .use(strip)
-      .process(props.body)
-      .then(result => {
-        const plainText = result.toString();
-        const truncated =
-          plainText.length > 300 ? plainText.slice(0, 300) + "..." : plainText;
-        setBody(truncated);
-        setIsLoading(false);
-      });
+    stripMdx(props.body || "").then(result => {
+      const truncated =
+        result.length > 300 ? result.slice(0, 300) + "..." : result;
+      setBody(truncated);
+      setIsLoading(false);
+    });
   }, [props.body]);
 
   // 제목의 실제 줄 수를 계산하는 함수

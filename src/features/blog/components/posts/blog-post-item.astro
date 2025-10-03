@@ -2,11 +2,11 @@
 import { FaClock } from "react-icons/fa";
 import type { PostEntry } from "~common/types/post.type";
 import dayjs from "dayjs";
-import { remark } from "remark";
-import strip from "strip-markdown";
+
 
 import Tag from "~features/blog/components/tags/common-tag";
 import HoverableImage from "~common/components/images/hoverable-image";
+import { stripMdx } from "~common/utils/markdown.utils";
 
 interface Props extends PostEntry {
   className?: string;
@@ -19,11 +19,7 @@ const formatDate = (date: string) => {
 };
 
 // 마크다운 본문을 텍스트로 변환
-const processedBody = await remark()
-  .use(strip)
-  .process(body)
-  .then(result => result.toString().slice(0, 300))
-  .catch(() => "");
+const processedBody = (await stripMdx(body || "")).slice(0, 300)
 
 // 태그 개수 제한 설정
 const maxTagsToShow = 2;

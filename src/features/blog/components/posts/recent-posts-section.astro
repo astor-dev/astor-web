@@ -1,7 +1,7 @@
 ---
-import { remark } from "remark";
-import strip from "strip-markdown";
+
 import type { PostEntry } from "~common/types/post.type";
+import { stripMdx } from "~common/utils/markdown.utils";
 
 interface Props {
   recentPosts: PostEntry[];
@@ -9,17 +9,13 @@ interface Props {
 
 const { recentPosts } = Astro.props;
 
-// 마크다운 제거 함수
-const stripMarkdown = async (content: string): Promise<string> => {
-  const result = await remark().use(strip).process(content);
-  return result.toString();
-};
+
 
 // 각 포스트의 본문에서 마크다운 제거
 const postsWithCleanContent = await Promise.all(
   recentPosts.map(async post => ({
     ...post,
-    cleanBody: post.body ? (await stripMarkdown(post.body)).slice(0, 300) : "",
+    cleanBody: post.body ? (await stripMdx(post.body)).slice(0, 300) : "",
   })),
 );
 ---
