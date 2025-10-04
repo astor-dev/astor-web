@@ -1,4 +1,5 @@
 @import url("https://cdn.jsdelivr.net/npm/katex@0.15.2/dist/katex.min.css");
+@import url("https://fonts.googleapis.com/css2?family=Fira+Code:wght@300..700&display=swap");
 
 
 @font-face {
@@ -8,15 +9,14 @@
   font-style: normal;
   font-display: block;
 }
-
+/* 
 @font-face {
   font-family: "Fira Code";
-  src: url("../../assets/fonts/firaCode/FiraCodeVariableFontWght.ttf")
-    format("ttf");
-  font-weight: 100 900;
+  src: url("../../assets/fonts/firaCode/FiraCode-VariableFont_wght.ttf") format("ttf");
   font-style: normal;
-  font-display: block;
-}
+  font-weight: 300 700;
+  font-display: swap;
+} */
 
 @font-face {
   font-family: "Pretendard";
