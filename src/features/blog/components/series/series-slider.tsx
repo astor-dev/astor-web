@@ -23,7 +23,17 @@ interface SliderOptions {
     slidesPerView: number;
     spaceBetween: number;
   };
-  desktop: {
+  md: {
+    effect: "slide" | "fade";
+    slidesPerView: number;
+    spaceBetween: number;
+  };
+  lg: {
+    effect: "slide" | "fade";
+    slidesPerView: number;
+    spaceBetween: number;
+  };
+  xl: {
     effect: "slide" | "fade";
     slidesPerView: number;
     spaceBetween: number;
@@ -37,8 +47,7 @@ const SeriesSlider = (props: {
   const { seriesList, options } = props;
   const swiperRef = useRef<SwiperRef>(null);
   const [isLoading, setIsLoading] = useState(true);
-  const [isMobile, setIsMobile] = useState(false);
-  const [isSm, setIsSm] = useState(false);
+  const [breakpoint, setBreakpoint] = useState<"mobile" | "sm" | "md" | "lg" | "xl">("mobile");
 
   // 기본 옵션 설정
   const defaultOptions: SliderOptions = {
@@ -49,10 +58,20 @@ const SeriesSlider = (props: {
     },
     sm: {
       effect: "slide",
-      slidesPerView: 2.2,
+      slidesPerView: 1.6,
       spaceBetween: 30,
     },
-    desktop: {
+    md: {
+      effect: "slide",
+      slidesPerView: 2.4,
+      spaceBetween: 30,
+    },
+    lg: {
+      effect: "slide",
+      slidesPerView: 2.8,
+      spaceBetween: 30,
+    },
+    xl: {
       effect: "slide",
       slidesPerView: 3.2,
       spaceBetween: 30,
@@ -68,20 +87,26 @@ const SeriesSlider = (props: {
   }, [seriesList]);
 
   useEffect(() => {
-    const checkMobile = () => {
-      setIsMobile(window.innerWidth < 640);
+    const updateBreakpoint = () => {
+      const width = window.innerWidth;
+      if (width < 640) {
+        setBreakpoint("mobile");
+      } else if (width < 768) {
+        setBreakpoint("sm");
+      } else if (width < 1024) {
+        setBreakpoint("md");
+      } else if (width < 1280) {
+        setBreakpoint("lg");
+      } else {
+        setBreakpoint("xl");
+      }
     };
 
-    const checkSm = () => {
-      setIsSm(window.innerWidth < 1024);
-    };
-
-    checkMobile();
-    window.addEventListener("resize", checkMobile);
-    window.addEventListener("resize", checkSm);
+    updateBreakpoint();
+    window.addEventListener("resize", updateBreakpoint);
+    
     return () => {
-      window.removeEventListener("resize", checkMobile);
-      window.removeEventListener("resize", checkSm);
+      window.removeEventListener("resize", updateBreakpoint);
     };
   }, []);
 
@@ -97,11 +122,7 @@ const SeriesSlider = (props: {
     }
   };
 
-  const currentOptions = isMobile
-    ? sliderOptions.mobile
-    : isSm
-      ? sliderOptions.sm
-      : sliderOptions.desktop;
+  const currentOptions = sliderOptions[breakpoint];
 
   return (
     <div className="relative -mx-4 md:mx-0">

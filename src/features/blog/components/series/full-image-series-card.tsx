@@ -48,7 +48,7 @@ const SeriesCard: React.FC<SeriesCardProps> = ({ series }) => {
   };
 
   return (
-    <div className="group relative h-[250px] overflow-hidden bg-transparent md:h-[300px]">
+    <div className="group relative h-[250px] overflow-hidden bg-transparent sm:h-[300px]">
       <motion.a
         href={`/blog/series/${encodeURIComponent(series.series.data.id)}`}
         onPointerDown={handlePointerDown}
@@ -57,16 +57,16 @@ const SeriesCard: React.FC<SeriesCardProps> = ({ series }) => {
         className="relative block h-full w-full"
       >
         <ImageWithSkeleton
-          className="absolute inset-0 h-full w-full object-cover md:relative md:h-[200px]"
+          className="absolute inset-0 h-full w-full object-cover sm:relative sm:h-[200px]"
           src={imageUrl}
           alt={series.series.data.name}
           onLoadComplete={handleImageLoad}
         />
 
         {/* 반투명 오버레이와 카드 내용 - 모바일용 */}
-        <div className="absolute inset-0 md:hidden">
+        <div className="absolute inset-0 sm:hidden">
           {/* 하단 그라디언트만 덮도록 제한된 영역 */}
-          <div className="absolute bottom-0 left-0 right-0 h-1/2 bg-gradient-to-t from-black/80 via-black/50 to-transparent md:hidden" />
+          <div className="absolute bottom-0 left-0 right-0 h-1/2 bg-gradient-to-t from-black/80 via-black/50 to-transparent sm:hidden" />
 
           {/* 텍스트는 하단에 별도로 위치 */}
           <div className="text-white absolute bottom-0 left-0 right-0 p-4">
@@ -84,7 +84,7 @@ const SeriesCard: React.FC<SeriesCardProps> = ({ series }) => {
         </div>
 
         {/* 카드 내용 - 데스크톱용 */}
-        <div className="hidden py-4 md:block">
+        <div className="hidden py-4 sm:block">
           <h2 className="text-xl font-bold text-black-accent">
             {isLoading ? <Skeleton width="50%" /> : series.series.data.name}
           </h2>

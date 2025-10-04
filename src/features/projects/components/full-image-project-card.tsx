@@ -140,18 +140,18 @@ const FullImageProjectCard = (props: ProjectEntry) => {
       href={`/projects/${props.id}`}
       className="group relative block h-full w-full cursor-pointer overflow-hidden transition-all duration-300"
     >
-      <div className="grid h-full grid-cols-1 md:grid-cols-5">
+      <div className="grid h-full grid-cols-1 sm:grid-cols-5">
         {/* 이미지 섹션 - 3/5 비율 */}
-        <div className="relative h-full w-full overflow-hidden md:col-span-3">
-          <div className="absolute bottom-0 left-0 right-0 h-1/2 bg-gradient-to-t from-black/80 via-black/50 to-transparent md:hidden" />
+        <div className="relative h-full w-full overflow-hidden sm:col-span-3">
+          <div className="absolute bottom-0 left-0 right-0 h-1/2 bg-gradient-to-t from-black/80 via-black/50 to-transparent sm:hidden" />
           <ImageWithSkeleton
             src={imageUrl}
             alt={projectName}
-            className="h-full w-full object-cover transition-transform duration-300 md:group-hover:scale-105"
+            className="h-full w-full object-cover transition-transform duration-300 sm:group-hover:scale-105"
           />
 
           {/* 프로젝트 정보 (모바일에서만 표시) */}
-          <div className="absolute bottom-0 left-0 w-full p-4 md:hidden">
+          <div className="absolute bottom-0 left-0 w-full p-4 sm:hidden">
             <h3 className="line-clamp-1 text-xl font-bold text-white-base">
               {projectName}
             </h3>
@@ -161,19 +161,19 @@ const FullImageProjectCard = (props: ProjectEntry) => {
           </div>
 
           {/* 데스크톱 hover 시 오버레이 효과 */}
-          <div className="absolute inset-0 hidden bg-black/0 transition-all duration-300 md:block md:group-hover:bg-black/10" />
+          <div className="absolute inset-0 hidden bg-black/0 transition-all duration-300 sm:block sm:group-hover:bg-black/10" />
         </div>
 
         {/* 프로젝트 상세 정보 섹션 - 2/5 비율 (md 이상에서만 표시) */}
         <div
-          className="hidden h-full transition-all duration-300 md:col-span-2 md:block"
+          className="hidden h-full transition-all duration-300 sm:col-span-2 sm:block"
           style={{ backgroundColor: theme.background }}
         >
           <div className="flex h-full flex-col justify-between p-4">
             {/* 프로젝트 기본 정보 */}
             <div className="mb-3">
               <h3
-                className="line-clamp-1 text-lg font-bold leading-tight transition-colors duration-300 md:group-hover:opacity-90"
+                className="line-clamp-1 text-lg font-bold leading-tight transition-colors duration-300 sm:group-hover:opacity-90"
                 style={{ color: theme.primary }}
               >
                 {projectName}
@@ -201,7 +201,7 @@ const FullImageProjectCard = (props: ProjectEntry) => {
             {/* 클릭 유도 힌트 */}
             <div className="flex items-center justify-end">
               <div
-                className="flex items-center gap-1 rounded-md px-2 py-1 text-xs opacity-60 transition-all duration-300 md:group-hover:opacity-100"
+                className="flex items-center gap-1 rounded-md px-2 py-1 text-xs opacity-60 transition-all duration-300 sm:group-hover:opacity-100"
                 style={{
                   backgroundColor: theme.background,
                   color: theme.primary,
@@ -209,7 +209,7 @@ const FullImageProjectCard = (props: ProjectEntry) => {
               >
                 <span>상세보기</span>
                 <svg
-                  className="h-3 w-3 transition-transform duration-300 md:group-hover:translate-x-0.5"
+                  className="h-3 w-3 transition-transform duration-300 sm:group-hover:translate-x-0.5"
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"
