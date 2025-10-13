@@ -100,7 +100,7 @@ const postsWithCleanContent = await Promise.all(
     const newBadgeList = document.querySelectorAll(".new-badge");
     const currentTime = new Date();
     const oneMonthAgo = new Date(
-      currentTime.getTime() - 30 * 24 * 60 * 60 * 1000,
+      currentTime.getTime() - 14 * 24 * 60 * 60 * 1000,
     );
 
     newBadgeList.forEach(badge => {
