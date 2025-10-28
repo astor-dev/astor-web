@@ -13,7 +13,7 @@ tags:
 ogImage: "https://d2r0pavv0lsiqc.cloudfront.net/posts/images/84ad3d09-ff3b-4d7a-875c-2b4f5cd87a70.webp"
 seriesId: "627035484337475587"
 createdAt: "2025-09-27 16:08:41"
-updatedAt: "2025-10-03 03:16:06"
+updatedAt: "2025-10-28 14:10:27"
 ---
 
 import LinkPreview from '~common/components/card/link-preview.astro'
@@ -22,7 +22,11 @@ import LinkPreview from '~common/components/card/link-preview.astro'
 
 그러나 **추상화는 본질적으로 동작을 은닉하고 이를 고수준의 언어로 포장**합니다. 이 과정이 겹겹이 쌓이다 보니 서버, 통신, HTTP, 서블릿, 톰캣, 스프링, 스프링부트 등을 설명하는 글들은 오히려 **불필요한 첨언과 혼란스러운 용어**만 늘어나는 경우가 많습니다. 추상화 위에서 실질적 동작을 억지로 설명하려다보니 무슨 말을 하는 지 모르겠는 글들을 참 많이 봤습니다.
 
-이번 시리즈에서는 Socket API에서 출발해 Spring Web MVC의 Controller까지 단계를 차근차근 밟아 올라가며, 실제 동작 원리와 엄밀한 개념을 바텀업 방식으로 살펴보고자 합니다.
+이번 시리즈에서는 Socket API에서 출발해 ServletAPI, Tomcat, Spring Web MVC, Spring Boot까지 단계를 차근차근 밟아 올라가며, 실제 동작 원리와 엄밀한 개념을 바텀업 방식으로 살펴보고자 합니다.
+
+시리즈에 사용된 전체 소스코드는 아래에서 확인하실 수 있습니다.
+
+<LinkPreview url="https://github.com/astor-dev/bottom-up-java-web" />
 
 ## Socket API
 
