@@ -1,7 +1,7 @@
 ---
 id: "638243380781912064"
 author: "Astor"
-title: "Servlet Container 직접 만들기 - 컴포넌트 설계 및 주요 Servlet API implementation"
+title: "Servlet Container 직접 만들기 - Servlet API 구현 및 런타임 제공"
 pinned: true
 draft: false
 tags:
@@ -11,7 +11,7 @@ tags:
 ogImage: "https://d2r0pavv0lsiqc.cloudfront.net/posts/images/ccf49f65-4701-46d5-abea-cfadca2d87dd.webp"
 seriesId: "627035484337475587"
 createdAt: "2025-10-27 14:07:19"
-updatedAt: "2025-10-28 14:11:19"
+updatedAt: "2025-10-28 16:55:16"
 ---
 
 import LinkPreview from '~common/components/card/link-preview.astro'
@@ -262,8 +262,6 @@ servletContainer.addConnector(8081, Endpoint.Type.NIO, Protocol.HTTP11);
 servletContainer.start();
 ```
 
-
-
 ![](https://d2r0pavv0lsiqc.cloudfront.net/projects/images/83f4caab-7c3d-4e1c-a517-2fb4de394512.webp)![](https://d2r0pavv0lsiqc.cloudfront.net/projects/images/7e41f246-b3e4-434a-b37f-c1b43edb8c7b.webp)![](https://d2r0pavv0lsiqc.cloudfront.net/projects/images/995d3e30-9b36-4941-8e4f-7fec0ac50014.webp)
 
 > 각기 다른 네트워크 설정에서 서버 소켓이 열리며 비즈니스 로직을 재활용하는 모습
@@ -336,3 +334,219 @@ public class Context {
 ```
 
 Servlet API의 `ServletContext`, `ServletRegistration`, `HttpSession`, `Filter` 등의 인스턴스를 갖고 있으며 getter과 setter를 제공합니다.
+
+### HttpRequest / Response
+
+![](https://d2r0pavv0lsiqc.cloudfront.net/projects/images/a39c20c2-086c-47d4-95d8-02d6d94426d2.webp)
+
+흔히 서블릿 컨테이너 위에서 실행되는 웹 애플리케이션을 개발하다보면 HttpServletRequest / Response 인터페이스를 다루어보셨을 겁니다.
+
+&#x20;헤더, 쿠키, 세션 등등 다양한 HTTP 요청/응답 관련 메서드를 지원해주는데 **Servlet Container는 이 인터페이스에 대한 구현의 책임**을 지기에 실제 인터페이스의 `getRequestURI` , `parseCookies` 등을 서블릿 컨테이너의 런타임 로직에 맞추어 구현해주어야 합니다.
+
+제 구현을 보면 **net 계층에서 소켓 데이터 스트림**을 받고, 이를 **bridge 계층에서 프로토콜 명세에 맞게 헤더, uri, body 등을 파싱**합니다.
+
+HttpRequest Class에서 **bridge 계층에서 파싱한 Request**와 **Connector**이 지닌 **네트워크 커넥션 관련 정보**, **Context에 담긴 세션, ServletContext 등**을 활용해 ServletAPI의 메서드들을 구현했습니다.
+
+### FilterMapper
+
+인스턴스화된 필터를 가지고 있고 url에 걸맞는 필터를 찾아주는 클래스입니다.
+
+```java
+public class FilterMapper {
+
+    private final Map<String, ? extends FilterRegistration> filterRegistrations;
+    private final Map<String, Filter> instantiatedFilters;
+
+    public FilterMapper(ServletContext servletContext, Map<String, Filter> instantiatedFilters) {
+        this.filterRegistrations = servletContext.getFilterRegistrations();
+        this.instantiatedFilters = instantiatedFilters;
+    }
+
+    public List<Filter> getMatchingFilters(String requestURI) {
+      // 생략
+    }
+}
+```
+
+### ApplicationFilterChain
+
+필터체인의 구현체입니다.&#x20;
+
+`BridgeGateway` 에서 유저의 요청이 들어오면 URI에 필요한 필터들을 매퍼에서 가져오고, 필터체인의 doFilter를 호출했었습니다.
+
+```java
+public class BridgeGateway implements Gateway { 
+    public void service(Request request, Response response)  {
+  // 생략
+      List<Filter> filters = filterMapper.getMatchingFilters(requestURI);
+
+            ApplicationFilterChain filterChain = new ApplicationFilterChain(filters, servlet);
+            filterChain.doFilter(httpRequest, httpResponse);
+  // 생략
+    }
+}
+```
+
+여기서 필터체인은 **필터 리스트를 순서대로 호출**하고, **만약 모두 호출했으면 서블릿의 service를 호출**하게 합니다.
+
+```java
+
+public class ApplicationFilterChain implements FilterChain {
+
+    private final List<Filter> filters;
+    private final Servlet servlet;
+    private int currentFilterIndex = 0;
+
+    public ApplicationFilterChain(List<Filter> filters, Servlet servlet) {
+        this.filters = filters;
+        this.servlet = servlet;
+    }
+
+    @Override
+    public void doFilter(ServletRequest request, ServletResponse response) throws IOException, ServletException {
+        if (currentFilterIndex < filters.size()) {
+            Filter currentFilter = filters.get(currentFilterIndex++);
+            currentFilter.doFilter(request, response, this);
+        } else {
+            if (servlet != null) {
+                servlet.service(request, response);
+            }
+        }
+    }
+}
+
+```
+
+이를 통해 **servlet 서비스 이전에 공통으로 처리할 로직(필터)를 유저가 동적으로 등록**할 수 있게 됩니다.&#x20;
+
+활용을 보자면, ServletContainer 위에서 구동되는 환경인 가령 spring-webmvc를 예로 들면, MVC에선 `dispatcherServlet` 이라는 하나의 서블릿만 내장 톰캣(== 서블릿 컨테이너)에 등록하기에 Filter를 등록하면 dispatcherServlet의 service 로직 이전에 실행될 로직 체인을 만들 수 있죠.
+
+### Session
+
+ServletAPI에서 세션을 관리하기 위해 사용되는 **HttpSession 인터페이스**를, 서블릿 컨테이너 런타임에 맞게 작동하도록 직접 구현해주어야 합니다.
+
+또한 `HttpSessionListener` 같은 리스너가 세션의 라이프사이클에 개입할 수 있어야 하니 이벤트 관련 로직 및 등록된 리스너의 메서드를 실핸하는 로직도 넣어줍니다.
+
+```ts
+
+public class CustomHttpSession implements HttpSession {
+
+    private final String id;
+    private final long creationTime;
+    private long lastAccessedTime;
+    private final Context context;
+    private final SessionManager sessionManager;
+    private boolean isValid = true;
+    private boolean isNew = true;
+    private int maxInactiveInterval = 1800; // 30 minutes
+
+    private final Map<String, Object> attributes = new ConcurrentHashMap<>();
+  // 생략
+  
+    private void fireAttributeReplacedEvent(String name, Object value) {
+        HttpSessionBindingEvent event = new HttpSessionBindingEvent(this, name, value);
+        for (EventListener listener : context.getServletContext().getListeners()) {
+            if (listener instanceof HttpSessionAttributeListener) {
+                ((HttpSessionAttributeListener) listener).attributeReplaced(event);
+            }
+        }
+    }
+
+    private void fireSessionDestroyedEvent() {
+        HttpSessionEvent event = new HttpSessionEvent(this);
+        for (EventListener listener : context.getServletContext().getListeners()) {
+            if (listener instanceof HttpSessionListener) {
+                ((HttpSessionListener) listener).sessionDestroyed(event);
+            }
+        }
+    }
+  // 생략
+}
+```
+
+### ServletContainer
+
+이렇게 만든 모든 컴포넌트를 조립해야합니다. 저희는 최초 요구사항에서 독립 실행되는 애플리케이션으로서의 서블릿 컨테이너 대신, **다른 WebApplication에서 내장되어** 웹서버 역할을 할 수 있도록 구현하기로 요구사항에서 정의해두었으니 진입점을 만들어야합니다.
+
+![](https://d2r0pavv0lsiqc.cloudfront.net/projects/images/fc73543e-8b24-4d0f-9fe1-aba2f8469586.webp)
+
+다시 다이어그램을 보면 사용자측 WAS에서 **connector**, **filter**, **listener**과 **servlet**을 등록할 수 있었죠. 이를 등록하고 `start()`, `close()` 를 할 수 있는 서블릿 컨테이너 클래스를 만들겠습니다.
+
+```java
+
+public class ServletContainer implements AutoCloseable {
+
+    private final Context context;
+    private final List<Connector> connectors = new ArrayList<>();
+    private final List<ConnectorConfig> connectorConfigs = new ArrayList<>();
+    private CountDownLatch shutdownLatch;
+
+    public ServletContainer() {
+        this.context = new Context();
+    }
+
+    public void addConnector(int port, Endpoint.Type endpointType, Protocol protocol) {
+        connectorConfigs.add(new ConnectorConfig(port, endpointType, protocol));
+    }
+
+    public void addListener(Class<? extends EventListener> listenerClass) {
+        this.context.addListener(listenerClass);
+    }
+
+    public void addServlet(String servletName, Class<? extends Servlet> servletClass, String... urlPatterns) {
+        this.context.addServlet(servletName, servletClass, urlPatterns);
+    }
+
+    public void addFilter(String filterName, Class<? extends Filter> filterClass, String... urlPatterns) {
+        this.context.addFilter(filterName, filterClass, urlPatterns);
+    }
+
+    public void start() {
+        context.init();
+        fireContextInitializedEvent();
+        shutdownLatch = new CountDownLatch(1);
+        for (ConnectorConfig config : connectorConfigs) {
+            Connector connector = new Connector(config.protocol, context, config.port, config.endpointType);
+            connectors.add(connector);
+        }
+        try {
+            shutdownLatch.await();
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            System.err.println("Server interrupted");
+        }
+    }
+  // 생략
+}
+```
+
+실제 springboot의 web쪽에서 사용하는 내장 톰캣도 이와 유사하게 구현됩니다. `new Tomcat()`으로 서블릿 컨테이너를 만들고 서블릿을 등록하고 시작하는 것을 Java 애플리케이션 안에서 할 수 있게 해두었습니다.
+
+```java
+public class WebApplication {
+    public static void main(String[] args) {
+        try (ServletContainer servletContainer = new ServletContainer()) {
+            servletContainer.addListener(ContextListener.class);
+            servletContainer.addFilter("LoggingFilter", LoggingFilter.class, "/*");
+            servletContainer.addServlet("HelloWorldServlet", HelloWorldServlet.class, "/hello");
+            servletContainer.addConnector(8080, Endpoint.Type.BIO, Protocol.HTTP11);
+            servletContainer.addConnector(8081, Endpoint.Type.NIO, Protocol.HTTP11);
+            servletContainer.start();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+}
+```
+
+이제 사용자 측인 WebApplication에서 직접 구현한 서블릿 컨테이너 모듈을 활용해서 Web Server를 구동할 수 있습니다. WebApplication은 저수준의 네트워크 프로그래밍도, 프로토콜 처리도, 라이프사이클 관리도 신경쓸 필요 없이 **Servlet을 통해 비즈니스 로직을 개발**하고, **Filter와 Listener를 통해 횡단관심사나 공통 로직**도 넣을 수 있습니다.
+
+## 마무리
+
+Servlet API의 요구 사항에 맞춰 실제 동작을 구현해보았습니다. 요구사항을 하나씩 코드로 녹여내 보면서 **서블릿API가 요청 매핑부터 라이프사이클 관리, 세션 처리, 필터 체인까지 어떻게 실제로 동작**하는지 **추상적 개념이 아니라 구체적인 흐름으로 환원**해서 보았습니다.
+
+Servlet API가 무엇인지, 서블릿 컨테이너가 무엇인지 밑바닥부터 개발하며 보았기에 이제 **내가 사용하는 웹 프레임워크에서 서블릿 컨테이너가 무엇을 처리하는 지**에 대해선 확실히 이해할 수 있을것입니다.
+
+Tomcat이나 Jetty 같은 상용 구현체도 훨씬 기능이 많고 복잡하긴 하지만 이와 비슷한 구조로 되어 있습니다. 가령 **tomcat.util.net 이 제 net 컴포넌트와 유사**하고 **coyote가 제 bridge와 유사**하며 **catalina가 container와 유사**합니다.
+
+다음 글에서는 대표적인 상용 Servlet Container인 Tomcat의 구현을 뜯어보도록 하겠습니다.
