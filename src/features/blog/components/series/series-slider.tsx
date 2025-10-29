@@ -48,13 +48,14 @@ const SeriesSlider = (props: {
   const swiperRef = useRef<SwiperRef>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [breakpoint, setBreakpoint] = useState<"mobile" | "sm" | "md" | "lg" | "xl">("mobile");
+  const [currentSlide, setCurrentSlide] = useState(1);
 
   // 기본 옵션 설정
   const defaultOptions: SliderOptions = {
     mobile: {
       effect: "fade",
       slidesPerView: 1,
-      spaceBetween: 0,
+      spaceBetween: 30,
     },
     sm: {
       effect: "slide",
@@ -125,7 +126,7 @@ const SeriesSlider = (props: {
   const currentOptions = sliderOptions[breakpoint];
 
   return (
-    <div className="relative -mx-4 md:mx-0">
+    <div className="relative">
       {isLoading ? (
         <div className="grid h-[300px] w-full grid-cols-3 gap-4"></div>
       ) : (
@@ -155,7 +156,9 @@ const SeriesSlider = (props: {
                 : undefined
             }
             centeredSlidesBounds={true}
-            pagination={{ clickable: true }}
+            onSlideChange={(swiper) => {
+              setCurrentSlide(swiper.realIndex + 1);
+            }}
             className="h-full w-full overflow-hidden"
           >
             {seriesList.map((series, index) => (
@@ -166,6 +169,12 @@ const SeriesSlider = (props: {
           </Swiper>
 
           <SliderNavButtons onPrevClick={handlePrev} onNextClick={handleNext} />
+          
+          {/* 슬라이드 카운터 */}
+          <div className="absolute right-2 top-2 z-10 min-w-[50px] rounded-full bg-black/60 py-2 text-center text-xs text-white-accent tabular-nums sm:hidden">
+            {currentSlide} / {seriesList.length}
+          </div>
+          
         </div>
       )}
     </div>

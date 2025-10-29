@@ -48,7 +48,7 @@ const SeriesCard: React.FC<SeriesCardProps> = ({ series }) => {
   };
 
   return (
-    <div className="group relative h-[250px] overflow-hidden bg-transparent sm:h-[300px]">
+    <div className="group relative h-[300px] overflow-hidden bg-transparent">
       <motion.a
         href={`/blog/series/${encodeURIComponent(series.series.data.id)}`}
         onPointerDown={handlePointerDown}
@@ -57,35 +57,14 @@ const SeriesCard: React.FC<SeriesCardProps> = ({ series }) => {
         className="relative block h-full w-full"
       >
         <ImageWithSkeleton
-          className="absolute inset-0 h-full w-full object-cover sm:relative sm:h-[200px]"
+          className="inset-0 w-full object-cover relative h-[200px]"
           src={imageUrl}
           alt={series.series.data.name}
           onLoadComplete={handleImageLoad}
         />
 
-        {/* 반투명 오버레이와 카드 내용 - 모바일용 */}
-        <div className="absolute inset-0 sm:hidden">
-          {/* 하단 그라디언트만 덮도록 제한된 영역 */}
-          <div className="absolute bottom-0 left-0 right-0 h-1/2 bg-gradient-to-t from-black/80 via-black/50 to-transparent sm:hidden" />
-
-          {/* 텍스트는 하단에 별도로 위치 */}
-          <div className="text-white absolute bottom-0 left-0 right-0 p-4">
-            <h2 className="text-xl font-bold text-white-base">
-              {isLoading ? <Skeleton width="50%" /> : series.series.data.name}
-            </h2>
-            <p className="mt-1 text-sm text-white-base/80">
-              {isLoading ? (
-                <Skeleton width="40%" />
-              ) : (
-                `${series.count}개의 포스트`
-              )}
-            </p>
-          </div>
-        </div>
-
-        {/* 카드 내용 - 데스크톱용 */}
-        <div className="hidden py-4 sm:block">
-          <h2 className="text-xl font-bold text-black-accent">
+        <div className="py-4">
+          <h2 className="text-xl font-bold text-black-accent line-clamp-1 min-h-[28px]">
             {isLoading ? <Skeleton width="50%" /> : series.series.data.name}
           </h2>
           <p className="mt-1 text-sm text-black-base">
