@@ -6,7 +6,7 @@ import { ProjectTypeEnum, ProjectRoleEnum } from "~common/types/project.type";
 import { stackTypeEnum } from "~common/types/stack.type";
 
 const projects = defineCollection({
-  loader: glob({ base: "./src/content/projects", pattern: "**/*.{md,mdx}" }),
+  loader: glob({ base: "./src/content/projects", pattern: "*.{md,mdx}" }),
   schema: z.object({
     projectType: ProjectTypeEnum,
     imageUrl: z.string(),
@@ -30,7 +30,7 @@ const projects = defineCollection({
 
 const posts = defineCollection({
   type: "content_layer",
-  loader: glob({ base: "./src/content/posts", pattern: "**/*.{md,mdx}" }),
+  loader: glob({ base: "./src/content/posts", pattern: "*.{md,mdx}" }),
   schema: () =>
     z.object({
       id: z.string(),
