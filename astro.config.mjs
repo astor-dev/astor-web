@@ -97,7 +97,7 @@ export default defineConfig({
       remarkPlugins: [remarkMath, remarkDirective, remarkIframeDirective],
       rehypePlugins: [rehypeUnwrapList, rehypeKatex],
       shikiConfig: {
-        theme: "dracula",
+        theme: "one-dark-pro",
         wrap: true,
       },
     }),
