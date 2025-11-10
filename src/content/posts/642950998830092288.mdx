@@ -8,11 +8,12 @@ tags:
   - CS
   - Linguistics
   - Thread
-ogImage: "https://d2r0pavv0lsiqc.cloudfront.net/posts/images/2eaf1708-cf4e-414e-bbad-b0d0af40afb1.webp"
+ogImage: "https://d2r0pavv0lsiqc.cloudfront.net/posts/images/d562c662-0f69-45ad-bf9b-58de3e515ccd.webp"
 seriesId: ""
 createdAt: "2025-11-10 13:12:01"
-updatedAt: "2025-11-10 13:57:43"
+updatedAt: "2025-11-10 17:32:03"
 ---
+
 
 import LinkPreview from '~common/components/card/link-preview.astro'
 
@@ -48,7 +49,7 @@ Blocking Function에서 Blocking은 block이라는 서술어의 분사형용사�
 block이라는 서술어는 **2-place-predicate** 또는 **3-place-predicate**로, 각각 **2개 또는 3개의 논항(argument)** 이 필요합니다.  
 의미론의 **semantic roles**(theta role)에 따르면,  
 
-$$
+```math
 \begin{aligned}
 &\text{2-place:}\quad block(x, y) \\
 &\quad x = \text{agent (행동을 의도적으로 수행하거나 원인이 되는 실체)} \\
@@ -57,14 +58,14 @@ $$
 &\text{3-place:}\quad block(x, y, z) \\
 &\quad z = \text{Source 또는 Path (대상이 차단되는 경로나 막고 있는 장소)}
 \end{aligned}
-$$
+```
 
 즉, block이라는 동사는 최소한 **Agent(행위자)** 와 **Theme / Patient(피행위자)** 라는 핵심적인 의미역을 요구합니다.
 
 그런데 `blocking function`이라는 용어는 표면적으로 오직 **1 argument**(즉, function 그 자체)만 명시합니다. 즉,
-$$
+```math
 \text{blocking function} \implies block(\text{function}, \ \ ?)
-$$
+```
 여기서 **누구를 blocking 하는가(theme/patient)** 에 대한 논항이 **생략**되어 있으므로, 결국 의미론적으로 $$block(agent, \ ?)$$와 같이 **불완전한 서술어 구조**가 됩니다.  
 이 생략된 자리는 문맥(pragmatics)에 따라 caller, thread, event loop 등으로 **다의적 해석**이 발생할 수밖에 없고,  
 바로 이 불완전성 때문에 "blocking function" 용어가 영원히 혼동될 수밖에 없는 **참조 애매성**을 가집니다.
@@ -80,18 +81,22 @@ $$
 
 #### Node.js 공식 문서
 <LinkPreview url="https://nodejs.org/en/learn/asynchronous-work/overview-of-blocking-vs-non-blocking" />
-> “blocking methods execute synchronously and **block the event loop until the operation completes**” → theme = event loop (caller의 흐름)  
+> “blocking methods execute synchronously and **block the event loop until the operation completes**” → theme = **event loop**
 
 > In Node.js, JavaScript that exhibits poor performance due to being **CPU intensive** rather than waiting on a non-JavaScript operation, such as I/O, **isn't** typically referred to as **blocking**.
 
 특히 위에서 이야기 했던 CPU Intensive한 작업은 Node.js 컨텍스트에 한해서 Blocking 작업으로 정의되지 않음을 명시적으로 밝힙니다.
 #### GeeksforGeeks
 <LinkPreview url="https://www.geeksforgeeks.org/blocking-and-non-blocking-in-node-js/" />
-> “Blocking code **stops everything else** until it finishes” → theme = caller’s control flow  
+> “Blocking code **stops everything else** until it finishes” → theme = **caller’s control flow**
 
-#### VEX Forum
-<LinkPreview url="https://www.vexforum.com/t/how-to-create-blocking-non-blocking-functions/77907" />
-> “A blocking function **blocks the currently running thread**” → theme = calling thread  
+#### Kotlin 공식 문서 (Coroutines API)
+<LinkPreview url="https://kotlinlang.org/api/kotlinx.coroutines/kotlinx-coroutines-core/kotlinx.coroutines/run-blocking.html" />
+> “runBlocking blocks the current thread until its completion.” -> theme = **thread**
+
+공식문서에서 blocking이라는 표현을 쓸 땐 함께 엄밀히 무엇을 블로킹하는 것인 지 자체를 명시적으로 정의하고 있습니다.
+
+--- 
 
 즉, `blocking function`은 화용적 맥락에 의해 뜻이 정의가 되기 때문에 맥락없이 무엇이 blocking인 지를 논하는 것 자체가 무용입니다.
 
@@ -102,3 +107,7 @@ $$
 - 화용론: theme이 누구인 지에 대한 맥락적 내포(implicature)
 
 를 통해 언어학적으로 풀이할 수 있습니다. 즉 맥락에 따라 다의성을 지니기에 맥락 없이 엄밀한 정의 자체를 내릴 수 없는 표현입니다.
+
+따라서 "블로킹이 도대체 뭔지" 엄밀히 정의하고자 노력하기 보단 애초에 용어 자체가 맥락에 따라 다의적으로 해석될 수 있는 용어구나 하고 넘어가는 걸 추천합니다.
+
+실제 프로그래밍에서 나오는 다양한 자연어 용어들 또한 **다의성**을 지니는 경우가 많습니다. 이런 경우 개발자 본능으로 엄밀히 정의를 하려하기 보단 애초에 concrete한 정의가 불가능 한 것은 아닌 지 생각해보는 것도 좋을 거 같습니다.
