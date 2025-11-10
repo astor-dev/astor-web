@@ -68,6 +68,7 @@ for (const stack of project.data.stack) {
       .join(", ")}
   image={project.data.imageUrl}
 >
+  <link rel="preload" href="https://cdn.jsdelivr.net/npm/katex@0.15.2/dist/katex.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
   <!-- Hero 섹션: 전체 화면을 채우면서 프로젝트 요약 정보를 보여줌 -->
   <section
     slot="hero"

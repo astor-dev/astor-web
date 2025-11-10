@@ -98,7 +98,7 @@ export default defineConfig({
       rehypePlugins: [rehypeUnwrapList, rehypeKatex],
       shikiConfig: {
         theme: "one-dark-pro",
-        wrap: true,
+        wrap: true, 
       },
     }),
     sitemap({
