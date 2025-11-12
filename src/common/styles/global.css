@@ -249,3 +249,8 @@
     print-color-adjust: exact !important;
   }
 }
+
+
+.katex-display > .katex { 
+  @apply overflow-x-auto ;
+}
