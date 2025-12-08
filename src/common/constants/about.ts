@@ -61,6 +61,11 @@ export const EDUCATIONS: EducationDetail[] = [
 
 export const CERTIFICATIONS: CertificationDetail[] = [
   {
+    name: "SQL 개발자(SQLD)",
+    issuer: "한국데이터산업진흥원",
+    issuedAt: "2025-12",
+  },
+  {
     name: "정보처리기사",
     issuer: "한국산업인력공단",
     issuedAt: "2025-09",
