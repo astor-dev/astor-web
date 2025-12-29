@@ -65,7 +65,6 @@ const currentPath = Astro.url.pathname;
         } w-full max-w-[1200px] flex-1 bg-skin-background px-4 md:px-6 print:mt-0`}
       >
         <!-- Navbar를 보여주는 경우 Navbar+12px 띄워줌 -->
-        <!-- {shouldShowBreadcrumb && <BreadcrumbNavigator pathname={currentPath} client:load />} -->
         <!-- 페이지별 콘텐츠는 slot을 통해 들어옴 -->
         <slot />
       </main>
