@@ -59,6 +59,9 @@ for (const stackId of FEATURED_STACK_IDS) {
   });
   relatedProjects[stackId] = projects.items;
 }
+
+const currentCareer = careers.items.find(career => career.data.endedAt === null);
+
 ---
 
 <Layout title="About Me">
@@ -78,6 +81,11 @@ for (const stackId of FEATURED_STACK_IDS) {
             majors: EDUCATIONS[0].majors,
             startedAt: EDUCATIONS[0].startedAt,
             endedAt: EDUCATIONS[0].endedAt,
+          },
+          currentCareer: {
+            role: currentCareer?.data.role ?? "",
+            organizationName: currentCareer?.data.organizationName ?? "",
+            startedAt: currentCareer?.data.startedAt ?? "",
           },
           // location: "Seoul, Korea",
           github: "astor-dev",

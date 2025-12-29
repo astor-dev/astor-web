@@ -7,8 +7,9 @@ import {
   FaPhone,
   FaEnvelope,
   FaUniversity,
+  FaBuilding,
 } from "react-icons/fa";
-import { formatDate } from "~common/utils/date.utils";
+
 
 interface EducationInfo {
   school: string;
@@ -17,11 +18,18 @@ interface EducationInfo {
   endedAt: string;
 }
 
+interface CareerInfo {
+  role: string;
+  organizationName: string;
+  startedAt: string;
+}
+
 interface InfoProps {
   birth?: string;
   phone?: string;
   email?: string;
   education?: EducationInfo;
+  currentCareer?: CareerInfo;
   location?: string;
   github?: string;
   website?: string;
@@ -138,6 +146,19 @@ const { name, realName, role, imageSrc, info } = Astro.props;
           )
         }
         {
+          info?.currentCareer && (
+            <div class="col-span-1 flex items-center gap-2 text-xs text-black-base">
+              <FaBuilding />
+              <div class="flex flex-col">
+                <span>{info.currentCareer.organizationName}</span>
+                <span class="text-xs text-black-base/60">
+                  {info.currentCareer.role}
+                </span>
+              </div>
+            </div>
+          )
+        }
+        {
           info?.education && (
             <div class="col-span-1 flex items-center gap-2 text-xs text-black-base">
               <FaUniversity />
@@ -145,7 +166,6 @@ const { name, realName, role, imageSrc, info } = Astro.props;
                 <span>{info.education.school}</span>
                 <span class="text-xs text-black-base/60">
                   {info.education.majors.join(" · ")}
-                  {`(${formatDate(info.education.startedAt)} - ${formatDate(info.education.endedAt)})`}
                 </span>
               </div>
             </div>

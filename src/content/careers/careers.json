@@ -36,5 +36,16 @@
       }
     ],
     "relatedProjectNames": ["핸디버스"]
+  },
+  {
+    "id": 2,
+    "role": "Backend Developer",
+    "organizationName": "카카오페이",
+    "startedAt": "2026-01",
+    "endedAt": null,
+    "body": [
+
+    ],
+    "relatedProjectNames": []
   }
 ]
