@@ -1,7 +1,7 @@
 ---
 id: "620536739584282624"
 author: "Astor"
-title: "결제 도메인에서의 멱등성 보장"
+title: "주문/결제 시스템에서의 멱등성 보장"
 pinned: true
 draft: false
 tags:
@@ -11,7 +11,7 @@ tags:
 ogImage: "https://d2r0pavv0lsiqc.cloudfront.net/posts/images/99581aba-8540-49db-a6ad-c5dafdcce709.webp"
 seriesId: "620508969839890435"
 createdAt: "2025-09-09 16:28:31"
-updatedAt: "2025-09-09 23:13:11"
+updatedAt: "2026-08-29 19:59:23"
 ---
 
 결제 도메인과 같이 일관성이 중요하면서도 PG사에 통신이 들어가는 등 일련된 비즈니스 로직을 하나의 트랜잭션에 담기 어려운 경우 **멱등성 처리**가 굉장히 중요해집니다. 일관성과 안전성을 챙기다 보면 자연스럽게 재시도 혹은 중복 요청 발생에 대한 위험성이 같이 늘어가기 때문이죠.
