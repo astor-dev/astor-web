@@ -1,0 +1,11 @@
+packages:
+  - .
+
+allowBuilds:
+  esbuild: true
+  sharp: true
+  mozjpeg: true
+  cwebp-bin: true
+  pngquant-bin: true
+  core-js: false
+  es5-ext: false

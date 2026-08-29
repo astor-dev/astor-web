@@ -28,7 +28,8 @@ jobs:
         with:
           path: .
           node-version: 22.9.0
-          package-manager: pnpm@latest
+          # package.json 의 packageManager 와 같은 버전을 유지할 것
+          package-manager: pnpm@11.24.0
 
   deploy:
     needs: build
