@@ -39,12 +39,21 @@
   },
   {
     "id": 2,
-    "role": "Backend Developer",
+    "role": "Software Developer",
     "organizationName": "카카오페이",
     "startedAt": "2026-01",
     "endedAt": null,
     "body": [
-
+      {
+        "heading": "결제 메타데이터 플랫폼 개발",
+        "description": "흩어진 결제 메타 정보 단일 원천화, 채널별 테이블 이중화로 가용성 확보 및 동기화·대사로 정합성 보장",
+        "lists": []
+      },
+      {
+        "heading": "PG 가맹점관리자 서버 구축",
+        "description": "간편결제·리셀러·일반결제 등 통합 서빙, 가맹점별 상이한 요구사항을 ABAC 판정 엔진으로 추상화",
+        "lists": []
+      }
     ],
     "relatedProjectNames": []
   }
