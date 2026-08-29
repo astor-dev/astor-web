@@ -47,6 +47,9 @@ const SeriesForm: React.FC<SeriesFormProps> = ({ initialSeries }) => {
   // 신규 시리즈 추가 모드인지 여부
   const [isNewMode, setIsNewMode] = useState<boolean>(true);
 
+  // 저장 요청 진행 여부
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
   // URL에서 ID 가져오기
   const getIdFromUrl = useCallback(() => {
     const url = new URL(window.location.href);
@@ -63,13 +66,21 @@ const SeriesForm: React.FC<SeriesFormProps> = ({ initialSeries }) => {
       url.searchParams.delete("id");
     }
 
-    window.history.pushState({ seriesId: id }, "", url.toString());
+    const nextUrl = url.toString();
+
+    // 같은 주소로 pushState 하면 히스토리에 중복 항목이 쌓인다
+    if (nextUrl === window.location.href) {
+      window.history.replaceState({ seriesId: id }, "", nextUrl);
+      return;
+    }
+
+    window.history.pushState({ seriesId: id }, "", nextUrl);
   }, []);
 
   // 브라우저 뒤로가기/앞으로가기 이벤트 처리
   useEffect(() => {
     const handlePopState = (event: PopStateEvent) => {
-      const seriesId = event.state?.seriesId || getIdFromUrl();
+      const seriesId = event.state?.seriesId ?? getIdFromUrl();
       setSelectedId(seriesId);
     };
 
@@ -81,38 +92,34 @@ const SeriesForm: React.FC<SeriesFormProps> = ({ initialSeries }) => {
 
   // 초기 데이터 로드 및 설정
   useEffect(() => {
-    // 초기 데이터 로딩이 완료되면 실행
-    if (initialSeries.length > 0 && !isReady) {
-      // URL에서 ID 가져오기
-      const urlId = getIdFromUrl();
+    // 시리즈가 0개여도 폼은 써야 하므로 개수는 보지 않는다
+    if (isReady) return;
 
-      // 시리즈 데이터
-      const seriesData = initialSeries.map(s => s.data);
+    // URL에서 ID 가져오기
+    const urlId = getIdFromUrl();
 
-      // URL에 ID가 있으면 해당 시리즈 찾기
-      if (urlId) {
-        const selectedSeries = seriesData.find(s => s.id === urlId);
-        if (selectedSeries) {
-          setCurrentSeries(selectedSeries);
-          setIsNewMode(false);
-          setSelectedId(urlId);
-        } else {
-          // ID가 유효하지 않으면 새 시리즈 모드로
-          setCurrentSeries(createNewSeries());
-          setIsNewMode(true);
-          setSelectedId("");
-          updateUrlWithId("");
-        }
-      } else {
-        // URL에 ID가 없으면 새 시리즈 모드
-        setCurrentSeries(createNewSeries());
-        setIsNewMode(true);
-        setSelectedId("");
-      }
+    // 시리즈 데이터
+    const seriesData = initialSeries.map(s => s.data);
 
-      // 초기화 완료
-      setIsReady(true);
+    // URL에 ID가 있으면 해당 시리즈 찾기
+    const selectedSeries = urlId
+      ? seriesData.find(s => s.id === urlId)
+      : undefined;
+
+    if (selectedSeries) {
+      setCurrentSeries(selectedSeries);
+      setIsNewMode(false);
+      setSelectedId(urlId);
+    } else {
+      // ID가 없거나 유효하지 않으면 새 시리즈 모드로
+      setCurrentSeries(createNewSeries());
+      setIsNewMode(true);
+      setSelectedId("");
+      if (urlId) updateUrlWithId("");
     }
+
+    // 초기화 완료
+    setIsReady(true);
   }, [initialSeries, createNewSeries, updateUrlWithId, getIdFromUrl, isReady]);
 
   // 시리즈 ID 선택 변경 시 처리 (드롭다운에서 선택했을 때)
@@ -122,7 +129,9 @@ const SeriesForm: React.FC<SeriesFormProps> = ({ initialSeries }) => {
 
     if (!selectedId) {
       // 새 시리즈 추가 모드
-      setCurrentSeries(createNewSeries());
+      setCurrentSeries(prev =>
+        prev.name || prev.ogImage ? createNewSeries() : prev,
+      );
       setIsNewMode(true);
       // 새 시리즈 모드일 때 URL에서 id 파라미터 제거
       updateUrlWithId("");
@@ -162,28 +171,37 @@ const SeriesForm: React.FC<SeriesFormProps> = ({ initialSeries }) => {
     [],
   );
 
+  // setState 가 비동기라 저장 직후의 allSeries 를 쓰면 방금 고친 시리즈가 빠진다
+  const buildMergedSeries = useCallback((): SeriesEntry["data"][] | null => {
+    const merged = {
+      ...currentSeries,
+      name: currentSeries.name.trim(),
+      ogImage: currentSeries.ogImage.trim(),
+    };
+
+    if (!merged.name || !merged.ogImage) return null;
+
+    return allSeries.some(s => s.id === merged.id)
+      ? allSeries.map(s => (s.id === merged.id ? merged : s))
+      : [...allSeries, merged];
+  }, [allSeries, currentSeries]);
+
   // 시리즈 저장 (추가 또는 수정)
   const handleSaveSeries = useCallback(() => {
+    const merged = buildMergedSeries();
+
     // 필수 필드 검증
-    if (!currentSeries.name.trim() || !currentSeries.ogImage.trim()) {
+    if (!merged) {
       alert("시리즈 이름과 OG 이미지는 필수 입력 항목입니다.");
-      return;
+      return null;
     }
 
-    // 기존 시리즈 수정인 경우
-    if (!isNewMode) {
-      setAllSeries(prev =>
-        prev.map(s => (s.id === currentSeries.id ? currentSeries : s)),
-      );
-    }
-    // 새 시리즈 추가인 경우
-    else {
-      setAllSeries(prev => [...prev, currentSeries]);
-      // 추가 후 드롭다운을 새로 추가된 시리즈로 선택
-      setSelectedId(currentSeries.id);
-      setIsNewMode(false);
-    }
-  }, [currentSeries, isNewMode]);
+    setAllSeries(merged);
+    setSelectedId(currentSeries.id);
+    setIsNewMode(false);
+
+    return merged;
+  }, [buildMergedSeries, currentSeries.id]);
 
   // 시리즈 삭제 핸들러
   const handleDeleteSeries = useCallback(() => {
@@ -191,22 +209,38 @@ const SeriesForm: React.FC<SeriesFormProps> = ({ initialSeries }) => {
 
     if (window.confirm("정말로 이 시리즈를 삭제하시겠습니까?")) {
       setAllSeries(prev => prev.filter(s => s.id !== currentSeries.id));
+      setCurrentSeries(createNewSeries());
       setSelectedId(""); // 삭제 후 새 시리즈 추가 모드로 전환
     }
-  }, [currentSeries.id, isNewMode]);
+  }, [currentSeries.id, isNewMode, createNewSeries]);
 
   // 전체 시리즈 데이터 저장 (서버에 전송)
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
+    if (isSubmitting) return;
+
+    // 현재 편집 중인 내용이 로컬 상태에 반영되지 않았다면 함께 저장한다.
+    const merged = buildMergedSeries();
+    const payload = merged ?? allSeries;
+
+    if (payload.length === 0) {
+      alert("저장할 시리즈가 없습니다.");
+      return;
+    }
+
+    setIsSubmitting(true);
+
     try {
-      // 현재 편집 중인 내용이 로컬 상태에 저장되지 않았다면 먼저 저장
-      if (currentSeries.name.trim() && currentSeries.ogImage.trim()) {
-        handleSaveSeries();
+      // 전체 시리즈 데이터를 서버에 저장
+      await seriesService.saveAllSeries(payload);
+
+      if (merged) {
+        setAllSeries(merged);
+        setSelectedId(currentSeries.id);
+        setIsNewMode(false);
       }
 
-      // 전체 시리즈 데이터를 서버에 저장
-      await seriesService.saveAllSeries(allSeries);
       alert("모든 시리즈 데이터가 저장되었습니다.");
     } catch (error) {
       if (error instanceof Error) {
@@ -214,6 +248,8 @@ const SeriesForm: React.FC<SeriesFormProps> = ({ initialSeries }) => {
       } else {
         alert("시리즈 저장 중 오류가 발생했습니다. 다시 시도해주세요.");
       }
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -320,15 +356,12 @@ const SeriesForm: React.FC<SeriesFormProps> = ({ initialSeries }) => {
             </div>
 
             <div className="flex justify-end gap-3">
+              <IconButton text="취소" href="/admin/blog" variant="secondary" />
               <IconButton
-                text="취소"
-                href="/admin/blog/series"
-                variant="secondary"
-              />
-              <IconButton
-                text="모든 시리즈 저장"
+                text={isSubmitting ? "저장 중..." : "모든 시리즈 저장"}
                 variant="primary"
                 type="submit"
+                disabled={isSubmitting}
               />
             </div>
           </div>

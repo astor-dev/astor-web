@@ -45,6 +45,7 @@ const ImageFileInput = forwardRef<ImageFileInputMethods, Props>(
       label,
       type,
       required = false,
+      value: propValue,
       defaultValue: propDefaultValue = "",
       setValue: propSetValue,
     },
@@ -53,14 +54,13 @@ const ImageFileInput = forwardRef<ImageFileInputMethods, Props>(
     const [file, setFile] = useState<File | null>(null);
     const [previewUrl, setPreviewUrl] = useState<string | null>(null);
     const [internalValue, setInternalValue] = useState<string>(
-      propDefaultValue || "",
+      propValue ?? propDefaultValue ?? "",
     );
     const inputRef = useRef<HTMLInputElement>(null);
     const containerRef = useRef<HTMLDivElement>(null);
     const imageService = serviceContainer.get<ImageService>(IMAGE_SERVICE);
 
-    // 실제 사용할 값은 항상 internalValue
-    const value = internalValue;
+    const value = propValue !== undefined ? propValue : internalValue;
 
     const isLoading = file !== null;
     const isPending = !value && !previewUrl;
@@ -70,7 +70,7 @@ const ImageFileInput = forwardRef<ImageFileInputMethods, Props>(
     useImperativeHandle(
       ref,
       () => ({
-        getValue: () => internalValue,
+        getValue: () => value,
         setValue: (newValue: string) => {
           setInternalValue(newValue);
           if (propSetValue) {
@@ -99,7 +99,7 @@ const ImageFileInput = forwardRef<ImageFileInputMethods, Props>(
           }
         },
       }),
-      [internalValue, file, propSetValue, type],
+      [value, file, propSetValue, type],
     );
 
     // 클립보드 이미지 처리 함수
@@ -197,7 +197,7 @@ const ImageFileInput = forwardRef<ImageFileInputMethods, Props>(
     }, [file, propSetValue, type]);
 
     return (
-      <div ref={containerRef}>
+      <div ref={containerRef} className="relative">
         <label
           htmlFor={id}
           className="mb-2 block text-sm font-medium text-black-accent"
@@ -269,11 +269,9 @@ const ImageFileInput = forwardRef<ImageFileInputMethods, Props>(
                     ref={inputRef}
                     disabled={file !== null}
                     id={id}
-                    name={name}
                     type="file"
                     accept="image/*"
                     className="hidden"
-                    required={required && isPending}
                     onChange={e => {
                       const file = e.target.files?.[0] ?? null;
                       setFile(file);
@@ -291,8 +289,18 @@ const ImageFileInput = forwardRef<ImageFileInputMethods, Props>(
           </p>
         </div>
 
-        {/* 실제 값을 담는 hidden input */}
-        <input type="hidden" name={name} value={value || ""} />
+        {/* hidden/display:none 이면 브라우저가 유효성 검사 메시지를 띄우지 못해
+            폼 제출이 조용히 막힌다. 화면에서만 숨긴다. */}
+        <input
+          type="text"
+          name={name}
+          value={value || ""}
+          required={required}
+          tabIndex={-1}
+          aria-label={`${label} 주소`}
+          onChange={() => {}}
+          className="pointer-events-none absolute bottom-0 left-0 h-px w-px opacity-0"
+        />
       </div>
     );
   },
