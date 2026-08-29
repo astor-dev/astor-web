@@ -24,3 +24,9 @@ pnpm-debug.log*
 .idea/
 
 *storybook.log
+
+# 커밋 메시지 편집 중 흘린 잔여 파일
+/@
+COMMIT_EDITMSG
+*.orig
+*.rej
