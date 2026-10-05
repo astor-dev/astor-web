@@ -8,7 +8,6 @@ import {
 } from "~modules/repositories/projects/ProjectRepository";
 import type { Paginated } from "~common/types/page.type";
 import type { ProjectEntry } from "~common/types/project.type";
-import projectHeader from "~assets/images/project-header.webp";
 import ProjectTable from "~features/admin/projects/components/project-table";
 import Layout from "~common/layouts/base-layout.astro";
 import CommonHero from "~common/components/heros/common-hero.astro";
@@ -19,7 +18,7 @@ const projects: Paginated<ProjectEntry> = await projectRepository.getProjects();
 ---
 
 <Layout title="프로젝트 관리">
-  <CommonHero title="프로젝트 관리" imageSrc={projectHeader.src} slot="hero" />
+  <CommonHero title="프로젝트 관리" slot="hero" />
   <AdminOnly client:load>
     <div class="mx-auto w-full max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
       <!-- 헤더 -->

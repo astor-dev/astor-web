@@ -34,13 +34,9 @@ const { series, posts } = Astro.props;
   title={series.data.name + " | 블로그"}
   image={series.data.ogImage}
   currentPath="/series"
+  heading={series.data.name}
+  count={posts.length}
 >
-  <div class="mb-8">
-    <h2 class="text-2xl font-bold text-black-accent">
-      {series.data.name}
-      <span class="text-sm text-black-muted">({posts.length})</span>
-    </h2>
-  </div>
   {
     posts.length > 0 ? (
       <>

@@ -1,6 +1,5 @@
-import React, { useState, useEffect, useRef } from "react";
-import { FiMoreHorizontal } from "react-icons/fi";
-import IconDropdown from "~common/components/dropdowns/icon-dropdown";
+import { useState, useEffect, useRef } from "react";
+import { FiLogIn, FiSettings, FiUser } from "react-icons/fi";
 
 // Constants
 const BREAKPOINT_MD = 768;
@@ -28,18 +27,22 @@ const isAboutPage = (pathname: string): boolean => {
   return pathname === "/about" || pathname === "/about/";
 };
 
-const getHeroHeight = (pathname: string): number => {
-  if (window.innerWidth >= BREAKPOINT_MD) {
-    if (isNoHeroPage(pathname)) {
-      return BLOG_MAIN_HEIGHT;
-    }
-    return HERO_HEIGHT_DESKTOP;
-  } else {
-    if (isNoHeroPage(pathname)) {
-      return BLOG_MAIN_HEIGHT;
-    }
-    return HERO_HEIGHT_MOBILE;
+// 히어로가 없는 페이지는 제목 헤더(data-nav-anchor)를 지나면 네브바를 고정한다
+const getNoHeroHeight = (): number => {
+  const anchor = document.querySelector("[data-nav-anchor]");
+  if (!anchor) {
+    return BLOG_MAIN_HEIGHT;
   }
+  return anchor.getBoundingClientRect().bottom + window.scrollY;
+};
+
+const getHeroHeight = (pathname: string): number => {
+  if (isNoHeroPage(pathname)) {
+    return getNoHeroHeight();
+  }
+  return window.innerWidth >= BREAKPOINT_MD
+    ? HERO_HEIGHT_DESKTOP
+    : HERO_HEIGHT_MOBILE;
 };
 
 const calculateIsInHero = (pathname: string, scrollY: number): boolean => {
@@ -56,9 +59,12 @@ const calculateIsInHero = (pathname: string, scrollY: number): boolean => {
 
 interface NavBarProps {
   pathname: string;
+  logoSrc: string;
+  // 주요 섹션(히어로·제목 헤더)을 지난 뒤 네브바 가운데에 보여줄 타이틀
+  title?: string;
 }
 
-const NavigationBar = ({ pathname }: NavBarProps) => {
+const NavigationBar = ({ pathname, logoSrc, title }: NavBarProps) => {
   const [showAdmin, setShowAdmin] = useState(false);
   const [showLogin, setShowLogin] = useState(false);
   const [isTextWhite, setIsTextWhite] = useState(true);
@@ -66,32 +72,9 @@ const NavigationBar = ({ pathname }: NavBarProps) => {
   const [shouldHideNavBar, setShouldHideNavBar] = useState(true);
   const navBarRef = useRef<HTMLDivElement>(null);
 
-  // 현재 경로 체크 헬퍼 함수
-  const isActiveRoute = (route: string): boolean => {
-    if (route === "/") {
-      return isBlogNoHeroPage(pathname);
-    }
-    return pathname === route || pathname === `${route}/`;
-  };
-
-  // 기본 스타일 계산
-  const baseHoverClass = isTextWhite
-    ? "hover:text-skin-base"
-    : "hover:text-skin-accent/80";
-
-  // 활성화 메뉴 스타일 생성 함수
-  const getMenuItemClassName = (route: string): string => {
-    const baseClass = `text-sm font-medium ${baseHoverClass}`;
-    const activeClass = "text-skin-accent font-semibold";
-    return isActiveRoute(route) ? `${baseClass} ${activeClass}` : baseClass;
-  };
-
-  // 모바일 메뉴 활성화 스타일 생성 함수
-  const getMobileMenuItemClassName = (route: string): string => {
-    const baseClass = "block text-sm text-black-base hover:underline";
-    const activeClass = "text-skin-accent font-semibold";
-    return isActiveRoute(route) ? `${baseClass} ${activeClass}` : baseClass;
-  };
+  const iconClassName = `h-6 w-6 ${
+    isTextWhite ? "hover:text-skin-base" : "hover:text-skin-accent/80"
+  }`;
 
   // 로그인 쿠키 감지
   useEffect(() => {
@@ -144,104 +127,45 @@ const NavigationBar = ({ pathname }: NavBarProps) => {
       }`}
     >
       {/* BaseLayout과 동일한 max-width와 패딩 적용 */}
-      <nav className="mx-auto flex w-full max-w-[1200px] items-center justify-between px-4 py-1 md:px-6 md:py-3">
+      <nav className="mx-auto grid h-14 w-full max-w-[1200px] grid-cols-[1fr_minmax(0,auto)_1fr] items-center gap-4 px-4 md:h-16 md:px-6">
         {/* 왼쪽: 로고 */}
-        <div className="flex-shrink-0">
-          <a href="/" title="홈" className={`font-logo text-xl md:text-2xl`}>
-            astor-dev
+        <a
+          href="/"
+          title="홈"
+          className="flex items-center gap-2 justify-self-start font-logo text-xl md:text-2xl"
+        >
+          <img src={logoSrc} alt="" className="h-8 w-8 md:h-9 md:w-9" />
+          <span className="hidden md:inline">astor-dev</span>
+        </a>
+
+        {/* 가운데: 주요 섹션을 지난 뒤에만 보이는 페이지 타이틀 */}
+        <p
+          className={`truncate text-center text-base font-bold tracking-tight text-black-accent ${
+            isInHero ? "invisible" : "visible"
+          }`}
+          aria-hidden={isInHero}
+        >
+          {title}
+        </p>
+
+        {/* 오른쪽: 아이콘 메뉴 */}
+        <div className="flex items-center gap-4 justify-self-end">
+          {showAdmin && (
+            <a href="/admin" title="관리자" aria-label="관리자">
+              <FiSettings className={iconClassName} />
+            </a>
+          )}
+          {showLogin && (
+            <a href="/login" title="로그인" aria-label="로그인">
+              <FiLogIn className={iconClassName} />
+            </a>
+          )}
+          <a href="/about" title="소개" aria-label="소개">
+            <FiUser className={iconClassName} />
           </a>
         </div>
-
-        {/* 오른쪽: 네비게이션 메뉴 */}
-        <div className="flex items-center">
-          {/* PC용 펼친 메뉴 (md 이상에서만 보임) */}
-          <div className="hidden md:flex md:items-center md:space-x-6">
-            <a
-              href="/"
-              className={getMenuItemClassName("/")}
-              title="블로그"
-            >
-              Blog
-            </a>
-            <a
-              href="/about"
-              className={getMenuItemClassName("/about")}
-              title="소개"
-            >
-              About
-            </a>
-            {showAdmin && (
-              <a
-                href="/admin"
-                className={getMenuItemClassName("/admin")}
-                title="관리자"
-              >
-                Admin
-              </a>
-            )}
-            {showLogin && (
-              <a href="/login" className={getMenuItemClassName("/login")}>
-                Login
-              </a>
-            )}
-          </div>
-
-          {/* 모바일용 햄버거 메뉴 (md 미만에서만 보임) */}
-          <div className="md:hidden">
-            <IconDropdown
-              title="페이지 메뉴"
-              icon={<FiMoreHorizontal className="h-4 w-4" />}
-              widthClass="w-40"
-              parentContainerRef={navBarRef as React.RefObject<HTMLElement>}
-              dropdownContent={
-                <div>
-                  <ul className="space-y-1">
-                    <li>
-                      <a
-                        href="/"
-                        className={getMobileMenuItemClassName("/")}
-                        title="블로그"
-                      >
-                        블로그
-                      </a>
-                    </li>
-                    <li>
-                      <a
-                        href="/about"
-                        className={getMobileMenuItemClassName("/about")}
-                        title="소개"
-                      >
-                        소개
-                      </a>
-                    </li>
-                    {showAdmin && (
-                      <li>
-                        <a
-                          href="/admin"
-                          className={getMobileMenuItemClassName("/admin")}
-                          title="관리자"
-                        >
-                          관리자
-                        </a>
-                      </li>
-                    )}
-                    {showLogin && (
-                      <li>
-                        <a
-                          href="/login"
-                          className={getMobileMenuItemClassName("/login")}
-                        >
-                          로그인
-                        </a>
-                      </li>
-                    )}
-                  </ul>
-                </div>
-              }
-            />
-          </div>
-        </div>
       </nav>
+
     </header>
   );
 };

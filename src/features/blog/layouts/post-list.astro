@@ -36,7 +36,12 @@ const totalPosts = (
 const tags = await postRepository.getAllTags();
 ---
 
-<BlogDefault title="블로그" currentPath="/">
+<BlogDefault
+  title="블로그"
+  currentPath="/"
+  heading={currentTag ?? "전체 게시글"}
+  count={posts.total}
+>
   <MobileTagScroll
     tags={tags}
     totalPosts={totalPosts}
@@ -48,12 +53,6 @@ const tags = await postRepository.getAllTags();
     <div class="grid grid-cols-1 md:grid-cols-4 md:gap-8">
       <!-- 메인 콘텐츠 영역: 포스트 목록 -->
       <main class="col-span-3">
-        <div class="mb-8">
-          <h2 class="text-2xl font-bold text-black-accent">
-            {currentTag ? `태그: ${currentTag}` : "전체 게시글"}
-            <span class="text-sm text-black-muted">({posts.total})</span>
-          </h2>
-        </div>
         <section class="mb-12">
           {posts.items.map(post => <BlogPostItem {...post} />)}
         </section>

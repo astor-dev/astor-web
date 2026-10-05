@@ -47,6 +47,7 @@ const postDescription = (await stripMdx(post.body || "")).slice(0, 157)
 
 <Layout
   title={postTitle}
+  navTitle={post.data.title}
   image={postImage}
   description={postDescription || postTitle + " | 블로그 글"}
   keywords={postKeywords}

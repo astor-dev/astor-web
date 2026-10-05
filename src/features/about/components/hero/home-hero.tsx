@@ -1,39 +1,9 @@
-import ImageWithSkeleton from "~common/components/skeletons/image-with-skeleton";
-import heroMilkyway from "~assets/images/space.jpg";
-import LoadingSpinner from "~common/components/loadings/loading-spinner";
-import { useState } from "react";
-
 export default function HomeHero() {
-
-  const [isImageLoaded, setIsImageLoaded] = useState(false);
-  const [spinnerVisible, setSpinnerVisible] = useState(true);
-
-  function handleImageLoad() {
-    setIsImageLoaded(true);
-    setSpinnerVisible(false);
-  }
   return (
     <section
       id="hero-section"
       className="relative flex min-h-[300px] w-full flex-col justify-center overflow-hidden bg-[#0a1929] md:min-h-[350px]"
     >
-      <ImageWithSkeleton
-        id="hero-img"
-        src={heroMilkyway.src}
-        alt="Hero 배경 이미지"
-        className={`absolute inset-0 flex h-full w-full items-center justify-center object-cover ${
-          isImageLoaded ? "" : "hidden"
-        }`}
-        onLoadComplete={handleImageLoad}
-      />
-      <div
-          id="spinner"
-          className="absolute inset-0 flex items-center justify-center bg-black"
-          style={{ display: spinnerVisible ? "flex" : "none" }}
-        >
-          <LoadingSpinner className="h-full w-full" />
-        </div>
-
       <div className="absolute inset-0 z-10 bg-black opacity-60"/>
       <div className="relative z-10 mx-auto flex w-full max-w-[1200px] px-12 md:px-16">
         <div className="flex-1">

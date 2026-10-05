@@ -1,6 +1,5 @@
 ---
 import AdminOnly from "~common/components/wrappers/admin-only";
-import heroMilkyWay from "~assets/images/hero-milkyway.webp";
 import Layout from "~common/layouts/base-layout.astro";
 import ActionCard, { type ActionCardProps } from "~features/admin/action-card";
 import CommonHero from "~common/components/heros/common-hero.astro";
@@ -22,7 +21,7 @@ const QUICK_ACTIONS: ActionCardProps[] = [
 ---
 
 <Layout title="관리자 대시보드">
-  <CommonHero title="관리자 대시보드" imageSrc={heroMilkyWay.src} slot="hero" />
+  <CommonHero title="관리자 대시보드" slot="hero" />
   <AdminOnly client:load>
     <div class="mx-auto w-full max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
       <!-- 빠른 작성 버튼 -->

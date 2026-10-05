@@ -1,5 +1,4 @@
 ---
-import ModernTextHero from "~common/components/heros/modern-text-hero";
 import { navItems } from "~common/constants/blog";
 import BlogCenterNav from "~features/blog/components/blog-center-nav.astro";
 import Layout from "~common/layouts/base-layout.astro";
@@ -8,16 +7,32 @@ interface Props {
   title: string;
   image?: string;
   currentPath: string;
+  heading: string;
+  count?: number;
 }
-const { title, image, currentPath } = Astro.props;
+const { title, image, currentPath, heading, count } = Astro.props;
 ---
 
-<Layout title={title} image={image}>
-  <ModernTextHero
-    title="*Tech* Blog"
-    content="직접 구현하고 검토를 거친 기술적 선택과 설계를 정리해 남깁니다"
-    client:load
-  />
+<Layout title={title} image={image} navTitle={heading} noMainMarginTop>
+  <!-- 네브바가 이 헤더 위쪽 여백에 겹쳐 놓인다 (pt = 네브바 높이) -->
+  <header
+    slot="hero"
+    data-nav-anchor
+    class="box-content grid min-h-[3lh] place-items-center px-4 pb-6 pt-14 text-center text-xl md:pt-16 md:text-3xl"
+  >
+    <h1
+      class="text-balance font-bold tracking-tight text-black-accent"
+    >
+      {heading}
+      {
+        count !== undefined && (
+          <span class="text-sm font-normal text-black-muted md:text-base">
+            ({count})
+          </span>
+        )
+      }
+    </h1>
+  </header>
   <BlogCenterNav items={navItems} currentPath={currentPath} />
   <article class="mx-auto mb-12 max-w-[1200px] md:mb-20">
     <div class="h-11">

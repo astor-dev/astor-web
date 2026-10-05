@@ -12,6 +12,11 @@ const postRepository = repositoryContainer.get<PostRepository>(POST_REPOSITORY);
 const series: SeriesAndCount[] = await postRepository.getAllSeriesAndCount();
 ---
 
-<BlogDefault title="블로그" currentPath="/series">
+<BlogDefault
+  title="블로그"
+  currentPath="/series"
+  heading="시리즈"
+  count={series.length}
+>
   <SeriesList series={series} />
 </BlogDefault>

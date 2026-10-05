@@ -5,7 +5,6 @@ import {
   POST_REPOSITORY,
   type PostRepository,
 } from "~modules/repositories/posts/PostRepository";
-import heroMilkyWay from "~assets/images/hero-milkyway.webp";
 import {
   SERIES_REPOSITORY,
   type SeriesRepository,
@@ -23,7 +22,7 @@ const series = await seriesRepository.getSeries();
 ---
 
 <Layout title="포스트 관리">
-  <CommonHero title="포스트 관리" imageSrc={heroMilkyWay.src} slot="hero" />
+  <CommonHero title="포스트 관리" slot="hero" />
   <AdminOnly client:load>
     <div class="mx-auto w-full max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
       <div class="mb-8">

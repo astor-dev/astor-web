@@ -11,6 +11,7 @@ import "~common/styles/font.css";
 import NavigationBar from "~common/components/navs/navigation-bar";
 import { SkeletonProvider } from "~common/components/skeletons/skeleton-provider";
 import SeoHead from "~common/components/head/seo-head.astro";
+import logoIcon from "~assets/images/favicon-black-512x512.png";
 
 interface Props {
   title?: string;
@@ -23,6 +24,8 @@ interface Props {
   publishedTime?: string;
   modifiedTime?: string;
   noMainMarginTop?: boolean;
+  // 주요 섹션을 지난 뒤 네브바에 보여줄 타이틀
+  navTitle?: string;
 }
 
 const {
@@ -36,6 +39,7 @@ const {
   publishedTime,
   modifiedTime,
   noMainMarginTop,
+  navTitle,
 } = Astro.props;
 const currentPath = Astro.url.pathname;
 ---
@@ -56,7 +60,12 @@ const currentPath = Astro.url.pathname;
 
   <body class={`flex w-full flex-col text-skin-base`}>
     <SkeletonProvider>
-      <NavigationBar pathname={currentPath} client:load />
+      <NavigationBar
+        pathname={currentPath}
+        logoSrc={logoIcon.src}
+        title={navTitle}
+        client:load
+      />
       <slot name="hero" />
       <!-- 메인 콘텐츠 영역: 반응형 컨테이너 적용 예시 -->
       <main
