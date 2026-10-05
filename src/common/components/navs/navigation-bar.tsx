@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from "react";
-import { FiLogIn, FiSettings, FiUser } from "react-icons/fi";
+import { FaRegAddressCard } from "react-icons/fa";
+import { FiGithub, FiLogIn, FiSettings } from "react-icons/fi";
 
 // Constants
 const BREAKPOINT_MD = 768;
@@ -72,7 +73,7 @@ const NavigationBar = ({ pathname, logoSrc, title }: NavBarProps) => {
   const [shouldHideNavBar, setShouldHideNavBar] = useState(true);
   const navBarRef = useRef<HTMLDivElement>(null);
 
-  const iconClassName = `h-6 w-6 ${
+  const iconClassName = `h-[18px] w-[18px] md:h-5 md:w-5 ${
     isTextWhite ? "hover:text-skin-base" : "hover:text-skin-accent/80"
   }`;
 
@@ -132,15 +133,19 @@ const NavigationBar = ({ pathname, logoSrc, title }: NavBarProps) => {
         <a
           href="/"
           title="홈"
-          className="flex items-center gap-2 justify-self-start font-logo text-xl md:text-2xl"
+          className="flex items-center gap-2 justify-self-start whitespace-nowrap font-logo text-xl md:text-2xl"
         >
-          <img src={logoSrc} alt="" className="h-8 w-8 md:h-9 md:w-9" />
+          <img
+            src={logoSrc}
+            alt=""
+            className="h-[18px] w-[18px] flex-shrink-0 md:h-5 md:w-5"
+          />
           <span className="hidden md:inline">astor-dev</span>
         </a>
 
         {/* 가운데: 주요 섹션을 지난 뒤에만 보이는 페이지 타이틀 */}
         <p
-          className={`truncate text-center text-base font-bold tracking-tight text-black-accent ${
+          className={`truncate text-center text-sm font-bold md:text-base tracking-tight text-black-accent ${
             isInHero ? "invisible" : "visible"
           }`}
           aria-hidden={isInHero}
@@ -149,7 +154,7 @@ const NavigationBar = ({ pathname, logoSrc, title }: NavBarProps) => {
         </p>
 
         {/* 오른쪽: 아이콘 메뉴 */}
-        <div className="flex items-center gap-4 justify-self-end">
+        <div className="flex flex-shrink-0 items-center gap-4 justify-self-end">
           {showAdmin && (
             <a href="/admin" title="관리자" aria-label="관리자">
               <FiSettings className={iconClassName} />
@@ -161,7 +166,16 @@ const NavigationBar = ({ pathname, logoSrc, title }: NavBarProps) => {
             </a>
           )}
           <a href="/about" title="소개" aria-label="소개">
-            <FiUser className={iconClassName} />
+            <FaRegAddressCard className={iconClassName} />
+          </a>
+          <a
+            href="https://github.com/astor-dev"
+            title="GitHub"
+            aria-label="GitHub"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <FiGithub className={iconClassName} />
           </a>
         </div>
       </nav>
