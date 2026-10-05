@@ -11,7 +11,6 @@ import "~common/styles/font.css";
 import NavigationBar from "~common/components/navs/navigation-bar";
 import { SkeletonProvider } from "~common/components/skeletons/skeleton-provider";
 import SeoHead from "~common/components/head/seo-head.astro";
-import logoIcon from "~assets/images/favicon-black-512x512.png";
 
 interface Props {
   title?: string;
@@ -62,7 +61,6 @@ const currentPath = Astro.url.pathname;
     <SkeletonProvider>
       <NavigationBar
         pathname={currentPath}
-        logoSrc={logoIcon.src}
         title={navTitle}
         client:load
       />

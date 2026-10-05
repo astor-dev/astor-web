@@ -1,6 +1,5 @@
-import { useState, useEffect, useRef } from "react";
-import { FaRegAddressCard } from "react-icons/fa";
-import { FiGithub, FiLogIn, FiSettings } from "react-icons/fi";
+import { useState, useEffect, useRef, type MouseEvent } from "react";
+import { FiArrowLeft, FiLogIn, FiSettings } from "react-icons/fi";
 
 // Constants
 const BREAKPOINT_MD = 768;
@@ -18,6 +17,10 @@ const isProjectNoHeroPage = (pathname: string): boolean => {
 const isNoHeroPage = (pathname: string): boolean => {
   // posts/* 제외한 모든 블로그 페이지 + project 메인 페이지 (/projects)
   return isBlogNoHeroPage(pathname) || isProjectNoHeroPage(pathname);
+};
+
+const isPostPage = (pathname: string): boolean => {
+  return pathname.startsWith("/posts/");
 };
 
 const isAdminPage = (pathname: string): boolean => {
@@ -60,12 +63,11 @@ const calculateIsInHero = (pathname: string, scrollY: number): boolean => {
 
 interface NavBarProps {
   pathname: string;
-  logoSrc: string;
   // 주요 섹션(히어로·제목 헤더)을 지난 뒤 네브바 가운데에 보여줄 타이틀
   title?: string;
 }
 
-const NavigationBar = ({ pathname, logoSrc, title }: NavBarProps) => {
+const NavigationBar = ({ pathname, title }: NavBarProps) => {
   const [showAdmin, setShowAdmin] = useState(false);
   const [showLogin, setShowLogin] = useState(false);
   const [isTextWhite, setIsTextWhite] = useState(true);
@@ -73,9 +75,18 @@ const NavigationBar = ({ pathname, logoSrc, title }: NavBarProps) => {
   const [shouldHideNavBar, setShouldHideNavBar] = useState(true);
   const navBarRef = useRef<HTMLDivElement>(null);
 
-  const iconClassName = `h-[18px] w-[18px] md:h-5 md:w-5 ${
-    isTextWhite ? "hover:text-skin-base" : "hover:text-skin-accent/80"
-  }`;
+  const iconHoverClassName = isTextWhite
+    ? "hover:text-skin-base"
+    : "hover:text-skin-accent/80";
+  const iconClassName = `h-[18px] w-[18px] md:h-5 md:w-5 ${iconHoverClassName}`;
+
+  // 사이트 안에서 넘어온 경우에만 이전 페이지로, 외부 유입이면 href(/)로 이동
+  const handleBackClick = (event: MouseEvent<HTMLAnchorElement>) => {
+    if (document.referrer.startsWith(window.location.origin)) {
+      event.preventDefault();
+      window.history.back();
+    }
+  };
 
   // 로그인 쿠키 감지
   useEffect(() => {
@@ -129,19 +140,26 @@ const NavigationBar = ({ pathname, logoSrc, title }: NavBarProps) => {
     >
       {/* BaseLayout과 동일한 max-width와 패딩 적용 */}
       <nav className="mx-auto grid h-14 w-full max-w-[1200px] grid-cols-[1fr_minmax(0,auto)_1fr] items-center gap-4 px-4 md:h-16 md:px-6">
-        {/* 왼쪽: 로고 */}
-        <a
-          href="/"
-          title="홈"
-          className="flex items-center gap-2 justify-self-start whitespace-nowrap font-logo text-xl md:text-2xl"
-        >
-          <img
-            src={logoSrc}
-            alt=""
-            className="h-[18px] w-[18px] flex-shrink-0 md:h-5 md:w-5"
-          />
-          <span className="hidden md:inline">astor-dev</span>
-        </a>
+        {/* 왼쪽: 글 상세에서는 뒤로가기, 그 외에는 로고 */}
+        {isPostPage(pathname) ? (
+          <a
+            href="/"
+            title="뒤로가기"
+            aria-label="뒤로가기"
+            className="justify-self-start"
+            onClick={handleBackClick}
+          >
+            <FiArrowLeft className={iconClassName} />
+          </a>
+        ) : (
+          <a
+            href="/"
+            title="홈"
+            className="justify-self-start whitespace-nowrap font-logo text-xl md:text-2xl"
+          >
+            astor-dev
+          </a>
+        )}
 
         {/* 가운데: 주요 섹션을 지난 뒤에만 보이는 페이지 타이틀 */}
         <p
@@ -165,17 +183,12 @@ const NavigationBar = ({ pathname, logoSrc, title }: NavBarProps) => {
               <FiLogIn className={iconClassName} />
             </a>
           )}
-          <a href="/about" title="소개" aria-label="소개">
-            <FaRegAddressCard className={iconClassName} />
-          </a>
           <a
-            href="https://github.com/astor-dev"
-            title="GitHub"
-            aria-label="GitHub"
-            target="_blank"
-            rel="noopener noreferrer"
+            href="/about"
+            title="소개"
+            className={`text-sm font-medium ${iconHoverClassName}`}
           >
-            <FiGithub className={iconClassName} />
+            About
           </a>
         </div>
       </nav>

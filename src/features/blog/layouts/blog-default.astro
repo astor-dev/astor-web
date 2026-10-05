@@ -13,7 +13,7 @@ interface Props {
 const { title, image, currentPath, heading, count } = Astro.props;
 ---
 
-<Layout title={title} image={image} navTitle={heading} noMainMarginTop>
+<Layout title={title} image={image} noMainMarginTop>
   <!-- 네브바가 이 헤더 위쪽 여백에 겹쳐 놓인다 (pt = 네브바 높이) -->
   <header
     slot="hero"
