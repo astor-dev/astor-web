@@ -173,13 +173,6 @@ const NavigationBar = ({ pathname }: NavBarProps) => {
             >
               About
             </a>
-            <a
-              href="/projects"
-              className={getMenuItemClassName("/projects")}
-              title="프로젝트"
-            >
-              Projects
-            </a>
             {showAdmin && (
               <a
                 href="/admin"
@@ -222,15 +215,6 @@ const NavigationBar = ({ pathname }: NavBarProps) => {
                         title="소개"
                       >
                         소개
-                      </a>
-                    </li>
-                    <li>
-                      <a
-                        href="/projects"
-                        className={getMobileMenuItemClassName("/projects")}
-                        title="프로젝트"
-                      >
-                        프로젝트
                       </a>
                     </li>
                     {showAdmin && (
