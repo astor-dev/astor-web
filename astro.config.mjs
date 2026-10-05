@@ -85,6 +85,16 @@ function remarkIframeDirective() {
 export default defineConfig({
   site: "https://astor-dev.com",
   output: "static",
+  // /blog 하위에 있던 블로그가 루트로 올라오기 전의 주소
+  redirects: {
+    "/blog": "/",
+    "/blog/posts/[id]": "/posts/[id]",
+    "/blog/pages/[page]": "/pages/[page]",
+    "/blog/tags/[tag]": "/tags/[tag]",
+    "/blog/tags/[tag]/pages/[page]": "/tags/[tag]/pages/[page]",
+    "/blog/series": "/series",
+    "/blog/series/[series]": "/series/[series]",
+  },
   devToolbar: {
     enabled: true,
   },

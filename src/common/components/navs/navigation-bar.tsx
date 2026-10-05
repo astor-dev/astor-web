@@ -8,7 +8,7 @@ const HERO_HEIGHT_MOBILE = 450;
 const HERO_HEIGHT_DESKTOP = 500;
 const BLOG_MAIN_HEIGHT = 1;
 const isBlogNoHeroPage = (pathname: string): boolean => {
-  return pathname.match(/^\/blog(?!\/posts(?:\/|$)).*/) !== null;
+  return pathname === "/" || /^\/(pages|tags|series)(\/|$)/.test(pathname);
 };
 
 const isProjectNoHeroPage = (pathname: string): boolean => {
@@ -16,7 +16,7 @@ const isProjectNoHeroPage = (pathname: string): boolean => {
 };
 
 const isNoHeroPage = (pathname: string): boolean => {
-  // blog/posts/* 제외한 모든 블로그 페이지 + project 메인 페이지 (/projects)3
+  // posts/* 제외한 모든 블로그 페이지 + project 메인 페이지 (/projects)
   return isBlogNoHeroPage(pathname) || isProjectNoHeroPage(pathname);
 };
 
@@ -69,9 +69,6 @@ const NavigationBar = ({ pathname }: NavBarProps) => {
   // 현재 경로 체크 헬퍼 함수
   const isActiveRoute = (route: string): boolean => {
     if (route === "/") {
-      return pathname === "/" || pathname === "";
-    }
-    if (route === "/blog") {
       return isBlogNoHeroPage(pathname);
     }
     return pathname === route || pathname === `${route}/`;
@@ -160,8 +157,8 @@ const NavigationBar = ({ pathname }: NavBarProps) => {
           {/* PC용 펼친 메뉴 (md 이상에서만 보임) */}
           <div className="hidden md:flex md:items-center md:space-x-6">
             <a
-              href="/blog"
-              className={getMenuItemClassName("/blog")}
+              href="/"
+              className={getMenuItemClassName("/")}
               title="블로그"
             >
               Blog
@@ -201,8 +198,8 @@ const NavigationBar = ({ pathname }: NavBarProps) => {
                   <ul className="space-y-1">
                     <li>
                       <a
-                        href="/blog"
-                        className={getMobileMenuItemClassName("/blog")}
+                        href="/"
+                        className={getMobileMenuItemClassName("/")}
                         title="블로그"
                       >
                         블로그

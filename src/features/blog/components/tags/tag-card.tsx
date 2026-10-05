@@ -25,7 +25,7 @@ const TagCard: React.FC<TagCardProps> = ({
       } ${isVisible ? "translate-y-0 opacity-100" : "translate-y-10 opacity-0"} ${className}`}
     >
       <a
-        href={`/blog/tags/${tag}`}
+        href={`/tags/${tag}`}
         className="flex flex-col justify-between rounded-lg bg-transparent p-4"
       >
         <h3 className="text-lg font-semibold text-gray-800">{tag}</h3>

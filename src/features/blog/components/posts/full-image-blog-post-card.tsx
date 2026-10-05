@@ -26,7 +26,7 @@ const FullImageBlogPostCard: React.FC<FullImageBlogPostCardProps> = props => {
       } ${props.className}`}
     >
       <a
-        href={`/blog/posts/${props.id}`}
+        href={`/posts/${props.id}`}
         className="group relative flex h-full flex-col overflow-hidden rounded-2xl p-0.5 shadow-lg transition-all duration-300 hover:-translate-y-1 hover:shadow-xl"
       >
         {/* 배경 이미지 */}

@@ -43,14 +43,14 @@ const SeriesCard: React.FC<SeriesCardProps> = ({ series }) => {
     e.preventDefault();
     if (isClick.current) {
       // 클릭으로 판단되면 수동으로 링크 이동 처리
-      window.location.href = `/blog/series/${encodeURIComponent(series.series.data.id)}`;
+      window.location.href = `/series/${encodeURIComponent(series.series.data.id)}`;
     }
   };
 
   return (
     <div className="group relative h-[300px] overflow-hidden bg-transparent">
       <motion.a
-        href={`/blog/series/${encodeURIComponent(series.series.data.id)}`}
+        href={`/series/${encodeURIComponent(series.series.data.id)}`}
         onPointerDown={handlePointerDown}
         onPointerMove={handlePointerMove}
         onClick={handleClick}

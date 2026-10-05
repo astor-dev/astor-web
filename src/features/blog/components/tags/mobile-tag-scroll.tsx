@@ -47,12 +47,12 @@ const MobileTagScroll: React.FC<MobileTagScrollProps> = ({
         className="flex cursor-grab space-x-1 active:cursor-grabbing"
       >
         <TagScrollSpacer />
-        <Tag tag="전체보기" href="/blog" count={totalPosts} size="sm" />
+        <Tag tag="전체보기" href="/" count={totalPosts} size="sm" />
         {tags.map((tag, index) => (
           <Tag
             key={index}
             tag={tag.tag}
-            href={`/blog/tags/${tag.tag}`}
+            href={`/tags/${tag.tag}`}
             count={tag.count}
             size="sm"
           />

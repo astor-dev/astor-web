@@ -25,7 +25,7 @@ const TagSidebar: React.FC<TagSidebarProps> = ({
           key="all"
           className="flex items-center justify-between rounded bg-skin-fill/5 hover:bg-skin-accent/5"
         >
-          <a href="/blog" className="flex w-full items-center justify-between">
+          <a href="/" className="flex w-full items-center justify-between">
             <span className="text-sm font-medium text-black-accent">
               전체보기
             </span>
@@ -39,7 +39,7 @@ const TagSidebar: React.FC<TagSidebarProps> = ({
             className="flex items-center justify-between rounded bg-skin-fill/5 py-1 hover:bg-skin-accent/5"
           >
             <a
-              href={`/blog/tags/${tag.tag}`}
+              href={`/tags/${tag.tag}`}
               className="flex w-full items-center justify-between"
             >
               <span

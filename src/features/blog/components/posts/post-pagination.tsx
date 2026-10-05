@@ -14,8 +14,8 @@ const PostPagination: React.FC<PaginationProps> = ({
   // 태그가 있을 경우와 없을 경우의 링크를 지정
   const createLink = (page: number) => {
     return currentTag && currentTag.trim() !== ""
-      ? `/blog/tags/${encodeURIComponent(currentTag)}/pages/${page}`
-      : `/blog/pages/${page}`;
+      ? `/tags/${encodeURIComponent(currentTag)}/pages/${page}`
+      : `/pages/${page}`;
   };
 
   // 반응형 페이지 번호 생성

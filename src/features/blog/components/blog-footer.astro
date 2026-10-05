@@ -28,7 +28,7 @@ const { latestPosts = [], remainingPostCount = 0 } = Astro.props;
                 class="group overflow-hidden bg-skin-background"
                 style={`animation-delay: ${index * 100}ms`}
               >
-                <a href={`/blog/posts/${post.id}`} class="block h-full">
+                <a href={`/posts/${post.id}`} class="block h-full">
                   <div class="relative h-36 overflow-hidden">
                     <ImageWithSkeleton
                       src={
@@ -66,7 +66,7 @@ const { latestPosts = [], remainingPostCount = 0 } = Astro.props;
           {remainingPostCount > 0 && (
             <div class="mt-8 text-center">
               <a
-                href="/blog"
+                href="/"
                 class="inline-flex items-center gap-2 text-sm text-black-base/70 transition-colors hover:text-black-accent"
               >
                 <span>더 많은 포스트 보기 ({remainingPostCount})</span>

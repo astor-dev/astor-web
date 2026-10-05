@@ -1,0 +1,62 @@
+---
+import Layout from "~common/layouts/base-layout.astro";
+import { repositoryContainer } from "~modules/repository.module";
+import {
+  POST_REPOSITORY,
+  type PostRepository,
+} from "~modules/repositories/posts/PostRepository";
+import type { PostEntry, SeriesAndCount } from "~common/types/post.type";
+import HomeHero from "~features/about/components/hero/home-hero";
+import { ShootingStarHeader } from "~common/components/headers/shooting-star-header";
+import RecentPostsSection from "~features/blog/components/posts/recent-posts-section.astro";
+import SeriesSlider from "~features/blog/components/series/series-slider";
+import PinnedPostSlider from "~features/blog/components/posts/pinned-posts-slider";
+
+const postRepository = repositoryContainer.get<PostRepository>(POST_REPOSITORY);
+
+// 블로그 데이터 가져오기
+const pinnedPosts: PostEntry[] = (
+  await postRepository.getPosts({
+    filter: { pinned: true, draft: false },
+  })
+).items;
+
+// 최근 게시글 가져오기
+const recentPosts: PostEntry[] = (
+  await postRepository.getPosts({
+    paging: { page: 1, limit: 6 },
+    filter: { draft: false },
+  })
+).items;
+
+const seriesList: SeriesAndCount[] =
+  await postRepository.getAllSeriesAndCount();
+---
+
+<Layout>
+  <Fragment slot="hero">
+    <HomeHero client:load />
+  </Fragment>
+  <div class="mx-auto w-full">
+    <section class="mb-16">
+      <div class="flex flex-col space-y-4">
+        <ShootingStarHeader
+          title="시리즈"
+          moreLink="/series"
+          client:load
+        />
+        <SeriesSlider seriesList={seriesList} client:idle />
+      </div>
+    </section>
+    <section class="mb-16">
+      <ShootingStarHeader title="주목할만한 글" moreLink="/" client:load />
+      <PinnedPostSlider pinnedPosts={pinnedPosts} client:idle />
+    </section>
+    <section class="mb-16">
+      <div class="mb-6">
+        <ShootingStarHeader title="최근 게시글" moreLink="/" client:load />
+      </div>
+      <RecentPostsSection recentPosts={recentPosts} />
+    </section>
+  </div>
+</Layout>

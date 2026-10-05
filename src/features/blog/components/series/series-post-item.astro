@@ -14,7 +14,7 @@ const processedBody = (await stripMdx(post.body || "")).slice(0, 300)
 ---
 
 <li class="my-4" data-created-at={post.data.createdAt}>
-  <a href={`/blog/posts/${post.id}`} class="group block">
+  <a href={`/posts/${post.id}`} class="group block">
     <h2
       class="break-all text-base font-bold text-black-base md:text-lg md:group-hover:underline"
     >
